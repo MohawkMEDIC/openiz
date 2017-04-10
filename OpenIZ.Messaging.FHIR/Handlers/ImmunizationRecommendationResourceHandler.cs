@@ -72,7 +72,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 
             retVal.Id = model.Key.ToString();
             retVal.Timestamp = DateTime.Now;
-            retVal.Identifier = model.Identifiers.Select(o => DatatypeConverter.ToFhirIdentifier(o)).ToList();
+            retVal.Identifier = model.Identifiers.Select(o => DataTypeConverter.ToFhirIdentifier(o)).ToList();
 
             var rct = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget).PlayerEntity;
             if (rct != null)
@@ -86,7 +86,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             {
                 Date = model.CreationTime.DateTime,
                 DoseNumber = model.SequenceId,
-                VaccineCode = DatatypeConverter.ToFhirCodeableConcept(mat?.TypeConcept),
+                VaccineCode = DataTypeConverter.ToFhirCodeableConcept(mat?.TypeConcept),
                 ForecastStatus = new FhirCodeableConcept(new Uri("http://hl7.org/fhir/conceptset/immunization-recommendation-status"), status),
                 DateCriterion = new List<MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ImmunizationRecommendationDateCriterion>()
                 {

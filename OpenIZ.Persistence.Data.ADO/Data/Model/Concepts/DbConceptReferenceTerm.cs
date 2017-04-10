@@ -22,7 +22,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
         /// <summary>
         /// Gets or sets the target key
         /// </summary>
-        [Column("ref_term_id")]
+        [Column("ref_term_id"), ForeignKey(typeof(DbReferenceTerm), nameof(DbReferenceTerm.Key))]
         public Guid TargetKey { get; set; }
 
         /// <summary>

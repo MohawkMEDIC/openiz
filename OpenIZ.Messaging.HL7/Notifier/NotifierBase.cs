@@ -19,19 +19,17 @@
  */
 
 using MARC.HI.EHRS.SVC.Core;
-using NHapi.Model.V25.Segment;
+using NHapi.Model.V231.Datatype;
+using NHapi.Model.V231.Segment;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.HL7.Configuration;
-using OpenIZ.Messaging.HL7.Extensions;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using NHapi.Model.V25.Datatype;
 using TS = MARC.Everest.DataTypes.TS;
-using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Messaging.HL7.Notifier
 {
@@ -60,7 +58,6 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// </summary>
 		protected NotifierBase()
 		{
-
 		}
 
 		internal static void UpdateAD(EntityAddress entityAddress, XAD address)
@@ -78,8 +75,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			address.City.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.City).Select(c => c.Value));
 			address.Country.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Country).Select(c => c.Value));
 			address.StateOrProvince.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.State).Select(c => c.Value));
-			address.StreetAddress.StreetName.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.StreetName).Select(c => c.Value));
-			address.StreetAddress.StreetOrMailingAddress.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.StreetAddressLine).Select(c => c.Value));
+			address.StreetAddress.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.StreetAddressLine).Select(c => c.Value));
 			address.ZipOrPostalCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Select(c => c.Value));
 		}
 
@@ -97,19 +93,22 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			tracer.TraceEvent(TraceEventType.Information, 0, "Adding gender");
 
+			// TODO: fix this to use concept lookup
 			switch (gender?.ToLowerInvariant())
 			{
 				case "male":
 				case "f4e3a6bb-612e-46b2-9f77-ff844d971198":
-					pid.AdministrativeSex.Value = "M";
+					pid.Sex.Value = "M";
 					break;
+
 				case "female":
 				case "094941e9-a3db-48b5-862c-bc289bd7f86c":
-					pid.AdministrativeSex.Value = "F";
+					pid.Sex.Value = "F";
 					break;
+
 				case "undifferentiated":
 				case "ae94a782-1485-4241-9bca-5b09db2156bf":
-					pid.AdministrativeSex.Value = "U";
+					pid.Sex.Value = "U";
 					break;
 			}
 		}
@@ -124,7 +123,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			tracer.TraceEvent(TraceEventType.Information, 0, "Start updating MSH segment");
 
 			msh.AcceptAcknowledgmentType.Value = "AL";
-			msh.DateTimeOfMessage.Time.Value = DateTime.Now.ToString("yyyyMMddHHmmss");
+			msh.DateTimeOfMessage.TimeOfAnEvent.Value = DateTime.Now.ToString("yyyyMMddHHmmss");
 			msh.MessageControlID.Value = BitConverter.ToInt64(Guid.NewGuid().ToByteArray(), 0).ToString();
 			msh.ProcessingID.ProcessingID.Value = "P";
 
@@ -177,12 +176,12 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			if (patient.DateOfBirth.HasValue)
 			{
-				pid.DateTimeOfBirth.Time.Value = (TS)patient.DateOfBirth.Value;
+				pid.DateTimeOfBirth.TimeOfAnEvent.Value = (TS)patient.DateOfBirth.Value;
 			}
 
 			if (patient.DeceasedDate.HasValue)
 			{
-				pid.PatientDeathDateAndTime.Time.Value = (TS)patient.DeceasedDate.Value;
+				pid.PatientDeathDateAndTime.TimeOfAnEvent.Value = (TS)patient.DeceasedDate.Value;
 				pid.PatientDeathIndicator.Value = "Y";
 			}
 
@@ -195,14 +194,14 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			if (!patient.Identifiers.Any())
 			{
-				pid.GetPatientIdentifierList(0).IDNumber.Value = patient.Key.GetValueOrDefault(Guid.NewGuid()).ToString();
+				pid.GetPatientIdentifierList(0).ID.Value = patient.Key.GetValueOrDefault(Guid.NewGuid()).ToString();
 				pid.GetPatientIdentifierList(0).AssigningAuthority.UniversalID.Value = "1.3.6.1.4.1.33349.3.1.5.9.2.10000";
 				pid.GetPatientIdentifierList(0).AssigningAuthority.UniversalIDType.Value = "ISO";
 			}
 
 			foreach (var entityIdentifier in patient.Identifiers.Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null))
 			{
-				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).IDNumber.Value = entityIdentifier.Value;
+				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).ID.Value = entityIdentifier.Value;
 				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).AssigningAuthority.UniversalID.Value = entityIdentifier.Authority.Oid;
 				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).AssigningAuthority.UniversalIDType.Value = "ISO";
 			}
@@ -222,7 +221,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.UniversalID.Value = c.Authority.Oid;
 					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.UniversalIDType.Value = "ISO";
 					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.NamespaceID.Value = c.Authority.Oid;
-					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).IDNumber.Value = c.Value;
+					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).ID.Value = c.Value;
 				});
 
 				mother.Names.ForEach(c =>
@@ -248,10 +247,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			name.NameTypeCode.Value = MessageUtil.GetCode(entityName.NameUseKey.Value, CodeSystemKeys.EntityNameUse);
 			name.DegreeEgMD.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Suffix).Select(c => c.Value));
-			name.FamilyName.Surname.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Family).Select(c => c.Value));
+			name.FamilyLastName.FamilyName.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Family).Select(c => c.Value));
 			name.GivenName.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Given).Select(c => c.Value));
 			name.PrefixEgDR.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Prefix).Select(c => c.Value));
-			name.SecondAndFurtherGivenNamesOrInitialsThereof.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Delimiter).Select(c => c.Value));
+			name.MiddleInitialOrName.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Delimiter).Select(c => c.Value));
 
 			return name;
 		}

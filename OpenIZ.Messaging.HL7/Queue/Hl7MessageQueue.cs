@@ -39,14 +39,14 @@ namespace OpenIZ.Messaging.HL7.Queue
 		private static object syncLock = new object();
 
 		/// <summary>
-		/// The internal reference to the <see cref="Queue{T}"/> instance.
-		/// </summary>
-		private Queue<MessageQueueWorkItem> queue = new Queue<MessageQueueWorkItem>();
-
-		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
 		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+
+		/// <summary>
+		/// The internal reference to the <see cref="Queue{T}"/> instance.
+		/// </summary>
+		private Queue<MessageQueueWorkItem> queue = new Queue<MessageQueueWorkItem>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Hl7MessageQueue"/> class.

@@ -166,6 +166,57 @@
     <None Include="Data\001-Materials.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\002-CSD-CadreTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-ContactTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-FacilitySpecializationTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-FacilityStatusCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-OrganizationStatusCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-ProviderIdTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-ProviderStatusCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-ProviderTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-ServiceTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-OrganizationTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\002-CSD-AddressTypeCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\003-BCP-47-LanguageCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\004-FHIR-AdministrativeGenderCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\004-FHIR-ContactPointSystemCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\004-FHIR-ContactPointUseCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\004-FHIR-AddressUseCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\004-FHIR-NameUseCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">

@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="CSD Facility Specialization Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>50cf6151-1cba-44f1-8de3-708d6f49b80c</id>
+      <creationTime>2017-04-09T01:32:27.7670380-04:00</creationTime>
+      <name>CSD Facility Specialization Codes</name>
+      <oid>1.3.6.1.4.1.21367.200.109</oid>
+      <url>http://openiz.org/csd/CSD-FacilitySpecializationTypeCodes</url>
+      <version>20131201</version>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>58c376c5-f9c6-44e8-9820-e4ba273072d9</id>
+      <creationTime>2017-04-09T01:32:27.7675382-04:00</creationTime>
+      <mnemonic>109-001</mnemonic>
+      <codeSystem>50cf6151-1cba-44f1-8de3-708d6f49b80c</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Alzheimer Disease Assessment</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>74a5ee1d-9fd5-4c8e-9f05-b1b2ccd2cb24</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>109-001</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>58c376c5-f9c6-44e8-9820-e4ba273072d9</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Alzheimer Disease Assessment</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e23217d9-711f-491e-b9ba-002ba8c752ea</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <mnemonic>109-002</mnemonic>
+      <codeSystem>50cf6151-1cba-44f1-8de3-708d6f49b80c</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Lung Cancer Screening</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>904cd88c-17d4-4045-92e4-58f2a237b566</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>109-002</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>e23217d9-711f-491e-b9ba-002ba8c752ea</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Lung Cancer Screening</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2cbb1b9e-1775-454b-9e17-7f32f57ae83f</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <mnemonic>109-003</mnemonic>
+      <codeSystem>50cf6151-1cba-44f1-8de3-708d6f49b80c</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Cancer Imaging Services</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>5b154df6-1609-4feb-b52e-7b618728ad22</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>109-003</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>2cbb1b9e-1775-454b-9e17-7f32f57ae83f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Cancer Imaging Services</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3a21253e-8921-4feb-b74a-1a33f2cbc822</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <mnemonic>109-004</mnemonic>
+      <codeSystem>50cf6151-1cba-44f1-8de3-708d6f49b80c</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Cardiac Imaging Services</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>2f3304fc-aaf9-42b2-8c3f-12815fe3d97e</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>109-004</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>3a21253e-8921-4feb-b74a-1a33f2cbc822</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Cardiac Imaging Services</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>66aafa7e-8594-41c8-85f1-d2332ba8774a</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <mnemonic>109-005</mnemonic>
+      <codeSystem>50cf6151-1cba-44f1-8de3-708d6f49b80c</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Women's Imaging Services</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>42a967c0-5597-4248-b782-3d35cd028169</id>
+      <creationTime>2017-04-09T01:32:27.7715391-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>109-005</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>66aafa7e-8594-41c8-85f1-d2332ba8774a</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Women's Imaging Services</value>
+      </name>
+    </Concept>
+  </insert>
+</dataset>

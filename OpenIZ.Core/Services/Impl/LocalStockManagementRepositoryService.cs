@@ -69,13 +69,16 @@ namespace OpenIZ.Core.Services.Impl
 		/// <param name="placeKey">The place key.</param>
 		/// <param name="startPeriod">The start period.</param>
 		/// <param name="endPeriod">The end period.</param>
-		/// <returns>IEnumerable&lt;Act&gt;.</returns>
-		/// <exception cref="System.InvalidOperationException"></exception>
+		/// <returns>Returns a list of acts.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
 		public IEnumerable<Act> FindAdjustments(Guid manufacturedMaterialKey, Guid placeKey, DateTimeOffset? startPeriod, DateTimeOffset? endPeriod)
         {
-            IDataPersistenceService<Act> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
-            if (persistenceService == null)
-                throw new InvalidOperationException();
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+
+	        if (persistenceService == null)
+	        {
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<Act>)}");
+			}
 
             return persistenceService.Query(o => o.ClassConceptKey == ActClassKeys.AccountManagement && o.ActTime >= startPeriod.Value && o.ActTime <= endPeriod.Value &&
                 o.Participations.Where(guard=>guard.ParticipationRole.Mnemonic == "Location").Any(p=>p.PlayerEntityKey == placeKey) &&

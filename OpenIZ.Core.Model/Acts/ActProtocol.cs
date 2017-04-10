@@ -54,7 +54,12 @@ namespace OpenIZ.Core.Model.Acts
         [XmlElement("state"), JsonProperty("state")]
         public byte[] StateData { get; set; }
 
-        public override bool SemanticEquals(object obj)
+		/// <summary>
+		/// Determines equality of this association
+		/// </summary>
+		/// <param name="obj">The object.</param>
+		/// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+		public override bool SemanticEquals(object obj)
         {
             var other = obj as ActProtocol;
             if (other == null) return false;

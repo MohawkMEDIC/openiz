@@ -75,8 +75,6 @@ namespace OpenIZ.Core.Model
 					return null;
 				else
 					return this.CreationTime.ToString("o", CultureInfo.InvariantCulture);
-
-				return this.CreationTime.ToString("o", CultureInfo.InvariantCulture);
 			}
             set {
                 if (value != null)

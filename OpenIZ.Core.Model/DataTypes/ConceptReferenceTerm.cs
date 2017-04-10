@@ -43,6 +43,25 @@ namespace OpenIZ.Core.Model.DataTypes
         
         private ConceptRelationshipType m_relationshipType;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConceptReferenceTerm"/> class.
+		/// </summary>
+		public ConceptReferenceTerm()
+	    {
+		    
+	    }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConceptReferenceTerm"/> class.
+		/// </summary>
+		/// <param name="referenceTermKey">The reference term identifier.</param>
+		/// <param name="relationshipTypeKey">The relationship type identifier.</param>
+		public ConceptReferenceTerm(Guid? referenceTermKey, Guid? relationshipTypeKey)
+		{
+			this.RelationshipTypeKey = relationshipTypeKey;
+			this.ReferenceTermKey = referenceTermKey;
+		}
+
         /// <summary>
         /// Gets or sets the reference term identifier
         /// </summary>

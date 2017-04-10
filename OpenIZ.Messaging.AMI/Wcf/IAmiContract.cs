@@ -349,14 +349,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="id">The identifier.</param>
 		/// <returns>Returns a code system.</returns>
-		[WebGet(UriTemplate = "/codeSystem", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/codeSystem/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
 		CodeSystem GetCodeSystem(string id);
 
 		/// <summary>
 		/// Gets the code systems.
 		/// </summary>
 		/// <returns>Returns a list of code systems.</returns>
-		[WebGet(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare)]
+		[WebGet(UriTemplate = "/codeSystem", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<CodeSystem> GetCodeSystems();
 
 		/// <summary>

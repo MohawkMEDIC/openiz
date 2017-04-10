@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using OpenIZ.Core.Diagnostics;
@@ -39,9 +40,9 @@ namespace OpenIZ.Core.Services.Impl
 	{
 		
 		/// <summary>
-		/// The tracer instance.
+		/// The trace source instance.
 		/// </summary>
-		private readonly Tracer tracer = Tracer.GetTracer(typeof(LocalPatientRepositoryService));
+		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Core");
 
 		/// <summary>
 		/// Locates the specified patient.
@@ -95,7 +96,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			if (clientRegistryNotificationService != null)
 			{
-				this.tracer.TraceInfo("Notifying client registry of new registration");
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Notifying client registry of new registration");
 				clientRegistryNotificationService.NotifyRegister(new NotificationEventArgs<Patient>(patient));
 			}
 
@@ -153,7 +154,7 @@ namespace OpenIZ.Core.Services.Impl
 
             if (clientRegistryNotificationService != null)
 			{
-				this.tracer.TraceInfo("Notifying client registry of update");
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Notifying client registry of update");
 				clientRegistryNotificationService?.NotifyUpdate(new NotificationEventArgs<Patient>(patient));
 			}
 			

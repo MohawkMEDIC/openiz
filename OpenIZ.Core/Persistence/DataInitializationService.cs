@@ -37,6 +37,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Core.Persistence
 {
@@ -123,6 +124,37 @@ namespace OpenIZ.Core.Persistence
                             var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
                             mi.Invoke(pi.GetValue(target), new object[] { ascn.Element });
                         }
+
+					// ensure version sequence is set
+					// the reason this exists is because in FHIR code system values have the same mnemonic values in different code systems
+					// since we cannot insert duplicate mnemonic values, we want to associate the existing concept with the new reference term
+					// for the new code system
+					//
+					// i.e.
+					//
+					// Code System Address Use has the following codes:
+					// home
+					// work
+					// temp
+					// old
+					// we want to insert reference terms and concepts so we can find an associated concept
+					// for a given reference term and code system
+					// 
+					// Code System Contact Point Use has the following codes:
+					// home
+					// work
+					// temp
+					// old
+					// mobile
+					//
+					// we can insert new reference terms for these reference terms, but cannot insert new concept using the same values for the mnemonic
+					// so we associate the new reference term and the concept
+	                if (target is ConceptReferenceTerm)
+	                {
+		                var conceptReferenceTerm = target as ConceptReferenceTerm;
+		                conceptReferenceTerm.EffectiveVersionSequenceId = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Get(new Identifier<Guid>(conceptReferenceTerm.SourceEntityKey.Value), AuthenticationContext.Current.Principal, true)?.VersionSequence;
+		                target = conceptReferenceTerm;
+	                }
 
                     if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
                         idpInstance.Insert(target);

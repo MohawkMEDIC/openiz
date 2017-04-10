@@ -1,0 +1,363 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="CSD Service Type Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>788F885D-60DD-4DD2-A18D-37BF014C741E</id>
+
+      <name>CSD Service Type Codes</name>
+      <oid>1.3.6.1.4.1.21367.200.103</oid>
+      <authority>CsdServiceTypeCodes</authority>
+      <version>20131201</version>
+      <url>http://openiz.org/csd/CSD-ServiceTypeCodes</url>
+      <description>CSD Service Type Codes</description>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>DBF8A3A8-F21B-43A2-A274-B01CB5553ED8</id>
+      <mnemonic>103-001</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Ambulatory Surgery Center</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>229188D3-7369-4C10-B090-B2CD34EC0715</id>
+      <mnemonic>103-002</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Cancer Center</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>CA214E07-57AF-4075-934F-EADC1BB03030</id>
+      <mnemonic>103-003</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Dialysis Center</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>840F96CB-97CD-425B-AB3A-94F6187F34A2</id>
+      <mnemonic>103-004</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Hearing Services</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>87619728-1695-48E8-8E98-A54B83489E44</id>
+      <mnemonic>103-005</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Hospital</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>CEEFF72A-198C-40F4-B765-640E0F2A5CE3</id>
+      <mnemonic>103-006</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Laboratory</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>8D5149B4-87AE-4ADB-8AE5-213C0D9AF458</id>
+      <mnemonic>103-007</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Occupational Therapy</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7F343110-8D46-4F45-BD4F-862F691EF54F</id>
+      <mnemonic>103-008</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Pharmacy</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0E32C55C-85CE-4CA8-A14A-1A857B1454CC</id>
+      <mnemonic>103-009</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Physical Therapy</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>796235CD-7DE3-49DE-921F-4A3C7AAA3FD6</id>
+      <mnemonic>103-110</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Radiology - Imaging Services</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>72503267-1A26-411D-89D0-80B1A16994BE</id>
+      <mnemonic>103-111</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Vision Center</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>9DD8A042-A9E3-4229-B2BF-EBF932BA40ED</id>
+      <mnemonic>103-112</mnemonic>
+      <codeSystem>788F885D-60DD-4DD2-A18D-37BF014C741E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Womens Health</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>cfaeea8a-f5d1-499b-9aba-e9ebc3d9495b</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-001</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>DBF8A3A8-F21B-43A2-A274-B01CB5553ED8</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Ambulatory Surgery Center</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>057D9FEF-19A4-4A7F-BE7E-D742D85C3B21</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-002</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>229188D3-7369-4C10-B090-B2CD34EC0715</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Cancer Center</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>CA214E07-57AF-4075-934F-EADC1BB03030</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-003</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>cb93ec06-ab79-4411-b566-a72329153c9a</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Dialysis Center</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>14AD341F-85A6-49AE-B18A-EC276196D31A</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-004</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>840F96CB-97CD-425B-AB3A-94F6187F34A2</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Hearing Services</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>7B674FB4-7752-4F16-900C-56A025B87D75</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-005</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>87619728-1695-48E8-8E98-A54B83489E44</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Hospital</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>5ECC3615-1D8B-47DF-9E03-5776BAA07E0C</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-006</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>CEEFF72A-198C-40F4-B765-640E0F2A5CE3</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Laboratory</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>601CF960-C483-4AC5-B7A3-FDA00A743BE1</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-007</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>8D5149B4-87AE-4ADB-8AE5-213C0D9AF458</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Occupational Therapy</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>F63CDA5B-3F3F-49CE-856F-5DB4C7FDDA2A</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-008</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>7F343110-8D46-4F45-BD4F-862F691EF54F</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Pharmacy</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>03EB7E6C-C1A2-4140-B551-72FCFF5C5DAF</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-009</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>0E32C55C-85CE-4CA8-A14A-1A857B1454CC</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Physical Therapy</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>0FBA83FC-2F76-443C-A952-7A2B4C58A778</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-110</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>796235CD-7DE3-49DE-921F-4A3C7AAA3FD6</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Radiology - Imaging Services</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>8FD8DA98-DE66-4DF2-BF76-417F5A9E2C2B</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-111</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>72503267-1A26-411D-89D0-80B1A16994BE</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Vision Center</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>81D67F1F-C547-45F3-80E6-3FFC6AE901AA</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>103-112</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>9DD8A042-A9E3-4229-B2BF-EBF932BA40ED</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Womens Health</value>
+      </name>
+      <conceptSet>95f9a19a-fa85-4af7-9342-4ba3af0de72a</conceptSet>
+    </Concept>
+  </insert>
+</dataset>

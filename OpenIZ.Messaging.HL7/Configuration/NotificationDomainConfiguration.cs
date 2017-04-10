@@ -18,11 +18,10 @@
  * Date: 2016-11-11
  */
 
-using OpenIZ.Core.Event;
+using OpenIZ.Messaging.HL7.Notifier;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
-using OpenIZ.Messaging.HL7.Notifier;
 
 namespace OpenIZ.Messaging.HL7.Configuration
 {

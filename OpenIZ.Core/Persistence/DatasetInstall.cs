@@ -72,10 +72,11 @@ namespace OpenIZ.Core.Persistence
         /// </summary>
         public abstract String ActionName { get; }
 
-        /// <summary>
-        /// Gets the elements to be performed
-        /// </summary>
-        [XmlElement("Concept", typeof(Concept), Namespace = "http://openiz.org/model")]
+		/// <summary>
+		/// Gets the elements to be performed
+		/// </summary>
+		[XmlElement("ConceptReferenceTerm", typeof(ConceptReferenceTerm), Namespace = "http://openiz.org/model")]
+		[XmlElement("Concept", typeof(Concept), Namespace = "http://openiz.org/model")]
         [XmlElement("ConceptSet", typeof(ConceptSet), Namespace = "http://openiz.org/model")]
         [XmlElement("AssigningAuthority", typeof(AssigningAuthority), Namespace = "http://openiz.org/model")]
         [XmlElement("ConceptClass", typeof(ConceptClass), Namespace = "http://openiz.org/model")]

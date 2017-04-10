@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="CSD Address Type Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>7E096272-81DF-4530-A315-7EEFF17EE874</id>
+
+      <name>CSD Address Type Codes</name>
+      <oid>2.25.309768652999692686176651983274504471835.999.404</oid>
+      <authority>CsdAddressTypeCodes</authority>
+      <version>20140122</version>
+      <url>urn:ihe:iti:csd:2013:addressType</url>
+      <description>CSD Address Type Codes</description>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>403c90d8-f582-40f8-9e3e-f2f6100e6952</id>
+      <mnemonic>Mailing</mnemonic>
+      <codeSystem>7E096272-81DF-4530-A315-7EEFF17EE874</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Mailing</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>1347b739-4f17-42b5-870f-f08ccede538f</id>
+      <mnemonic>Billing</mnemonic>
+      <codeSystem>7E096272-81DF-4530-A315-7EEFF17EE874</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Billing</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d7caf151-2061-488e-bec7-39c683884d0a</id>
+      <mnemonic>Practice</mnemonic>
+      <codeSystem>7E096272-81DF-4530-A315-7EEFF17EE874</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Practice</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>a47dc432-723d-4d21-ad17-58d1d15efb4f</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>Mailing</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>403c90d8-f582-40f8-9e3e-f2f6100e6952</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Mailing</value>
+      </name>
+      <conceptSet>5cca5869-8a7b-47a3-83db-041d5af5c9da</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>f11b44d0-7961-459e-afeb-cc54a66c8e96</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>Billing</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>1347b739-4f17-42b5-870f-f08ccede538f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Billing</value>
+      </name>
+      <conceptSet>5cca5869-8a7b-47a3-83db-041d5af5c9da</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>22ae4433-fb25-4e0a-a1f3-76fb6acbd273</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>Practice</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0D6B3439-C9BE-4480-AF39-EEB457C052D0</conceptClass>
+      <referenceTerm>
+        <term>d7caf151-2061-488e-bec7-39c683884d0a</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Practice</value>
+      </name>
+      <conceptSet>5cca5869-8a7b-47a3-83db-041d5af5c9da</conceptSet>
+    </Concept>
+  </insert>
+</dataset>

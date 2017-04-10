@@ -184,7 +184,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             }
             catch (Exception e)
             {
-                m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Information, e.HResult, "Will use slow query construction due to {0}", e.Message);
+                m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, e.HResult, "Will use slow query construction due to {0}", e.Message);
                 domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query).Build();
             }
             domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);

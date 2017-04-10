@@ -76,7 +76,6 @@
     <Compile Include="Configuration\NotificationConfiguration.cs" />
     <Compile Include="Configuration\NotificationDomainConfiguration.cs" />
     <Compile Include="Configuration\TargetConfiguration.cs" />
-    <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Notifier\ActionType.cs" />
     <Compile Include="Notifier\INotifier.cs" />
     <Compile Include="MessageUtil.cs" />

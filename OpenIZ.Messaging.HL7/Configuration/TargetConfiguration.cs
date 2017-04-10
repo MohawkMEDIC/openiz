@@ -18,14 +18,12 @@
  * Date: 2016-11-11
  */
 
-using OpenIZ.Core.Model;
 using OpenIZ.Messaging.HL7.Notifier;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Serialization;
-using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Messaging.HL7.Configuration
 {
@@ -35,13 +33,16 @@ namespace OpenIZ.Messaging.HL7.Configuration
 	public class TargetConfiguration
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TargetConfiguration"/> class
+		/// Initializes a new instance of the <see cref="TargetConfiguration" /> class
 		/// with a specific name, connection string, act as identifier, and device id.
 		/// </summary>
 		/// <param name="name">The name of the target configuration.</param>
 		/// <param name="connectionString">The connection string of the target configuration.</param>
 		/// <param name="actor">The act as identifier of the target configuration.</param>
 		/// <param name="deviceId">The device id of the configuration.</param>
+		/// <exception cref="System.Configuration.ConfigurationErrorsException">
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException"></exception>
 		public TargetConfiguration(string name, string connectionString, string actor, string deviceId)
 		{
 			this.Name = name;

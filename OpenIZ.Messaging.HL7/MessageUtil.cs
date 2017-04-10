@@ -25,7 +25,7 @@ using NHapi.Base.Model;
 using NHapi.Base.Parser;
 using NHapi.Base.Util;
 using NHapi.Base.validation.impl;
-using NHapi.Model.V25.Datatype;
+using NHapi.Model.V231.Datatype;
 using NHapi.Model.V25.Segment;
 using OpenIZ.Core;
 using OpenIZ.Core.Model.Constants;
@@ -36,15 +36,18 @@ using OpenIZ.Core.ResultsDetails;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
+using ERR = NHapi.Model.V231.Segment.ERR;
+using EVN = NHapi.Model.V231.Segment.EVN;
+using MSH = NHapi.Model.V231.Segment.MSH;
+using PD1 = NHapi.Model.V231.Segment.PD1;
+using PID = NHapi.Model.V231.Segment.PID;
 
 namespace OpenIZ.Messaging.HL7
 {
@@ -136,9 +139,9 @@ namespace OpenIZ.Messaging.HL7
 					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, addresses[i].ZipOrPostalCode.Value));
 				}
 
-				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.StreetOrMailingAddress.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.StreetOrMailingAddress.Value))
+				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.Value))
 				{
-					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, addresses[i].StreetAddress.StreetOrMailingAddress.Value));
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetAddressLine, addresses[i].StreetAddress.Value));
 				}
 
 				if (!string.IsNullOrEmpty(addresses[i].StateOrProvince.Value) && !string.IsNullOrWhiteSpace(addresses[i].StateOrProvince.Value))
@@ -146,9 +149,9 @@ namespace OpenIZ.Messaging.HL7
 					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.State, addresses[i].StateOrProvince.Value));
 				}
 
-				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.StreetName.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.StreetName.Value))
+				if (!string.IsNullOrEmpty(addresses[i].StreetAddress.Value) && !string.IsNullOrWhiteSpace(addresses[i].StreetAddress.Value))
 				{
-					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetName, addresses[i].StreetAddress.StreetName.Value));
+					entityAddress.Component.Add(new EntityAddressComponent(AddressComponentKeys.StreetName, addresses[i].StreetAddress.Value));
 				}
 
 				if (!string.IsNullOrEmpty(addresses[i].OtherDesignation.Value) && !string.IsNullOrWhiteSpace(addresses[i].OtherDesignation.Value))
@@ -243,12 +246,12 @@ namespace OpenIZ.Messaging.HL7
 				else
 				{
 #if DEBUG
-					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, $"Adding {cx.IDNumber.Value}^^^&{cx.AssigningAuthority.UniversalID.Value}&ISO to alternate identifiers");
+					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, $"Adding {cx.ID.Value}^^^&{cx.AssigningAuthority.UniversalID.Value}&ISO to alternate identifiers");
 #endif
 					MessageUtil.tracer.TraceEvent(TraceEventType.Information, 0, $"Adding identifier from {cx.AssigningAuthority.UniversalID.Value} domain to alternate identifiers");
 
 					entityIdentifier.Authority = assigningAuthority;
-					entityIdentifier.Value = cx.IDNumber.Value;
+					entityIdentifier.Value = cx.ID.Value;
 				}
 
 				entityIdentifiers.Add(entityIdentifier);
@@ -305,9 +308,9 @@ namespace OpenIZ.Messaging.HL7
 					Key = nameUse
 				};
 
-				if (!string.IsNullOrEmpty(names[i].FamilyName.Surname.Value) && !string.IsNullOrWhiteSpace(names[i].FamilyName.Surname.Value))
+				if (!string.IsNullOrEmpty(names[i].FamilyLastName.FamilyName.Value) && !string.IsNullOrWhiteSpace(names[i].FamilyLastName.FamilyName.Value))
 				{
-					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Family, names[i].FamilyName.Surname.Value));
+					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Family, names[i].FamilyLastName.FamilyName.Value));
 				}
 
 				if (!string.IsNullOrEmpty(names[i].GivenName.Value) && !string.IsNullOrWhiteSpace(names[i].GivenName.Value))
@@ -315,9 +318,9 @@ namespace OpenIZ.Messaging.HL7
 					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Given, names[i].GivenName.Value));
 				}
 
-				if (!string.IsNullOrEmpty(names[i].SecondAndFurtherGivenNamesOrInitialsThereof.Value) && !string.IsNullOrWhiteSpace(names[i].SecondAndFurtherGivenNamesOrInitialsThereof.Value))
+				if (!string.IsNullOrEmpty(names[i].MiddleInitialOrName.Value) && !string.IsNullOrWhiteSpace(names[i].MiddleInitialOrName.Value))
 				{
-					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Given, names[i].SecondAndFurtherGivenNamesOrInitialsThereof.Value));
+					entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Given, names[i].MiddleInitialOrName.Value));
 				}
 
 				if (!string.IsNullOrEmpty(names[i].PrefixEgDR.Value) && !string.IsNullOrWhiteSpace(names[i].PrefixEgDR.Value))
@@ -345,21 +348,21 @@ namespace OpenIZ.Messaging.HL7
 		{
 			DateTime? result = null;
 
-			if (timestamp.Time.Value == null)
+			if (timestamp.TimeOfAnEvent.Value == null)
 			{
 				return result;
 			}
 
 			object dateTime = null;
 
-			if (Util.TryFromWireFormat(timestamp.Time.Value, typeof(MARC.Everest.DataTypes.TS), out dateTime))
+			if (Util.TryFromWireFormat(timestamp.TimeOfAnEvent.Value, typeof(MARC.Everest.DataTypes.TS), out dateTime))
 			{
 				result = ((MARC.Everest.DataTypes.TS)dateTime).DateValue;
 			}
 			else
 			{
 #if DEBUG
-				MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to convert date of birth value: {0}", timestamp.Time.Value));
+				MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, string.Format("Unable to convert date of birth value: {0}", timestamp.TimeOfAnEvent.Value));
 #endif
 				MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, "Unable to convert date of birth value");
 			}
@@ -388,19 +391,22 @@ namespace OpenIZ.Messaging.HL7
 						sb.AppendFormat("{0}-", xtn.CountryCode);
 					}
 
-					if (xtn.TelephoneNumber != null && xtn.TelephoneNumber.Value != null && !xtn.TelephoneNumber.Value.Contains("-"))
+					if (xtn.PhoneNumber?.Value != null && !xtn.PhoneNumber.Value.Contains("-"))
 					{
-						xtn.TelephoneNumber.Value = xtn.TelephoneNumber.Value.Insert(3, "-");
+						xtn.PhoneNumber.Value = xtn.PhoneNumber.Value.Insert(3, "-");
 					}
 
-					sb.AppendFormat("{0}-{1}", xtn.AreaCityCode, xtn.TelephoneNumber);
+					sb.AppendFormat("{0}-{1}", xtn.AreaCityCode, xtn.PhoneNumber);
 
 					if (xtn.Extension.Value != null)
 					{
 						sb.AppendFormat(";ext={0}", xtn.Extension);
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				if (sb.ToString().EndsWith("tel:") || sb.ToString() == "tel:-")
 				{
@@ -415,11 +421,11 @@ namespace OpenIZ.Messaging.HL7
 			{
 				var match = re.Match(xtn.AnyText.Value);
 
-				StringBuilder sb = new StringBuilder("tel:");
+				var sb = new StringBuilder("tel:");
 
-				for (int i = 1; i < 5; i++)
+				for (var i = 1; i < 5; i++)
 				{
-					if (!String.IsNullOrEmpty(match.Groups[i].Value))
+					if (!string.IsNullOrEmpty(match.Groups[i].Value))
 					{
 						sb.AppendFormat("{0}{1}", match.Groups[i].Value, i == 4 ? "" : "-");
 					}
@@ -434,7 +440,7 @@ namespace OpenIZ.Messaging.HL7
 			}
 
 			// Use code conversion
-			Guid use = Guid.Empty;
+			var use = Guid.Empty;
 
 			if (!string.IsNullOrEmpty(xtn.TelecommunicationUseCode.Value))
 			{
@@ -592,9 +598,9 @@ namespace OpenIZ.Messaging.HL7
 
 			try
 			{
-				if (!string.IsNullOrEmpty(pid.AdministrativeSex.Value) && !string.IsNullOrWhiteSpace(pid.AdministrativeSex.Value))
+				if (!string.IsNullOrEmpty(pid.Sex.Value) && !string.IsNullOrWhiteSpace(pid.Sex.Value))
 				{
-					var concept = GetConcept(pid.AdministrativeSex.Value, "2.16.840.1.113883.5.1");
+					var concept = GetConcept(pid.Sex.Value, "2.16.840.1.113883.5.1");
 
 					// TODO: cleanup
 					if (concept == null)
@@ -613,7 +619,7 @@ namespace OpenIZ.Messaging.HL7
 			{
 				details.Add(new NotSupportedChoiceResultDetail(ResultDetailType.Error, null, null));
 #if DEBUG
-				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, $"Gender value {pid.AdministrativeSex.Value} not found in map");
+				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, $"Gender value {pid.Sex.Value} not found in map");
 #endif
 				MessageUtil.tracer.TraceEvent(TraceEventType.Error, 0, "Gender value not found in map");
 			}

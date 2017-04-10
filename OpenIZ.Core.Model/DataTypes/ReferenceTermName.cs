@@ -27,97 +27,124 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
-    /// <summary>
-    /// Display name of a code system or reference term
-    /// </summary>
-    [XmlType("ReferenceTermName",  Namespace = "http://openiz.org/model"), JsonObject("ReferenceTermName")]
-    [Classifier(nameof(Language)), SimpleValue(nameof(Name))]
-    public class ReferenceTermName : BaseEntityData, ISimpleAssociation
-    {
+	/// <summary>
+	/// Display name of a code system or reference term
+	/// </summary>
+	[XmlType("ReferenceTermName", Namespace = "http://openiz.org/model"), JsonObject("ReferenceTermName")]
+	[Classifier(nameof(Language)), SimpleValue(nameof(Name))]
+	public class ReferenceTermName : BaseEntityData, ISimpleAssociation
+	{
 
-        // Id of the algorithm used to generate phonetic code
-        private Guid? m_phoneticAlgorithmId;
-        // Algorithm used to generate the code
-        
-        private PhoneticAlgorithm m_phoneticAlgorithm;
-        
-        /// <summary>
-        /// Should serialize reference term key
-        /// </summary>
-        public bool ShouldSerializeSourceEntityKey ()
-        {
-            return this.SourceEntityKey.HasValue;
-        }
+		// Id of the algorithm used to generate phonetic code
+		private Guid? m_phoneticAlgorithmId;
+		// Algorithm used to generate the code
 
-        /// <summary>
-        /// Gets or sets the language code of the object
-        /// </summary>
-        [XmlElement("language"), JsonProperty("language")]
-        public String Language { get; set; }
+		private PhoneticAlgorithm m_phoneticAlgorithm;
 
-        /// <summary>
-        /// Gets or sets the name of the reference term
-        /// </summary>
-        [XmlElement("value"), JsonProperty("value")]
-        public String Name { get; set; }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReferenceTermName"/> class.
+		/// </summary>
+		public ReferenceTermName()
+		{
 
-        /// <summary>
-        /// Gets or sets the phonetic code of the reference term
-        /// </summary>
-        [XmlElement("phoneticCode"), JsonProperty("phoneticCode")]
-        public String PhoneticCode { get; set; }
+		}
 
-        /// <summary>
-        /// Gets or sets the identifier of the phonetic code
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [Binding(typeof(PhoneticAlgorithmKeys))]
-        [XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
-        public Guid?  PhoneticAlgorithmKey
-        {
-            get { return this.m_phoneticAlgorithmId; }
-            set
-            {
-                this.m_phoneticAlgorithmId = value;
-                this.m_phoneticAlgorithm = null;
-            }
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReferenceTermName"/> class.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		public ReferenceTermName(string name)
+		{
+			this.Name = name;
+		}
 
-        /// <summary>
-        /// Gets or sets the phonetic algorithm
-        /// </summary>
-        [SerializationReference(nameof(PhoneticAlgorithmKey))]
-        [XmlIgnore, JsonIgnore]
-        public PhoneticAlgorithm PhoneticAlgorithm
-        {
-            get
-            {
-                this.m_phoneticAlgorithm = base.DelayLoad(this.m_phoneticAlgorithmId, this.m_phoneticAlgorithm);
-                return this.m_phoneticAlgorithm;
-            }
-            set
-            {
-                this.m_phoneticAlgorithm = value;
-                this.m_phoneticAlgorithmId = value?.Key;
-            }
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReferenceTermName"/> class.
+		/// </summary>
+		/// <param name="language">The language.</param>
+		/// <param name="name">The name.</param>
+		public ReferenceTermName(string language, string name)  : this(name)
+		{
+			this.Language = language;
+		}
 
-        /// <summary>
-        /// Gets the source entity key
-        /// </summary>
-        [XmlElement("source"), JsonProperty("source")]
-        public Guid? SourceEntityKey
-        {
-            get;set;
-        }
+		/// <summary>
+		/// Should serialize reference term key
+		/// </summary>
+		public bool ShouldSerializeSourceEntityKey()
+		{
+			return this.SourceEntityKey.HasValue;
+		}
 
-        /// <summary>
-        /// Force reloading of delay load properties
-        /// </summary>
-        public override void Refresh()
-        {
-            base.Refresh();
-            this.m_phoneticAlgorithm = null;
-        }
-    }
+		/// <summary>
+		/// Gets or sets the language code of the object
+		/// </summary>
+		[XmlElement("language"), JsonProperty("language")]
+		public String Language { get; set; }
+
+		/// <summary>
+		/// Gets or sets the name of the reference term
+		/// </summary>
+		[XmlElement("value"), JsonProperty("value")]
+		public String Name { get; set; }
+
+		/// <summary>
+		/// Gets or sets the phonetic code of the reference term
+		/// </summary>
+		[XmlElement("phoneticCode"), JsonProperty("phoneticCode")]
+		public String PhoneticCode { get; set; }
+
+		/// <summary>
+		/// Gets or sets the identifier of the phonetic code
+		/// </summary>
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		[Binding(typeof(PhoneticAlgorithmKeys))]
+		[XmlElement("phoneticAlgorithm"), JsonProperty("phoneticAlgorithm")]
+		public Guid? PhoneticAlgorithmKey
+		{
+			get { return this.m_phoneticAlgorithmId; }
+			set
+			{
+				this.m_phoneticAlgorithmId = value;
+				this.m_phoneticAlgorithm = null;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the phonetic algorithm
+		/// </summary>
+		[SerializationReference(nameof(PhoneticAlgorithmKey))]
+		[XmlIgnore, JsonIgnore]
+		public PhoneticAlgorithm PhoneticAlgorithm
+		{
+			get
+			{
+				this.m_phoneticAlgorithm = base.DelayLoad(this.m_phoneticAlgorithmId, this.m_phoneticAlgorithm);
+				return this.m_phoneticAlgorithm;
+			}
+			set
+			{
+				this.m_phoneticAlgorithm = value;
+				this.m_phoneticAlgorithmId = value?.Key;
+			}
+		}
+
+		/// <summary>
+		/// Gets the source entity key
+		/// </summary>
+		[XmlElement("source"), JsonProperty("source")]
+		public Guid? SourceEntityKey
+		{
+			get; set;
+		}
+
+		/// <summary>
+		/// Force reloading of delay load properties
+		/// </summary>
+		public override void Refresh()
+		{
+			base.Refresh();
+			this.m_phoneticAlgorithm = null;
+		}
+	}
 }

@@ -1,0 +1,228 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Contact Point System Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</id>
+      <name>FHIR Contact Point System Codes</name>
+      <oid>2.16.840.1.113883.4.642.1.65</oid>
+      <url>http://hl7.org/fhir/contact-point-system</url>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>c714211b-a6f4-445c-a56b-c602a53cc8e1</id>
+      <mnemonic>phone</mnemonic>
+      <codeSystem>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Phone</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>30ab59a6-ee75-4524-856a-b69baf0761f0</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>phone</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>c714211b-a6f4-445c-a56b-c602a53cc8e1</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Phone</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b478e5cf-95c5-457a-9d3d-ccbdeeac7ced</id>
+      <mnemonic>fax</mnemonic>
+      <codeSystem>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Fax</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>3fe54cfb-3868-442c-87f1-5972d9777bfc</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>fax</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>b478e5cf-95c5-457a-9d3d-ccbdeeac7ced</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Fax</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>90308bd2-b505-4ac0-8e27-aa75ba25941e</id>
+      <mnemonic>email</mnemonic>
+      <codeSystem>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Email</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>648c4dda-771c-46b6-9cb7-1aae65a6b3f9</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>email</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>90308bd2-b505-4ac0-8e27-aa75ba25941e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Email</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>94da349f-4514-4796-a962-25c259c7121c</id>
+      <mnemonic>pager</mnemonic>
+      <codeSystem>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Pager</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>337e72b8-69f7-4b81-8bdb-2fd4de9fe73c</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>pager</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>94da349f-4514-4796-a962-25c259c7121c</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Pager</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>fe047f8d-f247-4b8a-8df8-2f372edbf126</id>
+      <mnemonic>url</mnemonic>
+      <codeSystem>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</codeSystem>
+      <name>
+        <language>en</language>
+        <value>URL</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>ec1b3f17-929d-4780-8bde-839b597416ab</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>url</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>fe047f8d-f247-4b8a-8df8-2f372edbf126</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>URL</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ffff64ce-7ebc-4a70-af53-7ebc047e5b3a</id>
+      <mnemonic>sms</mnemonic>
+      <codeSystem>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</codeSystem>
+      <name>
+        <language>en</language>
+        <value>SMS</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>49b51fa6-545f-4e30-a022-35f8dfe4ab30</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>sms</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>ffff64ce-7ebc-4a70-af53-7ebc047e5b3a</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>SMS</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>554f8c69-d0b5-481a-a3b1-40af00b44752</id>
+      <mnemonic>other</mnemonic>
+      <codeSystem>0cb5d972-ace6-4cf5-8485-9963eac0c5cf</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Other</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>091f27e8-e592-4e81-b5d7-338b7749d8b8</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>other</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>554f8c69-d0b5-481a-a3b1-40af00b44752</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Other</value>
+      </name>
+    </Concept>
+  </insert>
+</dataset>

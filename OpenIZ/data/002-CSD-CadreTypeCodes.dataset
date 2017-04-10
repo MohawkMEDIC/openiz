@@ -1,0 +1,838 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="Cadre" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</id>
+      <creationTime>2017-04-09T02:08:00.1792139-04:00</creationTime>
+      <name>Cadre</name>
+      <oid>2.25.18630021159349753613449707959296853730613166189051</oid>
+	  <url>http://openiz.org/csd/CSD-CadreTypeCodes</url>
+      <version>1</version>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b328ca65-851d-4f59-9ad2-0b17eb57b499</id>
+      <creationTime>2017-04-09T02:08:00.1807145-04:00</creationTime>
+      <mnemonic>3</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Nurses - Professional/Registered nurses</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>71e91ee1-3444-4b1f-8e10-87053652b869</id>
+      <creationTime>2017-04-09T02:08:00.2397289-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>3</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>b328ca65-851d-4f59-9ad2-0b17eb57b499</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Nurses - Professional/Registered nurses</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0b39a4c5-2b46-4a3b-8188-3d181eea2daf</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>25</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Registered Nurse/RN</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>daf76c49-26cf-463f-84d2-9d571b7c3002</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>25</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>0b39a4c5-2b46-4a3b-8188-3d181eea2daf</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Registered Nurse/RN</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>043506d0-6370-4c09-8b87-5e5066fb5a1d</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>13</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Physiotherapists</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>aaa998b3-21c1-4b61-910c-5254526af68e</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>13</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>043506d0-6370-4c09-8b87-5e5066fb5a1d</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Physiotherapists</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ff1606fd-5ccc-4891-929a-d4e5e457e835</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>18</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Environmental and Public Health Officers</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>e7875296-cc29-44ac-9dec-a65f68dc261d</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>18</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>ff1606fd-5ccc-4891-929a-d4e5e457e835</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Environmental and Public Health Officers</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>c5a27f30-8fae-4942-8d2d-8dec69dbb9fe</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>16</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Laboratory Technicians/Assistants</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>08f55b9e-31a6-4fcf-b90a-90fc40d32113</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>16</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>c5a27f30-8fae-4942-8d2d-8dec69dbb9fe</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Laboratory Technicians/Assistants</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3766a8a4-3e08-4b3f-b597-f7793ddcf236</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>17</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Radiographers</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>0d7f6b62-414a-40eb-9a7b-32a076220cb0</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>17</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>3766a8a4-3e08-4b3f-b597-f7793ddcf236</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Radiographers</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>40ce5ed6-95f3-4023-bf3d-27d9e83eeabd</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>15</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Laboratory Scientists</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>a1222e72-a05f-4c25-9380-43ec028543d2</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>15</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>40ce5ed6-95f3-4023-bf3d-27d9e83eeabd</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Laboratory Scientists</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ecec277e-b96c-4578-b329-b20c8de83235</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>8</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Midwives - Auxiliary/Assistant midwives</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>aca2afd5-4c61-4521-9af1-663d83bfb56a</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>8</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>ecec277e-b96c-4578-b329-b20c8de83235</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Midwives - Auxiliary/Assistant midwives</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d7e4cabd-8aec-4a7c-ba33-627e754d9752</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>4</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Nurses - Enrolled nurses</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>3789af0a-2c6d-4891-8547-e42a4d13f504</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>4</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>d7e4cabd-8aec-4a7c-ba33-627e754d9752</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Nurses - Enrolled nurses</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3b8d1641-5ff1-41e0-9dc6-06551eff2aa3</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>5</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Nurses - Auxiliary/Assistant nurses</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>3c9f382d-3df8-443b-9c0a-77f79996bbb2</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>5</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>3b8d1641-5ff1-41e0-9dc6-06551eff2aa3</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Nurses - Auxiliary/Assistant nurses</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ffd0eac7-70af-4538-b901-e7a54f4af1de</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>7</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Midwives - Enrolled midwives</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>cafcdf3c-5424-4353-8b74-bc264da03e9e</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>7</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>ffd0eac7-70af-4538-b901-e7a54f4af1de</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Midwives - Enrolled midwives</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>57204261-11df-4be3-b9bb-edf81d565f64</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>14</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Medical Assistants/Clinical Officers</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>a69337e4-dc1a-44d1-a8ad-0b51513b6bb9</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>14</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>57204261-11df-4be3-b9bb-edf81d565f64</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Medical Assistants/Clinical Officers</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>9fb36a02-a797-4d2c-b7d1-872e5cc17c94</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>19</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Environmental and Public Health Technicians/Assistants</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>2bf33629-21c7-4941-beef-aa6c7453b001</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>19</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>9fb36a02-a797-4d2c-b7d1-872e5cc17c94</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Environmental and Public Health Technicians/Assistants</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2aee9a0a-dfe6-4c6b-a932-24d16182594f</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>11</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Pharmacists</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>5b4903a6-f4a7-401c-bca0-7b925559bb0f</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>11</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>2aee9a0a-dfe6-4c6b-a932-24d16182594f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Pharmacists</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e18caaed-e929-4aec-8fec-15013d6f7a45</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>10</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Dental Technicians/Assistants</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>8b2d65ee-9a55-404e-8c22-94710d663a19</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>10</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>e18caaed-e929-4aec-8fec-15013d6f7a45</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Dental Technicians/Assistants</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>a5bbd0fd-ac80-4c6e-8851-81f939743f25</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>1</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Physicians - Generalists</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>7ff18bad-e292-4797-b25d-fb899275ccaa</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>1</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>a5bbd0fd-ac80-4c6e-8851-81f939743f25</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Physicians - Generalists</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5ce119f7-7ea7-40ac-9963-4864fc364790</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>12</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Pharmacy Technicians/Assistants</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>9ddb37f9-0f26-4113-bede-705655232ebe</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>12</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>5ce119f7-7ea7-40ac-9963-4864fc364790</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Pharmacy Technicians/Assistants</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>6a2714d0-bf30-46f5-8053-3336c10af738</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>21</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Traditional birth attendants</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>1f292891-468c-414a-96eb-b0857fa867fd</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>21</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>6a2714d0-bf30-46f5-8053-3336c10af738</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Traditional birth attendants</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>69b2c9da-051e-49ce-90a8-c6cebd9c0d92</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>24</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Environmental Health Technician</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>69257bb0-e68b-4cea-a197-7e42d1793942</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>24</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>69b2c9da-051e-49ce-90a8-c6cebd9c0d92</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Environmental Health Technician</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7b320905-1e1a-48cb-924b-b9974644c0b0</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>9</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Dentists</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>60df4713-ae79-46b4-a820-62353cd410d9</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>9</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>7b320905-1e1a-48cb-924b-b9974644c0b0</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Dentists</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>1d133209-ab35-458e-b696-f79ccf4c0300</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>6</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Midwives - Professional/Registered midwives</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>3c57d365-5689-42d3-bc8e-76997274bb55</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>6</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>1d133209-ab35-458e-b696-f79ccf4c0300</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Midwives - Professional/Registered midwives</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>bc2a6bcf-07c9-423c-b588-d15af301f6bf</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>20</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Other technicians and health cadres</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>eed7f570-4b0c-4e69-8764-e09cfe028abc</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>20</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>bc2a6bcf-07c9-423c-b588-d15af301f6bf</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Other technicians and health cadres</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e099076a-e7ba-433e-ad1e-37f27e4d9bf6</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>23</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Administrative and support staff</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>09abdf79-9d34-4673-8b23-2cdfddb48fb7</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>23</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>e099076a-e7ba-433e-ad1e-37f27e4d9bf6</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Administrative and support staff</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>dccda691-832e-47e0-8768-2e189fbc7e3d</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>22</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Community health workers</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>98c343e9-42c4-41f0-8a46-2f9aea41e184</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>22</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>dccda691-832e-47e0-8768-2e189fbc7e3d</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Community health workers</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>6666c785-34c6-4419-a1e6-a76a13864ed4</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <mnemonic>2</mnemonic>
+      <codeSystem>f4e0d82f-d3a8-47ef-ae7f-3749aa7d58ef</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Physicians - Specialists</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>52b9062f-0f98-4593-b92b-4739d9086352</id>
+      <creationTime>2017-04-09T02:08:00.2402291-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>2</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>6666c785-34c6-4419-a1e6-a76a13864ed4</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Physicians - Specialists</value>
+      </name>
+    </Concept>
+  </insert>
+</dataset>

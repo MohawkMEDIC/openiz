@@ -18,8 +18,6 @@
  * Date: 2016-11-11
  */
 
-using System.Xml.Serialization;
-using OpenIZ.Core.Event;
 using OpenIZ.Messaging.HL7.Notifier;
 
 namespace OpenIZ.Messaging.HL7.Configuration

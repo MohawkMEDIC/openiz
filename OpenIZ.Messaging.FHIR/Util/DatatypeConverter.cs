@@ -1,27 +1,27 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-14
  */
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -29,182 +29,158 @@ using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel.Web;
-using System.Text;
-using System.Threading.Tasks;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
-    /// <summary>
-    /// Represents a datatype converter
-    /// </summary>
-    public static class DatatypeConverter
-    {
+	/// <summary>
+	/// Represents a data type converter.
+	/// </summary>
+	public static class DataTypeConverter
+	{
+		/// <summary>
+		/// The trace source.
+		/// </summary>
+		private static readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.FHIR");
 
-        /// <summary>
-        /// Create the base resource data
-        /// </summary>
-        public static TResource CreateResource<TResource>(IVersionedEntity resource) where TResource : ResourceBase, new()
-        {
-            var retVal = new TResource();
-            retVal.Id = resource.Key.ToString();
-            retVal.VersionId = resource.VersionKey.ToString();
-            return retVal;
-        }
+		/// <summary>
+		/// Creates a FHIR reference.
+		/// </summary>
+		/// <typeparam name="TResource">The type of the t resource.</typeparam>
+		/// <param name="targetEntity">The target entity.</param>
+		/// <returns>Returns a reference instance.</returns>
+		public static Reference<TResource> CreateReference<TResource>(IVersionedEntity targetEntity) where TResource : DomainResourceBase, new()
+		{
+			return Reference.CreateResourceReference(DataTypeConverter.CreateResource<TResource>(targetEntity), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
+		}
 
-        /// <summary>
-        /// Convert reference term
-        /// </summary>
-        public static FhirCoding ToCoding(ReferenceTerm rt)
-        {
-            if (rt == null)
-                return null;
-            return new FhirCoding(new Uri(rt.CodeSystem.Url ?? String.Format("urn:oid:{0}", rt.CodeSystem.Oid)), rt.Mnemonic);
-        }
+		/// <summary>
+		/// Creates the resource.
+		/// </summary>
+		/// <typeparam name="TResource">The type of the t resource.</typeparam>
+		/// <param name="resource">The resource.</param>
+		/// <returns>TResource.</returns>
+		public static TResource CreateResource<TResource>(IVersionedEntity resource) where TResource : ResourceBase, new()
+		{
+			var retVal = new TResource();
+			retVal.Id = resource.Key.ToString();
+			retVal.VersionId = resource.VersionKey.ToString();
+			return retVal;
+		}
 
-        /// <summary>
-        /// Convert the telecommunications address
-        /// </summary>
-        public static FhirTelecom ToFhirTelecom(EntityTelecomAddress tel)
-        {
-            return new FhirTelecom()
-            {
-                Use = DatatypeConverter.ToFhirCodeableConcept(tel.AddressUse)?.GetPrimaryCode()?.Code,
-                Value = tel.IETFValue
-            };
-        }
+		/// <summary>
+		/// Convert to assigning authority
+		/// </summary>
+		/// <param name="fhirSystem">The FHIR system.</param>
+		/// <returns>AssigningAuthority.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
+		public static AssigningAuthority ToAssigningAuthority(FhirUri fhirSystem)
+		{
+			if (fhirSystem == null)
+			{
+				return null;
+			}
 
-        /// <summary>
-        /// Convert the entity address to a FHIR address
-        /// </summary>
-        public static FhirAddress ToFhirAddress(EntityAddress addr)
-        {
-            if (addr == null) return null;
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping assigning authority");
 
-            // Return value
-            var retVal = new FhirAddress()
-            {
-                Use = DatatypeConverter.ToFhirCodeableConcept(addr.AddressUse)?.GetPrimaryCode()?.Code,
-                Line = new List<FhirString>()
-            };
+			var metaDataService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
 
-            // Process components
-            foreach(var com in addr.Component)
-            {
-                if (com.ComponentTypeKey == AddressComponentKeys.City)
-                    retVal.City = com.Value;
-                else if (com.ComponentTypeKey == AddressComponentKeys.Country)
-                    retVal.Country = com.Value;
-                else if (com.ComponentTypeKey == AddressComponentKeys.AddressLine ||
-                    com.ComponentTypeKey == AddressComponentKeys.StreetAddressLine)
-                    retVal.Line.Add(com.Value);
-                else if (com.ComponentTypeKey == AddressComponentKeys.State)
-                    retVal.State = com.Value;
-                else if (com.ComponentTypeKey == AddressComponentKeys.PostalCode)
-                    retVal.Zip = com.Value;
-                else
-                {
-                    retVal.Extension.Add(new Extension()
-                    {
-                        IsModifier = false,
-                        Url = FhirConstants.OpenIZProfile + "#address-" + com.ComponentType.Mnemonic,
-                        Value = new FhirString(com.Value)
-                    });
-                }
-            }
+			return metaDataService.GetAssigningAuthority(fhirSystem.Value);
+		}
 
-            return retVal;
-        }
+		/// <summary>
+		/// Converts a <see cref="ReferenceTerm"/> instance to a <see cref="FhirCoding"/> instance.
+		/// </summary>
+		/// <param name="referenceTerm">The reference term.</param>
+		/// <returns>Returns a FHIR coding instance.</returns>
+		public static FhirCoding ToCoding(ReferenceTerm referenceTerm)
+		{
+			if (referenceTerm == null)
+			{
+				return null;
+			}
 
-        /// <summary>
-        /// Convert the entity name to a FHIR name
-        /// </summary>
-        public static FhirHumanName ToFhirHumanName(EntityName en)
-        {
-            if (en == null) return null;
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping reference term");
 
-            // Return value
-            var retVal = new FhirHumanName()
-            {
-                Use = DatatypeConverter.ToFhirCodeableConcept(en.NameUse)?.GetPrimaryCode()?.Code
-            };
+			return new FhirCoding(new Uri(referenceTerm.CodeSystem.Url ?? String.Format("urn:oid:{0}", referenceTerm.CodeSystem.Oid)), referenceTerm.Mnemonic);
+		}
 
-            // Process components
-            foreach (var com in en.Component)
-            {
-                if (com.ComponentTypeKey == NameComponentKeys.Given)
-                    retVal.Given.Add(com.Value);
-                else if (com.ComponentTypeKey == NameComponentKeys.Family)
-                    retVal.Family.Add(com.Value);
-                else if (com.ComponentTypeKey == NameComponentKeys.Prefix)
-                    retVal.Prefix.Add(com.Value);
-                else if (com.ComponentTypeKey == NameComponentKeys.Suffix)
-                    retVal.Suffix.Add(com.Value);
-            }
+		/// <summary>
+		/// Gets the concept via the codeable concept
+		/// </summary>
+		/// <param name="codeableConcept">The codeable concept.</param>
+		/// <returns>Returns a concept.</returns>
+		public static Concept ToConcept(FhirCodeableConcept codeableConcept)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping codeable concept");
+			return codeableConcept?.Coding.Select(o => DataTypeConverter.ToConcept(o)).FirstOrDefault(o => o != null);
+		}
 
-            return retVal;
-        }
+		/// <summary>
+		/// Convert from FHIR coding to concept
+		/// </summary>
+		/// <param name="coding">The coding.</param>
+		/// <param name="defaultSystem">The default system.</param>
+		/// <returns>Returns a concept which matches the given code and code system or null if no concept is found.</returns>
+		/// <exception cref="System.InvalidOperationException">
+		/// Unable to locate service
+		/// or
+		/// Coding must have system attached
+		/// </exception>
+		public static Concept ToConcept(FhirCoding coding, FhirUri defaultSystem = null)
+		{
+			if (coding == null)
+			{
+				return null;
+			}
 
-        /// <summary>
-        /// Creates a FHIR reference
-        /// </summary>
-        public static Reference<TResource> CreateReference<TResource>(IVersionedEntity targetEntity) where TResource : DomainResourceBase, new()
-        {
-            return Reference<TResource>.CreateResourceReference(DatatypeConverter.CreateResource<TResource>(targetEntity), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
-        }
+			var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
-        /// <summary>
-        /// Convert the model
-        /// </summary>
-        public static FhirIdentifier ToFhirIdentifier<TBoundModel>(IdentifierBase<TBoundModel> identifier) where TBoundModel : VersionedEntityData<TBoundModel>, new()
-        {
-            if (identifier == null)
-                return null;
-            return new FhirIdentifier()
-            {
-                Label = identifier.Authority?.Name,
-                System = new FhirUri(new Uri(identifier.Authority?.Url ?? String.Format("urn:oid:{0}", identifier.Authority?.Oid))),
-                Use = identifier.IdentifierType?.TypeConcept?.Mnemonic,
-                Value = identifier.Value
-            };
-        }
+			var system = coding.System ?? defaultSystem;
 
-        /// <summary>
-        /// Gets the concept via the codable concept
-        /// </summary>
-        public static Concept ToConcept(FhirCodeableConcept codeableConcept)
-        {
-            if (codeableConcept == null) return null;
-            return codeableConcept.Coding.Select(o => DatatypeConverter.ToConcept(o)).FirstOrDefault(o => o != null);
-        }
+			if (system == null)
+			{
+				throw new InvalidOperationException("Coding must have system attached");
+			}
 
-        /// <summary>
-        /// Convert from FHIR coding to concept
-        /// </summary>
-        public static Concept ToConcept(FhirCoding coding, FhirUri defaultSystem = null)
-        {
-            if (coding == null) return null;
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR coding");
 
-            var conceptRepoService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+			// Lookup
+			return conceptService.FindConceptsByReferenceTerm(coding.Code, coding.System.Value).FirstOrDefault();
+		}
 
-            var system = coding.System ?? defaultSystem;
-            if (system == null) throw new InvalidOperationException("Coding must have system attached");
+		/// <summary>
+		/// Converts a <see cref="FhirCode{T}"/> instance to a <see cref="Concept"/> instance.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="code">The code.</param>
+		/// <param name="system">The system.</param>
+		/// <returns>Concept.</returns>
+		/// <exception cref="System.ArgumentNullException">
+		/// code - Value cannot be null
+		/// or
+		/// system - Value cannot be null
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
+		public static Concept ToConcept<T>(FhirCode<T> code, string system)
+		{
+			if (code == null)
+			{
+				throw new ArgumentNullException(nameof(code), "Value cannot be null");
+			}
 
-            // Lookup
-            return conceptRepoService.FindConceptsByReferenceTerm(coding.Code, coding.System.Value).FirstOrDefault();
-        }
+			if (system == null)
+			{
+				throw new ArgumentNullException(nameof(system), "Value cannot be null");
+			}
 
-        /// <summary>
-        /// Convert to assigning authority
-        /// </summary>
-        public static AssigningAuthority ToAssigningAuthority(FhirUri fhirSystem)
-        {
-            if (fhirSystem == null) return null;
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR code");
 
-            var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-            return metaService.GetAssigningAuthority(fhirSystem.Value);
-        }
+			return ToConcept(new FhirCoding(new Uri(system), code.Value.ToString()));
+		}
 
 		/// <summary>
 		/// Converts an <see cref="FhirAddress"/> instance to an <see cref="EntityAddress"/> instance.
@@ -212,76 +188,138 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// <param name="fhirAddress">The FHIR address.</param>
 		/// <returns>Returns an entity address instance.</returns>
 		public static EntityAddress ToEntityAddress(FhirAddress fhirAddress)
-	    {
-		    var address = new EntityAddress();
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR address");
 
-		    if (fhirAddress.City?.Value != null)
-		    {
-			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.City, fhirAddress.City.Value));
-		    }
+			var address = new EntityAddress
+			{
+				AddressUseKey = ToConcept(fhirAddress.Use, "http://hl7.org/fhir/address-use")?.Key
+			};
 
-		    if (fhirAddress.Country?.Value != null)
-		    {
-			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.Country, fhirAddress.Country.Value));
-		    }
+			if (fhirAddress.City?.Value != null)
+			{
+				address.Component.Add(new EntityAddressComponent(AddressComponentKeys.City, fhirAddress.City.Value));
+			}
 
-		    if (fhirAddress.Line?.Any() == true)
-		    {
-			    address.Component.AddRange(fhirAddress.Line.Select(a => new EntityAddressComponent(AddressComponentKeys.AddressLine, a.Value)));
-		    }
+			if (fhirAddress.Country?.Value != null)
+			{
+				address.Component.Add(new EntityAddressComponent(AddressComponentKeys.Country, fhirAddress.Country.Value));
+			}
 
-		    if (fhirAddress.State?.Value != null)
-		    {
-			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.State, fhirAddress.State.Value));
-		    }
+			if (fhirAddress.Line?.Any() == true)
+			{
+				address.Component.AddRange(fhirAddress.Line.Select(a => new EntityAddressComponent(AddressComponentKeys.AddressLine, a.Value)));
+			}
 
-		    if (fhirAddress.Zip?.Value != null)
-		    {
-			    address.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, fhirAddress.Zip.Value));
-		    }
+			if (fhirAddress.State?.Value != null)
+			{
+				address.Component.Add(new EntityAddressComponent(AddressComponentKeys.State, fhirAddress.State.Value));
+			}
 
-		    return address;
-	    }
+			if (fhirAddress.Zip?.Value != null)
+			{
+				address.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, fhirAddress.Zip.Value));
+			}
+
+			return address;
+		}
+
+		/// <summary>
+		/// Converts an <see cref="Extension"/> instance to an <see cref="EntityExtension"/> instance.
+		/// </summary>
+		/// <param name="fhirExtension">The FHIR extension.</param>
+		/// <returns>EntityExtension.</returns>
+		/// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// IMetadataRepositoryService
+		/// or
+		/// Unable to locate extension type
+		/// or
+		/// IEntityExtensionRepositoryService
+		/// </exception>
+		public static EntityExtension ToEntityExtension(Extension fhirExtension)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR extension");
+
+			var extension = new EntityExtension();
+
+			if (fhirExtension == null)
+			{
+				throw new ArgumentNullException(nameof(fhirExtension), "Value cannot be null");
+			}
+
+			var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+
+			extension.ExtensionType = extensionTypeService.FindExtensionType(e => e.Name == fhirExtension.Url).FirstOrDefault();
+			//extension.ExtensionValue = fhirExtension.Value;
+
+			return extension;
+		}
 
 		/// <summary>
 		/// Convert a FhirIdentifier to an identifier
 		/// </summary>
 		/// <param name="fhirId">The fhir identifier.</param>
 		/// <returns>Returns an entity identifier instance.</returns>
-		public static EntityIdentifier ToEntityIdentifier(FhirIdentifier fhirId) 
-        {
-            if (fhirId == null) return null;
+		public static EntityIdentifier ToEntityIdentifier(FhirIdentifier fhirId)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR identifier");
 
-            EntityIdentifier retVal = null;
-            if (fhirId.System != null)
-                retVal = new EntityIdentifier(DatatypeConverter.ToAssigningAuthority(fhirId.System), fhirId.Value.Value);
-            else
-            {
-                var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-                var assigningAuthority = metaService.FindAssigningAuthority(o => o.DomainName == fhirId.Label).FirstOrDefault();
-                retVal = new EntityIdentifier(assigningAuthority.Key.Value, fhirId.Value);
-            }
-            // TODO: Fill in use
-            return retVal;
-        }
+			if (fhirId == null)
+			{
+				return null;
+			}
+
+			EntityIdentifier retVal;
+
+			if (fhirId.System != null)
+			{
+				retVal = new EntityIdentifier(DataTypeConverter.ToAssigningAuthority(fhirId.System), fhirId.Value.Value);
+			}
+			else
+			{
+				var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+
+				var assigningAuthority = metaService.FindAssigningAuthority(o => o.DomainName == fhirId.Label).FirstOrDefault();
+
+				retVal = new EntityIdentifier(assigningAuthority.Key.Value, fhirId.Value);
+			}
+
+			// TODO: Fill in use
+			return retVal;
+		}
 
 		/// <summary>
-		/// Converts a <see cref="FhirHumanName"/> instance to an <see cref="EntityName"/> instance.
+		/// Converts a <see cref="FhirHumanName" /> instance to an <see cref="EntityName" /> instance.
 		/// </summary>
 		/// <param name="fhirHumanName">The name of the human.</param>
 		/// <returns>Returns an entity name instance.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
 		public static EntityName ToEntityName(FhirHumanName fhirHumanName)
-	    {
-			var name = new EntityName();
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR human name");
 
-			// TODO: add use
+			var name = new EntityName
+			{
+				NameUseKey = ToConcept(fhirHumanName.Use, "http://hl7.org/fhir/name-use")?.Key
+			};
 
-		    name.Component.AddRange(fhirHumanName.Family.Select(f => new EntityNameComponent(NameComponentKeys.Family, f.Value)));
-		    name.Component.AddRange(fhirHumanName.Given.Select(g => new EntityNameComponent(NameComponentKeys.Given, g.Value)));
-		    name.Component.AddRange(fhirHumanName.Prefix.Select(p => new EntityNameComponent(NameComponentKeys.Prefix, p.Value)));
-		    name.Component.AddRange(fhirHumanName.Suffix.Select(s => new EntityNameComponent(NameComponentKeys.Suffix, s.Value)));
+			name.Component.AddRange(fhirHumanName.Family.Select(f => new EntityNameComponent(NameComponentKeys.Family, f.Value)));
+			name.Component.AddRange(fhirHumanName.Given.Select(g => new EntityNameComponent(NameComponentKeys.Given, g.Value)));
+			name.Component.AddRange(fhirHumanName.Prefix.Select(p => new EntityNameComponent(NameComponentKeys.Prefix, p.Value)));
+			name.Component.AddRange(fhirHumanName.Suffix.Select(s => new EntityNameComponent(NameComponentKeys.Suffix, s.Value)));
 
-		    return name;
+			return name;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="PatientContact"/> instance to an <see cref="EntityRelationship"/> instance.
+		/// </summary>
+		/// <param name="patientContact">The patient contact.</param>
+		/// <returns>Returns the mapped entity relationship instance..</returns>
+		public static EntityRelationship ToEntityRelationship(PatientContact patientContact)
+		{
+			return new EntityRelationship();
 		}
 
 		/// <summary>
@@ -290,30 +328,168 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// <param name="fhirTelecom">The telecom.</param>
 		/// <returns>Returns an entity telecom address.</returns>
 		public static EntityTelecomAddress ToEntityTelecomAddress(FhirTelecom fhirTelecom)
-	    {
-		    var telecom = new EntityTelecomAddress
-		    {
-			    Value = fhirTelecom.Value.Value
-		    };
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR telecom");
 
-		    // TODO: add use
+			return new EntityTelecomAddress
+			{
+				Value = fhirTelecom.Value.Value,
+				AddressUseKey = ToConcept(fhirTelecom.Use, "http://hl7.org/fhir/contact-point-use")?.Key
+			};
+		}
 
-		    return telecom;
-	    }
+		/// <summary>
+		/// Converts an <see cref="EntityAddress"/> instance to a <see cref="FhirAddress"/> instance.
+		/// </summary>
+		/// <param name="address">The address.</param>
+		/// <returns>Returns a FHIR address.</returns>
+		public static FhirAddress ToFhirAddress(EntityAddress address)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping entity address");
 
-        /// <summary>
-        /// Convert the specified concept
-        /// </summary>
-        public static FhirCodeableConcept ToFhirCodeableConcept(Concept concept)
-        {
-            if (concept == null)
-                return null;
-            return new FhirCodeableConcept()
-            {
-                Coding = concept.ReferenceTerms.Select(o => DatatypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
-                Text = concept.ConceptNames.FirstOrDefault()?.Name
-            };
-        }
-        
-    }
+			if (address == null) return null;
+
+			// Return value
+			var retVal = new FhirAddress()
+			{
+				Use = DataTypeConverter.ToFhirCodeableConcept(address.AddressUse)?.GetPrimaryCode()?.Code,
+				Line = new List<FhirString>()
+			};
+
+			// Process components
+			foreach (var com in address.Component)
+			{
+				if (com.ComponentTypeKey == AddressComponentKeys.City)
+					retVal.City = com.Value;
+				else if (com.ComponentTypeKey == AddressComponentKeys.Country)
+					retVal.Country = com.Value;
+				else if (com.ComponentTypeKey == AddressComponentKeys.AddressLine ||
+					com.ComponentTypeKey == AddressComponentKeys.StreetAddressLine)
+					retVal.Line.Add(com.Value);
+				else if (com.ComponentTypeKey == AddressComponentKeys.State)
+					retVal.State = com.Value;
+				else if (com.ComponentTypeKey == AddressComponentKeys.PostalCode)
+					retVal.Zip = com.Value;
+				else
+				{
+					retVal.Extension.Add(new Extension()
+					{
+						IsModifier = false,
+						Url = FhirConstants.OpenIZProfile + "#address-" + com.ComponentType.Mnemonic,
+						Value = new FhirString(com.Value)
+					});
+				}
+			}
+
+			return retVal;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="Concept"/> instance to an <see cref="FhirCodeableConcept"/> instance.
+		/// </summary>
+		/// <param name="concept">The concept.</param>
+		/// <returns>Returns a FHIR codeable concept.</returns>
+		public static FhirCodeableConcept ToFhirCodeableConcept(Concept concept)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping concept");
+
+			if (concept == null)
+			{
+				return null;
+			}
+
+			return new FhirCodeableConcept
+			{
+				Coding = concept.ReferenceTerms.Select(o => DataTypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
+				Text = concept.ConceptNames.FirstOrDefault()?.Name
+			};
+		}
+
+		/// <summary>
+		/// Converts an <see cref="EntityName"/> instance to a <see cref="FhirHumanName"/> instance.
+		/// </summary>
+		/// <param name="entityName">Name of the entity.</param>
+		/// <returns>Returns the mapped FHIR human name.</returns>
+		public static FhirHumanName ToFhirHumanName(EntityName entityName)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping entity name");
+
+			if (entityName == null)
+			{
+				return null;
+			}
+
+			// Return value
+			var retVal = new FhirHumanName
+			{
+				Use = DataTypeConverter.ToFhirCodeableConcept(entityName.NameUse)?.GetPrimaryCode()?.Code
+			};
+
+			// Process components
+			foreach (var com in entityName.Component)
+			{
+				if (com.ComponentTypeKey == NameComponentKeys.Given)
+					retVal.Given.Add(com.Value);
+				else if (com.ComponentTypeKey == NameComponentKeys.Family)
+					retVal.Family.Add(com.Value);
+				else if (com.ComponentTypeKey == NameComponentKeys.Prefix)
+					retVal.Prefix.Add(com.Value);
+				else if (com.ComponentTypeKey == NameComponentKeys.Suffix)
+					retVal.Suffix.Add(com.Value);
+			}
+
+			return retVal;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="IdentifierBase{TBoundModel}" /> instance to an <see cref="FhirIdentifier" /> instance.
+		/// </summary>
+		/// <typeparam name="TBoundModel">The type of the bound model.</typeparam>
+		/// <param name="identifier">The identifier.</param>
+		/// <returns>Returns the mapped FHIR identifier.</returns>
+		public static FhirIdentifier ToFhirIdentifier<TBoundModel>(IdentifierBase<TBoundModel> identifier) where TBoundModel : VersionedEntityData<TBoundModel>, new()
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping entity identifier");
+
+			if (identifier == null)
+			{
+				return null;
+			}
+
+			return new FhirIdentifier
+			{
+				Label = identifier.Authority?.Name,
+				System = new FhirUri(new Uri(identifier.Authority?.Url ?? $"urn:oid:{identifier.Authority?.Oid}")),
+				Use = identifier.IdentifierType?.TypeConcept?.Mnemonic,
+				Value = identifier.Value
+			};
+		}
+
+		/// <summary>
+		/// Converts an <see cref="EntityTelecomAddress"/> instance to <see cref="FhirTelecom"/> instance.
+		/// </summary>
+		/// <param name="telecomAddress">The telecom address.</param>
+		/// <returns>Returns the mapped FHIR telecom.</returns>
+		public static FhirTelecom ToFhirTelecom(EntityTelecomAddress telecomAddress)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping entity telecom address");
+
+			return new FhirTelecom()
+			{
+				Use = DataTypeConverter.ToFhirCodeableConcept(telecomAddress.AddressUse)?.GetPrimaryCode()?.Code,
+				Value = telecomAddress.IETFValue
+			};
+		}
+
+		/// <summary>
+		/// Converts a <see cref="Communication"/> instance to a <see cref="PersonLanguageCommunication"/> instance.
+		/// </summary>
+		/// <param name="communication">The communication.</param>
+		/// <returns>Returns the mapped person language communication instance.</returns>
+		public static PersonLanguageCommunication ToPersonLanguageCommunication(Communication communication)
+		{
+			var languageCode = ToConcept(communication.Value);
+			return new PersonLanguageCommunication(languageCode.Mnemonic, communication.Preferred.Value ?? false);
+		}
+	}
 }
