@@ -25,14 +25,12 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model.Constants;
-using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.FHIR.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {

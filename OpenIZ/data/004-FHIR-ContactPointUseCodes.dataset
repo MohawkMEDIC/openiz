@@ -3,7 +3,6 @@
   <insert>
     <CodeSystem xmlns="http://openiz.org/model">
       <id>d57945a5-936b-4bfd-99c9-b41b6151748b</id>
-      <creationTime>2017-04-09T21:12:20.7156213-04:00</creationTime>
       <name>FHIR Contact Point Use Codes</name>
       <oid>2.16.840.1.113883.4.642.1.67</oid>
       <url>http://hl7.org/fhir/contact-point-use</url>
@@ -89,7 +88,6 @@
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</id>
-      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
       <mnemonic>mobile</mnemonic>
       <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
@@ -102,7 +100,6 @@
   <insert>
     <Concept xmlns="http://openiz.org/model">
       <id>8809DE9D-02B5-4F71-8A41-E043E1E003A6</id>
-      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
@@ -117,6 +114,7 @@
         <language>en</language>
         <value>Mobile</value>
       </name>
+      <conceptSet>1DABE3E2-44B8-4C45-9102-25EA147E5710</conceptSet>
     </Concept>
   </insert>
 </dataset>

@@ -3,7 +3,6 @@
   <insert>
     <CodeSystem xmlns="http://openiz.org/model">
       <id>ADB20623-BB4C-422C-8793-AE8ED8546AFD</id>
-      <creationTime>2017-04-09T21:01:21.1860191-04:00</creationTime>
       <name>FHIR Address Use Codes</name>
       <oid>2.16.840.1.113883.4.642.1.61</oid>
       <url>http://hl7.org/fhir/address-use</url>
@@ -44,7 +43,6 @@
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>8E38B058-AB80-46E3-9F30-20251BB2A423</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <mnemonic>work</mnemonic>
       <codeSystem>ADB20623-BB4C-422C-8793-AE8ED8546AFD</codeSystem>
       <name>
@@ -57,7 +55,6 @@
   <insert>
     <Concept xmlns="http://openiz.org/model">
       <id>5788A71E-7847-48F9-BE72-6DF46A5CF4A5</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
@@ -78,7 +75,6 @@
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>0CA87CA1-6219-46B3-B63A-8E53C759F28C</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <mnemonic>temp</mnemonic>
       <codeSystem>ADB20623-BB4C-422C-8793-AE8ED8546AFD</codeSystem>
       <name>
@@ -91,7 +87,6 @@
   <insert>
     <Concept xmlns="http://openiz.org/model">
       <id>05F2D190-F9B0-43A9-8E21-6039D3DC126E</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
@@ -112,7 +107,6 @@
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>62AF5472-681C-4C71-8D6C-D398B2EEE69D</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <mnemonic>old</mnemonic>
       <codeSystem>ADB20623-BB4C-422C-8793-AE8ED8546AFD</codeSystem>
       <name>
@@ -125,7 +119,6 @@
   <insert>
     <Concept xmlns="http://openiz.org/model">
       <id>B0296FFC-AD5D-4666-87AE-C5965FA18EB3</id>
-      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>

@@ -202,6 +202,12 @@
     <None Include="Data\003-BCP-47-LanguageCodes.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\004-FHIR-AdministrativeGenderCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\004-FHIR-ContactPointSystemCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\004-FHIR-ContactPointUseCodes.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
