@@ -33,13 +33,16 @@ namespace OpenIZ.Messaging.HL7.Configuration
 	public class TargetConfiguration
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="TargetConfiguration"/> class
+		/// Initializes a new instance of the <see cref="TargetConfiguration" /> class
 		/// with a specific name, connection string, act as identifier, and device id.
 		/// </summary>
 		/// <param name="name">The name of the target configuration.</param>
 		/// <param name="connectionString">The connection string of the target configuration.</param>
 		/// <param name="actor">The act as identifier of the target configuration.</param>
 		/// <param name="deviceId">The device id of the configuration.</param>
+		/// <exception cref="System.Configuration.ConfigurationErrorsException">
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException"></exception>
 		public TargetConfiguration(string name, string connectionString, string actor, string deviceId)
 		{
 			this.Name = name;

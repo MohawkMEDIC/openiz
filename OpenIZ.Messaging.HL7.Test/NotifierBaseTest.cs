@@ -25,13 +25,13 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NHapi.Base.Model;
 using NHapi.Base.Parser;
-using NHapi.Model.V25.Datatype;
-using NHapi.Model.V25.Message;
+using NHapi.Model.V231.Datatype;
+using NHapi.Model.V231.Message;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Messaging.HL7.Notifier;
-using NHapi.Model.V25.Segment;
+using NHapi.Model.V231.Segment;
 using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Messaging.HL7.Test
@@ -148,7 +148,7 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.AreEqual("Canada", actual.Country.Value);
 			Assert.AreEqual("L8N3T2", actual.ZipOrPostalCode.Value);
 			Assert.AreEqual("Ontario", actual.StateOrProvince.Value);
-			Assert.AreEqual("123 Main street west", actual.StreetAddress.StreetOrMailingAddress.Value);
+			Assert.AreEqual("123 Main street west", actual.StreetAddress.Value);
 		}
 
 		/// <summary>
@@ -170,7 +170,7 @@ namespace OpenIZ.Messaging.HL7.Test
 			Assert.AreEqual(string.Empty, actual.Country.Value);
 			Assert.AreEqual(string.Empty, actual.ZipOrPostalCode.Value);
 			Assert.AreEqual(string.Empty, actual.StateOrProvince.Value);
-			Assert.AreEqual(string.Empty, actual.StreetAddress.StreetOrMailingAddress.Value);
+			Assert.AreEqual(string.Empty, actual.StreetAddress.Value);
 		}
 
 		/// <summary>
@@ -183,7 +183,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdateGender("female", actual);
 
-			Assert.AreEqual("F", actual.AdministrativeSex.Value);
+			Assert.AreEqual("F", actual.Sex.Value);
 		}
 
 		/// <summary>
@@ -196,7 +196,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdateGender("094941e9-a3db-48b5-862c-bc289bd7f86c", actual);
 
-			Assert.AreEqual("F", actual.AdministrativeSex.Value);
+			Assert.AreEqual("F", actual.Sex.Value);
 		}
 
 		/// <summary>
@@ -209,7 +209,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdateGender("male", actual);
 
-			Assert.AreEqual("M", actual.AdministrativeSex.Value);
+			Assert.AreEqual("M", actual.Sex.Value);
 		}
 
 		/// <summary>
@@ -222,7 +222,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdateGender("f4e3a6bb-612e-46b2-9f77-ff844d971198", actual);
 
-			Assert.AreEqual("M", actual.AdministrativeSex.Value);
+			Assert.AreEqual("M", actual.Sex.Value);
 		}
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdateGender("undifferentiated", actual);
 
-			Assert.AreEqual("U", actual.AdministrativeSex.Value);
+			Assert.AreEqual("U", actual.Sex.Value);
 		}
 
 		/// <summary>
@@ -248,7 +248,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdateGender("ae94a782-1485-4241-9bca-5b09db2156bf", actual);
 
-			Assert.AreEqual("U", actual.AdministrativeSex.Value);
+			Assert.AreEqual("U", actual.Sex.Value);
 		}
 
 		/// <summary>
@@ -300,17 +300,17 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdatePID(this.patient, actual, configuration);
 
-			Assert.AreEqual("M", actual.AdministrativeSex.Value);
-			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+			Assert.AreEqual("M", actual.Sex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.TimeOfAnEvent.Value);
 
 			var mothersName = actual.GetMotherSMaidenName(0);
 
-			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Smith", mothersName.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
 
 			var name = actual.GetPatientName(0);
 
-			Assert.AreEqual("Khanna", name.FamilyName.Surname.Value);
+			Assert.AreEqual("Khanna", name.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Nityan David", name.GivenName.Value);
 		}
 
@@ -329,22 +329,22 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
 
-			Assert.AreEqual("F", actual.AdministrativeSex.Value);
-			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+			Assert.AreEqual("F", actual.Sex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.TimeOfAnEvent.Value);
 
 			var mothersName = actual.GetMotherSMaidenName(0);
 
-			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Smith", mothersName.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
 
 			var nameRepOne = actual.GetPatientName(0);
 
-			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Khanna", nameRepOne.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
 
 			var nameRepTwo = actual.GetPatientName(1);
 
-			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
 		}
 
@@ -363,22 +363,22 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
 
-			Assert.AreEqual("M", actual.AdministrativeSex.Value);
-			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+			Assert.AreEqual("M", actual.Sex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.TimeOfAnEvent.Value);
 
 			var mothersName = actual.GetMotherSMaidenName(0);
 
-			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Smith", mothersName.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
 
 			var nameRepOne = actual.GetPatientName(0);
 
-			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Khanna", nameRepOne.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
 
 			var nameRepTwo = actual.GetPatientName(1);
 
-			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
 		}
 
@@ -397,22 +397,22 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
 
-			Assert.AreEqual("U", actual.AdministrativeSex.Value);
-			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+			Assert.AreEqual("U", actual.Sex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.TimeOfAnEvent.Value);
 
 			var mothersName = actual.GetMotherSMaidenName(0);
 
-			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Smith", mothersName.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
 
 			var nameRepOne = actual.GetPatientName(0);
 
-			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Khanna", nameRepOne.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
 
 			var nameRepTwo = actual.GetPatientName(1);
 
-			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
 		}
 
@@ -428,22 +428,22 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdatePID(this.patient, actual, this.configuration);
 
-			Assert.AreEqual("M", actual.AdministrativeSex.Value);
-			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.Time.Value);
+			Assert.AreEqual("M", actual.Sex.Value);
+			Assert.AreEqual("19700101000000.000-0500", actual.DateTimeOfBirth.TimeOfAnEvent.Value);
 
 			var mothersName = actual.GetMotherSMaidenName(0);
 
-			Assert.AreEqual("Smith", mothersName.FamilyName.Surname.Value);
+			Assert.AreEqual("Smith", mothersName.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Mary L A", mothersName.GivenName.Value);
 
 			var nameRepOne = actual.GetPatientName(0);
 
-			Assert.AreEqual("Khanna", nameRepOne.FamilyName.Surname.Value);
+			Assert.AreEqual("Khanna", nameRepOne.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Nityan David", nameRepOne.GivenName.Value);
 
 			var nameRepTwo = actual.GetPatientName(1);
 
-			Assert.AreEqual("Norgate", nameRepTwo.FamilyName.Surname.Value);
+			Assert.AreEqual("Norgate", nameRepTwo.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Andrew", nameRepTwo.GivenName.Value);
 		}
 
@@ -457,7 +457,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			NotifierBase.UpdateXPN(entityName, actual);
 
-			Assert.AreEqual("Khanna", actual.FamilyName.Surname.Value);
+			Assert.AreEqual("Khanna", actual.FamilyLastName.FamilyName.Value);
 			Assert.AreEqual("Nityan David", actual.GivenName.Value);
 		}
 
@@ -469,9 +469,10 @@ namespace OpenIZ.Messaging.HL7.Test
 		{
 			var actual = new XPN(this.genericMessage);
 
-			this.entityName.Component = new List<EntityNameComponent>();
-
-			this.entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Given, "Nityan"));
+			this.entityName.Component = new List<EntityNameComponent>
+			{
+				new EntityNameComponent(NameComponentKeys.Given, "Nityan")
+			};
 
 			NotifierBase.UpdateXPN(this.entityName, actual);
 
@@ -486,13 +487,14 @@ namespace OpenIZ.Messaging.HL7.Test
 		{
 			var actual = new XPN(this.genericMessage);
 
-			this.entityName.Component = new List<EntityNameComponent>();
-
-			this.entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Family, "Khanna"));
+			this.entityName.Component = new List<EntityNameComponent>
+			{
+				new EntityNameComponent(NameComponentKeys.Family, "Khanna")
+			};
 
 			NotifierBase.UpdateXPN(this.entityName, actual);
 
-			Assert.AreEqual("Khanna", actual.FamilyName.Surname.Value);
+			Assert.AreEqual("Khanna", actual.FamilyLastName.FamilyName.Value);
 		}
 	}
 }

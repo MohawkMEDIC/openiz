@@ -20,8 +20,8 @@
 
 using MARC.Everest.DataTypes;
 using NHapi.Base.Model;
-using NHapi.Model.V25.Message;
-using NHapi.Model.V25.Segment;
+using NHapi.Model.V231.Message;
+using NHapi.Model.V231.Segment;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Messaging.HL7.Configuration;
@@ -92,7 +92,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			NotifierBase.UpdateMSH(msh, this.TargetConfiguration);
 
-			evn.RecordedDateTime.Time.Value = (TS)patient.CreationTime.DateTime;
+			evn.RecordedDateTime.TimeOfAnEvent.Value = (TS)patient.CreationTime.DateTime;
 
 			NotifierBase.UpdatePID(patient, pid, this.TargetConfiguration);
 

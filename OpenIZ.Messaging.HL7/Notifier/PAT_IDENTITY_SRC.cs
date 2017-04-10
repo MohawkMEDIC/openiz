@@ -19,8 +19,8 @@
  */
 
 using NHapi.Base.Model;
-using NHapi.Model.V25.Message;
-using NHapi.Model.V25.Segment;
+using NHapi.Model.V231.Message;
+using NHapi.Model.V231.Segment;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Messaging.HL7.Configuration;
@@ -51,17 +51,19 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <summary>
 		/// Notifies a remote system.
 		/// </summary>
+		/// <typeparam name="T"></typeparam>
 		/// <param name="workItem">The work item of the notification.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException"></exception>
 		public void Notify<T>(NotificationQueueWorkItem<T> workItem) where T : IdentifiedData
 		{
-			IMessage notificationMessage = null;
+			IMessage notificationMessage;
 
 			var patient = workItem.Event as Patient;
 
-			MSH msh = null;
-			PID pid = null;
-			EVN evn = null;
-			PV1 pv1 = null;
+			MSH msh;
+			PID pid;
+			EVN evn;
+			PV1 pv1;
 			MRG mrg = null;
 
 			switch (workItem.ActionType)
@@ -70,10 +72,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					{
 						tracer.TraceEvent(TraceEventType.Information, 0, "Received create notification");
 
-						ADT_A01 message = new ADT_A01();
+						var message = new ADT_A01();
 
 						msh = message.MSH;
-						msh.MessageType.MessageCode.Value = "ADT";
+						msh.MessageType.MessageType.Value = "ADT";
 						msh.MessageType.MessageStructure.Value = "ADT_A01";
 						msh.MessageType.TriggerEvent.Value = "A01";
 
@@ -91,10 +93,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					{
 						tracer.TraceEvent(TraceEventType.Information, 0, "Received duplicates resolved notification");
 
-						ADT_A39 message = new ADT_A39();
+						var message = new ADT_A39();
 
 						msh = message.MSH;
-						msh.MessageType.MessageCode.Value = "ADT";
+						msh.MessageType.MessageType.Value = "ADT";
 						msh.MessageType.MessageStructure.Value = "ADT_A40";
 						msh.MessageType.TriggerEvent.Value = "A40";
 
@@ -113,10 +115,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					{
 						tracer.TraceEvent(TraceEventType.Information, 0, "Received update notification");
 
-						ADT_A01 message = new ADT_A01();
+						var message = new ADT_A01();
 
 						msh = message.MSH;
-						msh.MessageType.MessageCode.Value = "ADT";
+						msh.MessageType.MessageType.Value = "ADT";
 						msh.MessageType.MessageStructure.Value = "ADT_A08";
 						msh.MessageType.TriggerEvent.Value = "A08";
 
@@ -136,7 +138,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			NotifierBase.UpdateMSH(msh, this.TargetConfiguration);
 
-			evn.RecordedDateTime.Time.Value = (TS)patient.CreationTime.DateTime;
+			evn.RecordedDateTime.TimeOfAnEvent.Value = (TS)patient.CreationTime.DateTime;
 
 			NotifierBase.UpdatePID(patient, pid, this.TargetConfiguration);
 
