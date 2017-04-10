@@ -11,8 +11,7 @@
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>3e6244e4-f243-4e39-8b88-774c417b8ce8</id>
-      <creationTime>2017-04-09T21:12:20.7166215-04:00</creationTime>
+      <id>9E96474B-6628-4744-8570-E70B4E18BB02</id>
       <mnemonic>home</mnemonic>
       <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
@@ -23,29 +22,15 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>904c8854-9a36-4205-9221-00e26240d1c5</id>
-      <creationTime>2017-04-09T21:12:20.7966412-04:00</creationTime>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>home</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>3e6244e4-f243-4e39-8b88-774c417b8ce8</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Home</value>
-      </name>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>999c2779-321d-402e-a94e-354896fa00b0</source>
+      <term>9E96474B-6628-4744-8570-E70B4E18BB02</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>827cb2ae-b782-4f24-b10d-05961abcfb8b</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <id>35F95D56-7C63-4D14-8E6B-A1BA01FCF57C</id>
       <mnemonic>work</mnemonic>
       <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
@@ -56,29 +41,15 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>c9532e97-1afa-4652-9974-73a6b84381d3</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>work</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>827cb2ae-b782-4f24-b10d-05961abcfb8b</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Work</value>
-      </name>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>5788a71e-7847-48f9-be72-6df46a5cf4a5</source>
+      <term>35F95D56-7C63-4D14-8E6B-A1BA01FCF57C</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>649b98da-1020-46c3-a1f6-3202eb153b18</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <id>287B4851-0DEC-45C0-9AC0-28E199583F06</id>
       <mnemonic>temp</mnemonic>
       <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
@@ -89,28 +60,15 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>32fd3b55-b648-4d3c-9d82-3b8291307377</id>
-      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>temp</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>649b98da-1020-46c3-a1f6-3202eb153b18</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Temp</value>
-      </name>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>05f2d190-f9b0-43a9-8e21-6039d3dc126e</source>
+      <term>287B4851-0DEC-45C0-9AC0-28E199583F06</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>f1c68a14-759c-47a6-9ea7-08328d1ccc37</id>
+      <id>DA472010-FE7B-40D2-A0DF-15338654B296</id>
       <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <mnemonic>old</mnemonic>
       <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
@@ -122,28 +80,15 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>266a65b9-e627-42d2-85c6-1b1e65e8dbef</id>
-      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>old</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>f1c68a14-759c-47a6-9ea7-08328d1ccc37</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Old</value>
-      </name>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>b0296ffc-ad5d-4666-87ae-c5965fa18eb3</source>
+      <term>DA472010-FE7B-40D2-A0DF-15338654B296</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>b4cdd7e2-ae56-490a-bc2a-5668bfc19e13</id>
+      <id>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</id>
       <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
       <mnemonic>mobile</mnemonic>
       <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
@@ -156,7 +101,7 @@
   </insert>
   <insert>
     <Concept xmlns="http://openiz.org/model">
-      <id>0a3eeb19-0c09-41dd-aa22-f826842bf479</id>
+      <id>8809DE9D-02B5-4F71-8A41-E043E1E003A6</id>
       <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -165,7 +110,7 @@
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
-        <term>b4cdd7e2-ae56-490a-bc2a-5668bfc19e13</term>
+        <term>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>

@@ -205,6 +205,9 @@
     <None Include="Data\004-FHIR-ContactPointUseCodes.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\004-FHIR-AddressUseCodes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\004-FHIR-NameUseCodes.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

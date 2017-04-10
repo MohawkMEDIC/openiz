@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Address Use Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>ADB20623-BB4C-422C-8793-AE8ED8546AFD</id>
+      <creationTime>2017-04-09T21:01:21.1860191-04:00</creationTime>
+      <name>FHIR Address Use Codes</name>
+      <oid>2.16.840.1.113883.4.642.1.61</oid>
+      <url>http://hl7.org/fhir/address-use</url>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>724CA96D-2BDF-4D83-A270-F3DE6DDDEE25</id>
+      <mnemonic>home</mnemonic>
+      <codeSystem>ADB20623-BB4C-422C-8793-AE8ED8546AFD</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Home</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>999C2779-321D-402E-A94E-354896FA00B0</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>home</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>724CA96D-2BDF-4D83-A270-F3DE6DDDEE25</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Home</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>8E38B058-AB80-46E3-9F30-20251BB2A423</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <mnemonic>work</mnemonic>
+      <codeSystem>ADB20623-BB4C-422C-8793-AE8ED8546AFD</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Work</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>5788A71E-7847-48F9-BE72-6DF46A5CF4A5</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>work</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>8E38B058-AB80-46E3-9F30-20251BB2A423</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Work</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0CA87CA1-6219-46B3-B63A-8E53C759F28C</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <mnemonic>temp</mnemonic>
+      <codeSystem>ADB20623-BB4C-422C-8793-AE8ED8546AFD</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Temp</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>05F2D190-F9B0-43A9-8E21-6039D3DC126E</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>temp</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>0CA87CA1-6219-46B3-B63A-8E53C759F28C</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Temp</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>62AF5472-681C-4C71-8D6C-D398B2EEE69D</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <mnemonic>old</mnemonic>
+      <codeSystem>ADB20623-BB4C-422C-8793-AE8ED8546AFD</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Old/Incorrect</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>B0296FFC-AD5D-4666-87AE-C5965FA18EB3</id>
+      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>old</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>62AF5472-681C-4C71-8D6C-D398B2EEE69D</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Old/Incorrect</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+</dataset>
