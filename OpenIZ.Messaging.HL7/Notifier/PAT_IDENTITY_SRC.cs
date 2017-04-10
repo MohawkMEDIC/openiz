@@ -21,13 +21,12 @@
 using NHapi.Base.Model;
 using NHapi.Model.V25.Message;
 using NHapi.Model.V25.Segment;
-using OpenIZ.Core.Event;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Messaging.HL7.Configuration;
 using OpenIZ.Messaging.HL7.Queue;
 using System;
 using System.Diagnostics;
-using OpenIZ.Core.Model;
 using TS = MARC.Everest.DataTypes.TS;
 
 namespace OpenIZ.Messaging.HL7.Notifier

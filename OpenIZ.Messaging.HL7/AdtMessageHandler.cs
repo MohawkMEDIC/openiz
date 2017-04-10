@@ -27,15 +27,12 @@ using NHapi.Base.Parser;
 using NHapi.Base.Util;
 using NHapi.Model.V25.Message;
 using OpenIZ.Core;
-using OpenIZ.Core.Event;
-using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace OpenIZ.Messaging.HL7
 {
@@ -48,7 +45,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// Handle a received message on the LLP interface.
@@ -65,7 +62,8 @@ namespace OpenIZ.Messaging.HL7
 					// Get the MSH segment
 					var terser = new Terser(e.Message);
 					var trigger = terser.Get("/MSH-9-2");
-					Trace.TraceInformation("Message is of type {0} {1}", e.Message.GetType().FullName, trigger);
+
+					this.traceSource.TraceEvent(TraceEventType.Information, 0, "Message is of type {0} {1}", e.Message.GetType().FullName, trigger);
 
 					switch (trigger)
 					{
@@ -79,33 +77,33 @@ namespace OpenIZ.Messaging.HL7
 						case "A01":
 						case "A04":
 						case "A05":
-							if (e.Message is NHapi.Model.V25.Message.ADT_A01)
-								response = HandleAdmit(e.Message as NHapi.Model.V25.Message.ADT_A01, e);
+							if (e.Message is NHapi.Model.V231.Message.ADT_A01)
+								response = HandleAdmit((NHapi.Model.V231.Message.ADT_A01)e.Message, e);
 							else
 								response = MessageUtil.CreateNack(e.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
 							break;
 
 						case "A08":
-							if (e.Message is NHapi.Model.V25.Message.ADT_A01)
-								response = HandleUpdate(e.Message as NHapi.Model.V25.Message.ADT_A01, e);
-							//else if (e.Message is NHapi.Model.V25.Message.ADT_A08)
-							//    response = HandleUpdate(e.Message as NHapi.Model.V25.Message.ADT_A08, e);
+							if (e.Message is NHapi.Model.V231.Message.ADT_A01)
+								response = HandlePixUpdate(e.Message as NHapi.Model.V231.Message.ADT_A01, e);
+							else if (e.Message is NHapi.Model.V231.Message.ADT_A08)
+								response = HandlePixUpdate(e.Message as NHapi.Model.V231.Message.ADT_A08, e);
 							else
 								response = MessageUtil.CreateNack(e.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
 							break;
 
 						case "A40":
 							if (e.Message is NHapi.Model.V25.Message.ADT_A39)
-								response = HandleMerge(e.Message as NHapi.Model.V25.Message.ADT_A39, e);
-							//else if (e.Message is NHapi.Model.V25.Message.ADT_A40)
-							//    response = HandleMerge(e.Message as NHapi.Model.V25.Message.ADT_A40, e);
+								response = HandleMerge(e.Message as NHapi.Model.V231.Message.ADT_A39, e);
+							else if (e.Message is NHapi.Model.V231.Message.ADT_A40)
+								response = HandleMerge(e.Message as NHapi.Model.V231.Message.ADT_A40, e);
 							else
 								response = MessageUtil.CreateNack(e.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
 							break;
 
 						default:
 							response = MessageUtil.CreateNack(e.Message, "AR", "201", ApplicationContext.Current.GetLocaleString("HL7201"));
-							Trace.TraceError("{0} is not a supported trigger", trigger);
+							this.traceSource.TraceEvent(TraceEventType.Error, 0, "{0} is not a supported trigger", trigger);
 							break;
 					}
 				}
@@ -118,49 +116,61 @@ namespace OpenIZ.Messaging.HL7
 			}
 			catch (Exception ex)
 			{
-				this.tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error processing message {0} : {1}", e.Message?.Version, ex);
+				this.traceSource.TraceEvent(TraceEventType.Error, ex.HResult, "Error processing message {0} : {1}", e.Message?.Version, ex);
 				response = MessageUtil.CreateNack(e.Message, "AR", "207", ex.Message);
 			}
 
 			return response;
 		}
 
-		//private IMessage HandleMerge(NHapi.Model.V25.Message.ADT_A40 aDT_A40, Hl7MessageReceivedEventArgs e)
-		//{
-		//    PipeParser parser = new PipeParser();
-		//    aDT_A40.MSH.MessageType.MessageStructure.Value = "ADT_A39";
-		//    var message = parser.Parse(parser.Encode(aDT_A40));
-		//    if (message is NHapi.Model.V25.Message.ADT_A39)
-		//        return this.HandleMerge(message as NHapi.Model.V25.Message.ADT_A39, e);
-		//    else
-		//        return MessageUtil.CreateNack(e.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
-		//}
+		/// <summary>
+		/// Handles a merge.
+		/// </summary>
+		/// <param name="message">The ADT_A40 message.</param>
+		/// <param name="e">The <see cref="Hl7MessageReceivedEventArgs"/> instance containing the event data.</param>
+		/// <returns>Returns the response message from the merge event.</returns>
+		private IMessage HandleMerge(NHapi.Model.V231.Message.ADT_A40 message, Hl7MessageReceivedEventArgs e)
+		{
+			var parser = new PipeParser();
+
+			message.MSH.MessageType.MessageStructure.Value = "ADT_A39";
+
+			var encodedMessage = parser.Parse(parser.Encode(message));
+
+			if (encodedMessage is NHapi.Model.V231.Message.ADT_A39)
+			{
+				return this.HandleMerge(encodedMessage as NHapi.Model.V231.Message.ADT_A39, e);
+			}
+
+			return MessageUtil.CreateNack(e.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
+		}
 
 		/// <summary>
-		/// Handles a patient registration event.
+		/// Handles the admit.
 		/// </summary>
-		/// <param name="request">The registration event message.</param>
-		/// <param name="evt">The event arguments.</param>
-		/// <returns>Returns the response message.</returns>
-		internal IMessage HandleAdmit(NHapi.Model.V25.Message.ADT_A01 request, Hl7MessageReceivedEventArgs evt)
+		/// <param name="message">The message.</param>
+		/// <param name="eventArgs">The <see cref="Hl7MessageReceivedEventArgs"/> instance containing the event data.</param>
+		/// <returns>IMessage.</returns>
+		/// <exception cref="System.InvalidOperationException">
+		/// </exception>
+		internal IMessage HandleAdmit(NHapi.Model.V231.Message.ADT_A01 message, Hl7MessageReceivedEventArgs eventArgs)
 		{
-			var clientRegistryNotificationService = ApplicationContext.Current.GetService<IClientRegistryNotificationService>();
 			var patientRepositoryService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
-			List<IResultDetail> details = new List<IResultDetail>();
+			var details = new List<IResultDetail>();
 
-			MessageUtil.Validate((IMessage)request, details);
+			MessageUtil.Validate(message, details);
 
-			IMessage response = null;
+			IMessage response;
 
-			if (request == null)
+			if (message == null)
 			{
 				return null;
 			}
 
 			try
 			{
-				var patient = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1, details);
+				var patient = MessageUtil.CreatePatient(message.MSH, message.EVN, message.PID, message.PD1, details);
 
 				if (details.Count(d => d.Type == ResultDetailType.Error) > 0)
 				{
@@ -174,41 +184,45 @@ namespace OpenIZ.Messaging.HL7
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("DTPE001"));
 				}
 
-				response = MessageUtil.CreateNack(request, details, typeof(ACK));
+				response = MessageUtil.CreateNack(message, details, typeof(ACK));
 
-				MessageUtil.UpdateMSH(new Terser(response), request);
+				MessageUtil.UpdateMSH(new Terser(response), message);
 
-				(response as ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
+				(response as ACK).MSH.MessageType.TriggerEvent.Value = message.MSH.MessageType.TriggerEvent.Value;
 				(response as ACK).MSH.MessageType.MessageStructure.Value = "ACK";
 			}
 			catch (Exception e)
 			{
 #if DEBUG
-				this.tracer.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.StackTrace);
 #endif
-				this.tracer.TraceEvent(TraceEventType.Error, 0, e.Message);
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.Message);
 
 				if (!details.Exists(o => o.Message == e.Message || o.Exception == e))
 				{
 					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
 				}
 
-				response = MessageUtil.CreateNack(request, details, typeof(ACK));
+				response = MessageUtil.CreateNack(message, details, typeof(ACK));
 			}
 
 			return response;
 		}
 
 		/// <summary>
-		/// Handle a PIX query
+		/// Handle a PIX query.
 		/// </summary>
-		internal IMessage HandleIDQuery(QBP_Q21 request, Hl7MessageReceivedEventArgs evt)
+		/// <param name="request">The request.</param>
+		/// <param name="eventArgs">The <see cref="Hl7MessageReceivedEventArgs"/> instance containing the event data.</param>
+		/// <returns>Returns the message result from the query.</returns>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		internal IMessage HandleIDQuery(QBP_Q21 request, Hl7MessageReceivedEventArgs eventArgs)
 		{
 			var patientRepositoryService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
-			List<IResultDetail> details = new List<IResultDetail>();
+			var details = new List<IResultDetail>();
 
-			MessageUtil.Validate((IMessage)request, details);
+			MessageUtil.Validate(request, details);
 
 			IMessage response = null;
 
@@ -221,38 +235,27 @@ namespace OpenIZ.Messaging.HL7
 			try
 			{
 				// Create Query Data
-				Expression<Func<Patient, bool>> query = MessageUtil.CreateIDQuery(request.QPD);
+				var query = MessageUtil.CreateIDQuery(request.QPD);
 
 				if (query == null)
+				{
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
+				}
 
-				int count = Int32.Parse(request?.RCP?.QuantityLimitedRequest?.Quantity?.Value ?? "0");
-				int offset = 0;
-				int totalCount = 0;
+				var count = int.Parse(request?.RCP?.QuantityLimitedRequest?.Quantity?.Value ?? "0");
+				var offset = 0;
+				var totalCount = 0;
 				var result = patientRepositoryService.Find(query, offset, count, out totalCount);
-
-				// Update locations?
-				/*
-                foreach (var dtl in dtls)
-                    if (dtl is PatientNotFoundResultDetail)
-                        dtl.Location = "QPD^1^3^1^1";
-                    else if (dtl is UnrecognizedPatientDomainResultDetail)
-                        dtl.Location = "QPD^1^3^1^4";
-                    else if (dtl is UnrecognizedTargetDomainResultDetail)
-                        dtl.Location = "QPD^1^4^";
-
-                audit = auditUtil.CreateAuditData("ITI-9", ActionType.Execute, OutcomeIndicator.Success, evt, result);
-                */
 
 				// Now process the result
 				response = MessageUtil.CreateRSPK23(result, details);
-				//var r = dcu.CreateRSP_K23(null, null);
-				// Copy QPD
+
 				try
 				{
 					(response as RSP_K23).QPD.MessageQueryName.Identifier.Value = request.QPD.MessageQueryName.Identifier.Value;
-					Terser reqTerser = new Terser(request),
-						rspTerser = new Terser(response);
+
+					Terser reqTerser = new Terser(request), rspTerser = new Terser(response);
+
 					rspTerser.Set("/QPD-1", reqTerser.Get("/QPD-1"));
 					rspTerser.Set("/QPD-2", reqTerser.Get("/QPD-2"));
 					rspTerser.Set("/QPD-3-1", reqTerser.Get("/QPD-3-1"));
@@ -266,33 +269,39 @@ namespace OpenIZ.Messaging.HL7
 				}
 				catch (Exception e)
 				{
-					Trace.TraceError(e.ToString());
+					this.traceSource.TraceEvent(TraceEventType.Error, 0, e.ToString());
 				}
-				//MessageUtil.((response as NHapi.Model.V25.Message.RSP_K23).QPD, request.QPD);
 
-				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), request);
+				MessageUtil.UpdateMSH(new Terser(response), request);
 			}
 			catch (Exception e)
 			{
-				Trace.TraceError(e.ToString());
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.ToString());
+
 				response = MessageUtil.CreateNack(request, details, typeof(RSP_K23));
-				Terser errTerser = new Terser(response);
+
+				var errTerser = new Terser(response);
+
 				// HACK: Fix the generic ACK with a real ACK for this message
 				errTerser.Set("/MSH-9-2", "K23");
 				errTerser.Set("/MSH-9-3", "RSP_K23");
 				errTerser.Set("/QAK-2", "AE");
 				errTerser.Set("/MSA-1", "AE");
 				errTerser.Set("/QAK-1", request.QPD.QueryTag.Value);
-				//audit = auditUtil.CreateAuditData("ITI-9", ActionType.Execute, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>());
 			}
 
 			return response;
 		}
 
 		/// <summary>
-		/// Handle the PIX merge request
+		/// Handles a PIX merge request.
 		/// </summary>
-		internal IMessage HandleMerge(NHapi.Model.V25.Message.ADT_A39 request, Hl7MessageReceivedEventArgs evt)
+		/// <param name="request">The request.</param>
+		/// <param name="evt">The <see cref="Hl7MessageReceivedEventArgs" /> instance containing the event data.</param>
+		/// <returns>IMessage.</returns>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		/// <exception cref="System.Collections.Generic.KeyNotFoundException"></exception>
+		internal IMessage HandleMerge(NHapi.Model.V231.Message.ADT_A39 request, Hl7MessageReceivedEventArgs evt)
 		{
 			// Get config
 			var dataService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
@@ -317,70 +326,87 @@ namespace OpenIZ.Messaging.HL7
 				for (var i = 0; i < request.PATIENTRepetitionsUsed; i++)
 				{
 					var patientGroup = request.GetPATIENT(i);
-					var survivor = MessageUtil.CreatePatient(request.MSH, request.EVN, patientGroup.PID, patientGroup.PD1, details);
-					if (survivor == null)
-						throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
-					var victim = dataService.Find(o => o.Identifiers.Any(id => id.Authority.DomainName == patientGroup.MRG.GetPriorAlternatePatientID(0).AssigningAuthority.NamespaceID.Value && id.Value == patientGroup.MRG.GetPriorAlternatePatientID(0).IDNumber.Value)).FirstOrDefault();
-					if (victim == null)
-						throw new KeyNotFoundException();
 
-					// Merge
+					var survivor = MessageUtil.CreatePatient(request.MSH, request.EVN, patientGroup.PID, patientGroup.PD1, details);
+
+					if (survivor == null)
+					{
+						throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
+					}
+
+					var victim = dataService.Find(o => o.Identifiers.Any(id => id.Authority.DomainName == patientGroup.MRG.GetPriorAlternatePatientID(0).AssigningAuthority.NamespaceID.Value && id.Value == patientGroup.MRG.GetPriorAlternatePatientID(0).ID.Value)).FirstOrDefault();
+
+					if (victim == null)
+					{
+						throw new KeyNotFoundException();
+					}
+
 					var result = dataService.Merge(survivor, victim);
 				}
 
-				// Now audit
-				//audit.Add(auditUtil.CreateAuditData("ITI-8", ActionType.Delete, OutcomeIndicator.Success, evt, deletedRecordIds));
-				//audit.Add(auditUtil.CreateAuditData("ITI-8", ActionType.Update, OutcomeIndicator.Success, evt, updatedRecordIds));
-				// Now process the result
-				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
+				response = MessageUtil.CreateNack(request, details, typeof(ACK));
 				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), request);
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.MessageStructure.Value = "ACK";
 			}
 			catch (Exception e)
 			{
-				Trace.TraceError(e.ToString());
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.ToString());
+
 				if (!details.Exists(o => o.Message == e.Message || o.Exception == e))
+				{
 					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
+				}
+
 				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
-				//audit.Add(auditUtil.CreateAuditData("ITI-8", ActionType.Delete, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>()));
 			}
 
 			return response;
 		}
 
 		/// <summary>
-		/// Handle PIX Update
+		/// Handles an update.
 		/// </summary>
-		internal IMessage HandleUpdate(NHapi.Model.V25.Message.ADT_A09 aDT_A08, Hl7MessageReceivedEventArgs e)
+		/// <param name="message">The ADT_A08 message.</param>
+		/// <param name="eventArgs">The <see cref="Hl7MessageReceivedEventArgs" /> instance containing the event data.</param>
+		/// <returns>Returns the response message from the merge event.</returns>
+		internal IMessage HandlePixUpdate(NHapi.Model.V231.Message.ADT_A08 message, Hl7MessageReceivedEventArgs eventArgs)
 		{
-			PipeParser parser = new PipeParser();
-			aDT_A08.MSH.MessageType.MessageStructure.Value = "ADT_A01";
-			var message = parser.Parse(parser.Encode(aDT_A08));
-			if (message is NHapi.Model.V25.Message.ADT_A01)
-				return this.HandleUpdate(message as NHapi.Model.V25.Message.ADT_A01, e);
-			else
-				return MessageUtil.CreateNack(e.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
+			var parser = new PipeParser();
+
+			message.MSH.MessageType.MessageStructure.Value = "ADT_A01";
+
+			var encodedMessage = parser.Parse(parser.Encode(message));
+
+			if (encodedMessage is NHapi.Model.V231.Message.ADT_A01)
+			{
+				return this.HandlePixUpdate(encodedMessage as NHapi.Model.V231.Message.ADT_A01, eventArgs);
+			}
+
+			return MessageUtil.CreateNack(eventArgs.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
 		}
 
 		/// <summary>
-		/// Handle PIX update
+		/// Handles an update.
 		/// </summary>
-		internal IMessage HandleUpdate(NHapi.Model.V25.Message.ADT_A01 request, Hl7MessageReceivedEventArgs evt)
+		/// <param name="message">The request.</param>
+		/// <param name="evt">The <see cref="Hl7MessageReceivedEventArgs" /> instance containing the event data.</param>
+		/// <returns>Returns the response message from the merge event.</returns>
+		/// <exception cref="System.InvalidOperationException"></exception>
+		internal IMessage HandlePixUpdate(NHapi.Model.V231.Message.ADT_A01 message, Hl7MessageReceivedEventArgs evt)
 		{
-			// Get config
 			var dataService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
 			// Create a details array
-			List<IResultDetail> details = new List<IResultDetail>();
+			var details = new List<IResultDetail>();
 
 			// Validate the inbound message
-			MessageUtil.Validate((IMessage)request, details);
+			MessageUtil.Validate(message, details);
 
 			IMessage response = null;
 
 			// Control
-			if (request == null)
+			if (message == null)
 			{
 				return null;
 			}
@@ -388,7 +414,7 @@ namespace OpenIZ.Messaging.HL7
 			try
 			{
 				// Create Query Data
-				var data = MessageUtil.CreatePatient(request.MSH, request.EVN, request.PID, request.PD1, details);
+				var data = MessageUtil.CreatePatient(message.MSH, message.EVN, message.PID, message.PD1, details);
 				if (data == null)
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("MSGE00A"));
 
@@ -399,18 +425,21 @@ namespace OpenIZ.Messaging.HL7
 
 				//audit = auditUtil.CreateAuditData("ITI-8", result.VersionId.UpdateMode == UpdateModeType.Update ? ActionType.Update : ActionType.Create, OutcomeIndicator.Success, evt, new List<VersionedDomainIdentifier>() { result.VersionId });
 				// Now process the result
-				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
-				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), request);
-				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = request.MSH.MessageType.TriggerEvent.Value;
+				response = MessageUtil.CreateNack(message, details, typeof(NHapi.Model.V25.Message.ACK));
+				MessageUtil.UpdateMSH(new NHapi.Base.Util.Terser(response), message);
+				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.TriggerEvent.Value = message.MSH.MessageType.TriggerEvent.Value;
 				(response as NHapi.Model.V25.Message.ACK).MSH.MessageType.MessageStructure.Value = "ACK";
 			}
 			catch (Exception e)
 			{
-				Trace.TraceError(e.ToString());
+				this.traceSource.TraceEvent(TraceEventType.Error, 0, e.ToString());
+
 				if (!details.Exists(o => o.Message == e.Message || o.Exception == e))
+				{
 					details.Add(new ResultDetail(ResultDetailType.Error, e.Message, e));
-				response = MessageUtil.CreateNack(request, details, typeof(NHapi.Model.V25.Message.ACK));
-				//audit = auditUtil.CreateAuditData("ITI-8", ActionType.Create, OutcomeIndicator.EpicFail, evt, new List<VersionedDomainIdentifier>());
+				}
+
+				response = MessageUtil.CreateNack(message, details, typeof(NHapi.Model.V25.Message.ACK));
 			}
 
 			return response;

@@ -18,12 +18,11 @@
  * Date: 2016-11-11
  */
 
-using OpenIZ.Core.Event;
+using OpenIZ.Messaging.HL7.Notifier;
 using System;
 using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
-using OpenIZ.Messaging.HL7.Notifier;
 
 namespace OpenIZ.Messaging.HL7.Configuration
 {

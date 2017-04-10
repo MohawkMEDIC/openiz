@@ -19,19 +19,17 @@
  */
 
 using MARC.HI.EHRS.SVC.Core;
+using NHapi.Model.V25.Datatype;
 using NHapi.Model.V25.Segment;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.HL7.Configuration;
-using OpenIZ.Messaging.HL7.Extensions;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using NHapi.Model.V25.Datatype;
 using TS = MARC.Everest.DataTypes.TS;
-using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Messaging.HL7.Notifier
 {
@@ -60,7 +58,6 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// </summary>
 		protected NotifierBase()
 		{
-
 		}
 
 		internal static void UpdateAD(EntityAddress entityAddress, XAD address)
@@ -103,10 +100,12 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				case "f4e3a6bb-612e-46b2-9f77-ff844d971198":
 					pid.AdministrativeSex.Value = "M";
 					break;
+
 				case "female":
 				case "094941e9-a3db-48b5-862c-bc289bd7f86c":
 					pid.AdministrativeSex.Value = "F";
 					break;
+
 				case "undifferentiated":
 				case "ae94a782-1485-4241-9bca-5b09db2156bf":
 					pid.AdministrativeSex.Value = "U";

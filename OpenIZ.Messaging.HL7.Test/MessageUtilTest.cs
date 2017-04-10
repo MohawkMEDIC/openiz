@@ -20,8 +20,8 @@
 using MARC.HI.EHRS.SVC.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NHapi.Base.Model;
-using NHapi.Model.V25.Datatype;
-using NHapi.Model.V25.Message;
+using NHapi.Model.V231.Datatype;
+using NHapi.Model.V231.Message;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using System;
@@ -109,17 +109,16 @@ namespace OpenIZ.Messaging.HL7.Test
 			this.xad.City.Value = "Hamilton";
 			this.xad.Country.Value = "Canada";
 			this.xad.StateOrProvince.Value = "Ontario";
-			this.xad.StreetAddress.StreetOrMailingAddress.Value = "123 Main street west";
-			this.xad.StreetAddress.StreetName.Value = "Main St";
+			this.xad.StreetAddress.Value = "123 Main street west";
 			this.xad.ZipOrPostalCode.Value = "L8N3T2";
 
 			this.xpn = new XPN(Activator.CreateInstance(typeof(ADT_A01)) as IMessage);
 
 			this.xpn.DegreeEgMD.Value = "MD";
-			this.xpn.FamilyName.Surname.Value = "Khanna";
+			this.xpn.FamilyLastName.FamilyName.Value = "Khanna";
 			this.xpn.GivenName.Value = "Nityan";
 			this.xpn.PrefixEgDR.Value = "Dr.";
-			this.xpn.SecondAndFurtherGivenNamesOrInitialsThereof.Value = "Dave";
+			this.xpn.MiddleInitialOrName.Value = "Dave";
 
 			this.xtn = new XTN(Activator.CreateInstance(typeof(ADT_A01)) as IMessage);
 		}
@@ -258,7 +257,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		[TestMethod]
 		public void TestConvertAddressEmptyStreet()
 		{
-			this.xad.StreetAddress.StreetName.Value = string.Empty;
+			this.xad.StreetAddress.Value = string.Empty;
 
 			var actual = MessageUtil.ConvertAddress(xad);
 
@@ -388,7 +387,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		[TestMethod]
 		public void TestConvertAddressNullStreet()
 		{
-			this.xad.StreetAddress.StreetName.Value = null;
+			this.xad.StreetAddress.Value = null;
 
 			var actual = MessageUtil.ConvertAddress(xad);
 
@@ -416,7 +415,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		{
 			this.xpn = new XPN(Activator.CreateInstance(typeof(ADT_A01)) as IMessage);
 
-			this.xpn.FamilyName.Surname.Value = "Khanna";
+			this.xpn.FamilyLastName.FamilyName.Value = "Khanna";
 			this.xpn.GivenName.Value = "Nityan";
 
 			var actual = MessageUtil.ConvertName(this.xpn);
@@ -436,7 +435,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		{
 			this.xpn = new XPN(Activator.CreateInstance(typeof(ADT_A01)) as IMessage);
 
-			this.xpn.FamilyName.Surname.Value = "Khanna";
+			this.xpn.FamilyLastName.FamilyName.Value = "Khanna";
 
 			var actual = MessageUtil.ConvertName(this.xpn);
 
@@ -476,15 +475,15 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			var name1 = adt.PID.GetPatientName(0);
 
-			name1.FamilyName.Surname.Value = "Khanna";
+			name1.FamilyLastName.FamilyName.Value = "Khanna";
 			name1.GivenName.Value = "Nityan";
-			name1.SecondAndFurtherGivenNamesOrInitialsThereof.Value = "Dave";
+			name1.MiddleInitialOrName.Value = "Dave";
 
 			var name2 = adt.PID.GetPatientName(1);
 
-			name2.FamilyName.Surname.Value = "Smith";
+			name2.FamilyLastName.FamilyName.Value = "Smith";
 			name2.GivenName.Value = "II";
-			name2.SecondAndFurtherGivenNamesOrInitialsThereof.Value = "Capitano";
+			name2.MiddleInitialOrName.Value = "Capitano";
 
 			var names = new XPN[2];
 
@@ -507,7 +506,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			Assert.IsNotNull(ts);
 
-			ts.Time.Value = new DateTime(1970, 01, 01).ToString("yyyyMMddHHmmss");
+			ts.TimeOfAnEvent.Value = new DateTime(1970, 01, 01).ToString("yyyyMMddHHmmss");
 
 			var actual = MessageUtil.ConvertTS(ts);
 
@@ -525,7 +524,7 @@ namespace OpenIZ.Messaging.HL7.Test
 
 			Assert.IsNotNull(ts);
 
-			ts.Time.Value = new DateTimeOffset(1970, 01, 01, 0, 0, 0, 0, TimeSpan.FromHours(12)).ToString("yyyyMMddHHmmss");
+			ts.TimeOfAnEvent.Value = new DateTimeOffset(1970, 01, 01, 0, 0, 0, 0, TimeSpan.FromHours(12)).ToString("yyyyMMddHHmmss");
 
 			var actual = MessageUtil.ConvertTS(ts);
 
@@ -536,25 +535,19 @@ namespace OpenIZ.Messaging.HL7.Test
 		[TestMethod]
 		public void TestCreatePatient()
 		{
-			ADT_A01 message = new ADT_A01();
+			var message = new ADT_A01();
 
-			message.MSH.DateTimeOfMessage.Time.Value = DateTime.Now.ToString("yyyyMMddHHmmss");
-			//message.PID.PatientID.IDNumber.Value = "12345";
-			message.PID.GetPatientName(0).FamilyName.Surname.Value = "Khanna";
+			message.MSH.DateTimeOfMessage.TimeOfAnEvent.Value = DateTime.Now.ToString("yyyyMMddHHmmss");
+
+			message.PID.GetPatientName(0).FamilyLastName.FamilyName.Value = "Khanna";
 			message.PID.GetPatientName(0).GivenName.Value = "Nityan";
 
 			message.PID.GetMotherSMaidenName(0).GivenName.Value = "Mom";
-			message.PID.GetMotherSMaidenName(0).FamilyName.Surname.Value = "Khanna";
+			message.PID.GetMotherSMaidenName(0).FamilyLastName.FamilyName.Value = "Khanna";
 
 			var details = new List<IResultDetail>();
 
 			var actual = MessageUtil.CreatePatient(message.MSH, message.EVN, message.PID, message.PD1, details);
-
-			var identifier = actual.Identifiers.FirstOrDefault();
-
-			//Assert.IsNotNull(identifier);
-
-			//Assert.AreEqual("12345", identifier.Value);
 
 			var name = actual.Names.FirstOrDefault();
 			Assert.IsNotNull(name);

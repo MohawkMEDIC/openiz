@@ -18,17 +18,16 @@
  * Date: 2016-11-12
  */
 
-using OpenIZ.Core.Model.Roles;
-using OpenIZ.Messaging.HL7.Configuration;
-using System;
-using System.Diagnostics;
 using MARC.Everest.DataTypes;
 using NHapi.Base.Model;
 using NHapi.Model.V25.Message;
 using NHapi.Model.V25.Segment;
-using OpenIZ.Core.Event;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Roles;
+using OpenIZ.Messaging.HL7.Configuration;
 using OpenIZ.Messaging.HL7.Queue;
+using System;
+using System.Diagnostics;
 
 namespace OpenIZ.Messaging.HL7.Notifier
 {

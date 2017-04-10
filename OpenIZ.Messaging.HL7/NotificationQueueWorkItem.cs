@@ -18,7 +18,6 @@
  * Date: 2016-11-12
  */
 
-using OpenIZ.Core.Event;
 using OpenIZ.Core.Model;
 using OpenIZ.Messaging.HL7.Notifier;
 
@@ -43,13 +42,13 @@ namespace OpenIZ.Messaging.HL7
 		}
 
 		/// <summary>
-		/// Gets the event that triggered the action.
-		/// </summary>
-		public T Event { get; }
-
-		/// <summary>
 		/// Gets the action to perform on the event.
 		/// </summary>
 		public ActionType ActionType { get; }
+
+		/// <summary>
+		/// Gets the event that triggered the action.
+		/// </summary>
+		public T Event { get; }
 	}
 }

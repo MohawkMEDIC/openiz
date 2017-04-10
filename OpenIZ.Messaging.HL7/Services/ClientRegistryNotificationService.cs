@@ -26,11 +26,10 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.HL7.Configuration;
+using OpenIZ.Messaging.HL7.Notifier;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using OpenIZ.Messaging.HL7.Notifier;
 
 namespace OpenIZ.Messaging.HL7.Services
 {
