@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using DatePrecision = OpenIZ.Core.Model.DataTypes.DatePrecision;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
@@ -71,17 +72,17 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		protected override MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient MapToFhir(Core.Model.Roles.Patient model)
 		{
-			var retVal = DatatypeConverter.CreateResource<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(model);
+			var retVal = DataTypeConverter.CreateResource<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(model);
 			retVal.Active = model.StatusConceptKey == StatusKeys.Active;
-			retVal.Address = model.Addresses.Select(o => DatatypeConverter.ToFhirAddress(o)).ToList();
+			retVal.Address = model.Addresses.Select(o => DataTypeConverter.ToFhirAddress(o)).ToList();
 			retVal.BirthDate = model.DateOfBirth;
 			retVal.Deceased = model.DeceasedDate == DateTime.MinValue ? (object)new FhirBoolean(true) : model.DeceasedDate != null ? new FhirDate(model.DeceasedDate.Value) : null;
-			retVal.Gender = DatatypeConverter.ToFhirCodeableConcept(model.GenderConcept)?.GetPrimaryCode()?.Code;
-			retVal.Identifier = model.Identifiers?.Select(o => DatatypeConverter.ToFhirIdentifier(o)).ToList();
+			retVal.Gender = DataTypeConverter.ToFhirCodeableConcept(model.GenderConcept)?.GetPrimaryCode()?.Code;
+			retVal.Identifier = model.Identifiers?.Select(o => DataTypeConverter.ToFhirIdentifier(o)).ToList();
 			retVal.MultipleBirth = model.MultipleBirthOrder == 0 ? (FhirElement)new FhirBoolean(true) : model.MultipleBirthOrder.HasValue ? new FhirInt(model.MultipleBirthOrder.Value) : null;
-			retVal.Name = model.Names.Select(o => DatatypeConverter.ToFhirHumanName(o)).ToList();
+			retVal.Name = model.Names.Select(o => DataTypeConverter.ToFhirHumanName(o)).ToList();
 			retVal.Timestamp = model.ModifiedOn.DateTime;
-			retVal.Telecom = model.Telecoms.Select(o => DatatypeConverter.ToFhirTelecom(o)).ToList();
+			retVal.Telecom = model.Telecoms.Select(o => DataTypeConverter.ToFhirTelecom(o)).ToList();
 
 			// TODO: Relationships
 			foreach (var rel in model.Relationships.Where(o => !o.InversionIndicator))
@@ -90,22 +91,22 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				if (rel.RelationshipType.ConceptSets.Any(o => o.Key == ConceptSetKeys.FamilyMember))
 				{
 					// Create the relative object
-					var relative = DatatypeConverter.CreateResource<RelatedPerson>(rel.TargetEntity);
-					relative.Relationship = DatatypeConverter.ToFhirCodeableConcept(rel.RelationshipType);
-					relative.Address = DatatypeConverter.ToFhirAddress(rel.TargetEntity.Addresses.FirstOrDefault());
-					relative.Gender = DatatypeConverter.ToFhirCodeableConcept((rel.TargetEntity as Core.Model.Roles.Patient)?.GenderConcept);
-					relative.Identifier = rel.TargetEntity.Identifiers.Select(o => DatatypeConverter.ToFhirIdentifier(o)).ToList();
-					relative.Name = DatatypeConverter.ToFhirHumanName(rel.TargetEntity.Names.FirstOrDefault());
+					var relative = DataTypeConverter.CreateResource<RelatedPerson>(rel.TargetEntity);
+					relative.Relationship = DataTypeConverter.ToFhirCodeableConcept(rel.RelationshipType);
+					relative.Address = DataTypeConverter.ToFhirAddress(rel.TargetEntity.Addresses.FirstOrDefault());
+					relative.Gender = DataTypeConverter.ToFhirCodeableConcept((rel.TargetEntity as Core.Model.Roles.Patient)?.GenderConcept);
+					relative.Identifier = rel.TargetEntity.Identifiers.Select(o => DataTypeConverter.ToFhirIdentifier(o)).ToList();
+					relative.Name = DataTypeConverter.ToFhirHumanName(rel.TargetEntity.Names.FirstOrDefault());
 					if (rel.TargetEntity is Core.Model.Roles.Patient)
-						relative.Patient = DatatypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(rel.TargetEntity);
-					relative.Telecom = rel.TargetEntity.Telecoms.Select(o => DatatypeConverter.ToFhirTelecom(o)).ToList();
+						relative.Patient = DataTypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(rel.TargetEntity);
+					relative.Telecom = rel.TargetEntity.Telecoms.Select(o => DataTypeConverter.ToFhirTelecom(o)).ToList();
 					retVal.Contained.Add(new ContainedResource()
 					{
 						Item = relative
 					});
 				}
 				else if (rel.RelationshipTypeKey == EntityRelationshipTypeKeys.HealthcareProvider)
-					retVal.Provider = DatatypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Practictioner>(rel.TargetEntity);
+					retVal.Provider = DataTypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Practictioner>(rel.TargetEntity);
 			}
 
 			// TODO: Links
@@ -121,14 +122,19 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		{
 			var patient = new Core.Model.Roles.Patient
 			{
-				Addresses = resource.Address.Select(DatatypeConverter.ToEntityAddress).ToList(),
+				Addresses = resource.Address.Select(DataTypeConverter.ToEntityAddress).ToList(),
 				CreationTime = DateTimeOffset.Now,
 				DateOfBirth = resource.BirthDate?.DateValue,
-				GenderConceptKey = DatatypeConverter.ToConcept(new FhirCoding(new Uri("http://hl7.org/fhir/administrative-gender"), resource.Gender?.Value))?.Key,
+				// TODO: Extensions
+				Extensions = resource.Extension.Select(DataTypeConverter.ToEntityExtension).ToList(),
+				GenderConceptKey = DataTypeConverter.ToConcept(new FhirCoding(new Uri("http://hl7.org/fhir/administrative-gender"), resource.Gender?.Value))?.Key,
+				Identifiers = resource.Identifier.Select(DataTypeConverter.ToEntityIdentifier).ToList(),
+				LanguageCommunication = resource.Communication.Select(DataTypeConverter.ToPersonLanguageCommunication).ToList(),
 				Key = Guid.NewGuid(),
-				Identifiers = resource.Identifier.Select(DatatypeConverter.ToEntityIdentifier).ToList(),
-				Names = resource.Name.Select(DatatypeConverter.ToEntityName).ToList(),
-				Telecoms = resource.Telecom.Select(DatatypeConverter.ToEntityTelecomAddress).ToList()
+				Names = resource.Name.Select(DataTypeConverter.ToEntityName).ToList(),
+				Relationships = resource.Contact.Select(DataTypeConverter.ToEntityRelationship).ToList(),
+				StatusConceptKey = resource.Active?.Value == true ? StatusKeys.Active : StatusKeys.Obsolete,
+				Telecoms = resource.Telecom.Select(DataTypeConverter.ToEntityTelecomAddress).ToList()
 			};
 
 			Guid key;
@@ -144,6 +150,13 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			{
 				patient.DeceasedDate = (FhirDateTime)resource.Deceased;
 			}
+			else if (resource.Deceased is FhirBoolean)
+			{
+				// we don't have a field for "deceased indicator" to say that the patient is dead, but we don't know that actual date/time of death
+				// should find a better way to do this
+				patient.DeceasedDate = DateTime.Now;
+				patient.DeceasedDatePrecision = DatePrecision.Year;
+			}
 
 			if (resource.MultipleBirth is FhirBoolean)
 			{
@@ -153,9 +166,6 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			{
 				patient.MultipleBirthOrder = ((FhirInt)resource.MultipleBirth).Value;
 			}
-
-			// TODO: Extensions
-			patient.Extensions.AddRange(resource.Extension.Select(DatatypeConverter.ToEntityExtension));
 
 			return patient;
 		}

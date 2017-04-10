@@ -32,13 +32,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel.Web;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
 	/// <summary>
-	/// Represents a datatype converter.
+	/// Represents a data type converter.
 	/// </summary>
-	public static class DatatypeConverter
+	public static class DataTypeConverter
 	{
 		/// <summary>
 		/// The trace source.
@@ -53,7 +54,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// <returns>Returns a reference instance.</returns>
 		public static Reference<TResource> CreateReference<TResource>(IVersionedEntity targetEntity) where TResource : DomainResourceBase, new()
 		{
-			return Reference.CreateResourceReference(DatatypeConverter.CreateResource<TResource>(targetEntity), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
+			return Reference.CreateResourceReference(DataTypeConverter.CreateResource<TResource>(targetEntity), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
 		}
 
 		/// <summary>
@@ -115,7 +116,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 		public static Concept ToConcept(FhirCodeableConcept codeableConcept)
 		{
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping codeable concept");
-			return codeableConcept?.Coding.Select(o => DatatypeConverter.ToConcept(o)).FirstOrDefault(o => o != null);
+			return codeableConcept?.Coding.Select(o => DataTypeConverter.ToConcept(o)).FirstOrDefault(o => o != null);
 		}
 
 		/// <summary>
@@ -273,7 +274,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 
 			if (fhirId.System != null)
 			{
-				retVal = new EntityIdentifier(DatatypeConverter.ToAssigningAuthority(fhirId.System), fhirId.Value.Value);
+				retVal = new EntityIdentifier(DataTypeConverter.ToAssigningAuthority(fhirId.System), fhirId.Value.Value);
 			}
 			else
 			{
@@ -312,6 +313,16 @@ namespace OpenIZ.Messaging.FHIR.Util
 		}
 
 		/// <summary>
+		/// Converts a <see cref="PatientContact"/> instance to an <see cref="EntityRelationship"/> instance.
+		/// </summary>
+		/// <param name="patientContact">The patient contact.</param>
+		/// <returns>Returns the mapped entity relationship instance..</returns>
+		public static EntityRelationship ToEntityRelationship(PatientContact patientContact)
+		{
+			return new EntityRelationship();
+		}
+
+		/// <summary>
 		/// Converts a <see cref="FhirTelecom"/> instance to an <see cref="EntityTelecomAddress"/> instance.
 		/// </summary>
 		/// <param name="fhirTelecom">The telecom.</param>
@@ -341,7 +352,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 			// Return value
 			var retVal = new FhirAddress()
 			{
-				Use = DatatypeConverter.ToFhirCodeableConcept(address.AddressUse)?.GetPrimaryCode()?.Code,
+				Use = DataTypeConverter.ToFhirCodeableConcept(address.AddressUse)?.GetPrimaryCode()?.Code,
 				Line = new List<FhirString>()
 			};
 
@@ -389,7 +400,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 
 			return new FhirCodeableConcept
 			{
-				Coding = concept.ReferenceTerms.Select(o => DatatypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
+				Coding = concept.ReferenceTerms.Select(o => DataTypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
 				Text = concept.ConceptNames.FirstOrDefault()?.Name
 			};
 		}
@@ -411,7 +422,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 			// Return value
 			var retVal = new FhirHumanName
 			{
-				Use = DatatypeConverter.ToFhirCodeableConcept(entityName.NameUse)?.GetPrimaryCode()?.Code
+				Use = DataTypeConverter.ToFhirCodeableConcept(entityName.NameUse)?.GetPrimaryCode()?.Code
 			};
 
 			// Process components
@@ -465,9 +476,20 @@ namespace OpenIZ.Messaging.FHIR.Util
 
 			return new FhirTelecom()
 			{
-				Use = DatatypeConverter.ToFhirCodeableConcept(telecomAddress.AddressUse)?.GetPrimaryCode()?.Code,
+				Use = DataTypeConverter.ToFhirCodeableConcept(telecomAddress.AddressUse)?.GetPrimaryCode()?.Code,
 				Value = telecomAddress.IETFValue
 			};
+		}
+
+		/// <summary>
+		/// Converts a <see cref="Communication"/> instance to a <see cref="PersonLanguageCommunication"/> instance.
+		/// </summary>
+		/// <param name="communication">The communication.</param>
+		/// <returns>Returns the mapped person language communication instance.</returns>
+		public static PersonLanguageCommunication ToPersonLanguageCommunication(Communication communication)
+		{
+			var languageCode = ToConcept(communication.Value);
+			return new PersonLanguageCommunication(languageCode.Mnemonic, communication.Preferred.Value ?? false);
 		}
 	}
 }

@@ -81,15 +81,15 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         protected override Immunization MapToFhir(SubstanceAdministration model)
         {
             
-            var retVal = DatatypeConverter.CreateResource<Immunization>(model);
+            var retVal = DataTypeConverter.CreateResource<Immunization>(model);
             retVal.DoseQuantity = new FhirQuantity()
             {
                 Units = model.DoseUnit.Mnemonic,
                 Value = new FhirDecimal(model.DoseQuantity)
             };
             retVal.Date = (FhirDate)model.ActTime.DateTime;
-            retVal.Route = DatatypeConverter.ToFhirCodeableConcept(model.Route);
-            retVal.Site = DatatypeConverter.ToFhirCodeableConcept(model.Site);
+            retVal.Route = DataTypeConverter.ToFhirCodeableConcept(model.Route);
+            retVal.Site = DataTypeConverter.ToFhirCodeableConcept(model.Site);
             retVal.Status = "completed";
             //retVal.SelfReported = model.Tags.Any(o => o.TagKey == "selfReported" && Convert.ToBoolean(o.Value));
             retVal.WasNotGiven = model.IsNegated;
@@ -98,7 +98,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             var matl = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable)?.PlayerEntity as Material;
             if(matl != null)
             {
-                retVal.VaccineCode = DatatypeConverter.ToFhirCodeableConcept(matl.TypeConcept);
+                retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.TypeConcept);
                 retVal.ExpirationDate = (FhirDate)matl.ExpiryDate;
                 retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
             }
