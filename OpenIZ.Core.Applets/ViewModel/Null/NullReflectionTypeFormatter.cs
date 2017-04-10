@@ -57,19 +57,27 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
                     retVal = null;
                 else
                 {
+                    var jpa = info.GetCustomAttribute<JsonPropertyAttribute>();
+                    var sra = info.GetCustomAttribute<SerializationReferenceAttribute>();
                     // Property info
-                    JsonPropertyAttribute jpa = info.GetCustomAttribute<JsonPropertyAttribute>();
                     if (jpa != null)
                         retVal = jpa.PropertyName;
-                    else
+                    else if (sra != null)
                     {
-                        SerializationReferenceAttribute sra = info.GetCustomAttribute<SerializationReferenceAttribute>();
-                        if (sra != null)
+                        // get the key of the SRA redir
+                        var redirProp = info.DeclaringType.GetRuntimeProperty(sra.RedirectProperty);
+                        String sraRetVal = null;
+                        if (!this.m_jsonPropertyNames.TryGetValue(redirProp, out sraRetVal))
                         {
-                            jpa = info.DeclaringType.GetRuntimeProperty(sra.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>();
+                            jpa = redirProp.GetCustomAttribute<JsonPropertyAttribute>();
                             if (jpa != null)
                                 retVal = jpa.PropertyName + "Model";
+                            lock (this.m_jsonPropertyNames)
+                                if (!this.m_jsonPropertyNames.ContainsKey(redirProp))
+                                    this.m_jsonPropertyNames.Add(redirProp, jpa.PropertyName);
                         }
+                        else
+                            retVal = sraRetVal + "Model";
                     }
 
                     if (retVal == null)

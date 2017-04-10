@@ -152,5 +152,13 @@ var OpenIZBre = OpenIZBre || {
             }
         return retVal;
 
+    },
+    /**
+     * @method
+     * @memberof OpenIZBre
+     * @summary Allows adding of a breakpoint
+     */
+    Break: function () {
+
     }
 };

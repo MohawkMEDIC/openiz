@@ -37,6 +37,7 @@ using OpenIZ.Core;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
 using System.Collections;
+using Jint.Runtime.Debugger;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI
 {
@@ -71,6 +72,17 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// Gets the serializer
         /// </summary>
         public JsonViewModelSerializer Serializer { get { return this.m_modelSerializer; } }
+
+        /// <summary>
+        /// Break current execution
+        /// </summary>
+        public void Break()
+        {
+            if (System.Diagnostics.Debugger.IsAttached)
+                System.Diagnostics.Debugger.Break();
+            else
+                new JsConsoleProvider().warn("Break was requested however no debugger is attached.");
+        }
 
         /// <summary>
         /// Add a business rule for the specified object

@@ -330,8 +330,10 @@ namespace OpenIZ.Core.Applets
                         foreach (var itm in retVal.Include)
                             retVal.Model.AddRange(this.GetViewModelDescription(itm).Model);
 
-                        if (!s_viewModelCache.ContainsKey(viewModelName))
-                            s_viewModelCache.Add(viewModelName, retVal);
+                        // caching 
+                        if(this.CachePages)
+                            if (!s_viewModelCache.ContainsKey(viewModelName))
+                                s_viewModelCache.Add(viewModelName, retVal);
                     }
 
                 }

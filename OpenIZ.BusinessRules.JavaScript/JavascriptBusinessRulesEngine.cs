@@ -98,9 +98,30 @@ namespace OpenIZ.BusinessRules.JavaScript
                 ).SetValue("OpenIZBre", this.m_bridge)
                 .SetValue("console", new JsConsoleProvider());
 
+            // Break
+#if DEBUG
+            this.m_engine.Break += M_engine_Break;
+#endif 
+
             foreach(var itm in typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceNames().Where(o=>o.EndsWith(".js")))
             using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))
                 this.AddRules(sr);
+        }
+
+        /// <summary>
+        /// Break at the current line of execution
+        /// </summary>
+        private Jint.Runtime.Debugger.StepMode M_engine_Break(object sender, Jint.Runtime.Debugger.DebugInformation e)
+        {
+
+            if (System.Diagnostics.Debugger.IsAttached)
+                System.Diagnostics.Debugger.Break();
+            else
+                return Jint.Runtime.Debugger.StepMode.None;
+
+            // Modify this value on the VS debugger to control debugging
+            var retVal = Jint.Runtime.Debugger.StepMode.None;
+            return retVal;
         }
 
         /// <summary>
@@ -147,7 +168,6 @@ namespace OpenIZ.BusinessRules.JavaScript
                         using (StreamReader sr = new StreamReader(incStream))
                             this.m_engine.Execute(rawScript);
                 }
-                var executionLog = this.m_engine.Execute(rawScript);
 
             }
             catch(JavaScriptException ex)
