@@ -1,86 +1,86 @@
 <?xml version="1.0"?>
-<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Name Use Codes" xmlns="http://openiz.org/data">
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Contact Point Use Codes" xmlns="http://openiz.org/data">
   <insert>
     <CodeSystem xmlns="http://openiz.org/model">
-      <id>9501a43b-1970-40b7-aece-189b8daa7955</id>
-      <creationTime>2017-04-09T21:01:21.1860191-04:00</creationTime>
-      <name>FHIR Name Use Codes</name>
-      <oid>2.16.840.1.113883.4.642.1.59</oid>
-      <url>http://hl7.org/fhir/name-use</url>
+      <id>d57945a5-936b-4bfd-99c9-b41b6151748b</id>
+      <creationTime>2017-04-09T21:12:20.7156213-04:00</creationTime>
+      <name>FHIR Contact Point Use Codes</name>
+      <oid>2.16.840.1.113883.4.642.1.67</oid>
+      <url>http://hl7.org/fhir/contact-point-use</url>
     </CodeSystem>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>bc13dc91-53ef-4f29-b4fe-0ede556fe33e</id>
-      <creationTime>2017-04-09T21:01:21.1890198-04:00</creationTime>
-      <mnemonic>usual</mnemonic>
-      <codeSystem>9501a43b-1970-40b7-aece-189b8daa7955</codeSystem>
+      <id>3e6244e4-f243-4e39-8b88-774c417b8ce8</id>
+      <creationTime>2017-04-09T21:12:20.7166215-04:00</creationTime>
+      <mnemonic>home</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
         <language>en</language>
-        <value>Usual</value>
+        <value>Home</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
   </insert>
   <insert>
     <Concept xmlns="http://openiz.org/model">
-      <id>93ea8d3e-ac97-4c53-a4db-ec652965eb62</id>
-      <creationTime>2017-04-09T21:01:21.2330309-04:00</creationTime>
+      <id>904c8854-9a36-4205-9221-00e26240d1c5</id>
+      <creationTime>2017-04-09T21:12:20.7966412-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>usual</mnemonic>
+      <mnemonic>home</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
-        <term>bc13dc91-53ef-4f29-b4fe-0ede556fe33e</term>
+        <term>3e6244e4-f243-4e39-8b88-774c417b8ce8</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
         <language>en</language>
-        <value>Usual</value>
+        <value>Home</value>
       </name>
     </Concept>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>f9c5c221-d63e-4567-9f08-491f2095b974</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
-      <mnemonic>official</mnemonic>
-      <codeSystem>9501a43b-1970-40b7-aece-189b8daa7955</codeSystem>
+      <id>827cb2ae-b782-4f24-b10d-05961abcfb8b</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <mnemonic>work</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
         <language>en</language>
-        <value>Official</value>
+        <value>Work</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
   </insert>
   <insert>
     <Concept xmlns="http://openiz.org/model">
-      <id>70a72ca8-3137-4ae3-8f9d-91344d87c654</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
+      <id>c9532e97-1afa-4652-9974-73a6b84381d3</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>official</mnemonic>
+      <mnemonic>work</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
-        <term>f9c5c221-d63e-4567-9f08-491f2095b974</term>
+        <term>827cb2ae-b782-4f24-b10d-05961abcfb8b</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
         <language>en</language>
-        <value>Official</value>
+        <value>Work</value>
       </name>
     </Concept>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>b37a3da9-fac0-4c88-af6b-040257f540e4</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
+      <id>649b98da-1020-46c3-a1f6-3202eb153b18</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <mnemonic>temp</mnemonic>
-      <codeSystem>9501a43b-1970-40b7-aece-189b8daa7955</codeSystem>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
         <language>en</language>
         <value>Temp</value>
@@ -89,77 +89,31 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>0e4ea7e3-ae47-4075-9171-d6fa71ba16f7</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
-      <mnemonic>nickname</mnemonic>
-      <codeSystem>9501a43b-1970-40b7-aece-189b8daa7955</codeSystem>
-      <name>
-        <language>en</language>
-        <value>Nickname</value>
-        <phoneticAlgorithm xsi:nil="true" />
-      </name>
-    </ReferenceTerm>
-  </insert>
-  <insert>
     <Concept xmlns="http://openiz.org/model">
-      <id>8707f1e6-ad09-4ce7-a636-46761b7ae33c</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
+      <id>32fd3b55-b648-4d3c-9d82-3b8291307377</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>nickname</mnemonic>
+      <mnemonic>temp</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
-        <term>0e4ea7e3-ae47-4075-9171-d6fa71ba16f7</term>
+        <term>649b98da-1020-46c3-a1f6-3202eb153b18</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
         <language>en</language>
-        <value>Nickname</value>
+        <value>Temp</value>
       </name>
     </Concept>
   </insert>
   <insert>
     <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>61a5d42c-9f4c-4308-90ef-d42a475e3617</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
-      <mnemonic>anonymous</mnemonic>
-      <codeSystem>9501a43b-1970-40b7-aece-189b8daa7955</codeSystem>
-      <name>
-        <language>en</language>
-        <value>Anonymous</value>
-        <phoneticAlgorithm xsi:nil="true" />
-      </name>
-    </ReferenceTerm>
-  </insert>
-  <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>11b1b609-f6c8-4722-943e-612b8f9e1fdf</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>anonymous</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>61a5d42c-9f4c-4308-90ef-d42a475e3617</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Anonymous</value>
-      </name>
-    </Concept>
-  </insert>
-  <insert>
-    <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>c3e58f73-da67-434d-9eb6-03448185d8b4</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
+      <id>f1c68a14-759c-47a6-9ea7-08328d1ccc37</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
       <mnemonic>old</mnemonic>
-      <codeSystem>9501a43b-1970-40b7-aece-189b8daa7955</codeSystem>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
       <name>
         <language>en</language>
         <value>Old</value>
@@ -168,35 +122,55 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <ReferenceTerm xmlns="http://openiz.org/model">
-      <id>4eb24ece-562e-4cb6-9dcb-88722b1f28f3</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
-      <mnemonic>maiden</mnemonic>
-      <codeSystem>9501a43b-1970-40b7-aece-189b8daa7955</codeSystem>
+    <Concept xmlns="http://openiz.org/model">
+      <id>266a65b9-e627-42d2-85c6-1b1e65e8dbef</id>
+      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>old</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>f1c68a14-759c-47a6-9ea7-08328d1ccc37</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
       <name>
         <language>en</language>
-        <value>Maiden</value>
+        <value>Old</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b4cdd7e2-ae56-490a-bc2a-5668bfc19e13</id>
+      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
+      <mnemonic>mobile</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Mobile</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
   </insert>
   <insert>
     <Concept xmlns="http://openiz.org/model">
-      <id>6de0b451-1417-4160-a78d-947c79da0cde</id>
-      <creationTime>2017-04-09T21:01:21.2335311-04:00</creationTime>
+      <id>0a3eeb19-0c09-41dd-aa22-f826842bf479</id>
+      <creationTime>2017-04-09T21:12:20.7976414-04:00</creationTime>
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>maiden</mnemonic>
+      <mnemonic>mobile</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
-        <term>4eb24ece-562e-4cb6-9dcb-88722b1f28f3</term>
+        <term>b4cdd7e2-ae56-490a-bc2a-5668bfc19e13</term>
         <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
       </referenceTerm>
       <name>
         <language>en</language>
-        <value>Maiden</value>
+        <value>Mobile</value>
       </name>
     </Concept>
   </insert>
