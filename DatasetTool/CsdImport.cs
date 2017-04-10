@@ -514,7 +514,7 @@ namespace OizDevTool
 
 				//service.SourceEntityKey = csdService.
 
-				//services.Add(service);
+				services.Add(service);
 			}
 
 			return services;

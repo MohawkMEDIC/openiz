@@ -30,9 +30,11 @@ using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
@@ -179,31 +181,95 @@ namespace OpenIZ.Messaging.FHIR.Util
             return codeableConcept.Coding.Select(o => DatatypeConverter.ToConcept(o)).FirstOrDefault(o => o != null);
         }
 
-        /// <summary>
-        /// Convert from FHIR coding to concept
-        /// </summary>
-        public static Concept ToConcept(FhirCoding coding, FhirUri defaultSystem = null)
+		/// <summary>
+		/// Convert from FHIR coding to concept
+		/// </summary>
+		/// <param name="coding">The coding.</param>
+		/// <param name="defaultSystem">The default system.</param>
+		/// <returns>Concept.</returns>
+		/// <exception cref="System.InvalidOperationException">
+		/// Unable to locate service
+		/// or
+		/// Coding must have system attached
+		/// </exception>
+		public static Concept ToConcept(FhirCoding coding, FhirUri defaultSystem = null)
         {
             if (coding == null) return null;
 
-            var conceptRepoService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+            var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+	        if (conceptService == null)
+	        {
+		        throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
+	        }
 
             var system = coding.System ?? defaultSystem;
-            if (system == null) throw new InvalidOperationException("Coding must have system attached");
+
+	        if (system == null)
+	        {
+		        throw new InvalidOperationException("Coding must have system attached");
+	        }
 
             // Lookup
-            return conceptRepoService.FindConceptsByReferenceTerm(coding.Code, coding.System.Value).FirstOrDefault();
+            return conceptService.FindConceptsByReferenceTerm(coding.Code, coding.System.Value).FirstOrDefault();
         }
 
-        /// <summary>
-        /// Convert to assigning authority
-        /// </summary>
-        public static AssigningAuthority ToAssigningAuthority(FhirUri fhirSystem)
-        {
-            if (fhirSystem == null) return null;
+		/// <summary>
+		/// Converts a <see cref="FhirCode{T}"/> instance to a <see cref="Concept"/> instance.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="code">The code.</param>
+		/// <param name="system">The system.</param>
+		/// <returns>Concept.</returns>
+		/// <exception cref="System.ArgumentNullException">
+		/// code - Value cannot be null
+		/// or
+		/// system - Value cannot be null
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
+		public static Concept ToConcept<T>(FhirCode<T> code, string system)
+	    {
+		    if (code == null)
+		    {
+			    throw new ArgumentNullException(nameof(code), "Value cannot be null");
+		    }
 
-            var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-            return metaService.GetAssigningAuthority(fhirSystem.Value);
+		    if (system == null)
+		    {
+			    throw new ArgumentNullException(nameof(system), "Value cannot be null");
+		    }
+
+		    var conceptService = ApplicationContext.Current.GetConceptService();
+
+		    if (conceptService == null)
+		    {
+			    throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
+		    }
+
+		    return conceptService.FindConceptsByReferenceTerm(code.Value.ToString(), new Uri(system)).FirstOrDefault();
+	    }
+
+		/// <summary>
+		/// Convert to assigning authority
+		/// </summary>
+		/// <param name="fhirSystem">The FHIR system.</param>
+		/// <returns>AssigningAuthority.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
+		public static AssigningAuthority ToAssigningAuthority(FhirUri fhirSystem)
+        {
+	        if (fhirSystem == null)
+	        {
+		        return null;
+	        }
+
+            var metaDataService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+
+	        if (metaDataService == null)
+	        {
+		        throw new InvalidOperationException($"Unable to locate service: {nameof(IMetadataRepositoryService)}");
+	        }
+
+            return metaDataService.GetAssigningAuthority(fhirSystem.Value);
         }
 
 		/// <summary>
@@ -244,6 +310,55 @@ namespace OpenIZ.Messaging.FHIR.Util
 	    }
 
 		/// <summary>
+		/// Converts an <see cref="Extension"/> instance to an <see cref="EntityExtension"/> instance.
+		/// </summary>
+		/// <param name="fhirExtension">The FHIR extension.</param>
+		/// <returns>EntityExtension.</returns>
+		/// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// IMetadataRepositoryService
+		/// or
+		/// Unable to locate extension type
+		/// or
+		/// IEntityExtensionRepositoryService
+		/// </exception>
+		public static EntityExtension ToEntityExtension(Extension fhirExtension)
+	    {
+		    var extension = new EntityExtension();
+
+		    if (fhirExtension == null)
+		    {
+			    throw new ArgumentNullException(nameof(fhirExtension), "Value cannot be null");
+		    }
+
+		    var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+
+		    if (extensionTypeService == null)
+		    {
+			    throw new InvalidOperationException($"Unable to locate service: {nameof(IMetadataRepositoryService)}");
+		    }
+
+		    var extensionType = extensionTypeService.FindExtensionType(e => e.Name == fhirExtension.Url).FirstOrDefault();
+
+		    if (extensionType == null)
+		    {
+			    throw new InvalidOperationException("Unable to locate extension type");
+		    }
+
+		    var extensionService = ApplicationContext.Current.GetService<IEntityExtensionRepositoryService>();
+
+		    if (extensionService == null)
+		    {
+			    throw new InvalidOperationException($"Unable to locate service: {nameof(IEntityExtensionRepositoryService)}");
+		    }
+
+		    extension.ExtensionType = extensionType;
+		    //extension.ExtensionValue = fhirExtension.Value
+
+		    return extension;
+	    }
+
+		/// <summary>
 		/// Convert a FhirIdentifier to an identifier
 		/// </summary>
 		/// <param name="fhirId">The fhir identifier.</param>
@@ -266,15 +381,23 @@ namespace OpenIZ.Messaging.FHIR.Util
         }
 
 		/// <summary>
-		/// Converts a <see cref="FhirHumanName"/> instance to an <see cref="EntityName"/> instance.
+		/// Converts a <see cref="FhirHumanName" /> instance to an <see cref="EntityName" /> instance.
 		/// </summary>
 		/// <param name="fhirHumanName">The name of the human.</param>
 		/// <returns>Returns an entity name instance.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
 		public static EntityName ToEntityName(FhirHumanName fhirHumanName)
 	    {
 			var name = new EntityName();
 
-			// TODO: add use
+		    var conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+		    if (conceptService == null)
+		    {
+			    throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
+		    }
+
+		    name.NameUseKey = ToConcept(fhirHumanName.Use, "http://hl7.org/fhir/name-use")?.Key;
 
 		    name.Component.AddRange(fhirHumanName.Family.Select(f => new EntityNameComponent(NameComponentKeys.Family, f.Value)));
 		    name.Component.AddRange(fhirHumanName.Given.Select(g => new EntityNameComponent(NameComponentKeys.Given, g.Value)));
@@ -290,13 +413,12 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// <param name="fhirTelecom">The telecom.</param>
 		/// <returns>Returns an entity telecom address.</returns>
 		public static EntityTelecomAddress ToEntityTelecomAddress(FhirTelecom fhirTelecom)
-	    {
-		    var telecom = new EntityTelecomAddress
-		    {
-			    Value = fhirTelecom.Value.Value
-		    };
-
-		    // TODO: add use
+		{
+			var telecom = new EntityTelecomAddress
+			{
+				Value = fhirTelecom.Value.Value,
+				AddressUseKey = ToConcept(fhirTelecom.Use, "http://hl7.org/fhir/contact-point-use")?.Key
+			};
 
 		    return telecom;
 	    }
