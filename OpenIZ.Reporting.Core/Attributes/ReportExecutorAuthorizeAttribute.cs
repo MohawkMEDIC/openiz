@@ -42,6 +42,10 @@ namespace OpenIZ.Reporting.Core.Attributes
 		{
 		}
 
+		/// <summary>
+		/// When overridden in a derived class, creates a permission object that can then be serialized into binary form and persistently stored along with the <see cref="T:System.Security.Permissions.SecurityAction" /> in an assembly's metadata.
+		/// </summary>
+		/// <returns>A serializable permission object.</returns>
 		public override IPermission CreatePermission()
 		{
 			throw new NotImplementedException();

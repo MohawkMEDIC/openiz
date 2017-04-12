@@ -332,7 +332,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
-		[ReportExecutorAuthorize(SecurityAction.Demand)]
+		//[ReportExecutorAuthorize(SecurityAction.Demand)]
 		public ReportDefinition GetReportDefinition(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
@@ -348,6 +348,8 @@ namespace OpenIZ.Reporting.Jasper
 			{
 				return null;
 			}
+
+			this.Authenticate(this.username, this.password);
 
 			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{reportDefinition.CorrelationId}").Result;
 
@@ -373,9 +375,11 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		[ReportExecutorAuthorize(SecurityAction.Demand)]
+		//[ReportExecutorAuthorize(SecurityAction.Demand)]
 		public RisiCollection<ReportDefinition> GetReportDefinitions()
 		{
+			this.Authenticate(this.username, this.password);
+
 			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}").Result;
 
 			tracer.TraceEvent(TraceEventType.Information, 0, $"Jasper report server response: {response.Content}");
