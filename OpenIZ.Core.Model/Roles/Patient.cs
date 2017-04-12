@@ -49,6 +49,7 @@ namespace OpenIZ.Core.Model.Roles
 
         private Concept m_genderConcept;
 
+
         /// <summary>
         /// Represents a patient
         /// </summary>
@@ -126,6 +127,22 @@ namespace OpenIZ.Core.Model.Roles
                 this.m_genderConcept = value;
                 this.m_genderConceptKey = value?.Key;
             }
+        }
+
+        /// <summary>
+        /// Should serialize deceased date?
+        /// </summary>
+        public bool ShouldSerializeDeceasedDateXml()
+        {
+            return this.DeceasedDate.HasValue;
+        }
+
+        /// <summary>
+        /// Should serialize deceased date?
+        /// </summary>
+        public bool ShouldSerializeMultipleBirthOrder()
+        {
+            return this.MultipleBirthOrder.HasValue;
         }
 
         /// <summary>

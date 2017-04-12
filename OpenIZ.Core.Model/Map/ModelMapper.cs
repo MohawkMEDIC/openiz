@@ -341,7 +341,7 @@ namespace OpenIZ.Core.Model.Map
         /// Convert the specified lambda expression from model into query
         /// </summary>
         /// <param name="expression">The expression to be converted</param>
-        public Expression<Func<TTo, bool>> MapModelExpression<TFrom, TTo>(Expression<Func<TFrom, bool>> expression)
+        public Expression<Func<TTo, bool>> MapModelExpression<TFrom, TTo>(Expression<Func<TFrom, bool>> expression, bool throwOnError = true)
         {
             try
             {
@@ -353,10 +353,13 @@ namespace OpenIZ.Core.Model.Map
 #endif
                 return retVal;
             }
-            catch (Exception e)
+            catch 
             {
-               // Debug.WriteLine("Error converting {0}. {1}", expression, e);
-                throw;
+                // Debug.WriteLine("Error converting {0}. {1}", expression, e);
+                if (throwOnError)
+                    throw;
+                else
+                    return null;
             }
         }
 

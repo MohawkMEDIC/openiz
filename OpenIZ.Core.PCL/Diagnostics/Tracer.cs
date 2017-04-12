@@ -32,14 +32,14 @@ namespace OpenIZ.Core.Diagnostics
 		private String m_source;
 
 		// Writers
-		private static List<TraceWriter> m_writers = new List<TraceWriter>();
+		private static List<KeyValuePair<TraceWriter, EventLevel>> m_writers = new List<KeyValuePair<TraceWriter, EventLevel>>();
 
         /// <summary>
         /// Adds a writer to the trace stack
         /// </summary>
-        public static void AddWriter(TraceWriter tw)
+        public static void AddWriter(TraceWriter tw, EventLevel filter)
         {
-            m_writers.Add(tw);
+            m_writers.Add(new KeyValuePair<TraceWriter, EventLevel>(tw, filter));
         }
 
 		/// <summary>
@@ -66,7 +66,8 @@ namespace OpenIZ.Core.Diagnostics
 		{
 			foreach (var w in m_writers)
 			{
-				w.TraceEvent(level, this.m_source, format, args);
+                if(level < w.Value)
+				    w.Key.TraceEvent(level, this.m_source, format, args);
 			}
 		}
 

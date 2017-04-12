@@ -85,7 +85,8 @@ namespace OpenIZ.Core.Model
         /// </summary>
         public bool ShouldSerializeEffectiveVersionSequenceId()
         {
-            return this.m_effectiveVersionSequenceId.HasValue;
+            return this.m_effectiveVersionSequenceId.HasValue &&
+                this.m_obsoleteVersionSequenceId.HasValue;
         }
 
 

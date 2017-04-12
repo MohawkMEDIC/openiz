@@ -100,13 +100,23 @@ namespace OpenIZ.Core.Services.Impl
 			return extensionTypePersistenceService.Query(expression, offset, count, AuthenticationContext.Current.Principal, out totalCount);
 		}
 
-		/// <summary>
-		/// Get the assigning authority
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <returns>AssigningAuthority.</returns>
-		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
-		public AssigningAuthority GetAssigningAuthority(Guid id)
+        /// <summary>
+        /// Find template definitions
+        /// </summary>
+        public IEnumerable<TemplateDefinition> FindTemplateDefinitions(Expression<Func<TemplateDefinition, bool>> query, int offset, int? count, out int totalCount)
+        {
+            var templateDefinitionPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<TemplateDefinition>>();
+            if (templateDefinitionPersistence == null) throw new InvalidOperationException($"Unable to find persistence service: {typeof(IDataPersistenceService<TemplateDefinition>).FullName}");
+            return templateDefinitionPersistence.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalCount);
+        }
+
+        /// <summary>
+        /// Get the assigning authority
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>AssigningAuthority.</returns>
+        /// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
+        public AssigningAuthority GetAssigningAuthority(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>();
 

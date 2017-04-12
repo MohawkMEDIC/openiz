@@ -454,6 +454,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
+                    if ((count ?? 1000) > 25)
+                        connection.PrepareStatements = true;
+
                     var results = this.Query(connection, query, queryId, offset, count ?? 1000, out totalCount, true, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
                     this.Queried?.Invoke(this, postData);

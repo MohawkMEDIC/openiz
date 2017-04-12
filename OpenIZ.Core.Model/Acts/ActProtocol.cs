@@ -65,5 +65,13 @@ namespace OpenIZ.Core.Model.Acts
             if (other == null) return false;
             return base.SemanticEquals(obj) && other.ProtocolKey == this.ProtocolKey;
         }
+
+        /// <summary>
+        /// Shoud serialize source
+        /// </summary>
+        public override bool ShouldSerializeSourceEntityKey()
+        {
+            return false;
+        }
     }
 }

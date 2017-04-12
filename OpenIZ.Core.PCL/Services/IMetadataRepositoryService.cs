@@ -92,5 +92,10 @@ namespace OpenIZ.Core.Services
 		/// <param name="value">The URI of the extension.</param>
 		/// <returns>Returns an extension type or null of no extension type is found.</returns>
 		ExtensionType GetExtensionType(Uri value);
-	}
+
+        /// <summary>
+        /// Find template definitions matching the query
+        /// </summary>
+        IEnumerable<TemplateDefinition> FindTemplateDefinitions(Expression<Func<TemplateDefinition, bool>> query, int offset, int? count, out int totalCount);
+    }
 }

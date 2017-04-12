@@ -111,48 +111,70 @@ namespace OpenIZ.OrmLite.Providers
             if (pno !=  parms.Length && type == CommandType.Text)
                 throw new ArgumentOutOfRangeException(nameof(sql), $"Parameter mismatch query expected {pno} but {parms.Length} supplied");
 
-            var cmd = context.Connection.CreateCommand();
-            cmd.Transaction = context.Transaction;
-            cmd.CommandType = type;
-            cmd.CommandText = sql;
 
-            if (this.TraceSql)
-                this.m_tracer.TraceVerbose("[{0}] {1}", type, sql);
-
-            pno = 0;
-            foreach (var itm in parms)
+            IDbCommand cmd = context.GetPreparedCommand(sql);
+            if (cmd == null)
             {
-                var parm = cmd.CreateParameter();
-                var value = itm;
-
-                // Parameter type
-                if (value is String) parm.DbType = System.Data.DbType.String;
-                else if (value is DateTime) parm.DbType = System.Data.DbType.DateTime;
-                else if (value is DateTimeOffset) parm.DbType = DbType.DateTimeOffset;
-                else if (value is Int32) parm.DbType = System.Data.DbType.Int32;
-                else if (value is Boolean) parm.DbType = System.Data.DbType.Boolean;
-                else if (value is byte[])
-                    parm.DbType = System.Data.DbType.Binary;
-                else if (value is Guid || value is Guid?)
-                    parm.DbType = System.Data.DbType.Guid;
-                else if (value is float || value is double) parm.DbType = System.Data.DbType.Double;
-                else if (value is Decimal) parm.DbType = System.Data.DbType.Decimal;
-
-                // Set value
-                if (itm == null)
-                    parm.Value = DBNull.Value;
-                else
-                    parm.Value = itm;
-
-                if(type == CommandType.Text)
-                    parm.ParameterName = $"parm{pno++}";
-                parm.Direction = ParameterDirection.Input;
+                cmd = context.Connection.CreateCommand();
+                cmd.Transaction = context.Transaction;
+                cmd.CommandType = type;
+                cmd.CommandText = sql;
 
                 if (this.TraceSql)
-                    this.m_tracer.TraceVerbose("\t [{0}] {1} ({2})", cmd.Parameters.Count, parm.Value, parm.DbType);
+                    this.m_tracer.TraceVerbose("[{0}] {1}", type, sql);
+
+                pno = 0;
+                foreach (var itm in parms)
+                {
+                    var parm = cmd.CreateParameter();
+                    var value = itm;
+
+                    // Parameter type
+                    if (value is String) parm.DbType = System.Data.DbType.String;
+                    else if (value is DateTime) parm.DbType = System.Data.DbType.DateTime;
+                    else if (value is DateTimeOffset) parm.DbType = DbType.DateTimeOffset;
+                    else if (value is Int32) parm.DbType = System.Data.DbType.Int32;
+                    else if (value is Boolean) parm.DbType = System.Data.DbType.Boolean;
+                    else if (value is byte[])
+                        parm.DbType = System.Data.DbType.Binary;
+                    else if (value is Guid || value is Guid?)
+                        parm.DbType = System.Data.DbType.Guid;
+                    else if (value is float || value is double) parm.DbType = System.Data.DbType.Double;
+                    else if (value is Decimal) parm.DbType = System.Data.DbType.Decimal;
+                    else if (value == null) parm.DbType = DbType.Object;
+                    // Set value
+                    if (itm == null)
+                        parm.Value = DBNull.Value;
+                    else
+                        parm.Value = itm;
+
+                    if (type == CommandType.Text)
+                        parm.ParameterName = $"parm{pno++}";
+                    parm.Direction = ParameterDirection.Input;
+
+                    if (this.TraceSql)
+                        this.m_tracer.TraceVerbose("\t [{0}] {1} ({2})", cmd.Parameters.Count, parm.Value, parm.DbType);
 
 
-                cmd.Parameters.Add(parm);
+                    cmd.Parameters.Add(parm);
+                }
+
+                // Prepare command
+                if (context.PrepareStatements)
+                {
+                    if (!cmd.Parameters.OfType<IDataParameter>().Any(o => o.DbType == DbType.Object))
+                        cmd.Prepare();
+
+                    context.AddPreparedCommand(cmd);
+                }
+            }
+            else
+            {
+                if (cmd.Parameters.Count != parms.Length)
+                    throw new ArgumentOutOfRangeException(nameof(parms), "Argument count mis-match");
+
+                for(int i = 0; i < parms.Length; i++)
+                    (cmd.Parameters[i] as IDataParameter).Value = parms[i] ?? DBNull.Value; 
             }
 
             return cmd;
@@ -214,7 +236,8 @@ namespace OpenIZ.OrmLite.Providers
         public object ConvertValue(object value, Type toType)
         {
             object retVal = null;
-            MapUtil.TryConvert(value, toType, out retVal);
+            if(value != DBNull.Value)
+                MapUtil.TryConvert(value, toType, out retVal);
             return retVal;
         }
 

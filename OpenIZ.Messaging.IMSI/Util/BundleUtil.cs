@@ -57,9 +57,9 @@ namespace OpenIZ.Messaging.IMSI.Util
                 {
                     if (itm == null)
                         continue;
-                    if (!retVal.Item.Exists(o => o?.Tag == itm.Tag) && itm.Key.HasValue)
+                    if (!retVal.HasTag(itm.Tag) && itm.Key.HasValue)
                     {
-                        retVal.Item.Add(itm);
+                        retVal.Add(itm);
                         Bundle.ProcessModel(itm.GetLocked(), retVal, !lean);
                     }
                 }

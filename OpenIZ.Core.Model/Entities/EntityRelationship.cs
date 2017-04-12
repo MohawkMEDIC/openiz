@@ -248,5 +248,12 @@ namespace OpenIZ.Core.Model.Entities
 		{
 			return this.Quantity != 0;
 		}
-	}
+        /// <summary>
+        /// Shoudl serialize source entity?
+        /// </summary>
+        public override bool ShouldSerializeSourceEntityKey()
+        {
+            return false;
+        }
+    }
 }

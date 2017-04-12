@@ -35,18 +35,17 @@ namespace OpenIZ.Core.Model.Map
     {
 
         /// <summary>
-        /// Flavor validation
-        /// </summary>
-        private static Dictionary<string, MethodInfo> s_flavorValidation = new Dictionary<string, MethodInfo>();
-        /// <summary>
         /// Maps from wire format to real format
         /// Key - string in the format {FROM}>{TO}
         /// Value - MethodInfo of the method that will perform the operation to convert
         /// </summary>
         private static Dictionary<string, MethodInfo> s_wireMaps = new Dictionary<string, MethodInfo>();
 
+        // Non convertable
+        private static HashSet<String> m_nonConvertable = new HashSet<String>();
+
         // Conversion maps
-        private static Dictionary<KeyValuePair<Type, Type>, MethodInfo> m_converterMaps = new Dictionary<KeyValuePair<Type, Type>, MethodInfo>();
+        private static Dictionary<String, MethodInfo> m_converterMaps = new Dictionary<string, MethodInfo>();
 
         /// <summary>
         /// Register a map
@@ -79,7 +78,7 @@ namespace OpenIZ.Core.Model.Map
         /// <returns></returns>
         internal static MethodInfo FindConverter(Type scanType, Type sourceType, Type destType)
         {
-            var key = new KeyValuePair<Type, Type>(sourceType, destType);
+            var key = $"{sourceType.FullName}>{destType.FullName}";
             MethodInfo retVal = null;
             if (!m_converterMaps.TryGetValue(key, out retVal))
             {
@@ -95,11 +94,13 @@ namespace OpenIZ.Core.Model.Map
                                             mi.GetParameters()[0].ParameterType.FullName == sourceType.FullName && retVal == null)
                         retVal = mi;
 
-                if(retVal != null)
+                if (retVal != null)
                     lock (m_converterMaps)
-                        if (!m_converterMaps.ContainsKey(key)) 
+                        if (!m_converterMaps.ContainsKey(key))
                             m_converterMaps.Add(key, retVal);
             }
+            else
+                System.Diagnostics.Debugger.Break();
             return retVal;
 
         }
@@ -112,19 +113,24 @@ namespace OpenIZ.Core.Model.Map
         /// will be thrown whenever vocabulary cannot be cast.</remarks>
         public static bool TryConvert(object value, Type destType, out object result)
         {
+
             // The type represents a wrapper for an enumeration
             Type m_destType = destType;
 
-            bool requiresExplicitCastCall = false;
+            String convertKey = $"{value.GetType().FullName}>{destType.FullName}";
             if (value == null)
             {
                 result = null;
                 return true;
             }
+            else if (m_nonConvertable.Contains(convertKey))
+            {
+                result = null;
+                return false;
+            }
             else if (m_destType.GetTypeInfo().IsGenericType && !value.GetType().GetTypeInfo().IsEnum)
             {
                 m_destType = m_destType.GenericTypeArguments[0];
-                requiresExplicitCastCall = true;
             }
 
             // Is there a cast?
@@ -168,7 +174,7 @@ namespace OpenIZ.Core.Model.Map
                 // Try to find a map first...
                 // Using an operator overload
                 mi = FindConverter(typeof(OpenIZConvert), value.GetType(), destType);
-                if(mi == null)
+                if (mi == null)
                     mi = FindConverter(m_destType, value.GetType(), destType);
                 if (mi == null)
                     mi = FindConverter(value.GetType(), value.GetType(), destType);
@@ -201,16 +207,24 @@ namespace OpenIZ.Core.Model.Map
                         );
                         try
                         {
-                            return TryConvert(value, valueCastType, out result);
+                            var retVal = TryConvert(value, valueCastType, out result);
+                            if (!retVal)
+                                lock (m_nonConvertable)
+                                    m_nonConvertable.Add(convertKey);
+                            return retVal;
                         }
                         catch
                         {
                             result = null;
                             return false;
+
                         }
                     }
                     else
                     {
+                        lock (m_nonConvertable)
+                            m_nonConvertable.Add(convertKey);
+
                         result = null;
                         return false;
                     }
@@ -225,7 +239,11 @@ namespace OpenIZ.Core.Model.Map
                     result = mi.Invoke(null, new object[] { value, CultureInfo.InvariantCulture }); // Invoke the conversion method;
                 else
                     result = mi.Invoke(null, new object[] { value }); // Invoke the conversion method
-                return result != null;
+                var retVal = result != null;
+                if(!retVal) /// non convertable
+                    lock (m_nonConvertable)
+                        m_nonConvertable.Add(convertKey);
+                return retVal;
             }
             catch { result = null; return false; }
         }

@@ -228,5 +228,23 @@ namespace OpenIZ.Core.Model.Acts
                 other.PlayerEntityKey == this.PlayerEntityKey &&
                 other.ParticipationRoleKey == this.ParticipationRoleKey;
         }
+
+        /// <summary>
+        /// Don't serialize source entity
+        /// </summary>
+        public override bool ShouldSerializeSourceEntityKey()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Should serialize quantity
+        /// </summary>
+        public bool ShouldSerializeQuantity()
+        {
+            return this.Quantity > 0;
+        }
+
+        
     }
 }

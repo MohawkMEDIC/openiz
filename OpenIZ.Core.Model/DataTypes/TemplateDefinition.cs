@@ -32,6 +32,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents a template definition
     /// </summary>
     [KeyLookup(nameof(Mnemonic))]
+    [XmlRoot(nameof(TemplateDefinition), Namespace = "http://openiz.org/model")]
     [XmlType(nameof(TemplateDefinition), Namespace = "http://openiz.org/model"), JsonObject(nameof(TemplateDefinition))]
     public class TemplateDefinition : NonVersionedEntityData
     {

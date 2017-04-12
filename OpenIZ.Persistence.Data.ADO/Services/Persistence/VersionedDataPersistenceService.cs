@@ -196,7 +196,18 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
                 var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
                 var resultKeys = context.Query<Guid>(keyQuery.Build());
-                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query);
+                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Count(), resultKeys.Take(1000).Select(o => new Identifier<Guid>(o)).ToArray(), query);
+
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
+                {
+                    int ofs = 1000;
+                    var rkeys = o as Guid[];
+                    while (ofs < rkeys.Length)
+                    {
+                        this.m_queryPersistence.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
+                        ofs += 1000;
+                    }
+                }, resultKeys.ToArray());
 
                 if (countResults)
                     totalResults = (int)resultKeys.Count();
@@ -209,7 +220,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 return retVal.OfType<Object>();
             }
             else if (countResults)
+            {
                 totalResults = context.Count(domainQuery);
+                if (totalResults == 0)
+                    return new List<CompositeResult<TDomain, TDomainKey>>();
+            }
             else
                 totalResults = 0;
 

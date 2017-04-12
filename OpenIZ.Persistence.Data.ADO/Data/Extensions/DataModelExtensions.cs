@@ -260,7 +260,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// <summary>
         /// This method will load all basic properties for the specified model object
         /// </summary>
-        public static void LoadAssociations<TModel>(this TModel me, DataContext context, IPrincipal principal) where TModel : IIdentifiedEntity
+        public static void LoadAssociations<TModel>(this TModel me, DataContext context, IPrincipal principal, params String[] loadProperties) where TModel : IIdentifiedEntity
         {
             // I duz not haz a chzbrgr?
             if (me == null)
@@ -303,7 +303,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
                 lock (s_runtimeProperties)
                 {
-                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).IsAssignableFrom(o.PropertyType.StripGeneric()));
+                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).IsAssignableFrom(o.PropertyType.StripGeneric())).ToList();
 
 	                if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
 	                {
@@ -314,6 +314,10 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             // Iterate over the properties and load the properties
             foreach (var pi in properties)
             {
+                if (loadProperties.Length > 0 &&
+                    !loadProperties.Contains(pi.Name))
+                    continue;
+
                 // Map model type to domain
                 var adoPersister = AdoPersistenceService.GetPersister(pi.PropertyType.StripGeneric());
 
@@ -326,7 +330,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                     var assocPersister = adoPersister as IAdoAssociativePersistenceService;
 
                     // We want to query based on our PK and version if applicable
-                    decimal? versionSequence = (me as IVersionedEntity)?.VersionSequence;
+                    decimal? versionSequence = (me as IBaseEntityData)?.ObsoletionTime.HasValue == true ? (me as IVersionedEntity)?.VersionSequence : null;
                     var assoc = assocPersister.GetFromSource(context, me.Key.Value, versionSequence, principal);
                     var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
                     pi.SetValue(me, listValue);

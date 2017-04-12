@@ -38,6 +38,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <returns></returns>
         public override Bundle InsertInternal(DataContext context, Bundle data, IPrincipal principal)
         {
+            context.PrepareStatements = true;
             foreach (var itm in data.Item)
             {
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });

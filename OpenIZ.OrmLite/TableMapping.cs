@@ -42,7 +42,7 @@ namespace OpenIZ.OrmLite
 
             this.OrmType = t;
             this.TableName = t.GetCustomAttribute<TableAttribute>()?.Name ?? t.Name;
-            this.Columns = t.GetProperties().Where(o => o.GetCustomAttribute<ColumnAttribute>() != null).Select(o => ColumnMapping.Get(o, this));
+            this.Columns = t.GetProperties().Where(o => o.GetCustomAttribute<ColumnAttribute>() != null).Select(o => ColumnMapping.Get(o, this)).ToList();
             foreach (var itm in this.Columns)
                 this.m_mappings.Add(itm.SourceProperty.Name, itm);
 

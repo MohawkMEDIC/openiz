@@ -63,7 +63,7 @@ namespace OpenIZ.Core.Model
         public static String HashCode(this byte[] me)
         {
             long hash = 1009;
-            foreach(var b in me)
+            foreach (var b in me)
                 hash = ((hash << 5) + hash) ^ b;
             return BitConverter.ToString(BitConverter.GetBytes(hash)).Replace("-", "");
         }
@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Model
             bool equals = me.Count() == other.Count();
             foreach (var itm in me)
                 equals &= other.Any(o => o.SemanticEquals(itm));
-            foreach(var itm in other)
+            foreach (var itm in other)
                 equals &= me.Any(o => o.SemanticEquals(itm));
 
             return equals;
@@ -105,6 +105,8 @@ namespace OpenIZ.Core.Model
             return t;
         }
 
+        private static Dictionary<Type, PropertyInfo[]> s_typePropertyCache = new Dictionary<Type, PropertyInfo[]>();
+
         /// <summary>
         /// Update property data if required
         /// </summary>
@@ -116,7 +118,17 @@ namespace OpenIZ.Core.Model
                 throw new ArgumentNullException(nameof(fromEntity));
             else if (!fromEntity.GetType().GetTypeInfo().IsAssignableFrom(toEntity.GetType().GetTypeInfo()))
                 throw new ArgumentException("Type mismatch", nameof(fromEntity));
-            foreach (var destinationPi in toEntity.GetType().GetRuntimeProperties())
+
+            PropertyInfo[] properties = null;
+            if (!s_typePropertyCache.TryGetValue(toEntity.GetType(), out properties))
+            {
+                properties = toEntity.GetType().GetRuntimeProperties().Where(destinationPi => destinationPi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
+                    destinationPi.CanWrite).ToArray();
+                lock (s_typePropertyCache)
+                    if (!s_typePropertyCache.ContainsKey(toEntity.GetType()))
+                        s_typePropertyCache.Add(toEntity.GetType(), properties);
+            }
+            foreach (var destinationPi in properties.AsParallel())
             {
                 var sourcePi = fromEntity.GetType().GetRuntimeProperty(destinationPi.Name);
                 // Skip properties no in the source
@@ -124,31 +136,28 @@ namespace OpenIZ.Core.Model
                     continue;
 
                 // Skip data ignore
-                if (destinationPi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
-                    destinationPi.CanWrite)
-                {
-                    if (destinationPi.PropertyType.GetTypeInfo().IsGenericType &&
-                        destinationPi.PropertyType.GetGenericTypeDefinition().Namespace.StartsWith("System.Data.Linq") ||
-                        destinationPi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
-                        continue;
+                if (destinationPi.PropertyType.GetTypeInfo().IsGenericType &&
+                    destinationPi.PropertyType.GetGenericTypeDefinition().Namespace.StartsWith("System.Data.Linq") ||
+                    destinationPi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
+                    continue;
 
 
-                    object newValue = sourcePi.GetValue(fromEntity),
-                        oldValue = destinationPi.GetValue(toEntity);
+                object newValue = sourcePi.GetValue(fromEntity),
+                    oldValue = destinationPi.GetValue(toEntity);
 
-                    // HACK: New value wrap for nullables
-                    if (newValue is Guid? && newValue != null)
-                        newValue = (newValue as Guid?).Value;
+                // HACK: New value wrap for nullables
+                if (newValue is Guid? && newValue != null)
+                    newValue = (newValue as Guid?).Value;
 
-                    // HACK: Empty lists are NULL
-                    if ((newValue as IList)?.Count == 0)
-                        newValue = null;
+                // HACK: Empty lists are NULL
+                if ((newValue as IList)?.Count == 0)
+                    newValue = null;
 
-                    if (newValue != null &&
-                        !newValue.Equals(oldValue) == true &&
-                        (destinationPi.PropertyType.GetTypeInfo().IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !destinationPi.PropertyType.GetTypeInfo().IsValueType))
-                        destinationPi.SetValue(toEntity, newValue);
-                }
+                if (newValue != null &&
+                    !newValue.Equals(oldValue) == true &&
+                    (destinationPi.PropertyType.GetTypeInfo().IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !destinationPi.PropertyType.GetTypeInfo().IsValueType))
+                    destinationPi.SetValue(toEntity, newValue);
+
             }
         }
 
@@ -284,7 +293,7 @@ namespace OpenIZ.Core.Model
             if (!s_propertyCache.TryGetValue(key, out retVal))
             {
                 retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>()?.FirstOrDefault()?.ElementName == propertyName);
-                if(followReferences) retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
+                if (followReferences) retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
 
                 if (retVal.Name.EndsWith("Xml"))
                     retVal = type.GetRuntimeProperty(retVal.Name.Substring(0, retVal.Name.Length - 3));

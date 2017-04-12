@@ -44,6 +44,9 @@ namespace OpenIZ.Core.Model
     public abstract class IdentifiedData : IIdentifiedEntity
     {
 
+        // Tag
+        protected string m_tag;
+
         // True when the data class is locked for storage
         private bool m_delayLoad = false;
 
@@ -122,7 +125,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Gets a tag which changes whenever the object is updated
         /// </summary>
-        [XmlElement("etag"), JsonProperty("etag"), DataIgnore]
+        [XmlIgnore, JsonIgnore, DataIgnore]
         public virtual String Tag
         {
             get

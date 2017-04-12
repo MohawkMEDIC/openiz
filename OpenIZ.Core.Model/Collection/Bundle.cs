@@ -92,10 +92,9 @@ namespace OpenIZ.Core.Model.Collection
         private static Dictionary<Type, IEnumerable<PropertyInfo>> m_propertyCache = new Dictionary<System.Type, IEnumerable<PropertyInfo>>();
         private static object s_lockObject = new object();
 
-        /// <summary>
-        /// Represents bundle contents
-        /// </summary>
+        // Bundle contents
         private List<IdentifiedData> m_bundleContents = new List<IdentifiedData>();
+        private HashSet<String> m_bundleTags = new HashSet<string>(); // hashset of all tags
 
         // Modified now
         private DateTimeOffset m_modifiedOn = DateTime.Now;
@@ -169,6 +168,34 @@ namespace OpenIZ.Core.Model.Collection
         public int TotalResults { get; set; }
 
         /// <summary>
+        /// Add item to the bundle
+        /// </summary>
+        public void Add(IdentifiedData data)
+        {
+            if (data == null) return;
+            this.Item.Add(data);
+            this.m_bundleTags.Add(data.Tag);
+        }
+
+        /// <summary>
+        /// Insert data at the specified index
+        /// </summary>
+        public void Insert(int index, IdentifiedData data)
+        {
+            if (data == null) return;
+            this.Item.Insert(index, data);
+            this.m_bundleTags.Add(data.Tag);
+        } 
+
+        /// <summary>
+        /// True if the bundle has a tag
+        /// </summary>
+        public bool HasTag(String tag)
+        {
+            return this.m_bundleTags.Contains(tag);
+        }
+
+        /// <summary>
         /// Create a bundle
         /// </summary>
         public static Bundle CreateBundle(IdentifiedData resourceRoot)
@@ -180,7 +207,7 @@ namespace OpenIZ.Core.Model.Collection
             if (resourceRoot == null)
                 return retVal;
             retVal.EntryKey = resourceRoot.Key;
-            retVal.Item.Add(resourceRoot);
+            retVal.Add(resourceRoot);
             ProcessModel(resourceRoot, retVal);
             return retVal;
         }
@@ -205,7 +232,7 @@ namespace OpenIZ.Core.Model.Collection
                     continue;
                 if (!retVal.Item.Exists(o => o.Tag == itm.Tag) && itm.Key.HasValue)
                 {
-                    retVal.Item.Add(itm.GetLocked());
+                    retVal.Add(itm.GetLocked());
                     Bundle.ProcessModel(itm.GetLocked() as IdentifiedData, retVal);
                 }
             }
@@ -288,7 +315,7 @@ namespace OpenIZ.Core.Model.Collection
                     lock (s_lockObject)
                     {
                         properties = model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null ||
-                            typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && p.GetCustomAttributes<XmlElementAttribute>().Count() > 0 && followList);
+                            typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && p.GetCustomAttributes<XmlElementAttribute>().Count() > 0 && followList).ToList();
                         m_propertyCache.Add(model.GetType(), properties);
                     }
                 
@@ -314,8 +341,8 @@ namespace OpenIZ.Core.Model.Collection
 
                                     if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                         lock (currentBundle.m_lockObject)
-                                            if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag) && iValue.Key.HasValue)
-                                                currentBundle.Item.Insert(0, iValue);
+                                            if (!currentBundle.HasTag(iValue.Tag) && iValue.Key.HasValue)
+                                                currentBundle.Insert(0, iValue);
                                     ProcessModel(iValue, currentBundle, false);
                                 }
                             }
@@ -325,12 +352,12 @@ namespace OpenIZ.Core.Model.Collection
                             var iValue = rawValue as IdentifiedData;
 
                             // Check for existing item
-                            if (iValue != null && !currentBundle.Item.Exists(i => i?.Tag == iValue.Tag ))
+                            if (iValue != null && !currentBundle.HasTag(iValue.Tag ))
                             {
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null && iValue != null)
                                     lock (currentBundle.m_lockObject)
-                                        if (!currentBundle.Item.Exists(o => o.Tag == iValue.Tag) && iValue.Key.HasValue)
-                                            currentBundle.Item.Insert(0, iValue);
+                                        if (!currentBundle.HasTag(iValue.Tag) && iValue.Key.HasValue)
+                                            currentBundle.Insert(0, iValue);
                                 ProcessModel(iValue, currentBundle, followList);
                             }
                         }

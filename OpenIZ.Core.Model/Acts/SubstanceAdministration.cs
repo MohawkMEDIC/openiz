@@ -205,5 +205,14 @@ namespace OpenIZ.Core.Model.Acts
                 other.DoseQuantity == this.DoseQuantity &&
                 other.SequenceId == this.SequenceId;
         }
+
+        /// <summary>
+        /// Should serialize site key
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeSiteKey ()
+        {
+            return this.SiteKey.HasValue;
+        }
     }
 }

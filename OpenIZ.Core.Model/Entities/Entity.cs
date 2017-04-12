@@ -38,6 +38,10 @@ namespace OpenIZ.Core.Model.Entities
 	[Classifier(nameof(ClassConcept))]
 	public class Entity : VersionedEntityData<Entity>
 	{
+
+        private TemplateDefinition m_template;
+        private Guid? m_templateKey;
+
 		// Class concept
 		private Concept m_classConcept;
 
@@ -332,18 +336,42 @@ namespace OpenIZ.Core.Model.Entities
 			set;
 		}
 
-		/// <summary>
-		/// Gets or sets the template identifier
-		/// </summary>
-		[AutoLoad, XmlElement("template"), JsonProperty("template")]
-		public TemplateDefinition Template { get; set; }
+        /// <summary>
+        /// Gets the template key
+        /// </summary>
+        [XmlElement("template"), JsonProperty("template")]
+        public Guid? TemplateKey
+        {
+            get
+            {
+                return this.m_templateKey;
+            }
+            set
+            {
+                this.m_templateKey = value;
+                if (value.HasValue && value != this.m_template?.Key)
+                    this.m_template = null;
+            }
+        }
 
-		/// <summary>
-		/// Gets the template key
-		/// </summary>
-		[XmlIgnore, JsonIgnore]
-		public Guid? TemplateKey { get { return this.Template?.Key; } set { } }
-
+        /// <summary>
+        /// Gets or sets the template definition
+        /// </summary>
+        [AutoLoad, SerializationReference(nameof(TemplateKey)), XmlIgnore, JsonIgnore]
+        public TemplateDefinition Template
+        {
+            get
+            {
+                this.m_template = base.DelayLoad(this.m_templateKey, this.m_template);
+                return this.m_template;
+            }
+            set
+            {
+                this.m_template = value;
+                this.m_templateKey = value?.Key;
+            }
+        }
+        
 		/// <summary>
 		/// Type concept identifier
 		/// </summary>
@@ -436,7 +464,7 @@ namespace OpenIZ.Core.Model.Entities
 		/// <summary>
 		/// Should serialize type concept
 		/// </summary>
-		public bool ShouldSerializeTypeConcept()
+		public bool ShouldSerializeTypeConceptKey()
 		{
 			return this.TypeConceptKey.HasValue;
 		}

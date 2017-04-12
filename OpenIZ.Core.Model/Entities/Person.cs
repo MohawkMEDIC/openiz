@@ -98,6 +98,14 @@ namespace OpenIZ.Core.Model.Entities
 		[AutoLoad, XmlElement("language"), JsonProperty("language")]
 		public List<PersonLanguageCommunication> LanguageCommunication { get; set; }
 
+        /// <summary>
+        /// Should serialize date of birth precision
+        /// </summary>
+        public bool ShouldSerializeDateOfBirthPrecision()
+        {
+            return this.DateOfBirthPrecision.HasValue;
+        }
+
 		/// <summary>
 		/// Semantic equality function
 		/// </summary>

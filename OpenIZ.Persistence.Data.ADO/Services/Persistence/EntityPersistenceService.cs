@@ -81,9 +81,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             retVal.ClassConceptKey = entInstance.ClassConceptKey;
             retVal.DeterminerConceptKey = entInstance.DeterminerConceptKey;
-            var template = context.FirstOrDefault<DbTemplateDefinition>(o => o.Key == entInstance.TemplateKey);
-            retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(template);
-
+            
             // Inversion relationships
             //if (retVal.Relationships != null)
             //{

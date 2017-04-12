@@ -68,8 +68,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             retVal.ClassConceptKey = actInstance?.ClassConceptKey;
             retVal.MoodConceptKey = actInstance?.MoodConceptKey;
-            var template = context.FirstOrDefault<DbTemplateDefinition>(o => o.Key == actInstance.TemplateKey);
-            retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(template);
 
             var protocolStmt = context.CreateSqlStatement<DbActProtocol>().SelectFrom()
                 .InnerJoin<DbActProtocol, DbProtocol>(o => o.ProtocolKey, o => o.Key)

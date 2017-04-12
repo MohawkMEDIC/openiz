@@ -50,12 +50,14 @@ namespace OpenIZ.Core.Model.Acts
         private Guid? m_statusConceptKey;
         private Guid? m_moodConceptKey;
         private Guid? m_reasonConceptKey;
+        private Guid? m_templateKey;
 
         private Concept m_classConcept;
         private Concept m_typeConcept;
         private Concept m_statusConcept;
         private Concept m_moodConcept;
         private Concept m_reasonConcept;
+        private TemplateDefinition m_template;
 
         /// <summary>
         /// Constructor for ACT
@@ -70,7 +72,7 @@ namespace OpenIZ.Core.Model.Acts
             this.Tags = new SimpleAssociationCollection<ActTag>(this);
             this.Protocols = new SimpleAssociationCollection<ActProtocol>();
             this.Policies = new SimpleAssociationCollection<SecurityPolicyInstance>();
-            
+
         }
         /// <summary>
         /// Gets or sets an indicator which identifies whether the object is negated
@@ -87,20 +89,43 @@ namespace OpenIZ.Core.Model.Acts
         /// <summary>
         /// Gets the template key
         /// </summary>
-        [XmlIgnore, JsonIgnore]
-        public Guid? TemplateKey { get { return this.Template?.Key; } set { } }
-
+        [XmlElement("template"), JsonProperty("template")]
+        public Guid? TemplateKey
+        {
+            get
+            {
+                return this.m_templateKey;
+            }
+            set
+            {
+                this.m_templateKey = value;
+                if (value.HasValue && value != this.m_template?.Key)
+                    this.m_template = null;
+            }
+        }
 
         /// <summary>
-        /// Gets or sets the template identifier 
+        /// Gets or sets the template definition
         /// </summary>
-        [AutoLoad, XmlElement("template"), JsonProperty("template")]
-        public TemplateDefinition Template { get; set; }
+        [AutoLoad, SerializationReference(nameof(TemplateKey)), XmlIgnore, JsonIgnore]
+        public TemplateDefinition Template
+        {
+            get
+            {
+                this.m_template = base.DelayLoad(this.m_templateKey, this.m_template);
+                return this.m_template;
+            }
+            set
+            {
+                this.m_template = value;
+                this.m_templateKey = value?.Key;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the creation time in XML format
         /// </summary>
-        [DataIgnore, XmlElement("actTime"), JsonProperty("actTime")]
+            [DataIgnore, XmlElement("actTime"), JsonProperty("actTime")]
         public String ActTimeXml
         {
             get { return this.ActTime.ToString("o", CultureInfo.InvariantCulture); }
@@ -348,8 +373,8 @@ namespace OpenIZ.Core.Model.Acts
             }
             set
             {
-	            this.m_typeConceptKey = value?.Key;
-	            this.m_typeConcept = value;
+                this.m_typeConceptKey = value?.Key;
+                this.m_typeConcept = value;
             }
         }
 
@@ -396,7 +421,8 @@ namespace OpenIZ.Core.Model.Acts
         /// Identifies protocols attached to the act
         /// </summary>
         [AutoLoad, XmlElement("protocol"), JsonProperty("protocol")]
-        public SimpleAssociationCollection<ActProtocol> Protocols {
+        public SimpleAssociationCollection<ActProtocol> Protocols
+        {
             get;
             set;
         }
@@ -417,6 +443,13 @@ namespace OpenIZ.Core.Model.Acts
             this.m_moodConcept = this.m_reasonConcept = this.m_classConcept = this.m_statusConcept = this.m_typeConcept = null;
         }
 
+        /// <summary>
+        /// True if reason concept key should be serialized
+        /// </summary>
+        public bool ShouldSerializeReasonConceptKey()
+        {
+            return this.ReasonConceptKey.HasValue && this.ReasonConceptKey.GetValueOrDefault() != Guid.Empty;
+        }
 
         /// <summary>
         /// Clean the patient of any empty "noise" elements
@@ -447,7 +480,7 @@ namespace OpenIZ.Core.Model.Acts
                 this.MoodConceptKey == other.MoodConceptKey &&
                 this.Notes?.SemanticEquals(other.Notes) == true &&
                 this.Participations?.SemanticEquals(other.Participations) == true &&
-                this.Policies?.SemanticEquals(other.Policies) == true  &&
+                this.Policies?.SemanticEquals(other.Policies) == true &&
                 this.Protocols?.SemanticEquals(other.Protocols) == true &&
                 this.ReasonConceptKey == other.ReasonConceptKey &&
                 this.Relationships?.SemanticEquals(other.Relationships) == true &&

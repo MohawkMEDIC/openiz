@@ -17,6 +17,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using MARC.HI.EHRS.SVC.Core.Data;
+using System.Diagnostics;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -111,7 +112,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
 
             // Query has been registered?
-            if (this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
+            if (queryId != Guid.Empty && this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
             {
                 totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
                 var resultKeys = this.m_queryPersistence.GetQueryResults<Guid>(queryId.ToString(), offset, count.Value);
@@ -143,6 +144,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
             }
 
+            // Build and see if the query already exists on the stack???
+            domainQuery = domainQuery.Build();
+            var cachedQueryResults = context.CacheQuery(domainQuery);
+            if (cachedQueryResults != null)
+            {
+                totalResults = cachedQueryResults.Count();
+                return cachedQueryResults;
+            }
+
             // Query id just get the UUIDs in the db
             if (queryId != Guid.Empty)
             {
@@ -162,7 +172,18 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
                 var resultKeys = context.Query<Guid>(keyQuery.Build());
                 //ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(a => this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query), null);
-                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query);
+                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Count(), resultKeys.Select(o => new Identifier<Guid>(o)).Take(1000).ToArray(), query);
+
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
+                {
+                    int ofs = 1000;
+                    var rkeys = o as Guid[];
+                    while (ofs < rkeys.Length)
+                    {
+                        this.m_queryPersistence.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
+                        ofs += 1000;
+                    }
+                }, resultKeys.ToArray());
 
                 if (incudeCount)
                     totalResults = (int)resultKeys.Count();
@@ -175,7 +196,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 return retVal.OfType<Object>();
             }
             else if (incudeCount)
+            {
                 totalResults = context.Count(domainQuery);
+                if (totalResults == 0)
+                    return new List<Object>();
+            }
             else
                 totalResults = 0;
 
@@ -184,8 +209,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (count.HasValue)
                 domainQuery.Limit(count.Value);
 
+
             var results = context.Query<TQueryReturn>(domainQuery).OfType<Object>();
 
+            // Cache query result
+            context.AddQuery(domainQuery, results);
             return results;
         }
 
@@ -203,7 +231,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         protected Expression<Func<TAssociation, bool>> BuildSourceQuery<TAssociation>(Guid sourceId, decimal? versionSequenceId) where TAssociation : IVersionedAssociation
         {
-            return o => o.SourceEntityKey == sourceId && o.EffectiveVersionSequenceId <= versionSequenceId && (o.ObsoleteVersionSequenceId == null || o.ObsoleteVersionSequenceId > versionSequenceId);
+            if (versionSequenceId == null)
+                return o => o.SourceEntityKey == sourceId && o.ObsoleteVersionSequenceId == null;
+            else
+                return o => o.SourceEntityKey == sourceId && o.EffectiveVersionSequenceId <= versionSequenceId && (o.ObsoleteVersionSequenceId == null || o.ObsoleteVersionSequenceId > versionSequenceId);
         }
 
         /// <summary>

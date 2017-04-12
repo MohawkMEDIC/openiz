@@ -124,7 +124,7 @@ namespace OpenIZ.Caching.Memory
 
             // Now we start timers
             var timerService = ApplicationContext.Current.GetService<ITimerService>();
-            if(timerService != null)
+            if(timerService != null && this.m_configuration.Types.Count > 0)
             {
                 if (timerService.IsRunning)
                 {

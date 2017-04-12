@@ -36,9 +36,14 @@ namespace OpenIZ.OrmLite
         // Items to be added to cache after an action
         private Dictionary<Guid, IdentifiedData> m_cacheCommit = new Dictionary<Guid, IdentifiedData>();
 
+        // Cached query
+        private Dictionary<String, IEnumerable<Object>> m_cachedQuery = new Dictionary<string, IEnumerable<object>>();
+
         // Trace source
         private Tracer m_tracer = Tracer.GetTracer(typeof(DataContext));
-       
+
+        // Commands prepared on this connection
+        private Dictionary<String, IDbCommand> m_preparedCommands = new Dictionary<string, IDbCommand>();
 
         /// <summary>
         /// Connection
@@ -49,7 +54,7 @@ namespace OpenIZ.OrmLite
         /// Data dictionary
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
-
+        
         /// <summary>
         /// Cache on commit
         /// </summary>
@@ -60,6 +65,11 @@ namespace OpenIZ.OrmLite
                 return this.m_cacheCommit.Values;
             }
         }
+
+        /// <summary>
+        /// True if the context should prepare statements
+        /// </summary>
+        public bool PrepareStatements { get; set; }
 
         /// <summary>
         /// Current Transaction
@@ -127,13 +137,34 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
-        /// Open a cloned connection
+        /// Add a prepared command
         /// </summary>
-        private DataContext OpenClonedConnection()
+        internal void AddPreparedCommand(IDbCommand cmd)
         {
-            var retVal = this.m_provider.CloneConnection(this);
-            retVal.Open();
+            if (!this.m_preparedCommands.ContainsKey(cmd.CommandText))
+                lock (this.m_preparedCommands)
+                    if (!this.m_preparedCommands.ContainsKey(cmd.CommandText)) // Check after lock
+                        this.m_preparedCommands.Add(cmd.CommandText, cmd);
+           
+        }
+
+        /// <summary>
+        /// Get prepared command
+        /// </summary>
+        internal IDbCommand GetPreparedCommand(string sql)
+        {
+            IDbCommand retVal = null;
+            this.m_preparedCommands.TryGetValue(sql, out retVal);
             return retVal;
+        }
+        
+        /// <summary>
+        /// True if the command is prepared
+        /// </summary>
+        internal bool IsPreparedCommand(IDbCommand cmd)
+        {
+            IDbCommand retVal = null;
+            return this.m_preparedCommands.TryGetValue(cmd.CommandText, out retVal) && retVal == cmd;
         }
 
         /// <summary>
@@ -141,6 +172,12 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public void Dispose()
         {
+            foreach (var itm in this.m_preparedCommands.Values)
+                itm.Dispose();
+            this.m_cacheCommit.Clear();
+            this.m_cacheCommit = null;
+            this.m_cachedQuery.Clear();
+            this.m_cachedQuery = null;
             this.m_transaction?.Dispose();
             this.m_connection?.Dispose();
         }
@@ -177,5 +214,47 @@ namespace OpenIZ.OrmLite
         {
             return new SqlStatement<T>(this.m_provider);
         }
+
+        /// <summary>
+        /// Query
+        /// </summary>
+        public String GetQueryLiteral(SqlStatement query)
+        {
+            StringBuilder retVal = new StringBuilder(query.SQL);
+            String sql = retVal.ToString();
+            var qList = query.Arguments.ToArray();
+            int parmId = 0;
+            while(sql.Contains("?"))
+            {
+                var pIndex = sql.IndexOf("?");
+                retVal.Remove(pIndex, 1);
+                retVal.Insert(pIndex, qList[parmId++]);
+                sql = retVal.ToString();
+            }
+            return retVal.ToString();
+        }
+
+        /// <summary>
+        /// Add a cached set of query results
+        /// </summary>
+        public void AddQuery(SqlStatement domainQuery, IEnumerable<object> results)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            lock(this.m_cachedQuery)
+                if(!this.m_cachedQuery.ContainsKey(key))
+                    this.m_cachedQuery.Add(key, results);
+        }
+
+        /// <summary>
+        /// Cache a query 
+        /// </summary>
+        public IEnumerable<Object> CacheQuery(SqlStatement domainQuery)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            IEnumerable<Object> retVal = null;
+            this.m_cachedQuery.TryGetValue(key, out retVal);
+            return retVal;
+        }
+
     }
 }

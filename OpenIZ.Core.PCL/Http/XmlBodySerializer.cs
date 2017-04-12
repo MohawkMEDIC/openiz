@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Http
@@ -27,6 +28,10 @@ namespace OpenIZ.Core.Http
 	/// </summary>
 	internal class XmlBodySerializer : IBodySerializer
 	{
+
+        // Serializers
+        private static Dictionary<Type, XmlSerializer> m_serializers = new Dictionary<Type, XmlSerializer>();
+
 		// Serializer
 		private XmlSerializer m_serializer;
 
@@ -35,7 +40,13 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		public XmlBodySerializer(Type type)
 		{
-			this.m_serializer = new XmlSerializer(type);
+            if (!m_serializers.TryGetValue(type, out this.m_serializer))
+            {
+                this.m_serializer = new XmlSerializer(type);
+                lock (m_serializers)
+                    if (!m_serializers.ContainsKey(type))
+                        m_serializers.Add(type, this.m_serializer);
+            }
 		}
 
 		#region IBodySerializer implementation
