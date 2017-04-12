@@ -316,12 +316,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 try
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Loading {0}...", t.AssemblyQualifiedName);
-                    ApplicationContext.Current.AddServiceProvider(t);
 
-                    // Add to cache since we're here anyways
+	                if (t.ContainsGenericParameters)
+	                {
+						ApplicationContext.Current.AddServiceProvider(t.MakeGenericType(t.GetGenericArguments()));
+	                }
+	                else
+	                {
+						ApplicationContext.Current.AddServiceProvider(t);
+					}
 
-                    //s_persistenceCache.Add(t.GetGenericArguments()[0], Activator.CreateInstance(t) as IAdoPersistenceService);
-                }
+					// Add to cache since we're here anyways
+
+					//s_persistenceCache.Add(t.GetGenericArguments()[0], Activator.CreateInstance(t) as IAdoPersistenceService);
+				}
                 catch (Exception e)
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error adding service {0} : {1}", t.AssemblyQualifiedName, e);
