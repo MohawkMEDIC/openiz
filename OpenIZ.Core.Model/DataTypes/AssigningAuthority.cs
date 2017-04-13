@@ -37,6 +37,8 @@ namespace OpenIZ.Core.Model.DataTypes
     public  class AssigningAuthority : BaseEntityData
     {
 
+        private bool m_minimal = false;
+
         /// <summary>
         /// Assigning authority
         /// </summary>
@@ -159,7 +161,8 @@ namespace OpenIZ.Core.Model.DataTypes
             {
                 Key = this.Key,
                 DomainName = this.DomainName,
-                Name = this.Name
+                Name = this.Name,
+                m_minimal = true
             };
         }
 
@@ -185,12 +188,11 @@ namespace OpenIZ.Core.Model.DataTypes
                 this.AssigningDeviceKey == other.AssigningDeviceKey;
         }
 
-        /// <summary>
-        /// Should serialize assigning device key
-        /// </summary>
-        public bool ShouldSerializeAssigningDeviceKey()
-        {
-            return this.AssigningDeviceKey.HasValue;
-        }
+
+        public bool ShouldSerializeAuthorityScopeXml() => !this.m_minimal;
+        public bool ShouldSerializeUrl() => !this.m_minimal;
+        public bool ShouldSerializeOid() => !this.m_minimal;
+        public bool ShouldSerializeValidationRegex() => !this.m_minimal;
+        public bool ShouldSerializeAssigningDeviceKey() => !this.m_minimal && this.AssigningDeviceKey.HasValue;
     }
 }
