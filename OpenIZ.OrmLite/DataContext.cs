@@ -149,6 +149,22 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
+        /// Opens a cloned context
+        /// </summary>
+        public DataContext OpenClonedContext()
+        {
+            if (this.Transaction != null)
+                throw new InvalidOperationException("Cannot clone connection in transaction");
+            var retVal = this.m_provider.CloneConnection(this);
+            retVal.Open();
+            retVal.m_dataDictionary = this.m_dataDictionary; // share data
+            retVal.m_cachedQuery = this.m_cachedQuery;
+            
+            //retVal.PrepareStatements = this.PrepareStatements;
+            return retVal;
+        }
+
+        /// <summary>
         /// Get prepared command
         /// </summary>
         internal IDbCommand GetPreparedCommand(string sql)

@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.OrmLite;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Persistence.Data.PSQL.Security
 {
@@ -43,6 +44,7 @@ namespace OpenIZ.Persistence.Data.PSQL.Security
 
         // Policy handler
         private IPolicyHandler m_handler;
+
 
         /// <summary>
         /// Create a local security policy
@@ -116,6 +118,20 @@ namespace OpenIZ.Persistence.Data.PSQL.Security
             get
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the load state
+        /// </summary>
+        public LoadState LoadState
+        {
+            get
+            {
+                return LoadState.FullLoad;
+            }
+            set
+            {
             }
         }
     }

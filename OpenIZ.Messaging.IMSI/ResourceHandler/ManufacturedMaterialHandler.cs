@@ -34,127 +34,65 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 	/// <summary>
 	/// Represents a IMSI handler for manufactured materials
 	/// </summary>
-	public class ManufacturedMaterialHandler : IResourceHandler
+	public class ManufacturedMaterialHandler : ResourceHandlerBase<ManufacturedMaterial>
 	{
-		// Repository
-		private IMaterialRepositoryService m_repository;
 
-		public ManufacturedMaterialHandler()
-		{
-			ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
-		}
-
-		/// <summary>
-		/// Gets the resource name
-		/// </summary>
-		public string ResourceName
-		{
-			get
-			{
-				return "ManufacturedMaterial";
-			}
-		}
-
-		/// <summary>
-		/// Gets the type that this handler services
-		/// </summary>
-		public Type Type
-		{
-			get
-			{
-				return typeof(ManufacturedMaterial);
-			}
-		}
-
-		/// <summary>
-		/// Create the specified material
-		/// </summary>
+        /// <summary>
+        /// Create the specified material
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
-        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
-		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
+        public override IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        {
+            return base.Create(data, updateIfExists);
+        }
 
-			Bundle bundleData = data as Bundle;
-			bundleData?.Reconstitute();
-			var processData = bundleData?.Entry ?? data;
-
-			if (processData is Bundle) // Client submitted a bundle
-				throw new InvalidOperationException("Bundle must have an entry point");
-			else if (processData is ManufacturedMaterial)
-			{
-				var material = processData as ManufacturedMaterial;
-				if (updateIfExists)
-					return this.m_repository.Save(material);
-				else
-					return this.m_repository.Insert(material);
-			}
-			else
-				throw new ArgumentException(nameof(data), "Invalid data type");
-		}
-
-		/// <summary>
-		/// Gets the specified manufactured material
-		/// </summary>
-		/// <returns></returns>
+        /// <summary>
+        /// Gets the specified manufactured material
+        /// </summary>
+        /// <returns></returns>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IdentifiedData Get(Guid id, Guid versionId)
-		{
-			return this.m_repository.GetManufacturedMaterial(id, versionId);
-		}
+        public override IdentifiedData Get(Guid id, Guid versionId)
+        {
+            return base.Get(id, versionId);
+        }
 
-		/// <summary>
-		/// Obsoletes the specified material
-		/// </summary>
+        /// <summary>
+        /// Obsoletes the specified material
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
-        public IdentifiedData Obsolete(Guid key)
-		{
-			return this.m_repository.ObsoleteManufacturedMaterial(key);
-		}
+        public override IdentifiedData Obsolete(Guid key)
+        {
+            return base.Obsolete(key);
+        }
 
         /// <summary>
         /// Query for the specified material
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
-		{
-            int tr = 0;
-            return this.Query(queryParameters, 0, 100, out tr);
-		}
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        {
+            return base.Query(queryParameters);
+        }
+
 
         /// <summary>
         /// Query for the specified material with restrictions
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
-		{
-            var filter = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(queryParameters);
-            List<String> queryId = null;
-            if (this.m_repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
-                return (this.m_repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
-            else
-                return this.m_repository.FindManufacturedMaterial(filter, offset, count, out totalCount);
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        {
+            return base.Query(queryParameters, offset, count, out totalCount);
         }
 
-		/// <summary>
-		/// Update the specified material
-		/// </summary>
+
+        /// <summary>
+        /// Update the specified material
+        /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
-        public IdentifiedData Update(IdentifiedData data)
-		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
+        public override IdentifiedData Update(IdentifiedData data)
+        {
+            return base.Update(data);
+        }
 
-			var bundleData = data as Bundle;
-			bundleData?.Reconstitute();
-			var saveData = bundleData?.Entry ?? data;
-
-			if (saveData is Bundle)
-				throw new InvalidOperationException("Bundle must have an entry");
-			else if (saveData is ManufacturedMaterial)
-				return this.m_repository.Save(saveData as ManufacturedMaterial);
-			else
-				throw new ArgumentException(nameof(data), "Invalid storage type");
-		}
-	}
+    }
 }

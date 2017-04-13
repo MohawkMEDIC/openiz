@@ -163,6 +163,20 @@ namespace OpenIZ.Caching.Memory
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
+
+                // Parent cache lookup
+                Func<Type, bool> cacheLookup = (o) =>
+                {
+                    if (!this.m_entryTable.TryGetValue(o, out cache))
+                    {
+                        if (this.m_configuration.AutoSubscribeTypes && (typeof(Entity).IsAssignableFrom(o) || typeof(Act).IsAssignableFrom(o)))
+                            cache = this.RegisterCacheType(o);
+                        else
+                            return false;
+                    }
+                    return true;
+                };
+
                 // We want to cascade up the type heirarchy this is a do/while with IF instead of while
                 // because the ELSE-IF clause
                 do
@@ -182,7 +196,7 @@ namespace OpenIZ.Caching.Memory
                             }
 
                     objData = objData.BaseType;
-                } while (this.m_entryTable.TryGetValue(objData, out cache));
+                } while (cacheLookup(objData));
 
             }
             else if (this.m_configuration.AutoSubscribeTypes) {
@@ -348,7 +362,7 @@ namespace OpenIZ.Caching.Memory
         /// <summary>
         /// Register caching type
         /// </summary>
-        public void RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
+        public Dictionary<Guid, CacheEntry> RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
         {
 
             this.ThrowIfDisposed();
@@ -365,7 +379,7 @@ namespace OpenIZ.Caching.Memory
                     this.m_entryTable.Add(t, cache);
                 }
                 else
-                    return;
+                    return cache;
             }
 
             // We want to subscribe when this object is changed so we can keep the cache fresh
@@ -406,6 +420,9 @@ namespace OpenIZ.Caching.Memory
                     }
                 }
             });
+
+            return cache;
+
         }
 
         /// <summary>

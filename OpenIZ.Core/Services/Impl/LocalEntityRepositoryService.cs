@@ -117,10 +117,21 @@ namespace OpenIZ.Core.Services.Impl
             return base.Get<EntityRelationship>(key, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Inserts the specified data
-		/// </summary>
-		public EntityRelationship Insert(EntityRelationship data)
+        /// <summary>
+        /// Gets the specified data.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>TModel.</returns>
+        /// <exception cref="System.InvalidOperationException">Thrown if the persistence service is not found.</exception>
+        EntityRelationship IRepositoryService<EntityRelationship>.Get(Guid key, Guid versionKey)
+        {
+            return base.Get<EntityRelationship>(key, versionKey);
+        }
+
+        /// <summary>
+        /// Inserts the specified data
+        /// </summary>
+        public EntityRelationship Insert(EntityRelationship data)
 		{
             return base.Insert(data);
 		}

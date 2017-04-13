@@ -34,126 +34,63 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 	/// <summary>
 	/// Resource handler for patients
 	/// </summary>
-	public class PatientResourceHandler : IResourceHandler
+	public class PatientResourceHandler : ResourceHandlerBase<Patient>
 	{
-		// repository
-		private IPatientRepositoryService m_repository;
-
-		public PatientResourceHandler()
-		{
-			ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-		}
-
-		/// <summary>
-		/// Gets the resource name
-		/// </summary>
-		public string ResourceName
-		{
-			get
-			{
-				return "Patient";
-			}
-		}
-
-		/// <summary>
-		/// Gets the type
-		/// </summary>
-		public Type Type
-		{
-			get
-			{
-				return typeof(Patient);
-			}
-		}
-
-		/// <summary>
-		/// Create the specified patient
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
-		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-
-			Bundle bundleData = data as Bundle;
-			bundleData?.Reconstitute();
-			var processData = bundleData?.Entry ?? data;
-
-			if (processData is Bundle)
-				throw new InvalidOperationException("Bundle must have entry of type Patient");
-			else if (processData is Patient)
-			{
-				var patientData = processData as Patient;
-				if (updateIfExists)
-					return this.m_repository.Save(patientData);
-				else
-					return this.m_repository.Insert(patientData);
-			}
-			else
-				throw new ArgumentException("Invalid persistence type");
-		}
-
-		/// <summary>
-		/// Gets the specified patient data
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
-		public IdentifiedData Get(Guid id, Guid versionId)
-		{
-			return this.m_repository.Get(id, versionId);
-		}
-
-		/// <summary>
-		/// Obsolete the specified patient
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
-		public IdentifiedData Obsolete(Guid key)
-		{
-			return this.m_repository.Obsolete(key);
-		}
-
-		/// <summary>
-		/// Query the specified patient
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
-		{
-            int tr = 0;
-            return this.Query(queryParameters, 0, 100, out tr);
+        /// <summary>
+        /// Create the specified patient
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public override IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        {
+            return base.Create(data, updateIfExists);
         }
 
-		/// <summary>
-		/// Query specified patient
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
-		{
-            var filter = QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters);
-            List<String> queryId = null;
-            if (this.m_repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
-                return (this.m_repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
-            else
-                return this.m_repository.Find(filter, offset, count, out totalCount);
+        /// <summary>
+        /// Gets the specified patient
+        /// </summary>
+        /// <returns></returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public override IdentifiedData Get(Guid id, Guid versionId)
+        {
+            return base.Get(id, versionId);
         }
 
-		/// <summary>
-		/// Update the specified patient data
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
-		public IdentifiedData Update(IdentifiedData data)
-		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
+        /// <summary>
+        /// Obsoletes the specified patient
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
+        public override IdentifiedData Obsolete(Guid key)
+        {
+            return base.Obsolete(key);
+        }
 
-			var bundleData = data as Bundle;
-			bundleData?.Reconstitute();
-			var saveData = bundleData?.Entry ?? data;
+        /// <summary>
+        /// Query for the specified patient
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        {
+            return base.Query(queryParameters);
+        }
 
-			if (saveData is Bundle)
-				throw new InvalidOperationException("Bundle must have entry point of Patient");
-			else if (saveData is Patient)
-				return this.m_repository.Save(saveData as Patient);
-			else
-				throw new InvalidOperationException("Invalid storage type");
-		}
-	}
+
+        /// <summary>
+        /// Query for the specified patient with restrictions
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryClinicalData)]
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        {
+            return base.Query(queryParameters, offset, count, out totalCount);
+        }
+
+
+        /// <summary>
+        /// Update the specified patient
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        public override IdentifiedData Update(IdentifiedData data)
+        {
+            return base.Update(data);
+        }
+    }
 }

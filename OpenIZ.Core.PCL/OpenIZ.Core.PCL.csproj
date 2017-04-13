@@ -88,6 +88,7 @@
     <Compile Include="Services\IAdHocDatawarehouseService.cs" />
     <Compile Include="Services\IDataPersistenceService.cs" />
     <Compile Include="Services\IEntityExtensionRepositoryService.cs" />
+    <Compile Include="Services\IFastQueryRepositoryService.cs" />
     <Compile Include="Services\IPatchService.cs" />
     <Compile Include="Services\IPersonRepositoryService.cs" />
     <Compile Include="Services\IRepositoryService.cs" />

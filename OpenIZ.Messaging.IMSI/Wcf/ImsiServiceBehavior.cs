@@ -359,6 +359,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                     int totalResults = 0;
 
+                    // Lean mode
+                    var lean = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"];
+                    bool parsedLean = false;
+                    bool.TryParse(lean, out parsedLean);
+
+
                     var retVal = handler.Query(query, Int32.Parse(offset ?? "0"), Int32.Parse(count ?? "100"), out totalResults).Select(o=>o.GetLocked()).ToList();
                     WebOperationContext.Current.OutgoingResponse.LastModified = retVal.OrderByDescending(o => o.ModifiedOn).FirstOrDefault()?.ModifiedOn.DateTime ?? DateTime.Now;
 
@@ -380,20 +386,21 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                                 foreach (var itm in retVal)
                                 {
                                     wtp.QueueUserWorkItem((o) => {
-                                        var i = o as IdentifiedData;
-                                        ObjectExpander.ExpandProperties(i, query);
-                                        ObjectExpander.ExcludeProperties(i, query);
+                                        try
+                                        {
+                                            var i = o as IdentifiedData;
+                                            ObjectExpander.ExpandProperties(i, query);
+                                            ObjectExpander.ExcludeProperties(i, query);
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error setting properties: {0}", e);
+                                        }
                                     }, itm);
                                 }
                                 wtp.WaitOne();
                             }
                         }
-
-	                    var lean = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_lean"];
-
-	                    bool parsedLean = false;
-
-	                    bool.TryParse(lean, out parsedLean);
 
 						return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), parsedLean);
                     }

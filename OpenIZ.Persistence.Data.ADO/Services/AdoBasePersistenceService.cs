@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
     /// <summary>
     /// Represents a data persistence service which stores data in the local SQLite data store
     /// </summary>
-    public abstract class AdoBasePersistenceService<TData> : IDataPersistenceService<TData>, IStoredQueryDataPersistenceService<TData>, IAdoPersistenceService where TData : IdentifiedData
+    public abstract class AdoBasePersistenceService<TData> : IDataPersistenceService<TData>, IStoredQueryDataPersistenceService<TData>, IFastQueryDataPersistenceService<TData>, IAdoPersistenceService where TData : IdentifiedData
     {
 
         // Lock for editing 
@@ -126,7 +126,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         internal virtual TData Get(DataContext context, Guid key, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, o => o.Key == key, Guid.Empty, 0, 1, out tr, principal, false)?.FirstOrDefault();
+            var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
+            var cacheItem = cacheService?.GetCacheItem<TData>(key);
+            if (cacheItem != null)
+            {
+                if (cacheItem.LoadState < LoadState.FullLoad)
+                    cacheItem.LoadAssociations(context, principal);
+                return cacheItem;
+            }
+            else
+            {
+                cacheItem = this.QueryInternal(context, o => o.Key == key, Guid.Empty, 0, 1, out tr, principal, false)?.FirstOrDefault();
+                if (cacheService != null)
+                    cacheService.Add(cacheItem);
+                return cacheItem;
+            }
         }
 
         /// <summary>
@@ -367,6 +381,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         connection.Open();
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
 
+                        if (loadFast)
+                            connection.AddData("loadFast", true);
+
                         var result = this.Get(connection, guidIdentifier.Id, principal);
                         var postData = new PostRetrievalEventArgs<TData>(result, principal);
                         this.Retrieved?.Invoke(this, postData);
@@ -456,6 +473,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     if ((count ?? 1000) > 25)
                         connection.PrepareStatements = true;
+                    if (fastQuery)
+                        connection.AddData("loadFast", true);
 
                     var results = this.Query(connection, query, queryId, offset, count ?? 1000, out totalCount, true, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
@@ -660,6 +679,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         {
             return this.QueryInternal(query, queryId, offset, count, authContext, out totalCount, false);
 
+        }
+
+        /// <summary>
+        /// Perform a lean query
+        /// </summary>
+        public IEnumerable<TData> QueryFast(Expression<Func<TData, bool>> query, Guid queryId, int offset, int? count, IPrincipal authContext, out int totalCount)
+       { 
+            return this.QueryInternal(query, queryId, offset, count, authContext, out totalCount, true);
         }
 
         #endregion

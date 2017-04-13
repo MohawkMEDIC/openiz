@@ -34,14 +34,22 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             // We need to join, but to what?
             // True to get the cache item
-            var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(key) as TModel;
+            var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
+            var cacheItem = cacheService?.GetCacheItem<TModel>(key) as TModel;
             if (cacheItem != null)
+            {
+                if (cacheItem.LoadState < LoadState.FullLoad)
+                    cacheItem.LoadAssociations(context, principal);
                 return cacheItem;
+            }
             else
             {
                 var domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery<TModel>(o => o.Key == key && o.ObsoletionTime == null).Build();
                 domainQuery.OrderBy<TRootEntity>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
-                return this.ToModelInstance(context.FirstOrDefault<TQueryReturn>(domainQuery), context, principal);
+                cacheItem = this.ToModelInstance(context.FirstOrDefault<TQueryReturn>(domainQuery), context, principal);
+                if (cacheService != null)
+                    cacheService.Add(cacheItem);
+                return cacheItem;
             }
         }
 
@@ -56,7 +64,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (uuid.Id != Guid.Empty)
             {
                 var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(uuid.Id) as TModel;
-                if (cacheItem != null && (cacheItem.VersionKey.HasValue && uuid.VersionId == cacheItem.VersionKey.Value || uuid.VersionId == Guid.Empty))
+                if (cacheItem != null && (cacheItem.VersionKey.HasValue && uuid.VersionId == cacheItem.VersionKey.Value || uuid.VersionId == Guid.Empty) &&
+                    (loadFast && cacheItem.LoadState >= LoadState.PartialLoad || !loadFast && cacheItem.LoadState == LoadState.FullLoad))
                     return cacheItem;
             }
 

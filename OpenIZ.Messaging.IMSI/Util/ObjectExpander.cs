@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
@@ -227,60 +228,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                     foreach (var nvs in qp["_expand"])
                     {
                         // Get the property the user wants to expand
-                        object scope = returnValue;
-                        foreach (var property in nvs.Split('.'))
-                        {
-                            if (scope is IList)
-                            {
-                                foreach (var sc in scope as IList)
-                                {
-                                    // ensure the object is delay loaded 
-                                    // in case the property we are looking for is null but it's associated reference key is populated
-                                    var keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
-
-                                    if (keyPi == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    // Get the backing property
-                                    var expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
-
-                                    if (expandProp != null)
-                                    {
-                                        scope = expandProp.GetValue(sc);
-                                    }
-                                    else
-                                    {
-                                        scope = keyPi.GetValue(sc);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
-                                if (keyPi == null)
-                                    continue;
-                                // Get the backing property
-                                PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttributes<SerializationReferenceAttribute>().FirstOrDefault()?.RedirectProperty == keyPi.Name);
-
-                                Object existing = null;
-                                Object keyValue = keyPi.GetValue(scope);
-
-                                if (expandProp != null && expandProp.CanWrite)
-                                {
-                                    expandProp.SetValue(scope, existing);
-                                    scope = existing;
-                                }
-                                else
-                                {
-                                    if (expandProp != null)
-                                        scope = expandProp.GetValue(scope);
-                                    else
-                                        scope = keyValue;
-                                }
-                            }
-                        }
+                        DoExpand(returnValue, nvs);
                     }
 
                     ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
@@ -290,6 +238,58 @@ namespace OpenIZ.Messaging.IMSI.Util
             {
                 keyStack.Pop();
             }
+        }
+
+        /// <summary>
+        /// Do expansion
+        /// </summary>
+        private static void DoExpand(object scope, string propertySpec)
+        {
+            Regex propertyRegex = new Regex(@"(\w*)?\.?([\w\.]*)?");
+            var match = propertyRegex.Match(propertySpec);
+            if (!match.Success) return;
+
+            // My property
+            if (scope is IList)
+                foreach (var itm in scope as IList)
+                {
+                    var subScope = DoPopulateObject(itm, match.Groups[1].Value);
+                    if (!String.IsNullOrEmpty(match.Groups[2].Value))
+                        DoExpand(subScope, match.Groups[2].Value);
+                }
+            else
+            {
+                var subScope = DoPopulateObject(scope, match.Groups[1].Value);
+                if (!String.IsNullOrEmpty(match.Groups[2].Value))
+                    DoExpand(subScope, match.Groups[2].Value);
+            }
+        }
+
+        /// <summary>
+        /// Do population of an object
+        /// </summary>
+        private static object DoPopulateObject(object scope, string property)
+        {
+            // Look for the property in the scope
+            var propertyInfo = scope.GetType().GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
+            if (propertyInfo == null || !propertyInfo.CanWrite) return null; // invalid property name
+
+            var propertyValue = propertyInfo.GetValue(scope);
+            if (propertyValue is IList && (propertyValue as IList).Count == 0) // need to load
+            {
+                propertyValue = LoadCollection(propertyInfo.PropertyType, scope as IIdentifiedEntity);
+                propertyInfo.SetValue(scope, propertyValue);
+                scope = propertyValue;
+            }
+            else if (propertyValue is Guid) // A key!
+            {
+                var backingFieldInfo = scope.GetType().GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == propertyInfo.Name);
+                if (backingFieldInfo == null) return null; // stop 
+                propertyValue = LoadRelated(backingFieldInfo.PropertyType, (Guid)propertyValue);
+                backingFieldInfo.SetValue(scope, propertyValue);
+            }
+
+            return propertyValue;
         }
 
         /// <summary>

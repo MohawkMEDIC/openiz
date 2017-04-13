@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents a security repository service that uses the direct local services
 	/// </summary>
-	public class LocalSecurityRepositoryService : LocalEntityRepositoryServiceBase, ISecurityRepositoryService
+	public class LocalSecurityRepositoryService : LocalEntityRepositoryServiceBase, ISecurityRepositoryService, IRepositoryService<UserEntity>
 	{
 		private TraceSource m_traceSource = new TraceSource(OpenIzConstants.ServiceTraceSourceName);
 
@@ -781,5 +781,61 @@ namespace OpenIZ.Core.Services.Impl
 			var securityUser = this.GetUser(userId);
 			iids.SetLockout(securityUser.UserName, false, AuthenticationContext.Current.Principal);
 		}
-	}
+
+        /// <summary>
+        /// Find user entity
+        /// </summary>
+        IEnumerable<UserEntity> IRepositoryService<UserEntity>.Find(Expression<Func<UserEntity, bool>> query)
+        {
+            return this.FindUserEntity(query);
+        }
+
+        /// <summary>
+        /// Find user entity
+        /// </summary>
+        IEnumerable<UserEntity> IRepositoryService<UserEntity>.Find(Expression<Func<UserEntity, bool>> query, int offset, int? count, out int totalResults)
+        {
+            return this.FindUserEntity(query, offset, count, out totalResults);
+        }
+
+        /// <summary>
+        /// Get user entity
+        /// </summary>
+        UserEntity IRepositoryService<UserEntity>.Get(Guid key)
+        {
+            return this.GetUserEntity(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get user entity
+        /// </summary>
+        UserEntity IRepositoryService<UserEntity>.Get(Guid key, Guid versionKey)
+        {
+            return this.GetUserEntity(key, versionKey);
+        }
+
+        /// <summary>
+        /// Insert user entity
+        /// </summary>
+        UserEntity IRepositoryService<UserEntity>.Insert(UserEntity data)
+        {
+            return this.Insert<UserEntity>(data);
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        UserEntity IRepositoryService<UserEntity>.Obsolete(Guid key)
+        {
+            return this.Obsolete<UserEntity>(key);
+        }
+
+        /// <summary>
+        /// Save user entity
+        /// </summary>
+        UserEntity IRepositoryService<UserEntity>.Save(UserEntity data)
+        {
+            return this.Save(data);
+        }
+    }
 }

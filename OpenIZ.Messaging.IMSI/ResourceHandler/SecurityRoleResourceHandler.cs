@@ -74,103 +74,60 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 		}
 
-		/// <summary>
-		/// Creates the specified user entity
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
-		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
 
-			Bundle bundleData = data as Bundle;
+        /// <summary>
+        /// Creates the specified user entity
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        {
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-			bundleData?.Reconstitute();
+        }
 
-			var processData = bundleData?.Entry ?? data;
+        /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        public IdentifiedData Get(Guid id, Guid versionId)
+        {
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-			if (processData is Bundle)
-			{
-				throw new InvalidOperationException("Bundle must have an entry point");
-			}
-			else if (processData is SecurityRole)
-			{
-				var securityRole = processData as SecurityRole;
+        }
 
-				if (updateIfExists)
-				{
-					return this.repository.SaveRole(securityRole);
-				}
-				else
-				{
-					return this.repository.CreateRole(securityRole);
-				}
-			}
-			else
-			{
-				throw new ArgumentException(nameof(data), "Invalid data type");
-			}
-		}
+        /// <summary>
+        /// Obsolete the entity
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public IdentifiedData Obsolete(Guid key)
+        {
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-		/// <summary>
-		/// Gets the specified user entity
-		/// </summary>
-		public IdentifiedData Get(Guid id, Guid versionId)
-		{
-			return this.repository.GetRole(id);
-		}
+        }
 
-		/// <summary>
-		/// Obsolete the entity
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-		public IdentifiedData Obsolete(Guid key)
-		{
-			return this.repository.ObsoleteRole(key);
-		}
+        /// <summary>
+        /// Queries the specified user entity
+        /// </summary>
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        {
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-		/// <summary>
-		/// Queries the specified user entity
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
-		{
-			return this.repository.FindRoles(QueryExpressionParser.BuildLinqExpression<SecurityRole>(queryParameters));
-		}
+        }
 
-		/// <summary>
-		/// Query the specified user entity with restrictions
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
-		{
-			return this.repository.FindRoles(QueryExpressionParser.BuildLinqExpression<SecurityRole>(queryParameters), offset, count, out totalCount);
-		}
+        /// <summary>
+        /// Query the specified user entity with restrictions
+        /// </summary>
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        {
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-		/// <summary>
-		/// Updates the specified user entity
-		/// </summary>
-		public IdentifiedData Update(IdentifiedData data)
-		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
+        }
 
-			var bundleData = data as Bundle;
-
-			bundleData?.Reconstitute();
-
-			var saveData = bundleData?.Entry ?? data;
-
-			if (saveData is Bundle)
-			{
-				throw new InvalidOperationException("Bundle must have an entry");
-			}
-			else if (saveData is SecurityRole)
-			{
-				return this.repository.SaveRole(saveData as SecurityRole);
-			}
-			else
-			{
-				throw new ArgumentException(nameof(data), "Invalid storage type");
-			}
-		}
-	}
+        /// <summary>
+        /// Updates the specified user entity
+        /// </summary>
+        public IdentifiedData Update(IdentifiedData data)
+        {
+            throw new NotSupportedException("This method is obsolete, use the AMI");
+        }
+    }
 }

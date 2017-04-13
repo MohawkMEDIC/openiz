@@ -60,7 +60,8 @@ namespace OpenIZ.Messaging.IMSI.Util
                     if (!retVal.HasTag(itm.Tag) && itm.Key.HasValue)
                     {
                         retVal.Add(itm);
-                        Bundle.ProcessModel(itm.GetLocked(), retVal, !lean);
+                        if(!lean)
+                            Bundle.ProcessModel(itm.GetLocked(), retVal, !lean);
                     }
                 }
 

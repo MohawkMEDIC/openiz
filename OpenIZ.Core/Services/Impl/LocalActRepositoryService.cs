@@ -44,13 +44,15 @@ namespace OpenIZ.Core.Services.Impl
 	/// <seealso cref="Services.IRepositoryService{PatientEncounter}" />
 	/// <seealso cref="Services.IRepositoryService{CodedObservation}" />
 	/// <seealso cref="Services.IRepositoryService{TextObservation}" />
-	public partial class LocalActRepositoryService : IActRepositoryService, IRepositoryService<Act>,
+	public partial class LocalActRepositoryService : IActRepositoryService, 
+        IRepositoryService<Act>,
         IRepositoryService<SubstanceAdministration>,
         IRepositoryService<QuantityObservation>,
         IRepositoryService<PatientEncounter>,
         IRepositoryService<CodedObservation>,
         IRepositoryService<TextObservation>,
-        IPersistableQueryRepositoryService
+        IPersistableQueryRepositoryService,
+        IFastQueryRepositoryService
 	{
 
         // Events for audit
@@ -138,6 +140,18 @@ namespace OpenIZ.Core.Services.Impl
 		{
 			return this.Get<Act>(key, Guid.Empty);
 		}
+
+
+        /// <summary>
+        /// Gets the specified model.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the model.</returns>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadClinicalData)]
+        public Act Get(Guid key, Guid versionKey)
+        {
+            return this.Get<Act>(key, versionKey);
+        }
 
         /// <summary>
         /// Insert the specified act.
@@ -342,12 +356,32 @@ namespace OpenIZ.Core.Services.Impl
             }
 
             var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
-
             IEnumerable<TAct> results = null;
             if (queryId != Guid.Empty && persistenceService is IStoredQueryDataPersistenceService<TAct>)
                 results = (persistenceService as IStoredQueryDataPersistenceService<TAct>).Query(query, queryId, offset, count, AuthenticationContext.Current.Principal, out totalResults);
             else
                 results = persistenceService.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+
+            // Disclosure event
+            this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(query.ToString(), results));
+            return businessRulesService?.AfterQuery(results) ?? results;
+        }
+
+        /// <summary>
+        /// Perform a fast search with the specified query parameters
+        /// </summary>
+        public IEnumerable<TAct> FindFast<TAct>(Expression<Func<TAct, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IFastQueryDataPersistenceService<TAct>>() ;
+
+            if (persistenceService == null)
+            {
+                return this.Find<TAct>(query, offset, count, out totalResults, queryId);
+            }
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
+            IEnumerable<TAct> results = null;
+            results = persistenceService.QueryFast(query, queryId, offset, count, AuthenticationContext.Current.Principal, out totalResults);
 
             // Disclosure event
             this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(query.ToString(), results));

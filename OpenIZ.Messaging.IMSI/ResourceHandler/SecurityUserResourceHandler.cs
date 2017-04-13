@@ -80,36 +80,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-			Bundle bundleData = data as Bundle;
-
-			bundleData?.Reconstitute();
-
-			var processData = bundleData?.Entry ?? data;
-
-			if (processData is Bundle)
-			{
-				throw new InvalidOperationException("Bundle must have an entry point");
-			}
-			else if (processData is SecurityUser)
-			{
-				var securityUser = processData as SecurityUser;
-
-				if (updateIfExists)
-				{
-					return this.repository.SaveUser(securityUser);
-				}
-				else
-				{
-					return this.repository.CreateUser(securityUser, securityUser.PasswordHash);
-				}
-			}
-			else
-			{
-				throw new ArgumentException(nameof(data), "Invalid data type");
-			}
 		}
 
 		/// <summary>
@@ -117,60 +89,44 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		/// </summary>
 		public IdentifiedData Get(Guid id, Guid versionId)
 		{
-			return this.repository.GetUser(id);
-		}
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-		/// <summary>
-		/// Obsolete the entity
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        }
+
+        /// <summary>
+        /// Obsolete the entity
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public IdentifiedData Obsolete(Guid key)
 		{
-			return this.repository.ObsoleteUser(key);
-		}
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-		/// <summary>
-		/// Queries the specified user entity
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        }
+
+        /// <summary>
+        /// Queries the specified user entity
+        /// </summary>
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
 		{
-			return this.repository.FindUsers(QueryExpressionParser.BuildLinqExpression<SecurityUser>(queryParameters));
-		}
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-		/// <summary>
-		/// Query the specified user entity with restrictions
-		/// </summary>
-		public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        }
+
+        /// <summary>
+        /// Query the specified user entity with restrictions
+        /// </summary>
+        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
 		{
-			return this.repository.FindUsers(QueryExpressionParser.BuildLinqExpression<SecurityUser>(queryParameters), offset, count, out totalCount);
-		}
+            throw new NotSupportedException("This method is obsolete, use the AMI");
 
-		/// <summary>
-		/// Updates the specified user entity
-		/// </summary>
-		public IdentifiedData Update(IdentifiedData data)
+        }
+
+        /// <summary>
+        /// Updates the specified user entity
+        /// </summary>
+        public IdentifiedData Update(IdentifiedData data)
 		{
-			if (data == null)
-				throw new ArgumentNullException(nameof(data));
-
-			var bundleData = data as Bundle;
-
-			bundleData?.Reconstitute();
-
-			var saveData = bundleData?.Entry ?? data;
-
-			if (saveData is Bundle)
-			{
-				throw new InvalidOperationException("Bundle must have an entry");
-			}
-			else if (saveData is SecurityUser)
-			{
-				return this.repository.SaveUser(saveData as SecurityUser);
-			}
-			else
-			{
-				throw new ArgumentException(nameof(data), "Invalid storage type");
-			}
-		}
-	}
+            throw new NotSupportedException("This method is obsolete, use the AMI");
+        }
+    }
 }

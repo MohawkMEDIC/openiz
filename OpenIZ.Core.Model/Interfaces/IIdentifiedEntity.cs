@@ -32,6 +32,11 @@ namespace OpenIZ.Core.Model.Interfaces
     {
 
         /// <summary>
+        /// Gets the load state of the entity
+        /// </summary>
+        LoadState LoadState { get; set; }
+
+        /// <summary>
         /// Gets the identifier for the entity
         /// </summary>
         Guid? Key { get; set; }

@@ -39,6 +39,8 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Persistence.Data.ADO.Data
 {
@@ -263,7 +265,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         public static void LoadAssociations<TModel>(this TModel me, DataContext context, IPrincipal principal, params String[] loadProperties) where TModel : IIdentifiedEntity
         {
             // I duz not haz a chzbrgr?
-            if (me == null)
+            if (me == null || me.LoadState == LoadState.FullLoad)
                 return;
             else if (context.Transaction != null) // kk.. I haz a transaction
                 return;
@@ -310,6 +312,19 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 						s_runtimeProperties.Add(propertyCacheKey, properties);
 					}
                 }
+
+            // Load fast or lean mode only root associations which will appear on the wire
+            object loadFast = null;
+            if (context.Data.TryGetValue("loadFast", out loadFast) && true.Equals(loadFast))
+            {
+                if (me.LoadState == LoadState.PartialLoad) // already partially loaded :/ 
+                    return;
+                else
+                {
+                    me.LoadState = LoadState.PartialLoad;
+                    properties = properties.Where(o => o.GetCustomAttribute<XmlAttributeAttribute>() != null || o.GetCustomAttribute<XmlElementAttribute>() != null);
+                }
+            }
 
             // Iterate over the properties and load the properties
             foreach (var pi in properties)
@@ -364,6 +379,9 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             sw.Stop();
             s_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Load associations for {0} took {1} ms", me, sw.ElapsedMilliseconds);
 #endif
+
+            if (me.LoadState == LoadState.New)
+                me.LoadState = LoadState.FullLoad;
         }
     }
 }

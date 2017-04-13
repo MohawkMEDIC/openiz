@@ -68,7 +68,7 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public SimpleAssociationCollection(IEnumerable<TEntity> source)
         {
-            this.m_sourceData = new List<TEntity>(source);
+            this.m_sourceData = new List<TEntity>(source.AsParallel());
         }
 
         /// <summary>

@@ -31,91 +31,66 @@ using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
-	public class ProviderResourceHandler : IResourceHandler
+    /// <summary>
+    /// Resource handler for providers
+    /// </summary>
+	public class ProviderResourceHandler : ResourceHandlerBase<Provider>
 	{
-		private IProviderRepositoryService repository;
-
-		public ProviderResourceHandler()
-		{
-			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IProviderRepositoryService>();
-		}
-
-		public string ResourceName => nameof(Provider);
-
-		public Type Type => typeof(Provider);
-
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
-		{
-			var bundleData = data as Bundle;
-
-			bundleData?.Reconstitute();
-
-			var processData = bundleData?.Entry ?? data;
-
-			if (processData is Bundle)
-			{
-				throw new InvalidOperationException($"Bundle must have entry of type {nameof(Provider)}");
-			}
-
-			if (processData is Provider)
-			{
-				return updateIfExists ? this.repository.Save(processData as Provider) : this.repository.Insert(processData as Provider);
-			}
-
-			throw new ArgumentException("Invalid persistence type");
-		}
-
-		public IdentifiedData Get(Guid id, Guid versionId)
-		{
-			return this.repository.Get(id, versionId);
-		}
-
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public IdentifiedData Obsolete(Guid key)
-		{
-			return this.repository.Obsolete(key);
-		}
-
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
-		{
-            int tr = 0;
-            return this.Query(queryParameters, 0, 100, out tr);
+        /// <summary>
+        /// Create the specified place
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public override IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        {
+            return base.Create(data, updateIfExists);
         }
 
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
-		{
-            var filter = QueryExpressionParser.BuildLinqExpression<Provider>(queryParameters);
-            List<String> queryId = null;
-            if (this.repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
-                return (this.repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
-            else
-                return this.repository.Find(filter, offset, count, out totalCount);
+        /// <summary>
+        /// Gets the specified place
+        /// </summary>
+        /// <returns></returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public override IdentifiedData Get(Guid id, Guid versionId)
+        {
+            return base.Get(id, versionId);
         }
 
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-        public IdentifiedData Update(IdentifiedData data)
-		{
-			Bundle bundleData = data as Bundle;
-			bundleData?.Reconstitute();
-			var processData = bundleData?.Entry ?? data;
+        /// <summary>
+        /// Obsoletes the specified place
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public override IdentifiedData Obsolete(Guid key)
+        {
+            return base.Obsolete(key);
+        }
 
-			if (processData is Bundle)
-			{
-				throw new InvalidOperationException(string.Format("Bundle must have entry of type {0}", nameof(Provider)));
-			}
-			else if (processData is Provider)
-			{
-				var providerData = data as Provider;
+        /// <summary>
+        /// Query for the specified place
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        {
+            return base.Query(queryParameters);
+        }
 
-				return this.repository.Save(providerData);
-			}
-			else
-			{
-				throw new ArgumentException("Invalid persistence type");
-			}
-		}
-	}
+
+        /// <summary>
+        /// Query for the specified place with restrictions
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        {
+            return base.Query(queryParameters, offset, count, out totalCount);
+        }
+
+
+        /// <summary>
+        /// Update the specified place
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public override IdentifiedData Update(IdentifiedData data)
+        {
+            return base.Update(data);
+        }
+    }
 }

@@ -34,128 +34,63 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 	/// <summary>
 	/// Represents a resource handler that can perform operations on materials
 	/// </summary>
-	public class MaterialResourceHandler : IResourceHandler
+	public class MaterialResourceHandler : ResourceHandlerBase<Material>
 	{
-		// Repository
-		private IMaterialRepositoryService repository;
+        /// <summary>
+        /// Create the specified material
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public override IdentifiedData Create(IdentifiedData data, bool updateIfExists)
+        {
+            return base.Create(data, updateIfExists);
+        }
 
-		/// <summary>
-		/// Place resource handler subscription
-		/// </summary>
-		public MaterialResourceHandler()
-		{
-			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
-		}
+        /// <summary>
+        /// Gets the specified  material
+        /// </summary>
+        /// <returns></returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public override IdentifiedData Get(Guid id, Guid versionId)
+        {
+            return base.Get(id, versionId);
+        }
 
-		/// <summary>
-		/// Gets the name of the resource that this handler handles
-		/// </summary>
-		public string ResourceName => "Material";
-
-		/// <summary>
-		/// Gets the type of resource that this handler handles
-		/// </summary>
-		public Type Type => typeof(Material);
-
-		/// <summary>
-		/// Creates the specified place
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-		public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
-		{
-			if (data == null)
-			{
-				throw new ArgumentNullException(nameof(data));
-			}
-
-			Bundle bundleData = data as Bundle;
-
-			bundleData?.Reconstitute();
-
-			var processData = bundleData?.Entry ?? data;
-
-			if (processData is Bundle)
-			{
-				// Client submitted a bundle
-				throw new InvalidOperationException("Bundle must have an entry point");
-			}
-
-			if (processData is Material)
-			{
-				return updateIfExists ? this.repository.Save(processData as Material) : this.repository.Insert(processData as Material);
-			}
-
-			throw new ArgumentException(nameof(data), "Invalid data type");
-		}
-
-		/// <summary>
-		/// Gets the specified data
-		/// </summary>
-		public IdentifiedData Get(Guid id, Guid versionId)
-		{
-			return this.repository.GetMaterial(id, versionId);
-		}
-
-		/// <summary>
-		/// Obsoletes the specified data
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
-		public IdentifiedData Obsolete(Guid key)
-		{
-			return this.repository.ObsoleteMaterial(key);
-		}
+        /// <summary>
+        /// Obsoletes the specified material
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public override IdentifiedData Obsolete(Guid key)
+        {
+            return base.Obsolete(key);
+        }
 
         /// <summary>
         /// Query for the specified material
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            int tr = 0;
-            return this.Query(queryParameters, 0, 100, out tr);
+            return base.Query(queryParameters);
         }
+
 
         /// <summary>
         /// Query for the specified material with restrictions
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
-        public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
+        public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
-            var filter = QueryExpressionParser.BuildLinqExpression<Material>(queryParameters);
-            List<String> queryId = null;
-            if (this.repository is IPersistableQueryRepositoryService && queryParameters.TryGetValue("_queryId", out queryId))
-                return (this.repository as IPersistableQueryRepositoryService).Find(filter, offset, count, out totalCount, Guid.Parse(queryId[0]));
-            else
-                return this.repository.FindMaterial(filter, offset, count, out totalCount);
+            return base.Query(queryParameters, offset, count, out totalCount);
         }
 
+
         /// <summary>
-        /// Updates the specified object
+        /// Update the specified material
         /// </summary>
-        public IdentifiedData Update(IdentifiedData data)
-		{
-			if (data == null)
-			{
-				throw new ArgumentNullException(nameof(data));
-			}
-
-			var bundleData = data as Bundle;
-
-			bundleData?.Reconstitute();
-
-			var saveData = bundleData?.Entry ?? data;
-
-			if (saveData is Bundle)
-			{
-				throw new InvalidOperationException("Bundle must have an entry");
-			}
-
-			if (saveData is Material)
-			{
-				return this.repository.Save(saveData as Material);
-			}
-
-			throw new ArgumentException(nameof(data), "Invalid storage type");
-		}
-	}
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        public override IdentifiedData Update(IdentifiedData data)
+        {
+            return base.Update(data);
+        }
+    }
 }

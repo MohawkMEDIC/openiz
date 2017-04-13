@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Persistence.Data.MSSQL.Security
 {
@@ -115,6 +116,21 @@ namespace OpenIZ.Persistence.Data.MSSQL.Security
             get
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the load state
+        /// </summary>
+        public LoadState LoadState
+        {
+            get
+            {
+                return LoadState.FullLoad;
+            }
+
+            set
+            {
             }
         }
     }

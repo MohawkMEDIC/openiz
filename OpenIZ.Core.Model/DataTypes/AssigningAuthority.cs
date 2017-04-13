@@ -158,7 +158,8 @@ namespace OpenIZ.Core.Model.DataTypes
             return new AssigningAuthority()
             {
                 Key = this.Key,
-                DomainName = this.DomainName
+                DomainName = this.DomainName,
+                Name = this.Name
             };
         }
 

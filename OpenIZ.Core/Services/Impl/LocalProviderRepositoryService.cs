@@ -33,7 +33,7 @@ using System.Security.Principal;
 
 namespace OpenIZ.Core.Services.Impl
 {
-	public class LocalProviderRepositoryService : LocalEntityRepositoryServiceBase, IProviderRepositoryService
+	public class LocalProviderRepositoryService : LocalEntityRepositoryServiceBase, IProviderRepositoryService, IRepositoryService<Provider>
     {
 		/// <summary>
 		/// Searches for a provider using a given predicate.
@@ -79,12 +79,22 @@ namespace OpenIZ.Core.Services.Impl
             return base.Get<Provider>(id, versionId);
 		}
 
-		/// <summary>
-		/// Inserts the specified provider.
-		/// </summary>
-		/// <param name="provider">The provider to insert.</param>
-		/// <returns>Returns the inserted provider.</returns>
-		public Provider Insert(Provider provider)
+        /// <summary>
+        /// Gets the specified provider.
+        /// </summary>
+        /// <param name="id">The id of the provider.</param>
+        /// <returns>Returns the specified provider.</returns>
+        public Provider Get(Guid id)
+        {
+            return base.Get<Provider>(id, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Inserts the specified provider.
+        /// </summary>
+        /// <param name="provider">The provider to insert.</param>
+        /// <returns>Returns the inserted provider.</returns>
+        public Provider Insert(Provider provider)
 		{
             return base.Insert(provider);
 		}

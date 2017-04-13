@@ -102,7 +102,32 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
-            return this.QueryInternal(context, query, queryId, offset, count, out totalResults, countResults).AsParallel().Select(o => o is Guid ? this.Get(context, (Guid)o, principal) : this.CacheConvert(o, context, principal));
+            int resultCount = 0;
+            var results = this.QueryInternal(context, query, queryId, offset, count, out resultCount, countResults);
+            totalResults = resultCount;
+            return results.AsParallel().Select(o => {
+                var subContext = context;
+                var newSubContext = results.Count() > 1;
+
+                try
+                {
+                    if (newSubContext) subContext = subContext.OpenClonedContext();
+
+                    if (o is Guid)
+                        return this.Get(subContext, (Guid)o, principal);
+                    else
+                        return this.CacheConvert(o, subContext, principal);
+                }
+                catch(Exception e)
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error performing sub-query: {0}", e);
+                    throw;
+                }
+                finally
+                {
+                    if (newSubContext) subContext.Dispose();
+                }
+            });
         }
 
         /// <summary>
@@ -111,110 +136,124 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         protected virtual IEnumerable<Object> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, bool incudeCount = true)
         {
 
-            // Query has been registered?
-            if (queryId != Guid.Empty && this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
-            {
-                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
-                var resultKeys = this.m_queryPersistence.GetQueryResults<Guid>(queryId.ToString(), offset, count.Value);
-                return resultKeys.Select(p => p.Id).OfType<Object>();
-            }
-
-            // Domain query
-            SqlStatement domainQuery = null;
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             try
             {
-                domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom();
-                var expression = m_mapper.MapModelExpression<TModel, TDomain>(query);
-                Type lastJoined = typeof(TDomain);
-                if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
-                    foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
-                        if (p != typeof(TDomain))
-                        {
-                            // Find the FK to join
-                            domainQuery.InnerJoin(lastJoined, p);
-                            lastJoined = p;
-                        }
+#endif
 
-                domainQuery.Where<TDomain>(expression);
-
-            }
-            catch (Exception e)
-            {
-                m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, e.HResult, "Will use slow query construction due to {0}", e.Message);
-                domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
-            }
-
-            // Build and see if the query already exists on the stack???
-            domainQuery = domainQuery.Build();
-            var cachedQueryResults = context.CacheQuery(domainQuery);
-            if (cachedQueryResults != null)
-            {
-                totalResults = cachedQueryResults.Count();
-                return cachedQueryResults;
-            }
-
-            // Query id just get the UUIDs in the db
-            if (queryId != Guid.Empty)
-            {
-                ColumnMapping pkColumn = null;
-                if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
+                // Query has been registered?
+                if (queryId != Guid.Empty && this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
                 {
-                    foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
-                        if (!typeof(DbSubTable).IsAssignableFrom(p) && !typeof(IDbVersionedData).IsAssignableFrom(p))
-                        {
-                            pkColumn = TableMapping.Get(p).Columns.SingleOrDefault(o => o.IsPrimaryKey);
-                            break;
-                        }
+                    totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId.ToString());
+                    var resultKeys = this.m_queryPersistence.GetQueryResults<Guid>(queryId.ToString(), offset, count.Value);
+                    return resultKeys.Select(p => p.Id).OfType<Object>();
+                }
+
+                // Domain query
+                SqlStatement domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom();
+                var expression = m_mapper.MapModelExpression<TModel, TDomain>(query, false);
+                if (expression != null)
+                {
+                    Type lastJoined = typeof(TDomain);
+                    if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
+                        foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
+                            if (p != typeof(TDomain))
+                            {
+                                // Find the FK to join
+                                domainQuery.InnerJoin(lastJoined, p);
+                                lastJoined = p;
+                            }
+
+                    domainQuery.Where<TDomain>(expression);
                 }
                 else
-                    pkColumn = TableMapping.Get(typeof(TQueryReturn)).Columns.SingleOrDefault(o => o.IsPrimaryKey);
-
-                var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
-                var resultKeys = context.Query<Guid>(keyQuery.Build());
-                //ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(a => this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query), null);
-                this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Count(), resultKeys.Select(o => new Identifier<Guid>(o)).Take(1000).ToArray(), query);
-
-                ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
                 {
-                    int ofs = 1000;
-                    var rkeys = o as Guid[];
-                    while (ofs < rkeys.Length)
-                    {
-                        this.m_queryPersistence.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
-                        ofs += 1000;
-                    }
-                }, resultKeys.ToArray());
+                    m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, 0, "Will use slow query construction due to complex mapped fields");
+                    domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
+                }
 
-                if (incudeCount)
-                    totalResults = (int)resultKeys.Count();
+                // Build and see if the query already exists on the stack???
+                domainQuery = domainQuery.Build();
+                var cachedQueryResults = context.CacheQuery(domainQuery);
+                if (cachedQueryResults != null)
+                {
+                    totalResults = cachedQueryResults.Count();
+                    return cachedQueryResults;
+                }
+
+                // Query id just get the UUIDs in the db
+                if (queryId != Guid.Empty)
+                {
+                    ColumnMapping pkColumn = null;
+                    if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
+                    {
+                        foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
+                            if (!typeof(DbSubTable).IsAssignableFrom(p) && !typeof(IDbVersionedData).IsAssignableFrom(p))
+                            {
+                                pkColumn = TableMapping.Get(p).Columns.SingleOrDefault(o => o.IsPrimaryKey);
+                                break;
+                            }
+                    }
+                    else
+                        pkColumn = TableMapping.Get(typeof(TQueryReturn)).Columns.SingleOrDefault(o => o.IsPrimaryKey);
+
+                    var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
+
+                    var resultKeys = context.Query<Guid>(keyQuery.Build());
+
+                    //ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(a => this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query), null);
+                    this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Count(), resultKeys.Select(o => new Identifier<Guid>(o)).Take(1000).ToArray(), query);
+
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
+                    {
+                        int ofs = 1000;
+                        var rkeys = o as Guid[];
+                        while (ofs < rkeys.Length)
+                        {
+                            this.m_queryPersistence.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
+                            ofs += 1000;
+                        }
+                    }, resultKeys.ToArray());
+
+                    if (incudeCount)
+                        totalResults = (int)resultKeys.Count();
+                    else
+                        totalResults = 0;
+
+                    var retVal = resultKeys.Skip(offset);
+                    if (count.HasValue)
+                        retVal = retVal.Take(count.Value);
+                    return retVal.OfType<Object>();
+                }
+                else if (incudeCount)
+                {
+                    totalResults = context.Count(domainQuery);
+                    if (totalResults == 0)
+                        return new List<Object>();
+                }
                 else
                     totalResults = 0;
 
-                var retVal = resultKeys.Skip(offset);
+                if (offset > 0)
+                    domainQuery.Offset(offset);
                 if (count.HasValue)
-                    retVal = retVal.Take(count.Value);
-                return retVal.OfType<Object>();
+                    domainQuery.Limit(count.Value);
+
+
+                var results = context.Query<TQueryReturn>(domainQuery).OfType<Object>();
+
+                // Cache query result
+                context.AddQuery(domainQuery, results);
+                return results;
+#if DEBUG
             }
-            else if (incudeCount)
+            finally
             {
-                totalResults = context.Count(domainQuery);
-                if (totalResults == 0)
-                    return new List<Object>();
+                sw.Stop();
             }
-            else
-                totalResults = 0;
-
-            if (offset > 0)
-                domainQuery.Offset(offset);
-            if (count.HasValue)
-                domainQuery.Limit(count.Value);
-
-
-            var results = context.Query<TQueryReturn>(domainQuery).OfType<Object>();
-
-            // Cache query result
-            context.AddQuery(domainQuery, results);
-            return results;
+#endif
         }
 
 
@@ -252,7 +291,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             {
                 var cacheItem = cacheService?.GetCacheItem<TModel>(idData?.Key ?? Guid.Empty);
                 if (cacheItem != null)
+                {
+                    if (cacheItem.LoadState < LoadState.FullLoad)
+                        cacheItem.LoadAssociations(context, principal);
                     return cacheItem;
+                }
                 else
                 {
                     cacheItem = this.ToModelInstance(o, context, principal);

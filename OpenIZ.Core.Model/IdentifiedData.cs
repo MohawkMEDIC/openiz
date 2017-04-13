@@ -38,20 +38,39 @@ namespace OpenIZ.Core.Model
 {
 
     /// <summary>
+    /// Identifies the state of loading of the object
+    /// </summary>
+    public enum LoadState
+    {
+        /// <summary>
+        /// Newly created, not persisted, no data loaded
+        /// </summary>
+        New = 0,
+        /// <summary>
+        /// Object was partially loaded meaning some properties are not populated
+        /// </summary>
+        PartialLoad = 1,
+        /// <summary>
+        /// The object was fully loaded
+        /// </summary>
+        FullLoad = 2
+    }
+
+    /// <summary>
     /// Represents data that is identified by a key
     /// </summary>
     [XmlType("IdentifiedData", Namespace = "http://openiz.org/model"), JsonObject("IdentifiedData")]
     public abstract class IdentifiedData : IIdentifiedEntity
     {
 
-        // Tag
-        protected string m_tag;
-
         // True when the data class is locked for storage
         private bool m_delayLoad = false;
 
         // Type id
         private string m_typeId = String.Empty;
+
+        // Load state
+        private LoadState m_loadState = LoadState.New;
 
         /// <summary>
         /// True if the class is currently loading associations when accessed
@@ -123,6 +142,15 @@ namespace OpenIZ.Core.Model
         public abstract DateTimeOffset ModifiedOn { get; }
 
         /// <summary>
+        /// Never serialize modified on
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeModifiedOn()
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Gets a tag which changes whenever the object is updated
         /// </summary>
         [XmlIgnore, JsonIgnore, DataIgnore]
@@ -144,6 +172,22 @@ namespace OpenIZ.Core.Model
         /// </summary>
         /// <returns></returns>
         public virtual bool IsEmpty() { return false; }
+
+        /// <summary>
+        /// Gets or sets whether the object was partial loaded
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public LoadState LoadState {
+            get
+            {
+                return this.m_loadState;
+            }
+            set
+            {
+                if (value >= this.m_loadState)
+                    this.m_loadState = value;
+            }
+        }
 
         /// <summary>
         /// Clone the specified data

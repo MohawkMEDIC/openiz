@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents a repository service for managing persons.
 	/// </summary>
-	public class LocalPersonRepositoryService : LocalEntityRepositoryServiceBase, IPersonRepositoryService
+	public class LocalPersonRepositoryService : LocalEntityRepositoryServiceBase, IPersonRepositoryService, IRepositoryService<Person>
     {
 		/// <summary>
 		/// Searches for a person using a given predicate.
@@ -74,10 +74,20 @@ namespace OpenIZ.Core.Services.Impl
             return base.Get<Person>(id, versionId);
 		}
 
-		/// <summary>
-		/// Get the person based off the user identity
-		/// </summary>
-		public Person Get(IIdentity identity)
+        /// <summary>
+        /// Gets the specified person.
+        /// </summary>
+        /// <param name="id">The id of the person.</param>
+        /// <returns>Returns the specified person.</returns>
+        public Person Get(Guid id)
+        {
+            return base.Get<Person>(id, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get the person based off the user identity
+        /// </summary>
+        public Person Get(IIdentity identity)
 		{
             int t = 0;
             return base.Find<UserEntity>(o => o.SecurityUser.UserName == identity.Name, 0, 1, out t, Guid.Empty).FirstOrDefault();

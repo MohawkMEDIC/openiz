@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Provides operations for managing organizations.
 	/// </summary>
-	public class LocalOrganizationRepositoryService : LocalEntityRepositoryServiceBase, IOrganizationRepositoryService
+	public class LocalOrganizationRepositoryService : LocalEntityRepositoryServiceBase, IOrganizationRepositoryService, IRepositoryService<Organization>
     {
 		/// <summary>
 		/// Searches for a organization using a given query.
@@ -69,12 +69,24 @@ namespace OpenIZ.Core.Services.Impl
             return base.Get<Organization>(id, versionId);
 		}
 
-		/// <summary>
-		/// Inserts the specified organization.
-		/// </summary>
-		/// <param name="organization">The organization to insert.</param>
-		/// <returns>Returns the inserted organization.</returns>
-		public Organization Insert(Organization organization)
+
+        /// <summary>
+        /// Gets the specified organization.
+        /// </summary>
+        /// <param name="id">The id of the organization.</param>
+        /// <param name="versionId">The version id of the organization.</param>
+        /// <returns>Returns the specified organization.</returns>
+        public Organization Get(Guid id)
+        {
+            return base.Get<Organization>(id, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Inserts the specified organization.
+        /// </summary>
+        /// <param name="organization">The organization to insert.</param>
+        /// <returns>Returns the inserted organization.</returns>
+        public Organization Insert(Organization organization)
 		{
             return base.Insert(organization);
 		}

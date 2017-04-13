@@ -139,12 +139,42 @@ namespace OpenIZ.Core.Services.Impl
 			return this.Get<TextObservation>(key, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Inserts the specified data.
+        /// <summary>
+		/// Gets the specified model.
 		/// </summary>
-		/// <param name="data">The data.</param>
-		/// <returns>TModel.</returns>
-		public QuantityObservation Insert(QuantityObservation data)
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the model.</returns>
+		QuantityObservation IRepositoryService<QuantityObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<QuantityObservation>(key, versionKey);
+        }
+
+        /// <summary>
+        /// Gets the specified model.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the model.</returns>
+        CodedObservation IRepositoryService<CodedObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<CodedObservation>(key, versionKey);
+        }
+
+        /// <summary>
+        /// Gets the specified model.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the model.</returns>
+        TextObservation IRepositoryService<TextObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<TextObservation>(key, versionKey);
+        }
+
+        /// <summary>
+        /// Inserts the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns>TModel.</returns>
+        public QuantityObservation Insert(QuantityObservation data)
 		{
 			return this.Insert<QuantityObservation>(data);
 		}

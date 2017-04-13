@@ -18,12 +18,20 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns the model.</returns>
 		TModel Get(Guid key);
 
-		/// <summary>
-		/// Finds the specified data.
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <returns>Returns a list of identified data.</returns>
-		IEnumerable<TModel> Find(Expression<Func<TModel, bool>> query);
+        /// <summary>
+        /// Gets the specified model.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="versionKey">The key of the version.</param>
+        /// <returns>Returns the model.</returns>
+        TModel Get(Guid key, Guid versionKey);
+
+        /// <summary>
+        /// Finds the specified data.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>Returns a list of identified data.</returns>
+        IEnumerable<TModel> Find(Expression<Func<TModel, bool>> query);
 
 		/// <summary>
 		/// Finds the specified data.

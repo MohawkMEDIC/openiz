@@ -69,15 +69,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             retVal.ClassConceptKey = actInstance?.ClassConceptKey;
             retVal.MoodConceptKey = actInstance?.MoodConceptKey;
 
-            var protocolStmt = context.CreateSqlStatement<DbActProtocol>().SelectFrom()
-                .InnerJoin<DbActProtocol, DbProtocol>(o => o.ProtocolKey, o => o.Key)
-                .Where<DbActProtocol>(o => o.SourceKey == retVal.Key);
-            retVal.Protocols = context.Query<CompositeResult<DbActProtocol, DbProtocol>>(protocolStmt).Select(o => new ActProtocol()
-            {
-                SourceEntityKey = retVal.Key,
-                Key = Guid.NewGuid(),
-                ProtocolKey = o.Object2.Key
-            }).ToList();
             return retVal;
         }
 

@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Local material persistence service
 	/// </summary>
-	public class LocalMaterialRepositoryService : LocalEntityRepositoryServiceBase, IMaterialRepositoryService
+	public class LocalMaterialRepositoryService : LocalEntityRepositoryServiceBase, IMaterialRepositoryService, IRepositoryService<Material>, IRepositoryService<ManufacturedMaterial>
     {
 		/// <summary>
 		/// Find manufactured material
@@ -131,5 +131,87 @@ namespace OpenIZ.Core.Services.Impl
 		{
             return base.Save(material);
 		}
-	}
+
+        /// <summary>
+        /// Find material
+        /// </summary>
+        IEnumerable<Material> IRepositoryService<Material>.Find(Expression<Func<Material, bool>> query)
+        {
+            return this.FindMaterial(query);
+        }
+
+        /// <summary>
+        /// Find manufactured material
+        /// </summary>
+        IEnumerable<ManufacturedMaterial> IRepositoryService<ManufacturedMaterial>.Find(Expression<Func<ManufacturedMaterial, bool>> query)
+        {
+            return this.FindManufacturedMaterial(query);
+        }
+
+        /// <summary>
+        /// Find material
+        /// </summary>
+        IEnumerable<Material> IRepositoryService<Material>.Find(Expression<Func<Material, bool>> query, int offset, int? count, out int totalResults)
+        {
+            return this.FindMaterial(query, offset, count, out totalResults);
+        }
+
+        /// <summary>
+        /// Find manufactured material
+        /// </summary>
+        IEnumerable<ManufacturedMaterial> IRepositoryService<ManufacturedMaterial>.Find(Expression<Func<ManufacturedMaterial, bool>> query, int offset, int? count, out int totalResults)
+        {
+            return this.FindManufacturedMaterial(query, offset, count, out totalResults);
+        }
+
+        /// <summary>
+        /// Get material
+        /// </summary>
+        Material IRepositoryService<Material>.Get(Guid key)
+        {
+            return this.GetMaterial(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get manufactured material
+        /// </summary>
+        ManufacturedMaterial IRepositoryService<ManufacturedMaterial>.Get(Guid key)
+        {
+            return this.GetManufacturedMaterial(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get material
+        /// </summary>
+        Material IRepositoryService<Material>.Get(Guid key, Guid versionKey)
+        {
+            return this.GetMaterial(key, versionKey);
+        }
+
+        /// <summary>
+        /// Get manufactured material
+        /// </summary>
+        ManufacturedMaterial IRepositoryService<ManufacturedMaterial>.Get(Guid key, Guid versionKey)
+        {
+            return this.GetManufacturedMaterial(key, versionKey);
+        }
+        
+        /// <summary>
+        /// Obsoletes material
+        /// </summary>
+        Material IRepositoryService<Material>.Obsolete(Guid key)
+        {
+            return this.ObsoleteMaterial(key);
+        }
+
+        /// <summary>
+        /// Obsoletes manufactured material
+        /// </summary>
+        ManufacturedMaterial IRepositoryService<ManufacturedMaterial>.Obsolete(Guid key)
+        {
+            return this.ObsoleteManufacturedMaterial(key);
+        }
+
+
+    }
 }

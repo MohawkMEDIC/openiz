@@ -76,12 +76,23 @@ namespace OpenIZ.Core.Services.Impl
 		{
 			return this.Get<PatientEncounter>(key, Guid.Empty);
 		}
-		/// <summary>
-		/// Inserts the specified data.
-		/// </summary>
-		/// <param name="data">The data.</param>
-		/// <returns>TModel.</returns>
-		public PatientEncounter Insert(PatientEncounter data)
+
+        /// <summary>
+        /// Gets the specified model.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the model.</returns>
+        PatientEncounter IRepositoryService<PatientEncounter>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<PatientEncounter>(key, versionKey);
+        }
+
+        /// <summary>
+        /// Inserts the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns>TModel.</returns>
+        public PatientEncounter Insert(PatientEncounter data)
 		{
 			return this.Insert<PatientEncounter>(data);
 		}

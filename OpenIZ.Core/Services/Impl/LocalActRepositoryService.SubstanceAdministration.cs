@@ -71,12 +71,22 @@ namespace OpenIZ.Core.Services.Impl
 			return this.Get<SubstanceAdministration>(key, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Inserts the specified data.
-		/// </summary>
-		/// <param name="data">The data.</param>
-		/// <returns>TModel.</returns>
-		public SubstanceAdministration Insert(SubstanceAdministration data)
+        /// <summary>
+        /// Gets the specified model.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>Returns the model.</returns>
+        SubstanceAdministration IRepositoryService<SubstanceAdministration>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<SubstanceAdministration>(key, versionKey);
+        }
+
+        /// <summary>
+        /// Inserts the specified data.
+        /// </summary>
+        /// <param name="data">The data.</param>
+        /// <returns>TModel.</returns>
+        public SubstanceAdministration Insert(SubstanceAdministration data)
 		{
 			return this.Insert<SubstanceAdministration>(data);
 		}

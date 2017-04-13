@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Local patient repository service
 	/// </summary>
-	public class LocalPatientRepositoryService : LocalEntityRepositoryServiceBase, IPatientRepositoryService
+	public class LocalPatientRepositoryService : LocalEntityRepositoryServiceBase, IPatientRepositoryService, IRepositoryService<Patient>
 	{
 		
 		/// <summary>
@@ -69,14 +69,26 @@ namespace OpenIZ.Core.Services.Impl
             return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Gets the specified patient.
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <param name="versionId">The version identifier.</param>
-		/// <returns>Returns the patient or null if no patient is found.</returns>
-		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
-		public Patient Get(Guid id, Guid versionId)
+        /// <summary>
+        /// Gets the specified patient.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="versionId">The version identifier.</param>
+        /// <returns>Returns the patient or null if no patient is found.</returns>
+        /// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
+        public Patient Get(Guid id)
+        {
+            return base.Get<Patient>(id, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Gets the specified patient.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="versionId">The version identifier.</param>
+        /// <returns>Returns the patient or null if no patient is found.</returns>
+        /// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
+        public Patient Get(Guid id, Guid versionId)
 		{
             return base.Get<Patient>(id, versionId);
 		}

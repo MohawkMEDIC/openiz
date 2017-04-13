@@ -17,7 +17,9 @@ namespace OpenIZ.Core.Services.Impl
     /// <summary>
     /// Represents a base class for entity repository services
     /// </summary>
-    public abstract class LocalEntityRepositoryServiceBase : IPersistableQueryRepositoryService, IAuditEventSource
+    public abstract class LocalEntityRepositoryServiceBase : IPersistableQueryRepositoryService,
+        IAuditEventSource,
+        IFastQueryRepositoryService
     {
         public event EventHandler<AuditDataEventArgs> DataCreated;
         public event EventHandler<AuditDataEventArgs> DataUpdated;
@@ -183,6 +185,26 @@ namespace OpenIZ.Core.Services.Impl
                 throw new DetectedIssueException(details);
             }
             return p;
+        }
+
+        /// <summary>
+        /// Perform a faster version of the query for an object
+        /// </summary>
+        public IEnumerable<TEntity> FindFast<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IFastQueryDataPersistenceService<TEntity>>();
+
+            if (persistenceService == null)
+            {
+                return this.Find<TEntity>(query, offset, count, out totalResults, queryId);
+            }
+
+            var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();
+
+            IEnumerable<TEntity> results = null;
+            results = persistenceService.QueryFast(query, queryId, offset, count, AuthenticationContext.Current.Principal, out totalResults);
+
+            return businessRulesService != null ? businessRulesService.AfterQuery(results) : results;
         }
     }
 }

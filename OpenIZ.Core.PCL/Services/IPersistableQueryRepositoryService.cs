@@ -20,5 +20,6 @@ namespace OpenIZ.Core.Services
 		/// <param name="totalResults">The total results in the query</param>
 		/// <param name="queryId">The unique identifier for the query</param>
 		IEnumerable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData;
+
 	}
 }

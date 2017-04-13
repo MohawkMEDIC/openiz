@@ -70,7 +70,9 @@
     <Compile Include="ResourceHandler\BundleResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptClassResourceHandler.cs" />
     <Compile Include="ResourceHandler\ExtensionTypeResourceHandler.cs" />
+    <Compile Include="ResourceHandler\PatientEncounterResourceHandler.cs" />
     <Compile Include="ResourceHandler\PersonResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ObservationResourceHandlers.cs" />
     <Compile Include="ResourceHandler\ReferenceTermResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptReferenceTermResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
@@ -85,9 +87,11 @@
     <Compile Include="ResourceHandler\PatientResourceHandler.cs" />
     <Compile Include="ResourceHandler\PlaceResourceHandler.cs" />
     <Compile Include="ResourceHandler\ProviderResourceHandler.cs" />
+    <Compile Include="ResourceHandler\ResourceHandlerBase.cs" />
     <Compile Include="ResourceHandler\ResourceHandlerUtil.cs" />
     <Compile Include="ResourceHandler\SecurityRoleResourceHandler.cs" />
     <Compile Include="ResourceHandler\SecurityUserResourceHandler.cs" />
+    <Compile Include="ResourceHandler\SubstanceAdministrationResourceHandler.cs" />
     <Compile Include="ResourceHandler\TemplateDefinitionResourceHandler.cs" />
     <Compile Include="ResourceHandler\UserEntityResourceHandler.cs" />
     <Compile Include="Util\BundleUtil.cs" />
