@@ -46,8 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\ReportExecutorAuthorizeAttribute.cs" />
-    <Compile Include="Attributes\ReportExecutorPermission.cs" />
     <Compile Include="Configuration\CertificateCredential.cs" />
     <Compile Include="Configuration\CredentialBase.cs" />
     <Compile Include="Configuration\Credentials.cs" />

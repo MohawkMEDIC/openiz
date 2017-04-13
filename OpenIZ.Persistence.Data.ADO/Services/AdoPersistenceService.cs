@@ -317,14 +317,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Loading {0}...", t.AssemblyQualifiedName);
 
-	                if (t.ContainsGenericParameters)
-	                {
-						ApplicationContext.Current.AddServiceProvider(t.MakeGenericType(t.GetGenericArguments()));
-	                }
-	                else
-	                {
-						ApplicationContext.Current.AddServiceProvider(t);
-					}
+	                ApplicationContext.Current.AddServiceProvider(t);
 
 					// Add to cache since we're here anyways
 
