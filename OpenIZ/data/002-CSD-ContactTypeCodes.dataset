@@ -41,6 +41,7 @@
         <language>en</language>
         <value>Business Phone</value>
       </name>
+      <conceptSet>1DABE3E2-44B8-4C45-9102-25EA147E5710</conceptSet>
     </Concept>
   </insert>
   <insert>
@@ -74,6 +75,7 @@
         <language>en</language>
         <value>Fax Number</value>
       </name>
+      <conceptSet>1DABE3E2-44B8-4C45-9102-25EA147E5710</conceptSet>
     </Concept>
   </insert>
   <insert>
@@ -107,6 +109,7 @@
         <language>en</language>
         <value>Email</value>
       </name>
+      <conceptSet>1DABE3E2-44B8-4C45-9102-25EA147E5710</conceptSet>
     </Concept>
   </insert>
 </dataset>

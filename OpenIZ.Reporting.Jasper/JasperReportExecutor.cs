@@ -40,7 +40,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Diagnostics;
-using OpenIZ.Reporting.Core.Attributes;
+using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Reporting.Core.Auth;
 using OpenIZ.Reporting.Core.Configuration;
 using OpenIZ.Reporting.Core.Event;
@@ -222,6 +222,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="parameterType">The report parameter type to create.</param>
 		/// <returns>Returns the created report parameter type.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ParameterType CreateParameterType(ParameterType parameterType)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
@@ -239,6 +240,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="reportDefinition">The report definition to create.</param>
 		/// <returns>Returns the created report definition.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
 		{
 			throw new NotImplementedException();
@@ -249,6 +251,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="reportFormat">The report format to create.</param>
 		/// <returns>Returns the created report format.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportFormat CreateReportFormat(ReportFormat reportFormat)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
@@ -266,6 +269,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
 		/// <returns>Returns the deleted report parameter type.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ParameterType DeleteParameterType(Guid id)
 		{
 			throw new NotImplementedException();
@@ -276,6 +280,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report definition to delete.</param>
 		/// <returns>Returns the deleted report definition.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportDefinition DeleteReportDefinition(Guid id)
 		{
 			throw new NotImplementedException();
@@ -286,6 +291,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report format.</param>
 		/// <returns>Returns the report deleted report format.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportFormat DeleteReportFormat(Guid id)
 		{
 			throw new NotImplementedException();
@@ -303,6 +309,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public RisiCollection<ReportParameter> GetAllReportParameterTypes()
 		{
 			throw new NotImplementedException();
@@ -314,6 +321,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="id">The id of the parameter type to retrieve.</param>
 		/// <returns>Returns a parameter type.</returns>
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public ParameterType GetParameterType(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
@@ -332,7 +340,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="id">The id of the report definition to retrieve.</param>
 		/// <returns>Returns a report definition.</returns>
 		/// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
-		//[ReportExecutorAuthorize(SecurityAction.Demand)]
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public ReportDefinition GetReportDefinition(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
@@ -375,7 +383,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets a list of report definitions based on a specific query.
 		/// </summary>
 		/// <returns>Returns a list of report definitions.</returns>
-		//[ReportExecutorAuthorize(SecurityAction.Demand)]
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public RisiCollection<ReportDefinition> GetReportDefinitions()
 		{
 			this.Authenticate(this.username, this.password);
@@ -448,6 +456,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report format to retrieve.</param>
 		/// <returns>Returns a report format.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public ReportFormat GetReportFormat(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
@@ -465,6 +474,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report parameter to retrieve.</param>
 		/// <returns>Returns a report parameter.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public ReportParameter GetReportParameter(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>();
@@ -482,6 +492,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve parameters.</param>
 		/// <returns>Returns a list of parameters.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public RisiCollection<ReportParameter> GetReportParameters(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
@@ -502,6 +513,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="id">The id of the report.</param>
 		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
 		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
 		{
 			throw new NotImplementedException();
@@ -513,6 +525,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
 		/// <exception cref="System.InvalidOperationException">Unable to locate the persistence service or Unable to contact the Jasper Report Service.</exception>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public byte[] GetReportSource(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
@@ -570,6 +583,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="reportFormatId">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
 		/// <returns>Returns the raw report.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedClinicalData)]
 		public byte[] RunReport(Guid reportId, Guid reportFormatId, IEnumerable<ReportParameter> parameters)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
@@ -638,6 +652,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="parameterType">The updated parameter type.</param>
 		/// <returns>Returns the updated parameter type.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ParameterType UpdateParameterType(ParameterType parameterType)
 		{
 			throw new NotImplementedException();
@@ -648,6 +663,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="reportDefinition">The updated report definition.</param>
 		/// <returns>Returns the updated report definition.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition)
 		{
 			throw new NotImplementedException();
@@ -658,6 +674,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <param name="reportFormat">The updated report format.</param>
 		/// <returns>Returns the update report format.</returns>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportFormat UpdateReportFormat(ReportFormat reportFormat)
 		{
 			throw new NotImplementedException();
