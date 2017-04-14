@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -34,6 +35,11 @@ namespace OpenIZ.BusinessRules.Core.Configuration
 	/// </summary>
 	public class ConfigurationSectionHandler : IConfigurationSectionHandler
 	{
+		/// <summary>
+		/// The trace source.
+		/// </summary>
+		private TraceSource traceSource = new TraceSource("OpenIZ.BusinessRules.Core");
+
 		/// <summary>
 		/// Creates the configuration section.
 		/// </summary>
@@ -55,14 +61,21 @@ namespace OpenIZ.BusinessRules.Core.Configuration
 			{
 				throw new ConfigurationErrorsException("Path cannot be null");
 			}
-            else if (!Path.IsPathRooted(path))
-            {
-                path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), path);
-            }
+
+			if (!Path.IsPathRooted(path))
+			{
+				path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), path);
+			}
+
 			if (!Directory.Exists(path))
 			{
-				throw new ConfigurationErrorsException($"Path {path} does not exist");
+				this.traceSource.TraceEvent(TraceEventType.Warning, 0, $"Path {path} does not exist, attempting to create");
+
+				Directory.CreateDirectory(path);
+
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Directory: {path}, created successfully");
 			}
+
 
 			configuration.DirectoryConfiguration.Path = path;
 
