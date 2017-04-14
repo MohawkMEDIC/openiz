@@ -41,6 +41,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,6 +52,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleParameters.cs" />
+    <Compile Include="frmKeyPassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmKeyPassword.Designer.cs">
+      <DependentUpon>frmKeyPassword.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -69,7 +77,11 @@
       <Name>OpenIZ.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="frmKeyPassword.resx">
+      <DependentUpon>frmKeyPassword.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Sample\js\Index-Controller.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

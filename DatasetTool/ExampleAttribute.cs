@@ -5,6 +5,7 @@ namespace OizDevTool
     /// <summary>
     /// Example attribute
     /// </summary>
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class ExampleAttribute : Attribute
     {
         /// <summary>

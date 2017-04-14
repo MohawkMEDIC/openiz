@@ -38,5 +38,10 @@ namespace OpenIZ.Core.Interfaces
         /// Get all services
         /// </summary>
         IEnumerable<object> GetServices();
+
+        /// <summary>
+        /// Removes a service provider
+        /// </summary>
+        void RemoveServiceProvider(Type serviceType);
 	}
 }

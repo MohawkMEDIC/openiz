@@ -1,0 +1,233 @@
+﻿using OpenIZ.Core.Applets.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OpenIZ.Core.Applets;
+using OpenIZ.Core.Applets.Model;
+using MARC.HI.EHRS.SVC.Core.Services;
+using MARC.HI.EHRS.SVC.Core;
+using System.IO;
+using System.Reflection;
+using System.Diagnostics;
+using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Security;
+using OpenIZ.Core.Configuration;
+using System.Data.Linq;
+
+namespace OpenIZ.Core.Services.Impl
+{
+    /// <summary>
+    /// Represents an applet manager service that uses the local file system
+    /// </summary>
+    public class LocalAppletManagerService : IAppletManagerService, IDaemonService
+    {
+
+        // Map of package id to file
+        private Dictionary<String, String> m_fileDictionary = new Dictionary<string, string>();
+
+        // Config file
+        private OpenIzConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.core") as OpenIzConfiguration;
+
+        // Tracer
+        private TraceSource m_tracer = new TraceSource(OpenIzConstants.ServiceTraceSourceName);
+
+        /// <summary>
+        /// Indicates whether the service is running 
+        /// </summary>
+        public bool IsRunning => true;
+
+        /// <summary>
+        /// Local applet manager ctor
+        /// </summary>
+        public LocalAppletManagerService()
+        {
+            this.LoadedApplets = new AppletCollection();
+        }
+
+        /// <summary>
+        /// Gets the loaded applets from the manager
+        /// </summary>
+        public AppletCollection LoadedApplets
+        {
+            get; private set;
+        }
+
+        // Events
+        public event EventHandler Started;
+        public event EventHandler Starting;
+        public event EventHandler Stopped;
+        public event EventHandler Stopping;
+
+        /// <summary>
+        /// Get the specified package data
+        /// </summary>
+        public byte[] GetPackage(AppletInfo appletId)
+        {
+
+            // Save the applet
+            var appletDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets");
+            if (!Directory.Exists(appletDir))
+                Directory.CreateDirectory(appletDir);
+
+            // Install
+            String pakFile = Path.Combine(appletDir, appletId.Id + ".pak");
+            if (File.Exists(pakFile))
+                return File.ReadAllBytes(pakFile);
+            else
+                throw new FileNotFoundException($"Applet {appletId} not found");
+        }
+
+        /// <summary>
+        /// Performs an installation 
+        /// </summary>
+        public bool Install(AppletPackage package, bool isUpgrade = false)
+        {
+            // TODO: Verify package hash / signature
+            if (!this.VerifyPackage(package))
+                throw new SecurityException("Applet failed validation");
+
+            // Save the applet
+            var appletDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets");
+            if (!Directory.Exists(appletDir))
+                Directory.CreateDirectory(appletDir);
+
+            // Install
+            String pakFile = Path.Combine(appletDir, package.Meta.Id + ".pak");
+            if (File.Exists(pakFile) && !isUpgrade)
+                throw new InvalidOperationException($"Cannot replace {package.Meta} unless upgrade is specifically specified");
+
+            using (FileStream fs = File.Create(pakFile))
+                package.Save(fs);
+            return true;
+        }
+
+        /// <summary>
+        /// Verify package signature
+        /// </summary>
+        private bool VerifyPackage(AppletPackage package)
+        {
+            // First check: Hash - Make sure the HASH is ok
+            if (Convert.ToBase64String(SHA256.Create().ComputeHash(package.Manifest)) != Convert.ToBase64String(package.Meta.Hash))
+                throw new InvalidOperationException($"Package contents of {package.Meta.Id} appear to be corrupt!");
+
+            if (package.Meta.Signature != null)
+            {
+                this.m_tracer.TraceInformation("Will verify package {0}", package.Meta.Id.ToString());
+
+                // Get the public key 
+                var x509Store = new X509Store(StoreName.TrustedPublisher, StoreLocation.LocalMachine);
+                try
+                {
+                    x509Store.Open(OpenFlags.ReadOnly);
+                    var cert = x509Store.Certificates.Find(X509FindType.FindByThumbprint, package.Meta.PublicKeyToken, false);
+                    
+                    if (cert.Count == 0 || cert[0].NotAfter < DateTime.Now || cert[0].NotBefore > DateTime.Now)
+                        throw new SecurityException($"Cannot find public key of publisher information for {package.Meta.PublicKeyToken} or the local certificate is invalid");
+
+                    RSACryptoServiceProvider rsa = cert[0].PublicKey.Key as RSACryptoServiceProvider;
+                    var retVal =  rsa.VerifyData(package.Manifest, CryptoConfig.MapNameToOID("SHA1"), package.Meta.Signature);
+
+                    if(retVal == true)
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Information, 0, "SUCCESSFULLY VALIDATED: {0} v.{1}\r\n" +
+                            "\tKEY TOKEN: {2}\r\n" +
+                            "\tSIGNED BY: {3}\r\n" +
+                            "\tVALIDITY: {4:yyyy-MMM-dd} - {5:yyyy-MMM-dd}\r\n" +
+                            "\tISSUER: {6}", 
+                            package.Meta.Id, package.Meta.Version, cert[0].Thumbprint, cert[0].Subject, cert[0].NotBefore, cert[0].NotAfter, cert[0].Issuer);
+                    }
+                    else
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Critical, 0, ">> SECURITY ALERT : {0} v.{1} <<\r\n" +
+                            "\tPACKAGE HAS BEEN TAMPERED WITH\r\n" + 
+                            "\tKEY TOKEN (CLAIMED): {2}\r\n" +
+                            "\tSIGNED BY  (CLAIMED): {3}\r\n" +
+                            "\tVALIDITY: {4:yyyy-MMM-dd} - {5:yyyy-MMM-dd}\r\n" +
+                            "\tISSUER: {6}\r\n\tSERVICE WILL HALT",
+                            package.Meta.Id, package.Meta.Version, cert[0].Thumbprint, cert[0].Subject, cert[0].NotBefore, cert[0].NotAfter, cert[0].Issuer);
+                    }
+                    return retVal;
+                }
+                finally
+                {
+                    x509Store.Close();
+                }
+            }
+            else if (this.m_configuration.Security.AllowUnsignedApplets)
+            {
+                this.m_tracer.TraceEvent(TraceEventType.Warning, 1099, "Package {0} v.{1} (publisher: {2}) is not signed. To prevent unsigned applets from being installed disable the configuration option", package.Meta.Id, package.Meta.Version, package.Meta.Author);
+                return true;
+            }
+            else
+            {
+                this.m_tracer.TraceEvent(TraceEventType.Critical, 1097, "Package {0} v.{1} (publisher: {2}) is not signed and cannot be installed", package.Meta.Id, package.Meta.Version, package.Meta.Author);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Starts the daemon service 
+        /// </summary>
+        public bool Start()
+        {
+
+            this.m_tracer.TraceInformation("Starting applet manager service...");
+
+            this.Starting?.Invoke(this, EventArgs.Empty);
+
+            try
+            {
+                // Load packages from applets/ filesystem directory
+                this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Scanning {0} for applets..." , Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets"));
+                foreach (var f in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets")))
+                {
+                    // Try to open the file
+                    this.m_tracer.TraceInformation("Loading {0}...", f);
+                    using (var fs = File.OpenRead(f))
+                    {
+                        var pkg = AppletPackage.Load(fs);
+
+                        if(this.m_fileDictionary.ContainsKey(pkg.Meta.Id))
+                        {
+                            this.m_tracer.TraceEvent(TraceEventType.Critical, 1096, "Duplicate package {0} is not permitted", pkg.Meta.Id);
+                            throw new DuplicateKeyException(pkg.Meta.Id);
+                        }
+                        else if (this.VerifyPackage(pkg))
+                        {
+                            this.LoadedApplets.Add(pkg.Unpack());
+                            this.m_fileDictionary.Add(pkg.Meta.Id, f);
+                        }
+                        else
+                        {
+                            this.m_tracer.TraceEvent(TraceEventType.Critical, 1098, "Cannot proceed while untrusted applets are present");
+                            throw new Exception();
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error loading applets: {0}", ex);
+                throw new InvalidOperationException("Cannot proceed while untrusted applets are present");
+            }
+
+            this.Started?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
+        /// <summary>
+        /// Stop the service
+        /// </summary>
+        public bool Stop()
+        {
+            this.Stopping?.Invoke(this, EventArgs.Empty);
+            this.Stopped?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+    }
+}

@@ -22,6 +22,7 @@ using System;
 using OpenIZ.Core.Model.Security;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.RISI
 {
@@ -30,7 +31,8 @@ namespace OpenIZ.Core.Model.RISI
 	/// </summary>
 	[XmlType(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
 	[XmlRoot(nameof(ReportDefinition), Namespace = "http://openiz.org/risi")]
-	public class ReportDefinition : BaseEntityData
+    [JsonObject(nameof(ReportDefinition))]
+    public class ReportDefinition : BaseEntityData
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
@@ -56,31 +58,31 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the correlation id of the report to the report engine.
 		/// </summary>
-		[XmlAttribute("correlationId")]
+		[XmlAttribute("correlationId"), JsonProperty("correlationId")]
 		public string CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the description of the report.
 		/// </summary>
-		[XmlElement("description")]
+		[XmlElement("description"), JsonProperty("description")]
 		public string Description { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the stored query.
 		/// </summary>
-		[XmlElement("name")]
+		[XmlElement("name"), JsonProperty("name")]
 		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets a list of parameters which are supported for the specified query.
 		/// </summary>
-		[XmlElement("parameters")]
+		[XmlElement("parameters"), JsonProperty("parameters")]
 		public List<ReportParameter> Parameters { get; set; }
 
 		/// <summary>
 		/// Gets or sets security policy instances related to the query definition.
 		/// </summary>
-		[XmlElement("policy")]
+		[XmlElement("policy"), JsonProperty("policy")]
 		public List<SecurityPolicyInstance> Policies { get; set; }
 	}
 }

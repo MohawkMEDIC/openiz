@@ -66,17 +66,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// </summary>
         public JsonViewModelSerializer()
         {
-            this.ViewModel = new ViewModelDescription()
-            {
-                Model = new List<TypeModelDescription>()
-                {
-                    new TypeModelDescription()
-                    {
-                        TypeName = "IdentifiedData",
-                        All = true
-                    }
-                }
-            };
+            this.ViewModel = ViewModelDescription.Load(typeof(JsonViewModelSerializer).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Core.Applets.ViewModel.Default.xml"));
         }
 
         /// <summary>

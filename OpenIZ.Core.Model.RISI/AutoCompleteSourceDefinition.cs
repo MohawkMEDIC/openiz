@@ -18,6 +18,7 @@
  * Date: 2016-12-4
  */
 
+using Newtonsoft.Json;
 using OpenIZ.Core.Model.Entities;
 using System.Xml.Serialization;
 
@@ -29,6 +30,7 @@ namespace OpenIZ.Core.Model.RISI
 	[XmlInclude(typeof(Place))]
 	[XmlInclude(typeof(Material))]
 	[XmlInclude(typeof(Organization))]
+    [JsonObject(nameof(AutoCompleteSourceDefinition))]
 	[XmlType(nameof(AutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
 	public abstract class AutoCompleteSourceDefinition : BaseEntityData
 	{

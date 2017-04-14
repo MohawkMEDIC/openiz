@@ -19,6 +19,7 @@
  */
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Applets.Model
@@ -35,9 +36,12 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         public static AppletPackage Load(Stream resourceStream)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(AppletPackage));
-            var amfst = xsz.Deserialize(resourceStream) as AppletPackage;
-            return amfst;
+            using (GZipStream gzs = new GZipStream(resourceStream,  CompressionMode.Decompress))
+            {
+                XmlSerializer xsz = new XmlSerializer(typeof(AppletPackage));
+                var amfst = xsz.Deserialize(gzs) as AppletPackage;
+                return amfst;
+            }
         }
 
         /// <summary>
@@ -65,7 +69,20 @@ namespace OpenIZ.Core.Applets.Model
         public AppletManifest Unpack()
         {
             using (MemoryStream ms = new MemoryStream(this.Manifest))
-                return AppletManifest.Load(ms);
+            using (DeflateStream dfs = new DeflateStream(ms, CompressionMode.Decompress))
+                return AppletManifest.Load(dfs);
+        }
+
+        /// <summary>
+        /// Save the compressed applet manifest
+        /// </summary>
+        public void Save(Stream stream)
+        {
+            using (GZipStream gzs = new GZipStream(stream, CompressionMode.Compress))
+            {
+                XmlSerializer xsz = new XmlSerializer(typeof(AppletPackage));
+                xsz.Serialize(gzs, this);
+            }
         }
     }
 }

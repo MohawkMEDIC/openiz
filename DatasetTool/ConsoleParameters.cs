@@ -37,7 +37,6 @@ namespace OizDevTool
         /// The The name of the tool
         /// </summary>
         [Parameter("tool")]
-        [Parameter("t")]
         [Description("Identifies the data tool which should be executed")]
         public String ToolName { get; set; }
 
@@ -45,7 +44,6 @@ namespace OizDevTool
         /// Operation name
         /// </summary>
         [Parameter("operation")]
-        [Parameter("o")]
         [Description("Identifies the specified data tool operation to be executed")]
         public String OperationName { get; set; }
 

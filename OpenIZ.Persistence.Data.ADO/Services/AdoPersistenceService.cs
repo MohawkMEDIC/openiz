@@ -311,7 +311,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             }
 
             // Iterate the persistence services
-            foreach (var t in typeof(AdoPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Data.ADO.Services.Persistence" && !o.GetTypeInfo().IsAbstract))
+            foreach (var t in typeof(AdoPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Data.ADO.Services.Persistence" && !o.GetTypeInfo().IsAbstract && !o.IsGenericTypeDefinition))
             {
                 try
                 {

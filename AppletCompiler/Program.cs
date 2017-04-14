@@ -25,9 +25,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -52,7 +55,49 @@ namespace AppletCompiler
                 parser.WriteHelp(Console.Out);
                 return 0;
             }
+            else if (parameters.Compile)
+                return Compile(parameters);
+            else if (parameters.Sign)
+                return Sign(parameters);
+            else
+            {
+                Console.WriteLine("Nothing to do!");
+                return 0;
+            }
+        }
 
+        /// <summary>
+        /// Sign an existing package
+        /// </summary>
+        private static int Sign(ConsoleParameters parameters)
+        {
+            try
+            {
+                AppletPackage pkg = null;
+                using (FileStream fs = File.OpenRead(parameters.Source))
+                    pkg = AppletPackage.Load(fs);
+
+                Console.WriteLine("Will sign package {0}", pkg.Meta);
+                pkg = CreateSignedPackage(pkg.Unpack(), parameters);
+                using (FileStream fs = File.Create(parameters.Output ?? Path.ChangeExtension(parameters.Source, ".signed.pak")))
+                    pkg.Save(fs);
+                return 0;
+            }
+            catch(Exception e)
+            {
+                Console.Error.WriteLine("Cannot sign package: {0}", e);
+                return -0232;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Compile
+        /// </summary>
+        static int Compile(ConsoleParameters parameters)
+        {
+            int retVal = 0;
             // First is there a Manifest.xml?
             if (!Path.IsPathRooted(parameters.Source))
                 parameters.Source = Path.Combine(Environment.CurrentDirectory, parameters.Source);
@@ -61,10 +106,10 @@ namespace AppletCompiler
             AppletCollection ac = new AppletCollection();
             XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
             XmlSerializer xpz = new XmlSerializer(typeof(AppletPackage));
-            if(parameters.References != null)
+            if (parameters.References != null)
                 foreach (var itm in parameters.References)
                 {
-                    if(File.Exists(itm))
+                    if (File.Exists(itm))
                     {
                         using (var fs = File.OpenRead(itm))
                         {
@@ -97,7 +142,6 @@ namespace AppletCompiler
             {
                 Console.WriteLine("\t Reading Manifest...", parameters.Source);
 
-                XmlSerializer packXsz = new XmlSerializer(typeof(AppletPackage));
                 using (var fs = File.OpenRead(manifestFile))
                 {
                     AppletManifest mfst = xsz.Deserialize(fs) as AppletManifest;
@@ -111,72 +155,117 @@ namespace AppletCompiler
                     if (!Directory.Exists(Path.GetDirectoryName(parameters.Output)) && !String.IsNullOrEmpty(Path.GetDirectoryName(parameters.Output)))
                         Directory.CreateDirectory(Path.GetDirectoryName(parameters.Output));
 
-                    using (var ofs = File.Create(parameters.Output ?? "out.xml"))
-                        xsz.Serialize(ofs, mfst);
+                    AppletPackage pkg = null;
 
-                    var pkg = mfst.CreatePackage();
-                    pkg.Meta.Hash = SHA256.Create().ComputeHash(pkg.Manifest);
-                    pkg.Meta.PublicKeyToken = pkg.Meta.PublicKeyToken ?? BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "");
-
-
-                    using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak.raw")))
-                        packXsz.Serialize(ofs, pkg);
-                    using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.xml", ".pak")))
-                    using (var gzs = new GZipStream(ofs, CompressionMode.Compress))
+                    // Is there a signature?
+                    if (!String.IsNullOrEmpty(parameters.SignKey))
                     {
-                        packXsz.Serialize(gzs, pkg);
+                        pkg = CreateSignedPackage(mfst, parameters);
+                        if (pkg == null) return -102;
+                    }
+                    else
+                    {
+                        Console.WriteLine("WARNING:>>> THIS PACKAGE IS NOT SIGNED - MOST OPEN IZ TOOLS WILL NOT LOAD IT");
+                        mfst.Info.PublicKeyToken = null;
+                        pkg = mfst.CreatePackage();
+                        //pkg.Meta.PublicKeyToken = null;
+                    }
+                    pkg.Meta.Hash = SHA256.Create().ComputeHash(pkg.Manifest);
+
+                    using (var ofs = File.Create(Path.ChangeExtension(parameters.Output ?? "out.pak", ".pak")))
+                    {
+                        pkg.Save(ofs);
                     }
                     // Render the build directory
 
-                    var bindir = Path.Combine(Path.GetDirectoryName(parameters.Output), "bin");
-
-                    if (String.IsNullOrEmpty(parameters.Deploy))
+                    if (!String.IsNullOrEmpty(parameters.Deploy))
                     {
-                        if (Directory.Exists(bindir) && parameters.Clean)
-                            Directory.Delete(bindir, true);
-                        bindir = Path.Combine(bindir, mfst.Info.Id);
-                        Directory.CreateDirectory(bindir);
-                    }
-                    else
-                        bindir = parameters.Deploy;
+                        var bindir = Path.Combine(Path.GetDirectoryName(parameters.Output), "bin");
 
-                    mfst.Initialize();
-                    ac.Add(mfst);
-
-                    foreach (var lang in mfst.Strings)
-                    {
-                        
-                        string wd = Path.Combine(bindir, lang.Language);
-                        if (String.IsNullOrEmpty(parameters.Lang))
-                            Directory.CreateDirectory(wd);
-                        else if (parameters.Lang == lang.Language)
-                            wd = bindir;
+                        if (String.IsNullOrEmpty(parameters.Deploy))
+                        {
+                            if (Directory.Exists(bindir) && parameters.Clean)
+                                Directory.Delete(bindir, true);
+                            bindir = Path.Combine(bindir, mfst.Info.Id);
+                            Directory.CreateDirectory(bindir);
+                        }
                         else
-                            continue;
+                            bindir = parameters.Deploy;
 
-                        foreach(var m in ac)
-                            foreach(var itm in m.Assets)
-                            {
-                                try
+                        mfst.Initialize();
+                        ac.Add(mfst);
+
+                        foreach (var lang in mfst.Strings)
+                        {
+
+                            string wd = Path.Combine(bindir, lang.Language);
+                            if (String.IsNullOrEmpty(parameters.Lang))
+                                Directory.CreateDirectory(wd);
+                            else if (parameters.Lang == lang.Language)
+                                wd = bindir;
+                            else
+                                continue;
+
+                            foreach (var m in ac)
+                                foreach (var itm in m.Assets)
                                 {
-                                    String fn = Path.Combine(wd, m.Info.Id, itm.Name.Replace("/", "\\"));
-                                    Console.WriteLine("\tRendering {0}...", fn);
-                                    if (!Directory.Exists(Path.GetDirectoryName(fn)))
-                                        Directory.CreateDirectory(Path.GetDirectoryName(fn));
-                                    File.WriteAllBytes(fn, ac.RenderAssetContent(itm, lang.Language));
+                                    try
+                                    {
+                                        String fn = Path.Combine(wd, m.Info.Id, itm.Name.Replace("/", "\\"));
+                                        Console.WriteLine("\tRendering {0}...", fn);
+                                        if (!Directory.Exists(Path.GetDirectoryName(fn)))
+                                            Directory.CreateDirectory(Path.GetDirectoryName(fn));
+                                        File.WriteAllBytes(fn, ac.RenderAssetContent(itm, lang.Language));
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Console.WriteLine("E: {0}: {1} {2}", itm, e.GetType().Name, e);
+                                        retVal = -1000;
+                                    }
                                 }
-                                catch(Exception e)
-                                {
-                                    Console.WriteLine("E: {0}: {1} {2}", itm, e.GetType().Name, e);
-                                    retVal = -1000;
-                                }
-                            }
+                        }
                     }
+
                 }
-                
             }
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Create a signed package
+        /// </summary>
+        private static AppletPackage CreateSignedPackage(AppletManifest mfst, ConsoleParameters parameters)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(parameters.SignPassword))
+                {
+                    using (var frmKey = new frmKeyPassword(parameters.SignKey))
+                        if (frmKey.ShowDialog() == DialogResult.OK)
+                            parameters.SignPassword = frmKey.Password;
+                }
+                else if (File.Exists(parameters.SignPassword))
+                    parameters.SignPassword = File.ReadAllText(parameters.SignPassword);
+
+                X509Certificate2 signCert = new X509Certificate2(parameters.SignKey, parameters.SignPassword);
+
+                mfst.Info.PublicKeyToken = signCert.Thumbprint;
+                var retVal = mfst.CreatePackage();
+                retVal.Meta.Hash = SHA256.Create().ComputeHash(retVal.Manifest);
+                retVal.Meta.PublicKeyToken = signCert.Thumbprint;
+
+                if (!signCert.HasPrivateKey)
+                    throw new SecurityException($"Provided key {parameters.SignKey} has no private key");
+                RSACryptoServiceProvider rsa = signCert.PrivateKey as RSACryptoServiceProvider;
+                retVal.Meta.Signature = rsa.SignData(retVal.Manifest, CryptoConfig.MapNameToOID("SHA1"));
+                return retVal;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error signing package: {0}", e);
+                return null;
+            }
         }
 
         private static Dictionary<String, String> mime = new Dictionary<string, string>()
@@ -201,14 +290,14 @@ namespace AppletCompiler
         private static IEnumerable<AppletAsset> ProcessDirectory(string source, String path, ConsoleParameters parms)
         {
             List<AppletAsset> retVal = new List<AppletAsset>();
-            foreach(var itm in Directory.GetFiles(source))
+            foreach (var itm in Directory.GetFiles(source))
             {
                 Console.WriteLine("\t Processing {0}...", itm);
 
                 if (Path.GetFileName(itm).ToLower() == "manifest.xml")
                     continue;
-                else 
-                    switch(Path.GetExtension(itm))
+                else
+                    switch (Path.GetExtension(itm))
                     {
                         case ".html":
                         case ".htm":
@@ -218,20 +307,21 @@ namespace AppletCompiler
                             // Now we have to iterate throuh and add the asset\
                             AppletAssetHtml htmlAsset = new AppletAssetHtml();
                             htmlAsset.Layout = ResolveName(xe.Attribute(xs_openiz + "layout")?.Value);
-                            htmlAsset.Titles = new List<LocaleString>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "title").Select(o=> new LocaleString() { Language = o.Attribute("lang")?.Value, Value = o.Value }));
-                            htmlAsset.Bundle = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "bundle").Select(o=> ResolveName(o.Value)));
-                            htmlAsset.Script = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "script").Select(o=> ResolveName(o.Value)));
+                            htmlAsset.Titles = new List<LocaleString>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "title").Select(o => new LocaleString() { Language = o.Attribute("lang")?.Value, Value = o.Value }));
+                            htmlAsset.Bundle = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "bundle").Select(o => ResolveName(o.Value)));
+                            htmlAsset.Script = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "script").Select(o => ResolveName(o.Value)));
                             htmlAsset.Style = new List<string>(xe.Descendants().OfType<XElement>().Where(o => o.Name == xs_openiz + "style").Select(o => ResolveName(o.Value)));
                             htmlAsset.Static = xe.Attribute(xs_openiz + "static")?.Value == "true";
-                            htmlAsset.ViewState = xe.Elements().OfType<XElement>().Where(o => o.Name == xs_openiz + "state").Select(o=>new AppletViewState()
+                            htmlAsset.ViewState = xe.Elements().OfType<XElement>().Where(o => o.Name == xs_openiz + "state").Select(o => new AppletViewState()
                             {
                                 Name = o.Attribute("name")?.Value,
                                 Route = o.Elements().OfType<XElement>().FirstOrDefault(r => r.Name == xs_openiz + "url" || r.Name == xs_openiz + "route")?.Value,
                                 IsAbstract = Boolean.Parse(o.Attribute("abstract")?.Value ?? "False"),
-                                View = o.Elements().OfType<XElement>().Where(v=>v.Name == xs_openiz + "view")?.Select(v=>new AppletView()
+                                View = o.Elements().OfType<XElement>().Where(v => v.Name == xs_openiz + "view")?.Select(v => new AppletView()
                                 {
                                     Name = v.Attribute("name")?.Value,
-                                    Title = v.Elements().OfType<XElement>().Where(t=>t.Name == xs_openiz + "title")?.Select(t=>new LocaleString() {
+                                    Title = v.Elements().OfType<XElement>().Where(t => t.Name == xs_openiz + "title")?.Select(t => new LocaleString()
+                                    {
                                         Language = t.Attribute("lang")?.Value,
                                         Value = t?.Value
                                     }).ToList(),
@@ -255,7 +345,7 @@ namespace AppletCompiler
                             }
 
                             var xel = xe.Descendants().OfType<XElement>().Where(o => o.Name.Namespace == xs_openiz).ToList();
-                            if(xel != null)
+                            if (xel != null)
                                 foreach (var x in xel)
                                     x.Remove();
                             htmlAsset.Html = xe;
@@ -321,7 +411,7 @@ namespace AppletCompiler
         private static String ResolveName(string value)
         {
 
-            return value?.ToLower().Replace("\\","/");
+            return value?.ToLower().Replace("\\", "/");
         }
     }
 }

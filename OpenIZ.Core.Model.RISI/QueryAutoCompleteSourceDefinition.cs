@@ -18,6 +18,7 @@
  * Date: 2017-1-5
  */
 
+using Newtonsoft.Json;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.RISI
@@ -26,7 +27,8 @@ namespace OpenIZ.Core.Model.RISI
 	/// Represents an auto-complete source definition which is that of a query.
 	/// </summary>
 	[XmlType(nameof(QueryAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class QueryAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+    [JsonObject(nameof(QueryAutoCompleteSourceDefinition))]
+    public class QueryAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="QueryAutoCompleteSourceDefinition"/> class.
@@ -44,7 +46,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the source of the auto-complete source.
 		/// </summary>
-		[XmlElement("source")]
+		[XmlElement("source"), JsonProperty("source")]
 		public string Source { get; set; }
 	}
 }

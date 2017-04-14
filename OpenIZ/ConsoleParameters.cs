@@ -44,5 +44,12 @@ namespace OpenIZ
         [Parameter("console")]
         public bool ConsoleMode { get; set; }
 
+        /// <summary>
+        /// Start test
+        /// </summary>
+        [Description("Instructs the host process to perform startup functions and then shut down immediately")]
+        [Parameter("test-start")]
+        public bool StartupTest { get; set; }
+
     }
 }

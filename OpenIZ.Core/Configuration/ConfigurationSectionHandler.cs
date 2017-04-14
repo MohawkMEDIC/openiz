@@ -74,6 +74,7 @@ namespace OpenIZ.Core.Configuration
             {
                 retVal.Security = new OpenIzSecurityConfiguration();
 
+                retVal.Security.AllowUnsignedApplets = Boolean.Parse(securityNode.Attributes["allowUnsignedApplets"]?.Value ?? "false");
                 XmlElement basicSecurityNode = securityNode.SelectSingleNode("./basic") as XmlElement,
                     tokenSecurityNode = securityNode.SelectSingleNode("./token") as XmlElement;
 

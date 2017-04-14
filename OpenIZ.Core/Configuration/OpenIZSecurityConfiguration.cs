@@ -24,6 +24,10 @@ namespace OpenIZ.Core.Configuration
     /// </summary>
     public class OpenIzSecurityConfiguration
     {
+        /// <summary>
+        /// Allow unsigned applets to be installed
+        /// </summary>
+        public bool AllowUnsignedApplets { get; set; }
 
         /// <summary>
         /// Basic authentication configuration

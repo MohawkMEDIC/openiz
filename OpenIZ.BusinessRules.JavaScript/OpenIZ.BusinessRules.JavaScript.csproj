@@ -34,6 +34,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppletBusinessRuleLoader.cs" />
+    <Compile Include="AppletDataReferenceResolver.cs" />
     <Compile Include="IDataReferenceResolver.cs" />
     <Compile Include="JavascriptBusinessRulesEngine.cs" />
     <Compile Include="JNI\BusinessRulesBridge.cs" />
@@ -53,6 +55,10 @@
     <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
       <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
       <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Model.ViewModelSerializers\OpenIZ.Core.Model.ViewModelSerializers.csproj">
+      <Project>{ECE9B280-9647-4092-BABF-EB2E25084670}</Project>
+      <Name>OpenIZ.Core.Model.ViewModelSerializers</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>

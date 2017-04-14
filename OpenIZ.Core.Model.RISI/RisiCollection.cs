@@ -18,6 +18,7 @@
  * Date: 2017-1-13
  */
 
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
@@ -29,6 +30,7 @@ namespace OpenIZ.Core.Model.RISI
 	/// </summary>
 	/// <typeparam name="T">The type of the collection.</typeparam>
 	[XmlType(Namespace = "http://openiz.org/risi")]
+	[JsonObject(nameof(RisiCollection<T>))]
 	public class RisiCollection<T>
 	{
 		/// <summary>
@@ -53,13 +55,13 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the list of items in the <see cref="RisiCollection{T}"/>.
 		/// </summary>
-		[XmlElement("item")]
+		[XmlElement("item"), JsonProperty("item")]
 		public List<T> Items { get; set; }
 
 		/// <summary>
 		/// Gets or sets the count of the items.
 		/// </summary>
-		[XmlAttribute("size")]
+		[XmlAttribute("size"), JsonProperty("size")]
 		public int Size { get; set; }
 	}
 }

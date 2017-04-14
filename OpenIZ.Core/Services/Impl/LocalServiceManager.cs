@@ -48,5 +48,14 @@ namespace OpenIZ.Core.Services.Impl
         {
             return ApplicationContext.Current.GetServices();
         }
+
+
+        /// <summary>
+        /// Remove service provider
+        /// </summary>
+        public void RemoveServiceProvider(Type serviceType)
+        {
+            ApplicationContext.Current.RemoveServiceProvider(serviceType);
+        }
     }
 }

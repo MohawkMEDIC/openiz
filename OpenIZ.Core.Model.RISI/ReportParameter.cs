@@ -18,6 +18,7 @@
  * Date: 2017-1-5
  */
 
+using Newtonsoft.Json;
 using System;
 using System.Xml.Serialization;
 
@@ -27,6 +28,7 @@ namespace OpenIZ.Core.Model.RISI
 	/// Represents a parameter.
 	/// </summary>
 	[XmlType(nameof(ReportParameter), Namespace = "http://openiz.org/risi")]
+    [JsonObject(nameof(ReportParameter))]
 	public class ReportParameter : BaseEntityData
 	{
 		/// <summary>
@@ -65,49 +67,49 @@ namespace OpenIZ.Core.Model.RISI
 		/// Gets or sets the correlation identifier.
 		/// </summary>
 		/// <value>The correlation identifier.</value>
-		[XmlElement("correlationId")]
+		[XmlElement("correlationId"), JsonProperty("correlationId")]
 		public string CorrelationId { get; set; }
 
 		/// <summary>
 		/// Gets or sets the description of the report parameter.
 		/// </summary>
-		[XmlElement("description")]
+		[XmlElement("description"), JsonProperty("description")]
 		public string Description { get; set; }
 
 		/// <summary>
 		/// Gets or sets whether the report parameter is nullable.
 		/// </summary>
-		[XmlAttribute("isNullable")]
+		[XmlAttribute("isNullable"), JsonProperty("isNullable")]
 		public bool IsNullable { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the parameter.
 		/// </summary>
-		[XmlElement("name")]
+		[XmlElement("name"), JsonProperty("name")]
 		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets the order of the parameter.
 		/// </summary>
-		[XmlAttribute("order")]
+		[XmlAttribute("order"), JsonProperty("order")]
 		public int Order { get; set; }
 
 		/// <summary>
 		/// Gets or sets the parameter type associated with the report parameter.
 		/// </summary>
-		[XmlElement("type")]
+		[XmlElement("type"), JsonProperty("type")]
 		public ParameterType ParameterType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the report definition associated with the report parameter.
 		/// </summary>
-		[XmlElement("reportDefinition")]
+		[XmlElement("reportDefinition"), JsonProperty("reportDefinition")]
 		public ReportDefinition ReportDefinition { get; set; }
 
 		/// <summary>
 		/// Gets or sets the value of the parameter.
 		/// </summary>
-		[XmlElement("value")]
+		[XmlElement("value"), JsonProperty("value")]
 		public byte[] Value { get; set; }
 	}
 }

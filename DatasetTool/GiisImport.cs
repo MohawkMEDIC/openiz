@@ -398,7 +398,8 @@ namespace OizDevTool
         /// </summary>
         [Description("Extracts the core data from GIIS (Places, Facilities, Materials, Lots, etc.). Note: Due to a limitation of the GIIS data layer API, there must be a configuration connection string called GIIS in the oizdt.exe.config file")]
         [ParameterClass(typeof(ConsoleParameters))]
-        [Example("Extract all data from connection to a directory", @"--output=C:\data\giis")]
+        [Example("Extract all core data from connection to a directory", @"--output=C:\data\giis")]
+        [Example("Extract all core data from connection and push into OpenIZ Database", "--live")]
         public static void ImportCoreData(string[] args)
         {
 

@@ -23,6 +23,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
+using System.IO.Compression;
 
 namespace OpenIZ.Core.Applets.Model
 {
@@ -65,12 +66,17 @@ namespace OpenIZ.Core.Applets.Model
 			AppletPackage retVal = new AppletPackage () {
 				Meta = this.Info
 			};
-			using (MemoryStream ms = new MemoryStream ()) {
-				XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
-				xsz.Serialize (ms, this);
-				retVal.Manifest = ms.ToArray ();
-			}
-			return retVal;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (DeflateStream dfs = new DeflateStream(ms, CompressionMode.Compress))
+                {
+                    XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
+                    xsz.Serialize(dfs, this);
+                }
+                retVal.Manifest = ms.ToArray();
+
+            }
+            return retVal;
 
 		}
 

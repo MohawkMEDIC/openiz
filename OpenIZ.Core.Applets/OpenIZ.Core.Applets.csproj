@@ -47,7 +47,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="ViewModel\RMIM.README" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppletCollection.cs" />
@@ -70,6 +69,7 @@
     <Compile Include="Model\AppletMenu.cs" />
     <Compile Include="Model\LocaleString.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\IAppletManagerService.cs" />
     <Compile Include="ViewModel\Description\ClassifierModelDescription.cs" />
     <Compile Include="ViewModel\Description\SerializationBehaviorType.cs" />
     <Compile Include="ViewModel\IViewModelClassifier.cs" />
@@ -104,6 +104,9 @@
       <Project>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</Project>
       <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ViewModel\Default.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

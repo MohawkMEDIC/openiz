@@ -38,18 +38,21 @@ namespace AppletCompiler
         /// Deploy
         /// </summary>
         [Parameter("deploy")]
+        [Description("Deploys the rendered files to the secified directory")]
         public string Deploy { get; set; }
         
         /// <summary>
         /// Language
         /// </summary>
         [Parameter("lang")]
+        [Description("The language to render output files in (if rendering)")]
         public string Lang { get; set; }
 
         /// <summary>
         /// Clean
         /// </summary>
         [Parameter("c")]
+        [Description("Instructs the compiler to clean the output directory")]
         public bool Clean { get; set; }
 
         /// <summary>
@@ -74,6 +77,7 @@ namespace AppletCompiler
         /// </summary>
         [Parameter("?")]
         [Parameter("help")]
+        [Description("Shows this help and exits")]
         public bool Help { get; set; }
 
         /// <summary>
@@ -81,12 +85,42 @@ namespace AppletCompiler
         /// </summary>
         [Parameter("i")]
         [Parameter("include")]
+        [Description("Includes files from another directory in the applet package")]
         public StringCollection References { get; set; }
 
         /// <summary>
         /// Optimize the output files
         /// </summary>
         [Parameter("optimize")]
+        [Description("When true, optimize (minify) javascript and css")]
         public bool Optimize { get; set; }
+
+        /// <summary>
+        /// The key that should be used to sign the applet
+        /// </summary>
+        [Parameter("keyFile")]
+        [Description("The RSA key used to sign the applet")]
+        public String SignKey { get; set; }
+
+        /// <summary>
+        /// The key used to sign the applet
+        /// </summary>
+        [Parameter("keyPassword")]
+        [Description("The password for the applet signing key")]
+        public String SignPassword { get; set; }
+
+        /// <summary>
+        /// Compile instruction
+        /// </summary>
+        [Parameter("compile")]
+        [Description("Initiates a compilation of the specified applet source directories")]
+        public bool Compile { get; internal set; }
+
+        /// <summary>
+        /// Signing instruction
+        /// </summary>
+        [Parameter("sign")]
+        [Description("Signs an already existing applet pak file")]
+        public bool Sign { get; internal set; }
     }
 }

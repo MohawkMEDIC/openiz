@@ -70,7 +70,11 @@ namespace OizDevTool
             }
             catch(Exception e)
             {
+#if DEBUG
+                Console.Error.WriteLine(e);
+#else
                 Console.Error.WriteLine(e.Message);
+#endif
             }
         }
 
@@ -111,7 +115,7 @@ namespace OizDevTool
                 {
                     Console.WriteLine("Operation: {0}", mi.Name);
                     Console.WriteLine(mi.GetCustomAttribute<DescriptionAttribute>().Description);
-                    Console.WriteLine("Usage: --tool={0} --operation={1}", type.Name, mi.Name);
+                    Console.WriteLine("Usage: --tool={0} --operation={1} {{options}}", type.Name, mi.Name);
 
                     if (mi.GetCustomAttribute<ParameterClassAttribute>() != null)
                     {
@@ -126,7 +130,7 @@ namespace OizDevTool
 
                     foreach(var ex in mi.GetCustomAttributes<ExampleAttribute>())
                     {
-                        Console.WriteLine("Example: {0} \r\n{1} --tool={2} --operation={3} {4}", ex.Description, Path.GetFileNameWithoutExtension(typeof(Program).Assembly.Location), type.Name, mi.Name, ex.ExampleText);
+                        Console.WriteLine("Example: {0} \r\n{1} --tool={2} --operation={3} {4}\r\n", ex.Description, Path.GetFileNameWithoutExtension(typeof(Program).Assembly.Location), type.Name, mi.Name, ex.ExampleText);
                     }
 
                     Console.WriteLine("----\r\n");

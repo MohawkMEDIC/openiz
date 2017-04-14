@@ -18,6 +18,7 @@
  * Date: 2016-12-4
  */
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
@@ -29,6 +30,7 @@ namespace OpenIZ.Core.Model.RISI
 	/// </summary>
 	[XmlType(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
 	[XmlRoot(nameof(ParameterType), Namespace = "http://openiz.org/risi")]
+    [JsonObject(nameof(ParameterType))]
 	public class ParameterType : BaseEntityData
 	{
 		/// <summary>

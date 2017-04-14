@@ -18,6 +18,7 @@
  * Date: 2017-1-5
  */
 
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
@@ -28,7 +29,8 @@ namespace OpenIZ.Core.Model.RISI
 	/// Represents an auto complete source which is fed from a static list of members.
 	/// </summary>
 	[XmlType(nameof(ListAutoCompleteSourceDefinition), Namespace = "http://openiz.org/risi")]
-	public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
+    [JsonObject(nameof(ListAutoCompleteSourceDefinition))]
+    public class ListAutoCompleteSourceDefinition : AutoCompleteSourceDefinition
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ListAutoCompleteSourceDefinition"/> class.
@@ -51,7 +53,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the static list of auto-complete items.
 		/// </summary>
-		[XmlElement("items")]
+		[XmlElement("items"), JsonProperty("items")]
 		public List<IdentifiedData> Items { get; set; }
 	}
 }

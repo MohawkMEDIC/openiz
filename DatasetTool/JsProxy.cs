@@ -90,7 +90,7 @@ namespace OizDevTool
         /// </summary>
         [Description("Generate a serializer based on the VewModelSerializer rules for pre-compilation")]
         [ParameterClass(typeof(ConsoleParameters))]
-        [Example("Generate a ViewModelSerializer helper for all core OpenIZ data", "--asm=OpenIZ.Core.Model.dll --output=viewmodelhelper.cs --ns=OpenIZ.Helper")]
+        [Example("Generate a ViewModelSerializer helper for all core OpenIZ data", "--asm=OpenIZ.Core.Model.dll --out=viewmodelhelper.cs --ns=OpenIZ.Helper")]
         public static void GenerateSerializer(String[] args)
         {
 
@@ -124,13 +124,14 @@ namespace OizDevTool
         /// </summary>
         [Description("Generate a JavaScript proxy class (model classes) for the specified C# classes")]
         [ParameterClass(typeof(ConsoleParameters))]
-        [Example("Generate JavaScript proxy for all core OpenIZ model", "--asm=OpenIZ.Core.Model.dll --xml=OpenIZ.Core.Model.xml --ns=OpenIZModel --output=openiz-model.js")]
+        [Example("Generate JavaScript proxy for all core OpenIZ model", "--asm=OpenIZ.Core.Model.dll --xml=OpenIZ.Core.Model.xml --ns=OpenIZModel --out=openiz-model.js")]
 
         public static void GenerateProxy(String[] args)
         {
 
             var parms = new ParameterParser<ConsoleParameters>().Parse(args);
 
+            parms.Namespace = parms.Namespace ?? "DefaultNamespace";
             // First we want to open the output file
             using (TextWriter output = File.CreateText(parms.Output ?? "out.js"))
             {
@@ -146,8 +147,9 @@ namespace OizDevTool
 
                 List<Type> enumerationTypes = new List<Type>();
 
+                List<Type> alreadyGenerated = new List<Type>();
                 foreach (var type in Assembly.LoadFile(parms.AssemblyFile).GetTypes().Where(o => o.GetCustomAttribute<JsonObjectAttribute>() != null))
-                    GenerateTypeDocumentation(output, type, xmlDoc, parms, enumerationTypes);
+                    GenerateTypeDocumentation(output, type, xmlDoc, parms, enumerationTypes, alreadyGenerated);
                 // Generate type documentation for each of the binding enumerations
                 foreach (var typ in enumerationTypes.Distinct())
                     GenerateEnumerationDocumentation(output, typ, xmlDoc, parms);
@@ -212,8 +214,13 @@ namespace OizDevTool
         /// <summary>
         /// Generate a javascript "class"
         /// </summary>
-        private static void GenerateTypeDocumentation(TextWriter writer, Type type, XmlDocument xmlDoc, ConsoleParameters parms, List<Type> enumerationTypes)
+        private static void GenerateTypeDocumentation(TextWriter writer, Type type, XmlDocument xmlDoc, ConsoleParameters parms, List<Type> enumerationTypes, List<Type> alreadyGenerated)
         {
+
+            if (alreadyGenerated.Contains(type))
+                return;
+            else
+                alreadyGenerated.Add(type);
 
             writer.WriteLine("// {0}", type.AssemblyQualifiedName);
             writer.WriteLine("/**");

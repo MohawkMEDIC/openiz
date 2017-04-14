@@ -18,6 +18,7 @@
  * Date: 2017-1-13
  */
 
+using Newtonsoft.Json;
 using System;
 using System.Xml.Serialization;
 
@@ -28,7 +29,8 @@ namespace OpenIZ.Core.Model.RISI
 	/// </summary>
 	[XmlRoot(nameof(ReportFormat), Namespace = "http://openiz.org/risi")]
 	[XmlType(nameof(ReportFormat), Namespace = "http://openiz.org/risi")]
-	public class ReportFormat : BaseEntityData
+	[JsonObject(nameof(ReportFormat))]
+    public class ReportFormat : BaseEntityData
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportFormat"/> class.
@@ -52,7 +54,7 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the format of the report format.
 		/// </summary>
-		[XmlAttribute("format")]
+		[XmlAttribute("format"), JsonProperty("format")]
 		public string Format { get; set; }
 	}
 }
