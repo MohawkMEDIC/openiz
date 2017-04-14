@@ -64,7 +64,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>other</mnemonic>
+      <mnemonic>Gender-other</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -96,7 +96,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>unknown</mnemonic>
+      <mnemonic>Gender-unknown</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
