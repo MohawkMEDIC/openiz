@@ -23,6 +23,7 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Persistence;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,8 @@ namespace OizDevTool
     /// <summary>
     /// A tool which imports CDC formatted XML data files
     /// </summary>
-    public static class CdcImport
+    [Description("Vocabulary management tool")]
+    public static class VocabTool
     {
 
         private class CvxOptions
@@ -44,6 +46,7 @@ namespace OizDevTool
             /// </summary>
             [Parameter("input")]
             [Parameter("i")]
+            [Description("The path to the import file")]
             public String Input { get; set; }
 
             /// <summary>
@@ -51,6 +54,7 @@ namespace OizDevTool
             /// </summary>
             [Parameter("group")]
             [Parameter("g")]
+            [Description("The grouping file (not used)")]
             public String Group { get; set; }
 
             /// <summary>
@@ -58,30 +62,37 @@ namespace OizDevTool
             /// </summary>
             [Parameter("output")]
             [Parameter("o")]
+            [Description("The output dataset file to create")]
             public String Output { get; set; }
 
             /// <summary>
             /// Concept set name
             /// </summary>
             [Parameter("setName")]
+            [Description("The ConceptSet which should be created")]
             public String ConceptSetName { get; set; }
 
             /// <summary>
             /// The OID of the concept set
             /// </summary>
             [Parameter("setOid")]
+            [Description("The OID of the created concept set")]
             public String ConceptSetOid { get; set; }
 
             /// <summary>
             /// The OID of the concept set
             /// </summary>
             [Parameter("setDescription")]
+            [Description("The description to attach to the created concept set")]
             public String ConceptSetDescription { get; set; }
         }
 
         /// <summary>
         /// Converts PHIN VADS to dataset
         /// </summary>
+        [Description("Converts a CDC PHIN VADs file to DATASET import file")]
+        [ParameterClass(typeof(CvxOptions))]
+        [Example("Import a downloaded PHIN VADs file for Cause of Death to dataset", "--input=CauseOfDeath.txt --output=CauseOfDeath.dataset --setName=CauseOfDeath")]
         public static void PhinVadsToDataset(String[] args)
         {
 
@@ -190,6 +201,9 @@ namespace OizDevTool
         /// <summary>
         /// CVX Import
         /// </summary>
+        [Description("Converts a HL7 CVX definition file to DATASET import file. Download is in text pip-delimited format")]
+        [ParameterClass(typeof(CvxOptions))]
+        [Example("Import a downloaded CVX definition file", "--input=CVXCodes.txt --output=VaccineCodes.dataset")]
         public static void CvxToDataset(String[] args)
         {
             var options = new ParameterParser<CvxOptions>().Parse(args);
@@ -288,6 +302,9 @@ namespace OizDevTool
         /// <summary>
         /// CVX Import
         /// </summary>
+        [Description("Converts a Tab-delimited file to DATASET import file. The format of this file is described on the OpenIZ Wiki")]
+        [ParameterClass(typeof(CvxOptions))]
+        [Example("Import a downloaded CVX definition file", "--input=mycustomcodes.tsv --setName=\"ACME_MATL\" --setOid=1.2.3.4.5.6.7 --setDescription=\"ACME Material Codes\" --output=AcmeMaterials.dataset")]
         public static void TsvToDataset(String[] args)
         {
             var options = new ParameterParser<CvxOptions>().Parse(args);
@@ -306,21 +323,21 @@ namespace OizDevTool
                     Element = new ConceptSet()
                     {
                         Key = Guid.NewGuid(),
-                        Mnemonic = "TsvConceptSet",
+                        Mnemonic = options.ConceptSetName ?? "TsvConceptSet",
                         Name = components[5],
                         Oid = components[6],
-                        Url = "http://openiz.org/conceptset/TsvConceptCodes"
+                        Url = "http://openiz.org/conceptset/imported/" + (options.ConceptSetName ?? "TsvConceptSet")
                     },
                     Association = new List<DataAssociation>()
                 };
                 var codeSystem = new DataUpdate()
                 {
                     InsertIfNotExists = true,
-                    Element = new CodeSystem(components[5], components[6], "TSV")
+                    Element = new CodeSystem(components[5], components[6], (options.ConceptSetName ?? "TsvConceptSet"))
                     {
                         Key = Guid.NewGuid(),
 
-                        Url = "http://hl7.org/fhir/sid/TSV",
+                        Url = "http://openiz.org/conceptset/imported/" + (options.ConceptSetName ?? "TsvConceptSet"),
                     }
                 };
                 conceptDataset.Action.Add(codeSystem);
@@ -341,7 +358,7 @@ namespace OizDevTool
                         Key = Guid.NewGuid()
                     };
 
-                    var mnemonic = String.Format("TabSavedFile-{0}", components[1].Replace(" ", "").Replace(".", "").Replace("(", "").Replace(")", ""));
+                    var mnemonic = String.Format("{0}-{1}", options.ConceptSetName ?? "Tsv",  components[1].Replace(" ", "").Replace(".", "").Replace("(", "").Replace(")", ""));
                     if (mnemonic.Length > 64)
                         mnemonic = mnemonic.Substring(0, 64);
                     Concept concept = new Concept()

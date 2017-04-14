@@ -31,6 +31,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Services.Impl;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -41,12 +42,27 @@ namespace OizDevTool
 	/// <summary>
 	/// Represents a CSD import utility.
 	/// </summary>
+    [Description("Care Services Discovery (CSD) tooling")]
 	public class CsdImport
 	{
-		/// <summary>
-		/// The entity key map.
-		/// </summary>
-		private static Dictionary<string, Guid> entityKeyMap = new Dictionary<string, Guid>();
+
+        /// <summary>
+        /// Represents CSD options.
+        /// </summary>
+        internal class CsdOptions
+        {
+            /// <summary>
+            /// Gets or sets the file.
+            /// </summary>
+            [Parameter("file")]
+            [Description("The path to the CSD file")]
+            public string File { get; set; }
+        }
+
+        /// <summary>
+        /// The entity key map.
+        /// </summary>
+        private static Dictionary<string, Guid> entityKeyMap = new Dictionary<string, Guid>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CsdImport"/> class.
@@ -55,11 +71,13 @@ namespace OizDevTool
 		{
 		}
 
-		/// <summary>
-		/// Imports the CSD.
-		/// </summary>
-		/// <param name="args">The arguments.</param>
-		public static void ImportCsd(string[] args)
+        /// <summary>
+        /// Imports the CSD.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        [Description("Converts a Care Services Discovery (CSD) export to DATASET import file")]
+        [ParameterClass(typeof(CsdOptions))]
+        public static void ImportCsd(string[] args)
 		{
 			ApplicationContext.Current.Start();
 
@@ -551,15 +569,5 @@ namespace OizDevTool
 		}
 	}
 
-	/// <summary>
-	/// Represents CSD options.
-	/// </summary>
-	internal class CsdOptions
-	{
-		/// <summary>
-		/// Gets or sets the file.
-		/// </summary>
-		[Parameter("file")]
-		public string File { get; set; }
-	}
+	
 }

@@ -37,6 +37,7 @@ namespace OizDevTool
     /// <summary>
     /// Import value set from everest
     /// </summary>
+    [Description("MARC-HI Everest Tooling")]
     public static class EverestImport
     {
 
@@ -48,7 +49,8 @@ namespace OizDevTool
             /// <summary>
             /// Gets or sets the assembly file
             /// </summary>
-            [Parameter("assembly")]
+            [Parameter("asm")]
+            [Description("The path to the assembly file from which to import data")]
             public String AssemblyFile { get; set; }
 
         }
@@ -56,6 +58,9 @@ namespace OizDevTool
         /// <summary>
         /// Convert an enumeration to a dataset
         /// </summary>
+        [Description("Imports Everest Enumerations as dataset files")]
+        [ParameterClass(typeof(ConsoleParameters))]
+        [Example("Import all CDA vocabulary as OpenIZ datasets", "--asm=MARC.Everest.RMIM.UV.CDAr2.dll")]
         public static void EnumToDataset(String[] args)
         {
 

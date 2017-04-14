@@ -20,8 +20,10 @@
 using MohawkCollege.Util.Console.Parameters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,23 +38,101 @@ namespace OizDevTool
                Path.GetDirectoryName(typeof(Program).Assembly.Location));
 
 
-            Console.WriteLine("{0} {1} {2}", DateTime.Now, DateTimeOffset.Now, (DateTimeOffset)DateTime.Now);
-            var consoleParms = new ParameterParser<ConsoleParameters>().Parse(args);
+            Console.WriteLine("Open Immunize Data Tool v{0}", typeof(Program).Assembly.GetName().Version);
+            Console.WriteLine("Copyright (C) 2015 - 2017, Mohawk College of Applied Arts and Technology");
 
-            var tool = typeof(Program).Assembly.ExportedTypes.FirstOrDefault(o => o.Name == consoleParms.ToolName);
-            if (tool == null)
-                Console.WriteLine("Could not find tool: {0}", consoleParms.ToolName);
+            try
+            {
+                var consoleParms = new ParameterParser<ConsoleParameters>().Parse(args);
+
+                if (consoleParms.Help)
+                    PrintHelp(consoleParms.ToolName);
+                else
+                {
+                    var tool = typeof(Program).Assembly.ExportedTypes.FirstOrDefault(o => o.Name == consoleParms.ToolName);
+                    if (tool == null)
+                        Console.WriteLine("Could not find tool: {0}", consoleParms.ToolName);
+                    else
+                    {
+                        var operation = tool.GetMethod(consoleParms.OperationName);
+                        if (operation == null)
+                            Console.WriteLine("Tool {0} does not have operation named {1}", consoleParms.ToolName, consoleParms.OperationName);
+                        else
+                            operation.Invoke(null, new Object[] { args });
+                    }
+                }
+
+                if (System.Diagnostics.Debugger.IsAttached)
+                {
+                    Console.WriteLine("Program complete, press any key to exit...");
+                    Console.ReadKey();
+                }
+            }
+            catch(Exception e)
+            {
+                Console.Error.WriteLine(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Print help
+        /// </summary>
+        static void PrintHelp(String toolName)
+        {
+
+            if (string.IsNullOrEmpty(toolName)) {
+                Console.WriteLine("\r\nCore Options:");
+                new ParameterParser<ConsoleParameters>().WriteHelp(Console.Out);
+
+                // Output help for each tool
+                Console.WriteLine("\r\n\r\nInstalled --tool Options:\r\n");
+                foreach (var t in typeof(Program).Assembly.GetTypes().Where(o=>o.GetCustomAttribute<DescriptionAttribute>() != null))
+                {
+                    Console.WriteLine("{0}{1}{2}", t.Name, new String(' ', 20 - t.Name.Length) ,t.GetCustomAttribute<DescriptionAttribute>().Description);
+                }
+
+                Console.WriteLine("\r\nFor more help on a specified tool use: --help --tool=[toolname]");
+            }
             else
             {
-                var operation = tool.GetMethod(consoleParms.OperationName);
-                if (operation == null)
-                    Console.WriteLine("Tool {0} does not have operation named {1}", consoleParms.ToolName, consoleParms.OperationName);
-                else
-                    operation.Invoke(null, new Object[] { args });
+                var type = typeof(Program).Assembly.GetTypes().FirstOrDefault(o => o.Name == toolName);
+                if (type == null)
+                {
+                    Console.WriteLine("Error: Tool {0} is invalid", toolName);
+                    return;
+                }
+
+                // Output tool
+                Console.WriteLine("\r\n{1}\r\nUsage : --tool={0} --operation=[operationName] {{options}}", type.Name, type.GetCustomAttribute<DescriptionAttribute>().Description);
+
+                // Output operations
+                Console.WriteLine("\r\n");
+                foreach(var mi in type.GetMethods(BindingFlags.Static | BindingFlags.Public).Where(o=>o.GetCustomAttribute<DescriptionAttribute>() != null))
+                {
+                    Console.WriteLine("Operation: {0}", mi.Name);
+                    Console.WriteLine(mi.GetCustomAttribute<DescriptionAttribute>().Description);
+                    Console.WriteLine("Usage: --tool={0} --operation={1}", type.Name, mi.Name);
+
+                    if (mi.GetCustomAttribute<ParameterClassAttribute>() != null)
+                    {
+                        Console.WriteLine("\r\nWhere {options} are:");
+
+                        dynamic clz =Activator.CreateInstance(typeof(ParameterParser<>).MakeGenericType(mi.GetCustomAttribute<ParameterClassAttribute>().ParameterClass));
+                        clz.GetType().GetMethod("WriteHelp").Invoke(clz, new object[] { Console.Out });
+
+                    }
+
+                    Console.WriteLine();
+
+                    foreach(var ex in mi.GetCustomAttributes<ExampleAttribute>())
+                    {
+                        Console.WriteLine("Example: {0} \r\n{1} --tool={2} --operation={3} {4}", ex.Description, Path.GetFileNameWithoutExtension(typeof(Program).Assembly.Location), type.Name, mi.Name, ex.ExampleText);
+                    }
+
+                    Console.WriteLine("----\r\n");
+                }
             }
 
-			Console.WriteLine("Program complete, press any key to exit...");
-            Console.ReadKey();
         }
     }
 }

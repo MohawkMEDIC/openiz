@@ -28,18 +28,32 @@ using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Persistence;
+using System.ComponentModel;
 
 namespace OizDevTool
 {
 	/// <summary>
 	/// Represents a shared value set import.
 	/// </summary>
+    [Description("Tooling for import IHE Shared Value Sets (SVS) files")]
 	public class SvsImport
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SvsImport"/> class.
-		/// </summary>
-		public SvsImport()
+
+
+        internal class SvsOptions
+        {
+            /// <summary>
+            /// Gets or sets the file.
+            /// </summary>
+            [Parameter("file")]
+            [Description("The SVS file to be imported")]
+            public string File { get; set; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SvsImport"/> class.
+        /// </summary>
+        public SvsImport()
 		{
 			
 		}
@@ -48,7 +62,9 @@ namespace OizDevTool
 		/// Imports the SVS.
 		/// </summary>
 		/// <param name="args">The arguments.</param>
-		public static void ImportSvs(string[] args)
+        [Description("Imports an SVS file and generates the related DataSet file")]
+        [ParameterClass(typeof(SvsOptions))]
+        public static void ImportSvs(string[] args)
 		{
 			var parameters = new ParameterParser<SvsOptions>().Parse(args);
 
@@ -133,12 +149,4 @@ namespace OizDevTool
 		}
 	}
 
-	internal class SvsOptions
-	{
-		/// <summary>
-		/// Gets or sets the file.
-		/// </summary>
-		[Parameter("file")]
-		public string File { get; set; }
-	}
 }

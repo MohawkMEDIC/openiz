@@ -13,6 +13,7 @@ using OpenIZ.Core.Persistence;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -25,6 +26,7 @@ namespace OizDevTool
     /// <summary>
     /// Import routines for GIIS
     /// </summary>
+    [Description("Tooling for importing data from Generic Immunization Information System (GIIS)")]
     public static class GiisImport
     {
         /// <summary>
@@ -36,6 +38,7 @@ namespace OizDevTool
             /// Live migration
             /// </summary>
             [Parameter("live")]
+            [Description("Indicates the migration should be done in place (opposed to generating files)")]
             public bool LiveMigration { get; set; }
 
             /// <summary>
@@ -43,6 +46,7 @@ namespace OizDevTool
             /// </summary>
             [Parameter("output")]
             [Parameter("o")]
+            [Description("The directory in which to output generate files")]
             public String OutputDirectory { get; set; }
 
         }
@@ -392,6 +396,9 @@ namespace OizDevTool
         /// <summary>
         /// Imports the Core data
         /// </summary>
+        [Description("Extracts the core data from GIIS (Places, Facilities, Materials, Lots, etc.). Note: Due to a limitation of the GIIS data layer API, there must be a configuration connection string called GIIS in the oizdt.exe.config file")]
+        [ParameterClass(typeof(ConsoleParameters))]
+        [Example("Extract all data from connection to a directory", @"--output=C:\data\giis")]
         public static void ImportCoreData(string[] args)
         {
 

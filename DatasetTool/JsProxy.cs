@@ -28,6 +28,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -40,6 +41,7 @@ namespace OizDevTool
     /// <summary>
     /// View model documentation
     /// </summary>
+    [Description("JavaScript tooling for OpenIZ clients")]
     public static class JsProxy
     {
 
@@ -67,21 +69,28 @@ namespace OizDevTool
         {
 
             [Parameter("asm")]
+            [Description("The compiled OpenIZ binary from which to operate")]
             public String AssemblyFile { get; set; }
 
             [Parameter("xml")]
+            [Description("The .NET XML documentation file related to the assembly passed by --asm")]
             public String DocumentationFile { get; set; }
 
             [Parameter("out")]
+            [Description("The output file which should be generated")]
             public String Output { get; set; }
 
             [Parameter("ns")]
+            [Description("The generated namespace in which code should be placed")]
             public String Namespace { get; set; }
         }
 
         /// <summary>
         /// Generate a serializer
         /// </summary>
+        [Description("Generate a serializer based on the VewModelSerializer rules for pre-compilation")]
+        [ParameterClass(typeof(ConsoleParameters))]
+        [Example("Generate a ViewModelSerializer helper for all core OpenIZ data", "--asm=OpenIZ.Core.Model.dll --output=viewmodelhelper.cs --ns=OpenIZ.Helper")]
         public static void GenerateSerializer(String[] args)
         {
 
@@ -113,6 +122,10 @@ namespace OizDevTool
         /// <summary>
         /// Generate javascript documentation
         /// </summary>
+        [Description("Generate a JavaScript proxy class (model classes) for the specified C# classes")]
+        [ParameterClass(typeof(ConsoleParameters))]
+        [Example("Generate JavaScript proxy for all core OpenIZ model", "--asm=OpenIZ.Core.Model.dll --xml=OpenIZ.Core.Model.xml --ns=OpenIZModel --output=openiz-model.js")]
+
         public static void GenerateProxy(String[] args)
         {
 

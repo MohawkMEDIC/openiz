@@ -162,6 +162,7 @@ namespace OpenIZ.Core.Model.DataTypes
                 Key = this.Key,
                 DomainName = this.DomainName,
                 Name = this.Name,
+                Oid = this.Oid,
                 m_minimal = true
             };
         }

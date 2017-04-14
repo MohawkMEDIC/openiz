@@ -20,6 +20,7 @@
 using MohawkCollege.Util.Console.Parameters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ namespace OizDevTool
         /// </summary>
         [Parameter("tool")]
         [Parameter("t")]
+        [Description("Identifies the data tool which should be executed")]
         public String ToolName { get; set; }
 
         /// <summary>
@@ -44,7 +46,15 @@ namespace OizDevTool
         /// </summary>
         [Parameter("operation")]
         [Parameter("o")]
+        [Description("Identifies the specified data tool operation to be executed")]
         public String OperationName { get; set; }
 
+        /// <summary>
+        /// Show help and exit
+        /// </summary>
+        [Parameter("help")]
+        [Parameter("?")]
+        [Description("Shows this help and exits")]
+        public bool Help { get; set; }
     }
 }

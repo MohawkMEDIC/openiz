@@ -168,6 +168,7 @@ namespace OpenIZ.Core.Persistence
             catch(Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error applying dataset {0}: {1}", ds.Id, e);
+                throw;
             }
         }
 
@@ -212,6 +213,7 @@ namespace OpenIZ.Core.Persistence
                         catch (Exception ex)
                         {
                             this.m_traceSource.TraceEvent(TraceEventType.Error, ex.HResult, "Error applying {0}: {1}", f, ex);
+                            throw;
                         }
                     }
                 }

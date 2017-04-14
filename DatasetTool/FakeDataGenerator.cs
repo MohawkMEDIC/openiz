@@ -43,12 +43,14 @@ using MARC.Everest.Threading;
 using OpenIZ.Core;
 using OpenIZ.Core.Services.Impl;
 using System.Threading;
+using System.ComponentModel;
 
 namespace OizDevTool
 {
     /// <summary>
     /// Represents a fake data generator
     /// </summary>
+    [Description("Tooling to create fake data")]
     public static class FakeDataGenerator
     {
         /// <summary>
@@ -60,18 +62,21 @@ namespace OizDevTool
             /// Gets or sets the population size
             /// </summary>
             [Parameter("popsize")]
+            [Description("Population size of the generated dataset")]
             public String PopulationSize { get; set; }
 
             /// <summary>
             /// Gets or sets the population size
             /// </summary>
             [Parameter("maxage")]
+            [Description("The maximum age of patients to generate")]
             public String MaxAge { get; set; }
 
             /// <summary>
             /// Barcode auth
             /// </summary>
-            [Parameter("barcode")]
+            [Parameter("auth")]
+            [Description("The assigning authority from which a random ID should be generated")]
             public String BarcodeAuth { get; set; }
         }
 
@@ -123,6 +128,7 @@ namespace OizDevTool
         /// <summary>
         /// Generate stock
         /// </summary>
+        [Description("Generates fake stock levels by assigning random Materials to random Places")]
         public static void GenerateStock(String[] args)
         {
             ApplicationServiceContext.Current = ApplicationContext.Current;
@@ -182,6 +188,9 @@ namespace OizDevTool
         /// <summary>
         /// Generate patients
         /// </summary>
+        [Description("Generates a randomized patient population")]
+        [Example("Generate a fake patient population with 1000 patients, at most 30 days old", "--popsize=1000 --maxage=30 --auth=TEST_AUTH")]
+        [ParameterClass(typeof(ConsoleParameters))]
         public static void GeneratePatients(String[] args)
         {
             var parameters = new ParameterParser<ConsoleParameters>().Parse(args);
