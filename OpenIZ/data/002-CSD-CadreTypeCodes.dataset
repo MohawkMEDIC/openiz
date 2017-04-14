@@ -835,4 +835,37 @@
       </name>
     </Concept>
   </insert>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>86FDDD06-D7EC-43B5-9B8D-1A86C56EDBA3</id>
+      <name>Provider Type Codes</name>
+      <mnemonic>ProviderTypeConcepts</mnemonic>
+      <oid>2.25.18630021159349753613449707959296853730613166189052</oid>
+      <concept>52b9062f-0f98-4593-b92b-4739d9086352</concept>
+      <concept>98c343e9-42c4-41f0-8a46-2f9aea41e184</concept>
+      <concept>09abdf79-9d34-4673-8b23-2cdfddb48fb7</concept>
+      <concept>eed7f570-4b0c-4e69-8764-e09cfe028abc</concept>
+      <concept>3c57d365-5689-42d3-bc8e-76997274bb55</concept>
+      <concept>60df4713-ae79-46b4-a820-62353cd410d9</concept>
+      <concept>69257bb0-e68b-4cea-a197-7e42d1793942</concept>
+      <concept>1f292891-468c-414a-96eb-b0857fa867fd</concept>
+      <concept>9ddb37f9-0f26-4113-bede-705655232ebe</concept>
+      <concept>7ff18bad-e292-4797-b25d-fb899275ccaa</concept>
+      <concept>8b2d65ee-9a55-404e-8c22-94710d663a19</concept>
+      <concept>5b4903a6-f4a7-401c-bca0-7b925559bb0f</concept>
+      <concept>2bf33629-21c7-4941-beef-aa6c7453b001</concept>
+      <concept>a69337e4-dc1a-44d1-a8ad-0b51513b6bb9</concept>
+      <concept>cafcdf3c-5424-4353-8b74-bc264da03e9e</concept>
+      <concept>3c9f382d-3df8-443b-9c0a-77f79996bbb2</concept>
+      <concept>3789af0a-2c6d-4891-8547-e42a4d13f504</concept>
+      <concept>aca2afd5-4c61-4521-9af1-663d83bfb56a</concept>
+      <concept>a1222e72-a05f-4c25-9380-43ec028543d2</concept>
+      <concept>0d7f6b62-414a-40eb-9a7b-32a076220cb0</concept>
+      <concept>08f55b9e-31a6-4fcf-b90a-90fc40d32113</concept>
+      <concept>e7875296-cc29-44ac-9dec-a65f68dc261d</concept>
+      <concept>aaa998b3-21c1-4b61-910c-5254526af68e</concept>
+      <concept>daf76c49-26cf-463f-84d2-9d571b7c3002</concept>
+      <concept>71e91ee1-3444-4b1f-8e10-87053652b869</concept>
+    </ConceptSet>
+  </update>
 </dataset>
