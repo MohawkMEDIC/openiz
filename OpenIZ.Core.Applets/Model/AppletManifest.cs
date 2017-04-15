@@ -47,6 +47,15 @@ namespace OpenIZ.Core.Applets.Model
 		}
 
         /// <summary>
+        /// Save this applet manifest to the stream
+        /// </summary>
+        public void Save(Stream resourceStream)
+        {
+            XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
+            xsz.Serialize(resourceStream, this);
+        }
+
+        /// <summary>
         /// Initialize the applet manifest
         /// </summary>
         public void Initialize()

@@ -29,6 +29,16 @@ namespace OpenIZ.Core.Applets.Services
         bool Install(AppletPackage package, bool isUpgrade = false);
 
         /// <summary>
+        /// Get the specified applet manifest
+        /// </summary>
+        AppletManifest GetApplet(String appletId);
+
+        /// <summary>
+        /// Performs necessary loading functions for an applet
+        /// </summary>
+        bool LoadApplet(AppletManifest applet);
+
+        /// <summary>
         /// Gets the installed applet package source for the specified applet
         /// </summary>
         byte[] GetPackage(String appletId);

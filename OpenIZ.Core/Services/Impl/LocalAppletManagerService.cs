@@ -67,6 +67,7 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public byte[] GetPackage(String appletId)
         {
+            this.m_tracer.TraceInformation("Retrieving package {0}", appletId);
 
             // Save the applet
             var appletDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets");
@@ -86,6 +87,8 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public bool UnInstall(String packageId)
         {
+
+            this.m_tracer.TraceInformation("Un-installing {0}", packageId);
             // Applet check
             var applet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == packageId);
             if (applet == null)
@@ -113,6 +116,8 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public bool Install(AppletPackage package, bool isUpgrade = false)
         {
+            this.m_tracer.TraceInformation("Installing {0}", package.Meta);
+
             // TODO: Verify package hash / signature
             if (!this.VerifyPackage(package))
                 throw new SecurityException("Applet failed validation");
@@ -280,6 +285,22 @@ namespace OpenIZ.Core.Services.Impl
             this.Stopping?.Invoke(this, EventArgs.Empty);
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        /// <summary>
+        /// Get applet
+        /// </summary>
+        public AppletManifest GetApplet(string appletId)
+        {
+            return this.LoadedApplets.FirstOrDefault(o => o.Info.Id == appletId);
+        }
+
+        /// <summary>
+        /// Load an applet
+        /// </summary>
+        public bool LoadApplet(AppletManifest applet)
+        {
+            throw new SecurityException("Loading applet manifests directly is disabled for security reasons");
         }
     }
 }
