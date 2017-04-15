@@ -33,6 +33,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel.Web;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
@@ -68,6 +69,64 @@ namespace OpenIZ.Messaging.FHIR.Util
 			var retVal = new TResource();
 			retVal.Id = resource.Key.ToString();
 			retVal.VersionId = resource.VersionKey.ToString();
+			return retVal;
+		}
+
+		/// <summary>
+		/// Converts an <see cref="Extension"/> instance to an <see cref="ActExtension"/> instance.
+		/// </summary>
+		/// <param name="fhirExtension">The FHIR extension.</param>
+		/// <returns>Returns the converted act extension instance.</returns>
+		/// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
+		public static ActExtension ToActExtension(Extension fhirExtension)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR extension");
+
+			var extension = new ActExtension();
+
+			if (fhirExtension == null)
+			{
+				throw new ArgumentNullException(nameof(fhirExtension), "Value cannot be null");
+			}
+
+			var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+
+			extension.ExtensionType = extensionTypeService.FindExtensionType(e => e.Name == fhirExtension.Url).FirstOrDefault();
+			//extension.ExtensionValue = fhirExtension.Value;
+
+			return extension;
+		}
+
+		/// <summary>
+		/// Converts a <see cref="FhirIdentifier"/> instance to an <see cref="ActIdentifier"/> instance.
+		/// </summary>
+		/// <param name="fhirIdentifier">The FHIR identifier.</param>
+		/// <returns>Returns the converted act identifier instance.</returns>
+		public static ActIdentifier ToActIdentifier(FhirIdentifier fhirIdentifier)
+		{
+			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR identifier");
+
+			if (fhirIdentifier == null)
+			{
+				return null;
+			}
+
+			ActIdentifier retVal;
+
+			if (fhirIdentifier.System != null)
+			{
+				retVal = new ActIdentifier(DataTypeConverter.ToAssigningAuthority(fhirIdentifier.System), fhirIdentifier.Value.Value);
+			}
+			else
+			{
+				var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+
+				var assigningAuthority = metaService.FindAssigningAuthority(o => o.DomainName == fhirIdentifier.Label).FirstOrDefault();
+
+				retVal = new ActIdentifier(assigningAuthority.Key.Value, fhirIdentifier.Value);
+			}
+
+			// TODO: Fill in use
 			return retVal;
 		}
 
@@ -228,15 +287,8 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// Converts an <see cref="Extension"/> instance to an <see cref="EntityExtension"/> instance.
 		/// </summary>
 		/// <param name="fhirExtension">The FHIR extension.</param>
-		/// <returns>EntityExtension.</returns>
+		/// <returns>Returns the converted entity extension instance.</returns>
 		/// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// IMetadataRepositoryService
-		/// or
-		/// Unable to locate extension type
-		/// or
-		/// IEntityExtensionRepositoryService
-		/// </exception>
 		public static EntityExtension ToEntityExtension(Extension fhirExtension)
 		{
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR extension");

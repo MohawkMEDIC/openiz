@@ -36,43 +36,54 @@ using DatePrecision = OpenIZ.Core.Model.DataTypes.DatePrecision;
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
 	/// <summary>
-	/// Represents a resource handler which can handle patients
+	/// Represents a resource handler which can handle patients.
 	/// </summary>
-	public class PatientResourceHandler : ResourceHandlerBase<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient, Core.Model.Roles.Patient>
+	public class PatientResourceHandler : ResourceHandlerBase<Patient, Core.Model.Roles.Patient>
 	{
-		// Repository
-		private IPatientRepositoryService m_repository;
+		/// <summary>
+		/// The repository.
+		/// </summary>
+		private IPatientRepositoryService repository;
 
 		/// <summary>
 		/// Resource handler subscription
 		/// </summary>
 		public PatientResourceHandler()
 		{
-			ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 		}
 
 		/// <summary>
 		/// Create the specified patient instance
 		/// </summary>
+		/// <param name="modelInstance">The model instance.</param>
+		/// <param name="issues">The issues.</param>
+		/// <param name="mode">The mode.</param>
+		/// <returns>Returns the created model.</returns>
 		protected override Core.Model.Roles.Patient Create(Core.Model.Roles.Patient modelInstance, List<IResultDetail> issues, TransactionMode mode)
 		{
-			return this.m_repository.Insert(modelInstance);
+			return this.repository.Insert(modelInstance);
 		}
 
 		/// <summary>
 		/// Delete the specified patient
 		/// </summary>
+		/// <param name="modelId">The model identifier.</param>
+		/// <param name="details">The details.</param>
+		/// <returns>Returns the deleted model.</returns>
 		protected override Core.Model.Roles.Patient Delete(Guid modelId, List<IResultDetail> details)
 		{
-			return this.m_repository.Obsolete(modelId);
+			return this.repository.Obsolete(modelId);
 		}
 
 		/// <summary>
-		/// Map a patient object to FHIR
+		/// Map a patient object to FHIR.
 		/// </summary>
-		protected override MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient MapToFhir(Core.Model.Roles.Patient model)
+		/// <param name="model">The model.</param>
+		/// <returns>Returns the mapped FHIR resource.</returns>
+		protected override Patient MapToFhir(Core.Model.Roles.Patient model)
 		{
-			var retVal = DataTypeConverter.CreateResource<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(model);
+			var retVal = DataTypeConverter.CreateResource<Patient>(model);
 			retVal.Active = model.StatusConceptKey == StatusKeys.Active;
 			retVal.Address = model.Addresses.Select(o => DataTypeConverter.ToFhirAddress(o)).ToList();
 			retVal.BirthDate = model.DateOfBirth;
@@ -98,7 +109,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 					relative.Identifier = rel.TargetEntity.Identifiers.Select(o => DataTypeConverter.ToFhirIdentifier(o)).ToList();
 					relative.Name = DataTypeConverter.ToFhirHumanName(rel.TargetEntity.Names.FirstOrDefault());
 					if (rel.TargetEntity is Core.Model.Roles.Patient)
-						relative.Patient = DataTypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(rel.TargetEntity);
+						relative.Patient = DataTypeConverter.CreateReference<Patient>(rel.TargetEntity);
 					relative.Telecom = rel.TargetEntity.Telecoms.Select(o => DataTypeConverter.ToFhirTelecom(o)).ToList();
 					retVal.Contained.Add(new ContainedResource()
 					{
@@ -106,7 +117,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 					});
 				}
 				else if (rel.RelationshipTypeKey == EntityRelationshipTypeKeys.HealthcareProvider)
-					retVal.Provider = DataTypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Practictioner>(rel.TargetEntity);
+					retVal.Provider = DataTypeConverter.CreateReference<Practictioner>(rel.TargetEntity);
 			}
 
 			// TODO: Links
@@ -114,11 +125,11 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		}
 
 		/// <summary>
-		/// Maps to model.
+		/// Maps a FHIR patient resource to an IMSI patient.
 		/// </summary>
 		/// <param name="resource">The resource.</param>
 		/// <returns>Returns the mapped model.</returns>
-		protected override Core.Model.Roles.Patient MapToModel(MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient resource)
+		protected override Core.Model.Roles.Patient MapToModel(Patient resource)
 		{
 			var patient = new Core.Model.Roles.Patient
 			{
@@ -171,30 +182,43 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		}
 
 		/// <summary>
-		/// Query for patients
+		/// Query for patients.
 		/// </summary>
+		/// <param name="query">The query.</param>
+		/// <param name="issues">The issues.</param>
+		/// <param name="offset">The offset.</param>
+		/// <param name="count">The count.</param>
+		/// <param name="totalResults">The total results.</param>
+		/// <returns>Returns the list of models which match the given parameters.</returns>
 		protected override IEnumerable<Core.Model.Roles.Patient> Query(Expression<Func<Core.Model.Roles.Patient, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults)
 		{
 			Expression<Func<Core.Model.Roles.Patient, bool>> filter = o => o.ClassConceptKey == EntityClassKeys.Patient && o.ObsoletionTime == null;
 			var parm = Expression.Parameter(typeof(Core.Model.Roles.Patient));
 			query = Expression.Lambda<Func<Core.Model.Roles.Patient, bool>>(Expression.AndAlso(Expression.Invoke(filter, parm), Expression.Invoke(query, parm)), parm);
-			return this.m_repository.Find(query, offset, count, out totalResults);
+			return this.repository.Find(query, offset, count, out totalResults);
 		}
 
 		/// <summary>
-		/// Retrieves the specified patient
+		/// Retrieves the specified patient.
 		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="details">The details.</param>
+		/// <returns>Returns the model which matches the given id.</returns>
 		protected override Core.Model.Roles.Patient Read(Identifier<Guid> id, List<IResultDetail> details)
 		{
-			return this.m_repository.Get(id.Id, id.VersionId);
+			return this.repository.Get(id.Id, id.VersionId);
 		}
 
 		/// <summary>
-		/// Update the specified resource
+		/// Update the specified patient.
 		/// </summary>
+		/// <param name="model">The model.</param>
+		/// <param name="details">The details.</param>
+		/// <param name="mode">The mode.</param>
+		/// <returns>Returns the updated model.</returns>
 		protected override Core.Model.Roles.Patient Update(Core.Model.Roles.Patient model, List<IResultDetail> details, TransactionMode mode)
 		{
-			return this.m_repository.Save(model);
+			return this.repository.Save(model);
 		}
 	}
 }
