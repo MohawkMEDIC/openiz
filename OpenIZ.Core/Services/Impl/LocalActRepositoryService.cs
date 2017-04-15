@@ -294,9 +294,9 @@ namespace OpenIZ.Core.Services.Impl
         /// <exception cref="System.NotImplementedException"></exception>
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public Act Save(Act data)
-		{
-			throw new NotImplementedException();
-		}
+        {
+	        return this.Save<Act>(data);
+        }
 
 		/// <summary>
 		/// Validates an act.

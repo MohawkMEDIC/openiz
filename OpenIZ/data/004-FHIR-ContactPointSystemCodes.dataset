@@ -206,23 +206,4 @@
       </name>
     </ReferenceTerm>
   </insert>
-  <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>091f27e8-e592-4e81-b5d7-338b7749d8b8</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>other</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>554f8c69-d0b5-481a-a3b1-40af00b44752</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Other</value>
-      </name>
-    </Concept>
-  </insert>
 </dataset>
