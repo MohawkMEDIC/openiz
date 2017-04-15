@@ -103,18 +103,6 @@ namespace OpenIZ.Messaging.AMI
 				// Start the webhost
 				this.m_webHost.Open();
 
-				// creates the applets directory where the applets will live
-				var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-				var appletDirectory = Path.Combine(baseDirectory, "applets");
-
-				if (!Directory.Exists(appletDirectory))
-				{
-					this.tracer.TraceEvent(TraceEventType.Information, 0, "Creating applet directory: {0}", appletDirectory);
-
-					Directory.CreateDirectory(appletDirectory);
-				}
-
 				this.Started?.Invoke(this, EventArgs.Empty);
 				return true;
 			}

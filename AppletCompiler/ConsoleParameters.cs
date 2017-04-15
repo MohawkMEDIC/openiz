@@ -122,5 +122,12 @@ namespace AppletCompiler
         [Parameter("sign")]
         [Description("Signs an already existing applet pak file")]
         public bool Sign { get; internal set; }
+
+        /// <summary>
+        /// Embed certificate into the manifest
+        /// </summary>
+        [Parameter("embedCert")]
+        [Description("Embeds the certificate used to sign the package in the applet (recommended for wide-publishing)")]
+        public bool EmbedCertificate { get; set; }
     }
 }

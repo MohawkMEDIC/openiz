@@ -48,6 +48,7 @@
     <Compile Include="Exceptions\DataPersistenceException.cs" />
     <Compile Include="Exceptions\DetectedIssueException.cs" />
     <Compile Include="Exceptions\PatchException.cs" />
+    <Compile Include="Http\BinaryBodySerializer.cs" />
     <Compile Include="Http\Credentials.cs" />
     <Compile Include="Http\DefaultContentTypeMapper.cs" />
     <Compile Include="Http\Description\IRestClientCertificateDescription.cs" />

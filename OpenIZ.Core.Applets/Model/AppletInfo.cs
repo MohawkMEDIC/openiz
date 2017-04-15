@@ -108,10 +108,22 @@ namespace OpenIZ.Core.Applets.Model
 		}
 
 
-		/// <summary>
-		/// Return this applet reference
-		/// </summary>
-		public AppletName AsReference()
+        /// <summary>
+        /// A hash which validates the file has not changed on the disk. Different from signature which 
+        /// indicates the manifest has not changed since installed.
+        /// </summary>
+        /// <value><c>true</c> if this instance hash; otherwise, <c>false</c>.</value>
+        [XmlElement("hash")]
+        public byte[] Hash
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Return this applet reference
+        /// </summary>
+        public AppletName AsReference()
 		{
 			return new AppletName (this.Id, this.Version, this.PublicKeyToken);
 		}

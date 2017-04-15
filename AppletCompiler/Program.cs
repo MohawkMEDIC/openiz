@@ -255,6 +255,9 @@ namespace AppletCompiler
                 retVal.Meta.Hash = SHA256.Create().ComputeHash(retVal.Manifest);
                 retVal.Meta.PublicKeyToken = signCert.Thumbprint;
 
+                if (parameters.EmbedCertificate)
+                    retVal.PublicKey = signCert.Export(X509ContentType.Cert);
+
                 if (!signCert.HasPrivateKey)
                     throw new SecurityException($"Provided key {parameters.SignKey} has no private key");
                 RSACryptoServiceProvider rsa = signCert.PrivateKey as RSACryptoServiceProvider;

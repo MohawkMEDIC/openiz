@@ -24,8 +24,10 @@ using OpenIZ.Core.Configuration;
 using OpenIZ.Core.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Diagnostics;
 using System.IdentityModel.Tokens;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security;
@@ -68,37 +70,31 @@ namespace OpenIZ.Core.Wcf.Serialization
             this.m_traceSource.TraceEvent(TraceEventType.Error, error.HResult, "Error on WCF pipeline: {0}", error);
 
             // Formulate appropriate response
-            if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
-            {
-                code = FaultCode.CreateSenderFaultCode("POLICY", "http://openiz.org/model");
+            if (error is DomainStateException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            else if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
-            }
             else if (error is SecurityTokenException)
             {
-                code = FaultCode.CreateSenderFaultCode("TOKEN", "http://openiz.org/model");
-
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
-                WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", String.Format("Bearer realm=\"{0}\"", this.m_configuration.Security.ClaimsAuth.Realm));
-            }
-            else if (error is WebFaultException)
-            {
-                code = FaultCode.CreateSenderFaultCode("FAULT", "http://openiz.org/model");
-                WebOperationContext.Current.OutgoingResponse.StatusCode = (error as WebFaultException).StatusCode;
-            }
-            else if (error is Newtonsoft.Json.JsonException ||
-                error is System.Xml.XmlException)
-            {
-                code = FaultCode.CreateSenderFaultCode("BAD_REQUEST", "http://openiz.org/model");
-
-                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", "Bearer");
             }
             else if (error is UnauthorizedRequestException)
             {
-                code = FaultCode.CreateSenderFaultCode("POLICY", "http://openiz.org/model");
-
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", (error as UnauthorizedRequestException).AuthenticateChallenge);
             }
+            else if (error is WebFaultException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = (error as WebFaultException).StatusCode;
+            else if (error is FaultException) // Other fault exception do nothing
+                ;
+            else if (error is Newtonsoft.Json.JsonException ||
+                error is System.Xml.XmlException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+            else if(error is DuplicateKeyException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Conflict;
+            else if(error is FileNotFoundException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
            

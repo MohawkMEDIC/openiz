@@ -183,6 +183,15 @@ namespace OpenIZ.Core.Wcf.Serialization
                         var dserType = parm.Type;
                         parameters[pNumber] = jsz.Deserialize(sr, dserType);
                     }
+                    else if(contentType == "application/octet-stream")
+                    {
+                        XmlDictionaryReader rawReader = request.GetReaderAtBodyContents();
+                        rawReader.ReadStartElement("Binary");
+                        byte[] rawBody = rawReader.ReadContentAsBase64();
+
+                        MemoryStream ms = new MemoryStream(rawBody);
+                        parameters[pNumber] = ms;
+                    }
                     else if (contentType != null)// TODO: Binaries
                         throw new InvalidOperationException("Invalid request format");
                 }
@@ -274,6 +283,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                 }
                 else if (result is Stream) // TODO: This is messy, clean it up
                 {
+                    contentType = "application/octet-stream";
                     reply = Message.CreateMessage(messageVersion, this.m_operationDescription.Messages[1].Action, new RawBodyWriter(result as Stream));
                 }
                 else

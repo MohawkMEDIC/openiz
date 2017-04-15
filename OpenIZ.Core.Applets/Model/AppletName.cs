@@ -90,17 +90,6 @@ namespace OpenIZ.Core.Applets.Model
 		}
 
 		/// <summary>
-		/// A hash which validates the file has not changed on the disk. Different from signature which 
-		/// indicates the manifest has not changed since installed.
-		/// </summary>
-		/// <value><c>true</c> if this instance hash; otherwise, <c>false</c>.</value>
-		[XmlElement("hash")]
-		public byte[] Hash {
-			get;
-			set;
-		}
-
-		/// <summary>
 		/// Returns a string that represents the current object.
 		/// </summary>
 		/// <returns>A string that represents the current object.</returns>

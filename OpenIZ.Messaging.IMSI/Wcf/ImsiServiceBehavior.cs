@@ -58,6 +58,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core;
 using System.Data.Linq;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -84,6 +85,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Create(string resourceType, IdentifiedData body)
         {
+            this.ThrowIfNotReady();
+
             try
             {
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
@@ -127,6 +130,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body)
         {
+            this.ThrowIfNotReady();
             try
             {
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
@@ -169,6 +173,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Get(string resourceType, string id)
         {
+            this.ThrowIfNotReady();
 
             try
             {
@@ -222,6 +227,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData GetVersion(string resourceType, string id, string versionId)
         {
+            this.ThrowIfNotReady();
             try
             {
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
@@ -260,6 +266,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
         public XmlSchema GetSchema(int schemaId)
         {
+            this.ThrowIfNotReady();
             try
             {
                 XmlSchemas schemaCollection = new XmlSchemas();
@@ -296,6 +303,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData History(string resourceType, string id)
         {
+            this.ThrowIfNotReady();
             try
             {
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
@@ -339,6 +347,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Search(string resourceType)
         {
+            this.ThrowIfNotReady();
             try
             {
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
@@ -422,6 +431,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         public DateTime Time()
         {
+            this.ThrowIfNotReady();
             return DateTime.Now;
         }
 
@@ -431,6 +441,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Update(string resourceType, string id, IdentifiedData body)
         {
+            this.ThrowIfNotReady();
             try
             {
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
@@ -528,6 +539,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         public IdentifiedData Delete(string resourceType, string id)
         {
+            this.ThrowIfNotReady();
             try
             {
                 var handler = ResourceHandlerUtil.Current.GetResourceHandler(resourceType);
@@ -568,6 +580,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         public void HeadSearch(string resourceType)
         {
+            this.ThrowIfNotReady();
             WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.Add("_count", "1");
             this.Search(resourceType);
         }
@@ -577,6 +590,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         public void GetHead(string resourceType, string id)
         {
+            this.ThrowIfNotReady();
             this.Get(resourceType, id);
         }
 
@@ -588,6 +602,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <param name="body"></param>
         public void Patch(string resourceType, string id, Patch body)
         {
+            this.ThrowIfNotReady();
             try
             {
                 // Validate
@@ -648,6 +663,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
         public Patch GetPatch(string resourceType, string id)
         {
+            this.ThrowIfNotReady();
             throw new NotImplementedException();
         }
 
@@ -656,6 +672,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         public IdentifiedData Options()
         {
+            this.ThrowIfNotReady();
             try
             {
                 WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
@@ -707,6 +724,14 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         }
 
 
+        /// <summary>
+        /// Throw if the service is not ready
+        /// </summary>
+        public void ThrowIfNotReady()
+        {
+            if (!ApplicationContext.Current.IsRunning)
+                throw new DomainStateException();
+        }
         #endregion
     }
 }

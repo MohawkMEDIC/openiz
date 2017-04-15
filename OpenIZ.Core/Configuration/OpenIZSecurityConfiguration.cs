@@ -38,5 +38,10 @@ namespace OpenIZ.Core.Configuration
         /// Gets or sets the claims auth
         /// </summary>
         public OpenIzClaimsAuthorization ClaimsAuth { get; set; }
+
+        /// <summary>
+        /// Trusted publishers
+        /// </summary>
+        public string[] TrustedPublishers { get; set; }
     }
 }

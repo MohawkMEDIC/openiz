@@ -77,11 +77,15 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <summary>
 		/// Creates an applet.
 		/// </summary>
-		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
 		/// <returns>Returns the created applet manifest info.</returns>
-		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
+		public AppletManifestInfo CreateApplet(AppletPackage appletPackage)
 		{
-			return this.Client.Post<AppletManifestInfo, AppletManifestInfo>("applet", this.Client.Accept, appletManifestInfo);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                appletPackage.Save(ms);
+                ms.Flush();
+                return this.Client.Post<byte[], AppletManifestInfo>("applet", "application/octet-stream", ms.ToArray());
+            }
 		}
 
 		/// <summary>
@@ -149,9 +153,9 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// </summary>
 		/// <param name="appletId">The id of the applet to be deleted.</param>
 		/// <returns>Returns the deleted applet.</returns>
-		public AppletManifestInfo DeleteApplet(string appletId)
+		public bool DeleteApplet(string appletId)
 		{
-			return this.Client.Delete<AppletManifestInfo>($"applet/{appletId}");
+			return this.Client.Delete<object>($"applet/{appletId}") != null;
 		}
 
 		/// <summary>
@@ -275,7 +279,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Stream.</returns>
 		public Stream DownloadApplet(string appletId)
 		{
-			return this.Client.Get<Stream>($"pak/{appletId}");
+			return new MemoryStream(this.Client.Get($"applet/{appletId}/pak"));
 		}
 		
 		/// <summary>
@@ -310,7 +314,7 @@ namespace OpenIZ.Messaging.AMI.Client
         public AppletInfo StatUpdate(String packageId)
         {
 
-            var headers = this.Client.Head($"pak/{packageId}");
+            var headers = this.Client.Head($"applet/{packageId}/pak");
             String versionKey = String.Empty,
                 packId = String.Empty,
                 hash = String.Empty;
@@ -533,15 +537,20 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>($"alert/{alertId}", this.Client.Accept, alertMessageInfo);
 		}
 
-		/// <summary>
-		/// Updates an applet.
-		/// </summary>
-		/// <param name="appletId">The id of the applet to be updated.</param>
-		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
-		/// <returns>Returns the updated applet.</returns>
-		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
+        /// <summary>
+        /// Updates an applet.
+        /// </summary>
+        /// <param name="appletId">The id of the applet to be updated.</param>
+        /// <param name="appletPackage">The applet containing the updated information.</param>
+        /// <returns>Returns the updated applet.</returns>
+        public AppletManifestInfo UpdateApplet(string appletId, AppletPackage appletPackage)
 		{
-			return this.Client.Put<AppletManifestInfo, AppletManifestInfo>($"applet/{appletId}", this.Client.Accept, appletManifestInfo);
+            using (var ms = new MemoryStream())
+            {
+                appletPackage.Save(ms);
+                ms.Flush();
+                return this.Client.Put<byte[], AppletManifestInfo>($"applet/{appletId}", "application/octet-stream", ms.ToArray());
+            }
 		}
 
 		/// <summary>

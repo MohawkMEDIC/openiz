@@ -771,6 +771,21 @@ namespace OpenIZ.Core.Applets
         }
 
         /// <summary>
+        /// Verify dependencies are met for the specified applet
+        /// </summary>
+        public bool VerifyDependencies(AppletInfo applet)
+        {
+
+            bool verified = true;
+            foreach(var itm in applet.Dependencies)
+            {
+                var depItm = this.m_appletManifest.FirstOrDefault(o => o.Info.Id == itm.Id && (o.Info.PublicKeyToken == itm.PublicKeyToken || String.IsNullOrEmpty(itm.PublicKeyToken)));
+                verified &= depItm != null && new Version(depItm?.Info.Version) >= new Version(itm.Version);
+            }
+            return verified;
+        }
+
+        /// <summary>
         /// Xelement comparer
         /// </summary>
         private class XElementEquityComparer : IEqualityComparer<XElement>

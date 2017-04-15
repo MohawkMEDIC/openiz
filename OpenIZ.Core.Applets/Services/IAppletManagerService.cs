@@ -19,6 +19,11 @@ namespace OpenIZ.Core.Applets.Services
         AppletCollection LoadedApplets { get; }
 
         /// <summary>
+        /// Uninstall a package
+        /// </summary>
+        bool UnInstall(String appletId);
+
+        /// <summary>
         /// Installs or upgrades an existing applet collection via package
         /// </summary>
         bool Install(AppletPackage package, bool isUpgrade = false);
@@ -26,7 +31,7 @@ namespace OpenIZ.Core.Applets.Services
         /// <summary>
         /// Gets the installed applet package source for the specified applet
         /// </summary>
-        byte[] GetPackage(AppletInfo appletId);
+        byte[] GetPackage(String appletId);
 
     }
 }

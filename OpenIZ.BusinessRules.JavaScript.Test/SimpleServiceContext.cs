@@ -66,5 +66,13 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
         {
             return this.m_services;
         }
+
+        /// <summary>
+        /// Remove service provider
+        /// </summary>
+        public void RemoveServiceProvider(Type serviceType)
+        {
+            this.m_services.RemoveAll(o => o.GetType() == serviceType);
+        }
     }
 }

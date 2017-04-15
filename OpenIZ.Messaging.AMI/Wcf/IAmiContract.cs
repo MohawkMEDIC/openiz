@@ -123,8 +123,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
 		/// <returns>Returns the created applet manifest info.</returns>
-		[WebInvoke(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo);
+		[WebInvoke(UriTemplate = "/applet", Method = "POST")]
+		AppletManifestInfo CreateApplet(Stream pakData);
 
 		/// <summary>
 		/// Creates a security application.
@@ -196,7 +196,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="appletId">The id of the applet to be deleted.</param>
 		/// <returns>Returns the deleted applet.</returns>
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		AppletManifestInfo DeleteApplet(string appletId);
+		void DeleteApplet(string appletId);
 
 		/// <summary>
 		/// Deletes an application.
@@ -283,13 +283,13 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="appletId">The applet identifier.</param>
 		/// <returns>Stream.</returns>
-		[WebGet(UriTemplate = "/pak/{appletId}")]
+		[WebGet(UriTemplate = "/applet/{appletId}/pak")]
         Stream DownloadApplet(string appletId);
 
         /// <summary>
         /// Return just the headers of the applet id
         /// </summary>
-        [WebInvoke(Method = "HEAD", UriTemplate = "/pak/{appletId}")]
+        [WebInvoke(Method = "HEAD", UriTemplate = "/applet/{appletId}")]
         void HeadApplet(string appletId);
 
         /// <summary>
@@ -502,7 +502,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
 		/// <returns>Returns the updated applet.</returns>
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo);
+		AppletManifestInfo UpdateApplet(string appletId, Stream appletData);
 
 		/// <summary>
 		/// Updates an application.

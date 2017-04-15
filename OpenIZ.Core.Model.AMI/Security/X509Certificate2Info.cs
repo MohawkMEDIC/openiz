@@ -40,7 +40,7 @@ namespace OpenIZ.Core.Model.AMI.Security
 		/// Constructs a certificate info
 		/// </summary>
 		/// <param name="cert"></param>
-		public X509Certificate2Info(String issuer, DateTime nbf, DateTime naf, String sub, String ser)
+		public X509Certificate2Info(String issuer, DateTime? nbf, DateTime? naf, String sub, String ser)
 		{
 			this.Issuer = issuer;
 			this.NotBefore = nbf;
@@ -79,13 +79,15 @@ namespace OpenIZ.Core.Model.AMI.Security
 		/// Gets or sets the expiry date
 		/// </summary>
 		[XmlElement("exp")]
-		public DateTime NotAfter { get; set; }
+		public DateTime? NotAfter { get; set; }
+        public bool ShouldSerializeNotAfter() => this.NotAfter.HasValue;
 
-		/// <summary>
-		/// Gets or sets the issue date
-		/// </summary>
-		[XmlElement("nbf")]
-		public DateTime NotBefore { get; set; }
+        /// <summary>
+        /// Gets or sets the issue date
+        /// </summary>
+        [XmlElement("nbf")]
+		public DateTime? NotBefore { get; set; }
+        public bool ShouldSerializeNotBefore() => this.NotBefore.HasValue;
 
 		/// <summary>
 		/// Distinguished name

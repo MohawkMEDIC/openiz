@@ -31,6 +31,16 @@ namespace OpenIZ.Core.Applets.Model
     [XmlRoot(nameof(AppletPackage), Namespace = "http://openiz.org/applet")]
 	public class AppletPackage
 	{
+
+        /// <summary>
+        /// Load the specified manifest name
+        /// </summary>
+        public static AppletPackage Load(byte[] resourceData)
+        {
+            using (MemoryStream ms = new MemoryStream(resourceData))
+                return AppletPackage.Load(ms);
+        }
+
         /// <summary>
         /// Load the specified manifest name
         /// </summary>
@@ -62,6 +72,12 @@ namespace OpenIZ.Core.Applets.Model
 			get;
 			set;
 		}
+
+        /// <summary>
+        /// Public signing certificate
+        /// </summary>
+        [XmlElement("certificate")]
+        public byte[] PublicKey { get; set; }
 
         /// <summary>
         /// Unpack the package

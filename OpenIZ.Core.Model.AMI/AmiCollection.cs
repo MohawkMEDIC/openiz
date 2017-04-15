@@ -47,10 +47,20 @@ namespace OpenIZ.Core.Model.AMI.Security
 			this.CollectionItem = collectionItems;
 		}
 
-		/// <summary>
-		/// Gets or sets a list of collection items.
-		/// </summary>
-		[XmlElement("item")]
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AmiCollection{T}"/> class
+        /// with a specific list of collection items.
+        /// </summary>
+        public AmiCollection(IEnumerable<T> collectionItems)
+        {
+            this.CollectionItem = new List<T>(collectionItems);
+        }
+
+        /// <summary>
+        /// Gets or sets a list of collection items.
+        /// </summary>
+        [XmlElement("item")]
 		public List<T> CollectionItem { get; set; }
 
 		/// <summary>

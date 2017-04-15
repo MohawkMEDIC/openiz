@@ -18,13 +18,16 @@
  * Date: 2016-11-23
  */
 
+using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Applets.Services;
 using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Model.AMI.Security;
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Web;
 using System.Xml.Serialization;
 
@@ -40,32 +43,29 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
 		/// <returns>Returns the created applet manifest info.</returns>
-		public AppletManifestInfo CreateApplet(AppletManifestInfo appletManifestInfo)
+		public AppletManifestInfo CreateApplet(Stream appletData)
 		{
-			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-			var appletDirectory = Path.Combine(baseDirectory, "applets");
-
-			if (!appletManifestInfo.FileExtension.StartsWith("."))
-			{
-				appletManifestInfo.FileExtension = appletManifestInfo.FileExtension.Insert(0, ".");
-			}
-
-			switch (appletManifestInfo.FileExtension.ToLowerInvariant())
-			{
-				case ".pak":
-					using (var fileStream = File.Create(Path.Combine(appletDirectory, appletManifestInfo.AppletManifest.Info.Id + appletManifestInfo.FileExtension)))
-					using (var gzipStream = new GZipStream(fileStream, CompressionMode.Compress))
-					{
-						var package = appletManifestInfo.AppletManifest.CreatePackage();
-						var serializer = new XmlSerializer(typeof(AppletPackage));
-
-						serializer.Serialize(gzipStream, package);
-					}
-					break;
-			}
-
-			return appletManifestInfo;
+            var pkg = AppletPackage.Load(appletData);
+            ApplicationContext.Current.GetService<IAppletManagerService>().Install(pkg);
+            X509Certificate2 cert = null;
+            if (pkg.PublicKey != null)
+                cert = new X509Certificate2(pkg.PublicKey);
+            else if(pkg.Meta.PublicKeyToken != null)
+            {
+                X509Store store = new X509Store(StoreName.TrustedPublisher, StoreLocation.LocalMachine);
+                try
+                {
+                    store.Open(OpenFlags.ReadOnly);
+                    var results = store.Certificates.Find(X509FindType.FindByThumbprint, pkg.Meta.PublicKeyToken, false);
+                    if (results.Count > 0)
+                        cert = results[0];
+                }
+                finally
+                {
+                    store.Close();
+                }
+            }
+            return new AppletManifestInfo(pkg.Meta, new X509Certificate2Info(cert?.Issuer, cert?.NotBefore, cert?.NotAfter, cert?.Subject, cert?.Thumbprint));
 		}
 
 		/// <summary>
@@ -74,70 +74,44 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="appletId">The id of the applet to be deleted.</param>
 		/// <returns>Returns the deleted applet.</returns>
 		/// <exception cref="System.ArgumentException">Applet not found.</exception>
-		public AppletManifestInfo DeleteApplet(string appletId)
+		public void DeleteApplet(string appletId)
 		{
-			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-			var appletDirectory = Path.Combine(baseDirectory, "applets");
-
-			var file = Directory.GetFiles(appletDirectory).FirstOrDefault(f => f == appletId);
-
-			if (file == null)
-			{
-				throw new ArgumentException("Applet not found");
-			}
-
-			File.Delete(file);
-
-			return new AppletManifestInfo();
+            ApplicationContext.Current.GetService<IAppletManagerService>().UnInstall(appletId);
 		}
 
-		/// <summary>
-		/// Downloads the applet.
-		/// </summary>
-		/// <param name="appletId">The applet identifier.</param>
-		/// <returns>Stream.</returns>
-		public Stream DownloadApplet(string appletId)
+        /// <summary>
+        /// Set applet headers
+        /// </summary>
+        private void SetAppletHeaders(AppletInfo package)
         {
-            var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            WebOperationContext.Current.OutgoingResponse.ETag = package.Version;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("X-OpenIZ-PakID", package.Id);
+            if (package.Hash != null)
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("X-OpenIZ-Hash", Convert.ToBase64String(package.Hash));
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Type", "application/octet-stream");
+            WebOperationContext.Current.OutgoingResponse.ContentType = "application/octet-stream";
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", $"attachment; filename=\"{package.Id}.pak.gz\"");
+            WebOperationContext.Current.OutgoingResponse.Location = $"/ami/applet/{package.Id}/pak";
+        }
 
-            // TODO: Make this configurable
-            var appletDirectory = Path.Combine(baseDirectory, "applets");
-            var files = Directory.GetFiles(appletDirectory).Select(Path.GetFileName);
-            var file = files.FirstOrDefault(f => f.StartsWith(appletId));
+        /// <summary>
+        /// Downloads the applet.
+        /// </summary>
+        /// <param name="appletId">The applet identifier.</param>
+        /// <returns>Stream.</returns>
+        public Stream DownloadApplet(string appletId)
+        {
+            var appletService = ApplicationContext.Current.GetService<IAppletManagerService>();
+            var appletData = appletService.GetPackage(appletId);
 
-            if (file == null)
-                throw new InvalidOperationException("Applet not found");
-
-            var applet = new AppletManifestInfo();
-
-            // Stream
-            MemoryStream ms = new MemoryStream();
-            using (var stream = new FileStream(Path.Combine(appletDirectory, file), FileMode.Open))
+            if (appletData == null)
+                throw new FileNotFoundException(appletId);
+            else
             {
-                stream.CopyTo(ms);
-                ms.Seek(0, SeekOrigin.Begin);
-                stream.Seek(0, SeekOrigin.Begin);
-                AppletPackage package = null;
-
-                if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
-                {
-                    using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress))
-                    {
-                        var serializer = new XmlSerializer(typeof(AppletPackage));
-                        package = (AppletPackage)serializer.Deserialize(gzipStream);
-                        WebOperationContext.Current.OutgoingResponse.ETag = package.Meta.Version;
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add("X-OpenIZ-PakID", package.Meta.Id);
-                        if(package.Meta.Hash != null)
-                            WebOperationContext.Current.OutgoingResponse.Headers.Add("X-OpenIZ-Hash", Convert.ToBase64String(package.Meta.Hash));
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Type", "application/x-openiz-pak");
-                        WebOperationContext.Current.OutgoingResponse.Headers.Add("Content-Disposition", $"attachment; filename=\"{package.Meta.Id}.pak.gz\"");
-                        WebOperationContext.Current.OutgoingResponse.Location = $"/ami/pak/{package.Meta.Id}";
-                    }
-                }
+                var appletManifest = AppletPackage.Load(appletData);
+                this.SetAppletHeaders(appletManifest.Meta);
+                return new MemoryStream(appletData);
             }
-
-            return ms;
         }
 
         /// <summary>
@@ -145,7 +119,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         public void HeadApplet(String appletId)
         {
-            var stream = this.DownloadApplet(appletId);
+            var appletManifest = ApplicationContext.Current.GetService<IAppletManagerService>()?.LoadedApplets.FirstOrDefault(o=>o.Info.Id == appletId);
+            if (appletManifest == null)
+                throw new FileNotFoundException(appletId);
+            else
+                this.SetAppletHeaders(appletManifest.Info);
         }
 
 		/// <summary>
@@ -156,48 +134,34 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <exception cref="System.InvalidOperationException">Applet not found.</exception>
 		public AppletManifestInfo GetApplet(string appletId)
 		{
-			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-			var appletDirectory = Path.Combine(baseDirectory, "applets");
-
-			var files = Directory.GetFiles(appletDirectory).Select(Path.GetFileName);
-
-			var file = files.FirstOrDefault(f => f.StartsWith(appletId));
-
-			if (file == null)
-			{
-				throw new InvalidOperationException("Applet not found");
-			}
-
-			var applet = new AppletManifestInfo();
-
-			using (var stream = new FileStream(Path.Combine(appletDirectory, file), FileMode.Open))
-			{
-				AppletPackage package = null;
-
-				if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
-				{
-					using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress))
-					{
-						var serializer = new XmlSerializer(typeof(AppletPackage));
-						package = (AppletPackage)serializer.Deserialize(gzipStream);
-					}
-				}
-
-                // Set the ETAG of the package to an AQN
-                WebOperationContext.Current.OutgoingResponse.ETag = package.Meta.Version;
-
-				using (var memoryStream = new MemoryStream(package.Manifest))
-				{
-					applet = new AppletManifestInfo(AppletManifest.Load(memoryStream))
-					{
-						FileExtension = file.EndsWith(".pak.gz") ? ".pak.gz" : ".pak"
-					};
-				}
-			}
-
-			return applet;
-		}
+            var appletService = ApplicationContext.Current.GetService<IAppletManagerService>();
+            var appletData = appletService.GetPackage(appletId);
+            if (appletData == null)
+                throw new FileNotFoundException(appletId);
+            else
+            {
+                var pkg = AppletPackage.Load(appletData);
+                X509Certificate2 cert = null;
+                if(pkg.PublicKey != null)
+                    cert = new X509Certificate2(pkg.PublicKey);
+                else if (pkg.Meta.PublicKeyToken != null)
+                {
+                    X509Store store = new X509Store(StoreName.TrustedPublisher, StoreLocation.LocalMachine);
+                    try
+                    {
+                        store.Open(OpenFlags.ReadOnly);
+                        var results = store.Certificates.Find(X509FindType.FindByThumbprint, pkg.Meta.PublicKeyToken, false);
+                        if (results.Count > 0)
+                            cert = results[0];
+                    }
+                    finally
+                    {
+                        store.Close();
+                    }
+                }
+                return new AppletManifestInfo(pkg.Meta, new X509Certificate2Info(cert?.Issuer, cert?.NotBefore, cert?.NotAfter, cert?.Subject, cert?.Thumbprint));
+            }
+        }
 
 		/// <summary>
 		/// Gets a list of applets for a specific query.
@@ -205,76 +169,43 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
-			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-			var appletDirectory = Path.Combine(baseDirectory, "applets");
-
-			var files = Directory.GetFiles(appletDirectory);
-
-			var applets = new AmiCollection<AppletManifestInfo>();
-
-			foreach (var file in from file in files let bytes = File.ReadAllBytes(file) select file)
-			{
-				using (var stream = new FileStream(file, FileMode.Open))
-				{
-					AppletPackage package = null;
-
-					if (file.EndsWith(".pak") || file.EndsWith(".pak.gz"))
-					{
-						using (var gzipStream = new GZipStream(stream, CompressionMode.Decompress))
-						{
-							var serializer = new XmlSerializer(typeof(AppletPackage));
-							package = (AppletPackage)serializer.Deserialize(gzipStream);
-						}
-					}
-
-					using (var memoryStream = new MemoryStream(package.Manifest))
-					{
-						applets.CollectionItem.Add(new AppletManifestInfo(AppletManifest.Load(memoryStream)));
-					}
-				}
-			}
-
-			return applets;
+            return new AmiCollection<AppletManifestInfo>(ApplicationContext.Current.GetService<IAppletManagerService>().LoadedApplets.Select(o => new AppletManifestInfo(o.Info, null)));
 		}
 
-		/// <summary>
-		/// Updates an applet.
-		/// </summary>
-		/// <param name="appletId">The id of the applet to be updated.</param>
-		/// <param name="appletManifestInfo">The applet containing the updated information.</param>
-		/// <returns>Returns the updated applet.</returns>
-		/// <exception cref="System.ArgumentException">Applet not found.</exception>
-		public AppletManifestInfo UpdateApplet(string appletId, AppletManifestInfo appletManifestInfo)
+        /// <summary>
+        /// Updates an applet.
+        /// </summary>
+        /// <param name="appletId">The id of the applet to be updated.</param>
+        /// <param name="appletData">The applet containing the updated information.</param>
+        /// <returns>Returns the updated applet.</returns>
+        /// <exception cref="System.ArgumentException">Applet not found.</exception>
+        public AppletManifestInfo UpdateApplet(string appletId, Stream appletData)
 		{
-			if (appletId != appletManifestInfo.AppletManifest.Info.Id)
-			{
-				throw new ArgumentException($"Unable to update applet using id {appletId} and {appletManifestInfo.AppletManifest.Info.Id}");
-			}
+            var appletMgr = ApplicationContext.Current.GetService<IAppletManagerService>();
+            if (!appletMgr.LoadedApplets.Any(o => o.Info.Id == appletId))
+                throw new FileNotFoundException(appletId);
 
-			var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-			var appletDirectory = Path.Combine(baseDirectory, "applets");
-
-			var file = Directory.GetFiles(appletDirectory).FirstOrDefault(f => f.Contains(appletId));
-
-			if (file == null)
-			{
-				throw new ArgumentException("Applet not found");
-			}
-
-			File.Delete(file);
-
-			using (var fileStream = File.Create(Path.Combine(appletDirectory, appletManifestInfo.AppletManifest.Info.Id)))
-			{
-				var buffer = new byte[fileStream.Length];
-
-				fileStream.Write(buffer, 0, buffer.Length);
-
-				fileStream.Close();
-			}
-
-			return appletManifestInfo;
-		}
-	}
+            var pkg = AppletPackage.Load(appletData);
+            ApplicationContext.Current.GetService<IAppletManagerService>().Install(pkg, true);
+            X509Certificate2 cert = null;
+            if (pkg.PublicKey != null)
+                cert = new X509Certificate2(pkg.PublicKey);
+            else if (pkg.Meta.PublicKeyToken != null)
+            {
+                X509Store store = new X509Store(StoreName.TrustedPublisher, StoreLocation.LocalMachine);
+                try
+                {
+                    store.Open(OpenFlags.ReadOnly);
+                    var results = store.Certificates.Find(X509FindType.FindByThumbprint, pkg.Meta.PublicKeyToken, false);
+                    if (results.Count > 0)
+                        cert = results[0];
+                }
+                finally
+                {
+                    store.Close();
+                }
+            }
+            return new AppletManifestInfo(pkg.Meta, new X509Certificate2Info(cert?.Issuer, cert?.NotBefore, cert?.NotAfter, cert?.Subject, cert?.Thumbprint));
+        }
+    }
 }

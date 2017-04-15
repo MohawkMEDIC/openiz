@@ -74,11 +74,14 @@ namespace OpenIZ.Core.Configuration
             {
                 retVal.Security = new OpenIzSecurityConfiguration();
 
-                retVal.Security.AllowUnsignedApplets = Boolean.Parse(securityNode.Attributes["allowUnsignedApplets"]?.Value ?? "false");
                 XmlElement basicSecurityNode = securityNode.SelectSingleNode("./basic") as XmlElement,
-                    tokenSecurityNode = securityNode.SelectSingleNode("./token") as XmlElement;
+                    tokenSecurityNode = securityNode.SelectSingleNode("./token") as XmlElement,
+                    appletSecurityNode = securityNode.SelectSingleNode("./applet") as XmlElement;
 
-                if(tokenSecurityNode != null)
+                retVal.Security.AllowUnsignedApplets = Boolean.Parse(appletSecurityNode?.Attributes["allowUnsignedApplets"]?.Value ?? "false");
+                retVal.Security.TrustedPublishers = appletSecurityNode?.SelectNodes("./trustedPublishers/add")?.OfType<XmlElement>().Select(o => o.InnerText).ToArray();
+
+                if (tokenSecurityNode != null)
                 {
                     retVal.Security.ClaimsAuth = new OpenIzClaimsAuthorization();
                     retVal.Security.ClaimsAuth.Realm = tokenSecurityNode.Attributes["realm"]?.Value;

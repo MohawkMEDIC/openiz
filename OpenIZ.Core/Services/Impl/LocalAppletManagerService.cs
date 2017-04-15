@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Services.Impl
         /// <summary>
         /// Get the specified package data
         /// </summary>
-        public byte[] GetPackage(AppletInfo appletId)
+        public byte[] GetPackage(String appletId)
         {
 
             // Save the applet
@@ -74,11 +74,38 @@ namespace OpenIZ.Core.Services.Impl
                 Directory.CreateDirectory(appletDir);
 
             // Install
-            String pakFile = Path.Combine(appletDir, appletId.Id + ".pak");
-            if (File.Exists(pakFile))
+            String pakFile = null;
+            if(this.m_fileDictionary.TryGetValue(appletId, out pakFile) && File.Exists(pakFile))
                 return File.ReadAllBytes(pakFile);
             else
                 throw new FileNotFoundException($"Applet {appletId} not found");
+        }
+
+        /// <summary>
+        /// Uninstall the applet package
+        /// </summary>
+        public bool UnInstall(String packageId)
+        {
+            // Applet check
+            var applet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == packageId);
+            if (applet == null)
+                throw new FileNotFoundException($"Applet {packageId} is not installed");
+
+            // Dependency check
+            var dependencies = this.LoadedApplets.Where(o=>o.Info.Dependencies.Any(d=>d.Id == packageId));
+            if (dependencies.Any())
+                throw new InvalidOperationException($"Uninstalling {packageId} would break : {String.Join(", ", dependencies.Select(o => o.Info))}");
+
+            // We're good to go!
+            this.LoadedApplets.Remove(applet);
+
+            lock (this.m_fileDictionary)
+                if (this.m_fileDictionary.ContainsKey(packageId))
+                    File.Delete(this.m_fileDictionary[packageId]);
+
+            AppletCollection.ClearCaches();
+
+            return true;
         }
 
         /// <summary>
@@ -89,7 +116,9 @@ namespace OpenIZ.Core.Services.Impl
             // TODO: Verify package hash / signature
             if (!this.VerifyPackage(package))
                 throw new SecurityException("Applet failed validation");
-
+            else if (!this.LoadedApplets.VerifyDependencies(package.Meta))
+                throw new InvalidOperationException($"Applet {package.Meta} depends on : [{String.Join(", ", package.Meta.Dependencies.Select(o=>o.ToString()))}] which are missing or incompatible");
+           
             // Save the applet
             var appletDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets");
             if (!Directory.Exists(appletDir))
@@ -97,11 +126,18 @@ namespace OpenIZ.Core.Services.Impl
 
             // Install
             String pakFile = Path.Combine(appletDir, package.Meta.Id + ".pak");
-            if (File.Exists(pakFile) && !isUpgrade)
+            if (this.LoadedApplets.Any(o=>o.Info.Id == package.Meta.Id) && File.Exists(pakFile) && !isUpgrade)
                 throw new InvalidOperationException($"Cannot replace {package.Meta} unless upgrade is specifically specified");
 
             using (FileStream fs = File.Create(pakFile))
                 package.Save(fs);
+
+            lock (this.m_fileDictionary)
+                if(!this.m_fileDictionary.ContainsKey(package.Meta.Id))
+                    this.m_fileDictionary.Add(package.Meta.Id, pakFile);
+            this.LoadedApplets.Add(package.Unpack());
+            AppletCollection.ClearCaches();
+
             return true;
         }
 
@@ -110,6 +146,7 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         private bool VerifyPackage(AppletPackage package)
         {
+
             // First check: Hash - Make sure the HASH is ok
             if (Convert.ToBase64String(SHA256.Create().ComputeHash(package.Manifest)) != Convert.ToBase64String(package.Meta.Hash))
                 throw new InvalidOperationException($"Package contents of {package.Meta.Id} appear to be corrupt!");
@@ -124,10 +161,25 @@ namespace OpenIZ.Core.Services.Impl
                 {
                     x509Store.Open(OpenFlags.ReadOnly);
                     var cert = x509Store.Certificates.Find(X509FindType.FindByThumbprint, package.Meta.PublicKeyToken, false);
-                    
-                    if (cert.Count == 0 || cert[0].NotAfter < DateTime.Now || cert[0].NotBefore > DateTime.Now)
-                        throw new SecurityException($"Cannot find public key of publisher information for {package.Meta.PublicKeyToken} or the local certificate is invalid");
 
+                    if (cert.Count == 0)
+                    {
+                        if (package.PublicKey != null)
+                        {
+                            var embCert = new X509Certificate2(package.PublicKey);
+                            if (!this.m_configuration.Security.TrustedPublishers.Contains(embCert.Thumbprint) && !embCert.Verify())
+                                throw new SecurityException($"Cannot verify identity of publisher {embCert.Subject}");
+                            else
+                                cert = new X509Certificate2Collection(embCert);
+                        }
+                        else
+                            throw new SecurityException($"Cannot find public key of publisher information for {package.Meta.PublicKeyToken} or the local certificate is invalid");
+                    }
+
+                    if (cert[0].NotAfter < DateTime.Now || cert[0].NotBefore > DateTime.Now)
+                            throw new SecurityException($"Cannot find public key of publisher information for {package.Meta.PublicKeyToken} or the local certificate is invalid");
+
+                    
                     RSACryptoServiceProvider rsa = cert[0].PublicKey.Key as RSACryptoServiceProvider;
                     var retVal =  rsa.VerifyData(package.Manifest, CryptoConfig.MapNameToOID("SHA1"), package.Meta.Signature);
 
