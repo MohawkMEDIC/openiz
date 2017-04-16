@@ -198,7 +198,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets a minimal assigning authority from XML data
         /// </summary>
         [SerializationReference(nameof(AuthorityKey))]
-        [XmlElement("authority"), JsonProperty("authority")]
+        [AutoLoad, XmlElement("authority"), JsonProperty("authority")]
         public AssigningAuthority AuthorityXml
         {
             get
@@ -217,13 +217,13 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Represents the authority information 
         /// </summary>
-        [AutoLoad, XmlIgnore, JsonIgnore] 
+        [XmlIgnore, JsonIgnore] 
         public AssigningAuthority Authority
         {
             get
             {
-                if (this.m_authority == null)
-                    this.m_authority = EntitySource.Current.Get<AssigningAuthority>(this.m_authorityId); // base.DelayLoad(this.m_authorityId, this.m_authority);
+                //if (this.m_authority == null)
+                //    this.m_authority = EntitySource.Current.Get<AssigningAuthority>(this.m_authorityId); // base.DelayLoad(this.m_authorityId, this.m_authority);
                 return this.m_authority;
             }
             set

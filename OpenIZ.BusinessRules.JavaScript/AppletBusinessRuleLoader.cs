@@ -29,8 +29,8 @@ namespace OpenIZ.BusinessRules.JavaScript
             {
                 var appletManager = ApplicationServiceContext.Current.GetService(typeof(IAppletManagerService)) as IAppletManagerService;
 
-                foreach (var itm in appletManager.LoadedApplets.SelectMany(a => a.Assets).Where(a => a.Name.StartsWith("rules/")))
-                    using (StreamReader sr = new StreamReader(new MemoryStream(appletManager.LoadedApplets.RenderAssetContent(itm))))
+                foreach (var itm in appletManager.Applets.SelectMany(a => a.Assets).Where(a => a.Name.StartsWith("rules/")))
+                    using (StreamReader sr = new StreamReader(new MemoryStream(appletManager.Applets.RenderAssetContent(itm))))
                     {
                         OpenIZ.BusinessRules.JavaScript.JavascriptBusinessRulesEngine.Current.AddRules(sr);
                         this.m_tracer.TraceInfo("Added rules from {0}", itm.Name);

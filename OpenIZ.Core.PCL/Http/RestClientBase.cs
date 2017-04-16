@@ -524,13 +524,18 @@ namespace OpenIZ.Core.Http
 
                 // Get the responst
                 Dictionary<String, String> retVal = new Dictionary<string, string>();
+                Exception fault = null;
                 var httpTask = httpWebReq.GetResponseAsync().ContinueWith(o =>
                 {
-                    foreach (var itm in o.Result.Headers.AllKeys)
-                        retVal.Add(itm, o.Result.Headers[itm]);
+                    if(o.IsFaulted)
+                        fault = o.Exception.InnerExceptions.First();
+                    else
+                        foreach (var itm in o.Result.Headers.AllKeys)
+                            retVal.Add(itm, o.Result.Headers[itm]);
                 }, TaskContinuationOptions.LongRunning);
                 httpTask.Wait();
-
+                if (fault != null)
+                    throw fault;
                 this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 200));
 
                 return retVal;

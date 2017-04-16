@@ -314,17 +314,15 @@ namespace OpenIZ.Messaging.AMI.Client
         public AppletInfo StatUpdate(String packageId)
         {
 
-            var headers = this.Client.Head($"applet/{packageId}/pak");
+            var headers = this.Client.Head($"applet/{packageId}");
             String versionKey = String.Empty,
                 packId = String.Empty,
                 hash = String.Empty;
             headers.TryGetValue("X-OpenIZ-PakID", out packId);
             headers.TryGetValue("ETag", out versionKey);
-            headers.TryGetValue("X-OpenIZ-Hash", out hash);
 
             return new AppletInfo()
             {
-                Hash = Convert.FromBase64String(hash),
                 Id = packageId,
                 Version = versionKey
             };

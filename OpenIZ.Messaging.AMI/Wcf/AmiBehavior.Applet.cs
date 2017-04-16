@@ -119,7 +119,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         public void HeadApplet(String appletId)
         {
-            var appletManifest = ApplicationContext.Current.GetService<IAppletManagerService>()?.LoadedApplets.FirstOrDefault(o=>o.Info.Id == appletId);
+            var appletManifest = ApplicationContext.Current.GetService<IAppletManagerService>()?.Applets.FirstOrDefault(o=>o.Info.Id == appletId);
             if (appletManifest == null)
                 throw new FileNotFoundException(appletId);
             else
@@ -169,7 +169,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of applet which match the specific query.</returns>
 		public AmiCollection<AppletManifestInfo> GetApplets()
 		{
-            return new AmiCollection<AppletManifestInfo>(ApplicationContext.Current.GetService<IAppletManagerService>().LoadedApplets.Select(o => new AppletManifestInfo(o.Info, null)));
+            return new AmiCollection<AppletManifestInfo>(ApplicationContext.Current.GetService<IAppletManagerService>().Applets.Select(o => new AppletManifestInfo(o.Info, null)));
 		}
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         public AppletManifestInfo UpdateApplet(string appletId, Stream appletData)
 		{
             var appletMgr = ApplicationContext.Current.GetService<IAppletManagerService>();
-            if (!appletMgr.LoadedApplets.Any(o => o.Info.Id == appletId))
+            if (!appletMgr.Applets.Any(o => o.Info.Id == appletId))
                 throw new FileNotFoundException(appletId);
 
             var pkg = AppletPackage.Load(appletData);

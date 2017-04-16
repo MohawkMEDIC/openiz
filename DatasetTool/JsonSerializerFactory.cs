@@ -442,7 +442,10 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     if (wasLoadedExpression != null)
                     {
                         shouldForceLoad.TrueStatements.Add(new CodeAssignStatement(_propertyReference, _delay));
-                        shouldForceLoad.TrueStatements.Add(new CodeConditionStatement(wasLoadedExpression, new CodeAssignStatement(_loaded, s_true), new CodeExpressionStatement(writePropertyCall)));
+                        shouldForceLoad.TrueStatements.Add(new CodeConditionStatement(wasLoadedExpression,
+                            new CodeStatement[] { new CodeAssignStatement(_loaded, s_true), new CodeExpressionStatement(writePropertyCall) },
+                            new CodeStatement[] { new CodeExpressionStatement(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(_context, "RegisterMissTarget"), new CodePrimitiveExpression(jsonName), new CodePropertyReferenceExpression(_strongKeyReference, "Value"))) }
+                        ));
                     }
                 }
                 nullPropertyValueCondition.FalseStatements.Add(writePropertyCall);

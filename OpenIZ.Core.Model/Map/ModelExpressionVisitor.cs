@@ -219,6 +219,8 @@ namespace OpenIZ.Core.Model.Map
         protected override Expression VisitTypeBinary(TypeBinaryExpression node)
         {
             Expression newExpr = this.Visit(node.Expression);
+            if (newExpr == null)
+                return null;
             var newType = this.m_mapper.MapModelType(node.TypeOperand);
             if (newExpr != node.Expression || newType != node.TypeOperand)
                 return Expression.TypeIs(newExpr, newType);
@@ -231,6 +233,8 @@ namespace OpenIZ.Core.Model.Map
         protected override Expression VisitUnary(UnaryExpression node)
         {
             var newOp = this.Visit(node.Operand);
+            if (newOp == null)
+                return null;
             if (newOp != node.Operand && node.NodeType == ExpressionType.TypeAs)
                 return this.m_mapper.MapTypeCast(node, newOp);
             else if (newOp != node.Operand)
@@ -244,6 +248,9 @@ namespace OpenIZ.Core.Model.Map
         public virtual Expression VisitConvert(UnaryExpression convert)
         {
             Expression newOperand = this.Visit(convert.Operand);
+            if (newOperand == null)
+                return null;
+
             if (newOperand != convert.Operand)
             {
                 Type targetType = m_mapper.MapModelType(convert.Type);
@@ -261,8 +268,15 @@ namespace OpenIZ.Core.Model.Map
         protected virtual Expression VisitLambdaGeneric(LambdaExpression node)
         {
             var parameters = this.VisitExpressionList(node.Parameters.OfType<Expression>().ToList()).OfType<ParameterExpression>().ToArray();
-            this.m_scope.Push(this.Visit(parameters[0]) as ParameterExpression);
+            if (parameters == null)
+                return null;
+            var parmExpr = this.Visit(parameters[0]);
+            if (parmExpr == null)
+                return null;
+            this.m_scope.Push(parmExpr as ParameterExpression);
             Expression newBody = this.Visit(node.Body);
+            if (newBody == null)
+                return null;
 
             if (newBody != node.Body)
             {
@@ -282,7 +296,12 @@ namespace OpenIZ.Core.Model.Map
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
             Expression newExpression = this.Visit(node.Object);
+            if (newExpression == null)
+                return null;
             IEnumerable<Expression> args = this.VisitExpressionList(node.Arguments);
+            if (args == null)
+                return null;
+
             if (newExpression != node.Object || args != node.Arguments)
             {
                 // Re-bind the parameter types
@@ -309,6 +328,8 @@ namespace OpenIZ.Core.Model.Map
             foreach (var exp in args)
             {
                 Expression argExpression = this.Visit(exp);
+                if (argExpression == null) // couldn't map // invalid
+                    return null;
 
                 // Is there a VIA expression to be corrected?
                 if (argExpression is LambdaExpression)
@@ -324,6 +345,9 @@ namespace OpenIZ.Core.Model.Map
 					var accessExpression = this.m_mapper.CreateLambdaMemberAdjustmentExpression(args.First() as MemberExpression, newParameter);
 
 					var newBody = new LambdaCorrectionVisitor(accessExpression, lambdaExpression.Parameters[0], this.m_mapper).Visit(lambdaExpression.Body);
+                    if (newBody == null)
+                        return null;
+
                     var lambdaType = typeof(Func<,>).MakeGenericType(new Type[] { newParameter.Type, newBody.Type });
 
                     argExpression = Expression.Lambda(lambdaType, newBody, newParameter);
@@ -351,6 +375,10 @@ namespace OpenIZ.Core.Model.Map
         {
             Expression right = this.Visit(node.Right),
                 left = this.Visit(node.Left);
+
+            if (right == null || left == null)
+                return null;
+
             // Are the types compatible?
             if (!right.Type.GetTypeInfo().IsAssignableFrom(left.Type.GetTypeInfo()))
             {
@@ -484,6 +512,8 @@ namespace OpenIZ.Core.Model.Map
         {
             // Convert the expression
             Expression newExpression = this.Visit(node.Expression);
+            if (newExpression == null)
+                return null;
             if (newExpression != node.Expression)
             {
                 // Is the node member access a useless convert function?

@@ -16,7 +16,7 @@ namespace OpenIZ.Core.Applets.Services
         /// <summary>
         /// Gets the loaded applets from the manager
         /// </summary>
-        AppletCollection LoadedApplets { get; }
+        ReadonlyAppletCollection Applets { get; }
 
         /// <summary>
         /// Uninstall a package

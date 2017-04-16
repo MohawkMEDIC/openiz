@@ -32,6 +32,9 @@ namespace OpenIZ.Core.Model.Entities
 	/// Represents a container.
 	/// </summary>
 	/// <seealso cref="OpenIZ.Core.Model.Entities.ManufacturedMaterial" />
+    [XmlType(nameof(Container), Namespace = "http://openiz.org/model")]
+    [XmlRoot(nameof(Container), Namespace = "http://openiz.org/model")]
+    [JsonObject(nameof(Container))]
 	public class Container : ManufacturedMaterial
 	{
 		/// <summary>

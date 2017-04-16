@@ -193,7 +193,13 @@ namespace OpenIZ.Core.Protocol
                             // Are the participations of the patient null?
                             if (p.Participations.Count == 0 && p.VersionKey.HasValue)
                             {
-                                p.Participations = EntitySource.Current.Provider.Query<Act>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key)).Select(a =>
+                                p.Participations = 
+                                    EntitySource.Current.Provider.Query<SubstanceAdministration>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key)).OfType<Act>()
+                                    .Union(EntitySource.Current.Provider.Query<QuantityObservation>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key))).OfType<Act>()
+                                    .Union(EntitySource.Current.Provider.Query<CodedObservation>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key))).OfType<Act>()
+                                    .Union(EntitySource.Current.Provider.Query<TextObservation>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key))).OfType<Act>()
+                                    .Union(EntitySource.Current.Provider.Query<PatientEncounter>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key))).OfType<Act>()
+                                    .Select(a =>
                                     new ActParticipation()
                                     {
                                         Act = a,

@@ -18,10 +18,10 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
             // From loaded applets we resolve the references
             var appletManager = ApplicationServiceContext.Current.GetService(typeof(IAppletManagerService)) as IAppletManagerService;
-            var itm = appletManager.LoadedApplets.SelectMany(a => a.Assets).FirstOrDefault(a => a.Name.EndsWith(reference));
+            var itm = appletManager.Applets.SelectMany(a => a.Assets).FirstOrDefault(a => a.Name.EndsWith(reference));
             if (itm == null)
                 return null;
-            return new MemoryStream(appletManager.LoadedApplets.RenderAssetContent(itm));
+            return new MemoryStream(appletManager.Applets.RenderAssetContent(itm));
         }
 
     }

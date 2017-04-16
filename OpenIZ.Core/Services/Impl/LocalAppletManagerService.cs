@@ -26,6 +26,12 @@ namespace OpenIZ.Core.Services.Impl
     public class LocalAppletManagerService : IAppletManagerService, IDaemonService
     {
 
+        // Applet collection
+        private AppletCollection m_appletCollection = new AppletCollection();
+
+        // RO applet collection
+        private ReadonlyAppletCollection m_readonlyAppletCollection;
+
         // Map of package id to file
         private Dictionary<String, String> m_fileDictionary = new Dictionary<string, string>();
 
@@ -45,15 +51,19 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public LocalAppletManagerService()
         {
-            this.LoadedApplets = new AppletCollection();
+            this.m_appletCollection = new AppletCollection();
+            this.m_readonlyAppletCollection = this.m_appletCollection.AsReadonly();
         }
 
         /// <summary>
         /// Gets the loaded applets from the manager
         /// </summary>
-        public AppletCollection LoadedApplets
+        public ReadonlyAppletCollection Applets
         {
-            get; private set;
+            get
+            {
+                return this.m_readonlyAppletCollection;
+            }
         }
 
         // Events
@@ -90,17 +100,17 @@ namespace OpenIZ.Core.Services.Impl
 
             this.m_tracer.TraceInformation("Un-installing {0}", packageId);
             // Applet check
-            var applet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == packageId);
+            var applet = this.m_appletCollection.FirstOrDefault(o => o.Info.Id == packageId);
             if (applet == null)
                 throw new FileNotFoundException($"Applet {packageId} is not installed");
 
             // Dependency check
-            var dependencies = this.LoadedApplets.Where(o=>o.Info.Dependencies.Any(d=>d.Id == packageId));
+            var dependencies = this.m_appletCollection.Where(o=>o.Info.Dependencies.Any(d=>d.Id == packageId));
             if (dependencies.Any())
                 throw new InvalidOperationException($"Uninstalling {packageId} would break : {String.Join(", ", dependencies.Select(o => o.Info))}");
 
             // We're good to go!
-            this.LoadedApplets.Remove(applet);
+            this.m_appletCollection.Remove(applet);
 
             lock (this.m_fileDictionary)
                 if (this.m_fileDictionary.ContainsKey(packageId))
@@ -121,7 +131,7 @@ namespace OpenIZ.Core.Services.Impl
             // TODO: Verify package hash / signature
             if (!this.VerifyPackage(package))
                 throw new SecurityException("Applet failed validation");
-            else if (!this.LoadedApplets.VerifyDependencies(package.Meta))
+            else if (!this.m_appletCollection.VerifyDependencies(package.Meta))
                 throw new InvalidOperationException($"Applet {package.Meta} depends on : [{String.Join(", ", package.Meta.Dependencies.Select(o=>o.ToString()))}] which are missing or incompatible");
            
             // Save the applet
@@ -131,7 +141,7 @@ namespace OpenIZ.Core.Services.Impl
 
             // Install
             String pakFile = Path.Combine(appletDir, package.Meta.Id + ".pak");
-            if (this.LoadedApplets.Any(o=>o.Info.Id == package.Meta.Id) && File.Exists(pakFile) && !isUpgrade)
+            if (this.m_appletCollection.Any(o=>o.Info.Id == package.Meta.Id) && File.Exists(pakFile) && !isUpgrade)
                 throw new InvalidOperationException($"Cannot replace {package.Meta} unless upgrade is specifically specified");
 
             using (FileStream fs = File.Create(pakFile))
@@ -140,7 +150,7 @@ namespace OpenIZ.Core.Services.Impl
             lock (this.m_fileDictionary)
                 if(!this.m_fileDictionary.ContainsKey(package.Meta.Id))
                     this.m_fileDictionary.Add(package.Meta.Id, pakFile);
-            this.LoadedApplets.Add(package.Unpack());
+            this.m_appletCollection.Add(package.Unpack());
             AppletCollection.ClearCaches();
 
             return true;
@@ -255,7 +265,7 @@ namespace OpenIZ.Core.Services.Impl
                         }
                         else if (this.VerifyPackage(pkg))
                         {
-                            this.LoadedApplets.Add(pkg.Unpack());
+                            this.m_appletCollection.Add(pkg.Unpack());
                             this.m_fileDictionary.Add(pkg.Meta.Id, f);
                         }
                         else
@@ -292,7 +302,7 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public AppletManifest GetApplet(string appletId)
         {
-            return this.LoadedApplets.FirstOrDefault(o => o.Info.Id == appletId);
+            return this.m_appletCollection.FirstOrDefault(o => o.Info.Id == appletId);
         }
 
         /// <summary>

@@ -50,6 +50,77 @@ namespace OpenIZ.Core.Applets
     public delegate object AssetContentResolver(AppletAsset asset);
 
     /// <summary>
+    /// A readonly applet collection
+    /// </summary>
+    public class ReadonlyAppletCollection : AppletCollection
+    {
+
+        /// <summary>
+        /// Wrapper for the readonly applet collection
+        /// </summary>
+        internal ReadonlyAppletCollection(AppletCollection wrap)
+        {
+            this.m_appletManifest = wrap;
+        }
+
+        /// <summary>
+        /// Collection is readonly
+        /// </summary>
+        public override bool IsReadOnly
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Resolver
+        /// </summary>
+        public override AssetContentResolver Resolver
+        {
+            get
+            {
+                return (this.m_appletManifest as AppletCollection).Resolver;
+            }
+            set
+            {
+                throw new InvalidOperationException("Collection is readonly");
+            }
+        }
+
+        /// <summary>
+        /// Gets the base URL
+        /// </summary>
+        public override string BaseUrl
+        {
+            get
+            {
+                return (this.m_appletManifest as AppletCollection).BaseUrl;
+            }
+            set
+            {
+                throw new InvalidOperationException("Collection is readonly");
+            }
+        }
+
+        /// <summary>
+        /// Get the page caching setting
+        /// </summary>
+        public override bool CachePages
+        {
+            get
+            {
+                return (this.m_appletManifest as AppletCollection).CachePages;
+            }
+            set
+            {
+                throw new InvalidOperationException("Collection is readonly");
+            }
+        }
+    }
+
+    /// <summary>
     /// Represents a collection of applets
     /// </summary>
     public class AppletCollection : IList<AppletManifest>
@@ -64,8 +135,11 @@ namespace OpenIZ.Core.Applets
 
         private static Object s_syncLock = new object();
 
+        private AssetContentResolver m_resolver = null;
+
         public const string APPLET_SCHEME = "app://";
         private string m_baseUrl = null;
+        private bool m_cachePages = true;
 
         // XMLNS stuff
         private readonly XNamespace xs_xhtml = "http://www.w3.org/1999/xhtml";
@@ -74,22 +148,46 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// Gets or sets whether caching is enabled
         /// </summary>
-        public Boolean CachePages { get; set; }
+        public virtual Boolean CachePages { get { return this.m_cachePages; } set { this.m_cachePages = value; } }
 
         /// <summary>
         /// Get authentication assets
         /// </summary>
-        public IEnumerable<String> AuthenticationAssets {
+        public IEnumerable<String> AuthenticationAssets
+        {
             get
             {
-                return this.m_appletManifest.Where(o=>o.LoginAsset != null).Select(o => o.LoginAsset);
+                return this.m_appletManifest.Where(o => o.LoginAsset != null).Select(o => o.LoginAsset);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the base url
+        /// </summary>
+        public virtual String BaseUrl
+        {
+            get { return this.m_baseUrl; }
+            set
+            {
+                if (this.IsReadOnly)
+                    throw new InvalidOperationException("Collection is readonly");
+                this.m_baseUrl = value;
             }
         }
 
         /// <summary>
         /// Asset content resolver called when asset content is null
         /// </summary>
-        public AssetContentResolver Resolver { get; set; }
+        public virtual AssetContentResolver Resolver
+        {
+            get { return this.m_resolver; }
+            set
+            {
+                if (this.IsReadOnly)
+                    throw new InvalidOperationException("Collection is readonly");
+                this.m_resolver = value;
+            }
+        }
 
         // Reference bundles
         private List<RenderBundle> m_referenceBundles = new List<RenderBundle>()
@@ -101,7 +199,6 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public AppletCollection()
         {
-            this.CachePages = true;
             AppletCollection.ClearCaches();
         }
 
@@ -110,7 +207,6 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public AppletCollection(String baseUrl)
         {
-            this.CachePages = true;
             this.m_baseUrl = baseUrl;
             AppletCollection.ClearCaches();
 
@@ -127,13 +223,14 @@ namespace OpenIZ.Core.Applets
             s_viewModelCache?.Clear();
             s_viewStateAssets = null;
         }
+
         /// <summary>
         /// The current default scope applet
         /// </summary>
         public AppletManifest DefaultApplet { get; set; }
 
         // Applet manifest
-        private List<AppletManifest> m_appletManifest = new List<AppletManifest>();
+        protected IList<AppletManifest> m_appletManifest = new List<AppletManifest>();
 
         /// <summary>
         /// Gets or sets the item at the specified element
@@ -167,7 +264,7 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// Return true if the collection is readonly
         /// </summary>
-        public bool IsReadOnly
+        public virtual bool IsReadOnly
         {
             get
             {
@@ -181,6 +278,8 @@ namespace OpenIZ.Core.Applets
         /// <param name="item"></param>
         public void Add(AppletManifest item)
         {
+            if (this.IsReadOnly) throw new InvalidOperationException("Collection is readonly");
+
             s_stringCache.Clear();
 
             this.m_appletManifest.Add(item);
@@ -191,6 +290,8 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public void Clear()
         {
+            if (this.IsReadOnly) throw new InvalidOperationException("Collection is readonly");
+
             this.m_appletManifest.Clear();
         }
 
@@ -231,6 +332,7 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public void Insert(int index, AppletManifest item)
         {
+            if (this.IsReadOnly) throw new InvalidOperationException("Collection is readonly");
             this.m_appletManifest.Insert(index, item);
         }
 
@@ -239,6 +341,8 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public bool Remove(AppletManifest item)
         {
+            if (this.IsReadOnly) throw new InvalidOperationException("Collection is readonly");
+
             return this.m_appletManifest.Remove(item);
         }
 
@@ -247,6 +351,8 @@ namespace OpenIZ.Core.Applets
         /// </summary>
         public void RemoveAt(int index)
         {
+            if (this.IsReadOnly) throw new InvalidOperationException("Collection is readonly");
+
             this.m_appletManifest.RemoveAt(index);
         }
 
@@ -264,6 +370,8 @@ namespace OpenIZ.Core.Applets
         /// <param name="bundle"></param>
         public void RegisterBundle(RenderBundle bundle)
         {
+            if (this.IsReadOnly) throw new InvalidOperationException("Collection is readonly");
+
             this.m_referenceBundles.Add(bundle);
         }
 
@@ -331,7 +439,7 @@ namespace OpenIZ.Core.Applets
                             retVal.Model.AddRange(this.GetViewModelDescription(itm).Model);
 
                         // caching 
-                        if(this.CachePages)
+                        if (this.CachePages)
                             if (!s_viewModelCache.ContainsKey(viewModelName))
                                 s_viewModelCache.Add(viewModelName, retVal);
                     }
@@ -777,12 +885,21 @@ namespace OpenIZ.Core.Applets
         {
 
             bool verified = true;
-            foreach(var itm in applet.Dependencies)
+            foreach (var itm in applet.Dependencies)
             {
                 var depItm = this.m_appletManifest.FirstOrDefault(o => o.Info.Id == itm.Id && (o.Info.PublicKeyToken == itm.PublicKeyToken || String.IsNullOrEmpty(itm.PublicKeyToken)));
                 verified &= depItm != null && new Version(depItm?.Info.Version) >= new Version(itm.Version);
             }
             return verified;
+        }
+
+
+        /// <summary>
+        /// Readonly applet collection
+        /// </summary>
+        public ReadonlyAppletCollection AsReadonly()
+        {
+            return new ReadonlyAppletCollection(this);
         }
 
         /// <summary>
@@ -801,6 +918,10 @@ namespace OpenIZ.Core.Applets
                 return equals;
             }
 
+
+            /// <summary>
+            /// Get Hash code
+            /// </summary>
             public int GetHashCode(XElement obj)
             {
                 return obj.Attribute("src")?.Value.GetHashCode() ?? obj.Attribute("href")?.Value.GetHashCode() ?? obj.GetHashCode();

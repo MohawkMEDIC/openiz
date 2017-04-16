@@ -170,7 +170,8 @@ namespace OpenIZ.Protocol.Xml.Model
         private MethodInfo m_scopeSelectMethod;
         // Linq expression to select scope
         private Expression m_linqExpression;
-
+        // Compiled expression
+        private Delegate m_compiledExpression;
         /// <summary>
         /// Action name
         /// </summary>
@@ -219,22 +220,21 @@ namespace OpenIZ.Protocol.Xml.Model
                     exp.TypeRegistry.RegisterParameter(itm.Key, itm.Value);
 
                 // Scope
-                if (!String.IsNullOrEmpty(this.ScopeSelector))
+                if (!String.IsNullOrEmpty(this.ScopeSelector) && this.m_setter == null)
                 {
 
                     var scopeProperty = recordTarget.GetType().GetRuntimeProperty(this.ScopeSelector);
-                    var scopeValue = scopeProperty.GetValue(recordTarget);
 
                     if (scopeProperty == null) return null; // no scope
 
                     // Where clause?
-                    if (!String.IsNullOrEmpty(this.WhereFilter))
+                    if (!String.IsNullOrEmpty(this.WhereFilter) && this.m_scopeSelectMethod == null)
                     {
                         var itemType = scopeProperty.PropertyType.GetTypeInfo().GenericTypeArguments[0];
                         var predicateType = typeof(Func<,>).MakeGenericType(new Type[] { itemType, typeof(bool) });
                         var builderMethod = typeof(QueryExpressionParser).GetGenericMethod(nameof(QueryExpressionParser.BuildLinqExpression), new Type[] { itemType }, new Type[] { typeof(NameValueCollection) });
                         this.m_linqExpression = builderMethod.Invoke(null, new Object[] { NameValueCollection.ParseQueryString(this.WhereFilter) }) as Expression;
-
+                        this.m_compiledExpression = (this.m_linqExpression as LambdaExpression).Compile();
                         // Call where clause
                         builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
                         var firstMethod = typeof(Enumerable).GetGenericMethod("FirstOrDefault",
@@ -266,7 +266,7 @@ namespace OpenIZ.Protocol.Xml.Model
                     var scopeValue = scopeProperty.GetValue(recordTarget);
                     scope = scopeValue;
                     if (!String.IsNullOrEmpty(this.WhereFilter))
-                        scope = this.m_scopeSelectMethod.Invoke(null, new Object[] { scopeValue, (this.m_linqExpression as LambdaExpression).Compile() });
+                        scope = this.m_scopeSelectMethod.Invoke(null, new Object[] { scopeValue, this.m_compiledExpression });
                     lock (scopes)
                         if(!scopes.ContainsKey(scopeKey))
                             scopes.Add(scopeKey, scope);

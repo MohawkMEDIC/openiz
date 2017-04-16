@@ -253,7 +253,10 @@ namespace OpenIZ.Core.Model.Map
                         return MapModelMember(memberExpression, Expression.MakeMemberAccess(accessExpression, domainMember), (modelType ?? memberExpression.Expression.Type).GetTypeInfo().BaseType);
                     }
                     else
-                        throw new NotSupportedException(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
+                    {
+                        Debug.WriteLine(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
+                        return null;
+                    }
                 }
             }
         }
@@ -347,19 +350,23 @@ namespace OpenIZ.Core.Model.Map
             {
                 var parameter = Expression.Parameter(typeof(TTo), expression.Parameters[0].Name);
                 Expression expr = new ModelExpressionVisitor(this, parameter).Visit(expression.Body);
-                var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter);
+                if (expr == null && throwOnError)
+                    throw new InvalidOperationException("Could not map expressions");
+                else if (expr == null)
+                    return null;
+                else
+                {
+                    var retVal = Expression.Lambda<Func<TTo, bool>>(expr, parameter);
 #if VERBOSE_DEBUG
                 Debug.WriteLine("Map Expression: {0} > {1}", expression, retVal);
 #endif
-                return retVal;
+                    return retVal;
+                }
             }
-            catch 
+            catch (Exception e)
             {
-                // Debug.WriteLine("Error converting {0}. {1}", expression, e);
-                if (throwOnError)
-                    throw;
-                else
-                    return null;
+                Debug.WriteLine("Error converting {0}. {1}", expression, e);
+                throw;
             }
         }
 
@@ -506,9 +513,7 @@ namespace OpenIZ.Core.Model.Map
             var vidEnt = retVal as IVersionedEntity;
 
             PropertyMap iKeyMap = null;
-            if(vidEnt != null)
-                classMap.TryGetModelProperty("VersionKey", out iKeyMap);
-            else if (idEnt != null)
+            if (idEnt != null)
                 classMap.TryGetModelProperty("Key", out iKeyMap);
             if (iKeyMap != null)
             {

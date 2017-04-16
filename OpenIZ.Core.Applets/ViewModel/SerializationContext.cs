@@ -151,14 +151,27 @@ namespace OpenIZ.Core.Applets.ViewModel
             {
                 if (missProp.Contains(childProperty))
                     return false;
-                else
+            }
+            else
+                this.LoadedProperties.Add(key, new HashSet<string>() { });
+            return true;
+        }
+
+        /// <summary>
+        /// Register that this property was missed
+        /// </summary>
+        public void RegisterMissTarget(String childProperty, Guid key)
+        {
+            HashSet<String> missProp = null;
+            if (this.LoadedProperties.TryGetValue(key, out missProp))
+            {
+                if (!missProp.Contains(childProperty))
                     missProp.Add(childProperty);
             }
             else
                 this.LoadedProperties.Add(key, new HashSet<string>() { childProperty });
-            return true;
-        }
 
+        }
         /// <summary>
         /// Gets the current object identifier (from a JSON property perspective
         /// </summary>
