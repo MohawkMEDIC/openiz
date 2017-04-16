@@ -50,16 +50,16 @@ namespace OpenIZ.Core.Model.RISI
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ReportParameter"/> class
+		/// Initializes a new instance of the <see cref="ReportParameter" /> class
 		/// with a specific name, order, and value.
 		/// </summary>
 		/// <param name="name">The name of the parameter.</param>
-		/// <param name="order">The order of the parameter.</param>
+		/// <param name="position">The position.</param>
 		/// <param name="value">The value of the parameter.</param>
-		public ReportParameter(string name, int order, byte[] value)
+		public ReportParameter(string name, int position, byte[] value)
 		{
 			this.Name = name;
-			this.Order = order;
+			this.Position = position;
 			this.Value = value;
 		}
 
@@ -91,8 +91,8 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the order of the parameter.
 		/// </summary>
-		[XmlAttribute("order"), JsonProperty("order")]
-		public int Order { get; set; }
+		[XmlAttribute("position"), JsonProperty("position")]
+		public int Position { get; set; }
 
 		/// <summary>
 		/// Gets or sets the parameter type associated with the report parameter.

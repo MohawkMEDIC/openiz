@@ -19,13 +19,13 @@
  */
 
 using System.Xml.Serialization;
+using OpenIZ.OrmLite.Providers;
 
 namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 {
 	/// <summary>
 	/// Represents reporting configuration.
 	/// </summary>
-	[XmlType(nameof(ReportingConfiguration), Namespace = "http://openiz.org/risi")]
 	public class ReportingConfiguration
 	{
 		/// <summary>
@@ -36,18 +36,37 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ReportingConfiguration"/> class.
+		/// Gets or sets a value indicating whether to automatically update existing records.
 		/// </summary>
-		/// <param name="connectionStringName">The connection string name.</param>
-		public ReportingConfiguration(string connectionStringName)
-		{
-			this.ConnectionStringName = connectionStringName;
-		}
+		/// <value><c>true</c> if records should be automatically updated; otherwise, <c>false</c>.</value>
+		[XmlAttribute("autoUpdateExisting")]
+		public bool AutoUpdateExisting { get; set; }
 
 		/// <summary>
 		/// Gets or sets the connection string of the configuration.
 		/// </summary>
-		[XmlAttribute("name")]
-		public string ConnectionStringName { get; set; }
+		[XmlAttribute("readWriteConnection")]
+		public string ReadWriteConnectionString { get; set; }
+
+		/// <summary>
+		/// Gets or sets the readonly connection string.
+		/// </summary>
+		/// <value>The readonly connection string.</value>
+		[XmlAttribute("readonlyConnection")]
+		public string ReadonlyConnectionString { get; set; }
+
+		/// <summary>
+		/// Gets or sets the provider.
+		/// </summary>
+		/// <value>The provider.</value>
+		[XmlAttribute("provider")]
+		public IDbProvider Provider { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the application should trace SQL statements.
+		/// </summary>
+		/// <value><c>true</c> If the application should trace SQL statements; otherwise, <c>false</c>.</value>
+		[XmlAttribute("traceSql")]
+		public bool TraceSql { get; set; }
 	}
 }

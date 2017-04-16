@@ -68,6 +68,13 @@ namespace OpenIZ.Core.Model.RISI
 		public string Description { get; set; }
 
 		/// <summary>
+		/// Gets or sets the report formats.
+		/// </summary>
+		/// <value>The report formats.</value>
+		[XmlElement("formats"), JsonProperty("formats")]
+		public List<ReportFormat> Formats { get; set; }
+
+		/// <summary>
 		/// Gets or sets the name of the stored query.
 		/// </summary>
 		[XmlElement("name"), JsonProperty("name")]

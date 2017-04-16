@@ -184,22 +184,28 @@ namespace OpenIZ.Reporting.Jasper
 
 			if (response.IsSuccessStatusCode)
 			{
-				var values = response.Headers.GetValues("Set-Cookie");
+				// HACK: set the authentication token to use BASIC AUTH since the jasper server "sometimes" returns the "Set-Cookie" header
+				// so apparently in jasper, you can just use the username and password in the header as a workaround
+				var token = Convert.ToBase64String(Encoding.ASCII.GetBytes(username + ":" + password));
 
-				string token = null;
-
-				foreach (var value in values.SelectMany(v => v.Split(';')))
+				if (response.Headers.Contains("Set-Cookie"))
 				{
-					if (!value.StartsWith(JasperCookieKey + "="))
-					{
-						continue;
-					}
+					var values = response.Headers.GetValues("Set-Cookie");
 
-					token = value.Split('=')[1];
-					this.tracer.TraceEvent(TraceEventType.Information, 0, "Successfully authenticated against jasper server");
-					this.tracer.TraceEvent(TraceEventType.Verbose, 0, token);
-					break;
+					foreach (var value in values.SelectMany(v => v.Split(';')))
+					{
+						if (!value.StartsWith(JasperCookieKey + "="))
+						{
+							continue;
+						}
+
+						token = value.Split('=')[1];
+						break;
+					}
 				}
+
+				this.tracer.TraceEvent(TraceEventType.Information, 0, "Successfully authenticated against jasper server");
+				this.tracer.TraceEvent(TraceEventType.Verbose, 0, token);
 
 				this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(new AuthenticationResult(token)));
 			}
@@ -430,7 +436,9 @@ namespace OpenIZ.Reporting.Jasper
 
 			foreach (var report in reports)
 			{
-				var existingReport = reportDefinitionPersistenceService.Query(r => r.CorrelationId == report.CorrelationId, AuthenticationContext.Current.Principal).FirstOrDefault();
+				int totalResults;
+
+				var existingReport = reportDefinitionPersistenceService.Query(r => r.CorrelationId == report.CorrelationId, 0, 1, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault();
 
 				if (existingReport == null)
 				{
@@ -632,7 +640,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			var reportParameters = parameters.Select(reportParameter => reportParameterPersistenceService.Get(new Identifier<Guid>(reportParameter.Key.Value), AuthenticationContext.Current.Principal, true)).ToList();
 
-			foreach (var reportParameter in reportParameters.Where(p => reportDefinition.Parameters.Select(r => r.Key).Contains(p.Key)).OrderBy(r => r.Order))
+			foreach (var reportParameter in reportParameters.Where(p => reportDefinition.Parameters.Select(r => r.Key).Contains(p.Key)).OrderBy(r => r.Position))
 			{
 				builder.Append($"&{reportParameter.CorrelationId}={reportParameter.Value}");
 			}

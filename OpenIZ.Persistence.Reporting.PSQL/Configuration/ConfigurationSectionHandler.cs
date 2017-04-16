@@ -18,8 +18,10 @@
  * Date: 2017-1-15
  */
 
+using System;
 using System.Configuration;
 using System.Xml;
+using OpenIZ.OrmLite.Providers;
 
 namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 {
@@ -37,16 +39,54 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 		/// <returns>The created section handler object.</returns>
 		public object Create(object parent, object configContext, XmlNode section)
 		{
-			var providerElement = section.SelectSingleNode("./*[local-name() = 'connectionString']") as XmlElement;
+			var configuration = new ReportingConfiguration();
 
-			var connectionString = providerElement?.Attributes["name"]?.Value;
+			var connectionManagerElement = section.SelectSingleNode("./*[local-name() = 'connectionManager']") as XmlElement;
 
-			if (connectionString == null)
+			if (connectionManagerElement == null)
 			{
-				throw new ConfigurationErrorsException("The 'connectionString' element must have a 'name' attribute");
+				throw new ConfigurationErrorsException("No connection manager specified", section);
 			}
 
-			return new ReportingConfiguration(connectionString);
+			var readWriteConnection = connectionManagerElement.Attributes["readWriteConnection"]?.Value;
+
+			if (readWriteConnection == null)
+			{
+				throw new ConfigurationErrorsException("The 'connectionManager' element must have a 'readWriteConnection' attribute");
+			}
+
+			var readonlyConnection = connectionManagerElement.Attributes["readonlyConnection"]?.Value;
+
+			if (readonlyConnection == null)
+			{
+				throw new ConfigurationErrorsException("The 'connectionManager' element must have a 'readonlyConnection' attribute");
+			}
+
+			configuration.ReadWriteConnectionString = readWriteConnection;
+			configuration.ReadonlyConnectionString = readonlyConnection;
+			configuration.TraceSql = bool.Parse(connectionManagerElement.Attributes["traceSql"]?.Value);
+
+			var provider = connectionManagerElement.Attributes["provider"]?.Value;
+
+			if (provider == null)
+			{
+				throw new ConfigurationErrorsException("Reporting PSQL persistence requires a 'provider' attribute");
+			}
+
+			var databaseProviderInstance = Activator.CreateInstance(Type.GetType(provider)) as IDbProvider;
+
+			if (databaseProviderInstance == null)
+			{
+				throw new ConfigurationErrorsException($"Type {provider} does not implement {nameof(IDbProvider)}");
+			}
+
+			databaseProviderInstance.ConnectionString = ConfigurationManager.ConnectionStrings[configuration.ReadWriteConnectionString]?.ConnectionString;
+			databaseProviderInstance.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[configuration.ReadonlyConnectionString]?.ConnectionString;
+			databaseProviderInstance.TraceSql = configuration.TraceSql;
+
+			configuration.Provider = databaseProviderInstance;
+
+			return configuration;
 		}
 	}
 }
