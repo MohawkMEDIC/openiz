@@ -98,7 +98,7 @@
     <EmbeddedResource Include="Map\ModelMap.xml" />
     <Content Include="Sql\openiz-reporting-fx.sql" />
     <Content Include="Sql\openiz-reporting-ddl.sql" />
-    <Content Include="Sql\openiz-reporting-paramter-types.sql" />
+    <Content Include="Sql\openiz-reporting-parameter-types.sql" />
     <Content Include="Sql\openiz-reporting-report-formats.sql" />
   </ItemGroup>
   <ItemGroup />
