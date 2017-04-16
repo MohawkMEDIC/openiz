@@ -72,7 +72,7 @@ namespace OpenIZ.Core
 		}
 
 		/// <summary>
-		/// Get locale.
+		/// Gets a locale string value for a given string id.
 		/// </summary>
 		/// <param name="me">The current application context.</param>
 		/// <param name="stringId">The string identifier.</param>

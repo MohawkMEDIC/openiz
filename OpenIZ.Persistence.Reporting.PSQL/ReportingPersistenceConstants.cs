@@ -15,26 +15,29 @@
  * the License.
  * 
  * User: Nityan
- * Date: 2017-4-1
+ * Date: 2017-4-15
  */
 
-using System.Xml.Serialization;
-
-namespace OpenIZ.Reporting.Jasper.Model.Reference
+namespace OpenIZ.Persistence.Reporting.PSQL
 {
 	/// <summary>
-	/// Represents a JR XML file reference.
+	/// Represents reporting persistence constants.
 	/// </summary>
-	/// <seealso cref="ReferenceBase" />
-	[XmlType("jrxmlFileReference")]
-	public class JrXmlFileReference : ReferenceBase
+	public static class ReportingPersistenceConstants
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="JrXmlFileReference"/> class.
+		/// The trace name.
 		/// </summary>
-		public JrXmlFileReference()
-		{
-			
-		}
+		public const string TraceName = "OpenIZ.Persistence.Reporting.PSQL";
+
+		/// <summary>
+		/// The configuration section name.
+		/// </summary>
+		public const string ConfigurationSectionName = "openiz.persistence.reporting.psql";
+
+		/// <summary>
+		/// The map resource name.
+		/// </summary>
+		public const string MapResourceName = "OpenIZ.Persistence.Reporting.PSQL.Map.ModelMap.xml";
 	}
 }

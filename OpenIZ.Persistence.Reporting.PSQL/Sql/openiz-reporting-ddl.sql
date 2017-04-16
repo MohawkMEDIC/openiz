@@ -18,6 +18,8 @@
 -- Date: 2017-1-15
 -- 
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- CORRECTS THE BYTEA ENCODING PROBLEM ON POSTGRESQL 9.X
 SET bytea_output = ESCAPE;
 
@@ -44,7 +46,7 @@ CREATE TABLE report_definition
 (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	author varchar(256) NOT NULL,
-	correlation_id uuid NOT NULL,
+	correlation_id text NOT NULL,
 	creation_time timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	description varchar(1024) NULL,
 	name varchar(256) NOT NULL
@@ -76,8 +78,9 @@ CREATE TABLE report_parameter
 (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	creation_time timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	correlation_id text NOT NULL,
 	description varchar(1024) NULL,
-	is_nullable bit NOT NULL,
+	is_nullable boolean NOT NULL,
 	name varchar(256) NOT NULL,
 	position int NOT NULL,
 	parameter_type_id uuid NOT NULL REFERENCES parameter_type ON UPDATE NO ACTION ON DELETE NO ACTION,

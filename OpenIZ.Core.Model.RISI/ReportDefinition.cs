@@ -37,12 +37,20 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
 		/// </summary>
-		public ReportDefinition()
+		public ReportDefinition() : this(Guid.NewGuid())
 		{
 			this.CreationTime = DateTimeOffset.Now;
-			this.Key = Guid.NewGuid();
 			this.Parameters = new List<ReportParameter>();
 			this.Policies = new List<SecurityPolicyInstance>();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		public ReportDefinition(Guid key)
+		{
+			this.Key = key;
 		}
 
 		/// <summary>
@@ -66,6 +74,13 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlElement("description"), JsonProperty("description")]
 		public string Description { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report formats.
+		/// </summary>
+		/// <value>The report formats.</value>
+		[XmlElement("formats"), JsonProperty("formats")]
+		public List<ReportFormat> Formats { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the stored query.

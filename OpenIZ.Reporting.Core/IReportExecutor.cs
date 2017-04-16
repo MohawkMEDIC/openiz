@@ -87,7 +87,7 @@ namespace OpenIZ.Reporting.Core
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		RisiCollection<ReportParameter> GetAllReportParameterTypes();
+		RisiCollection<ParameterType> GetAllReportParameterTypes();
 
 		/// <summary>
 		/// Gets a parameter type by id.

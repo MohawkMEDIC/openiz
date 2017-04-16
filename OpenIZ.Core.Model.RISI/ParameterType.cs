@@ -38,7 +38,17 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		public ParameterType()
 		{
+			this.CreationTime = DateTimeOffset.Now;
 			this.ReportParameters = new List<ReportParameter>();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ParameterType"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		public ParameterType(Guid key) : this()
+		{
+			this.Key = key;
 		}
 
 		/// <summary>

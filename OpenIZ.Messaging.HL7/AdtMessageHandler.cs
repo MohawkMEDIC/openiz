@@ -39,7 +39,6 @@ namespace OpenIZ.Messaging.HL7
 	/// <summary>
 	/// Represents a message handler that can handle ADT messages from remote systems.
 	/// </summary>
-	[Description("ADT Message Handler")]
 	public class AdtMessageHandler : IHL7MessageHandler
 	{
 		/// <summary>

@@ -15,26 +15,22 @@
  * the License.
  * 
  * User: Nityan
- * Date: 2017-4-1
+ * Date: 2017-4-15
  */
 
-using System.Xml.Serialization;
+using System;
 
-namespace OpenIZ.Reporting.Jasper.Model.Reference
+namespace OpenIZ.Persistence.Reporting.PSQL.Model
 {
 	/// <summary>
-	/// Represents a JR XML file reference.
+	/// Represents an association.
 	/// </summary>
-	/// <seealso cref="ReferenceBase" />
-	[XmlType("jrxmlFileReference")]
-	public class JrXmlFileReference : ReferenceBase
+	public interface IDbAssociation
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="JrXmlFileReference"/> class.
+		/// Gets or sets the source key.
 		/// </summary>
-		public JrXmlFileReference()
-		{
-			
-		}
+		/// <value>The source key.</value>
+		Guid SourceKey { get; set; }
 	}
 }

@@ -36,9 +36,8 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RisiCollection{T}"/> class.
 		/// </summary>
-		public RisiCollection()
+		public RisiCollection() : this(new List<T>())
 		{
-			this.Items = new List<T>();
 		}
 
 		/// <summary>

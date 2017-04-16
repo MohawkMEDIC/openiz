@@ -27,36 +27,41 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Map;
+using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Reporting.PSQL.Configuration;
 
 namespace OpenIZ.Persistence.Reporting.PSQL
 {
 	/// <summary>
-	/// Represents a message handler for reporting services.
+	/// Represents a persistence service for reporting services.
 	/// </summary>
-	public class ReportingService : IDaemonService
+	public class ReportingPersistenceService : IDaemonService
 	{
 		/// <summary>
 		/// The internal reference to the trace source.
 		/// </summary>
-		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Persistence.Reporting.PSQL");
+		private readonly TraceSource traceSource = new TraceSource(ReportingPersistenceConstants.TraceName);
 
-		static ReportingService()
+		static ReportingPersistenceService()
 		{
-			var tracer = new TraceSource("OpenIZ.Persistence.Reporting.PSQL");
+			var tracer = new TraceSource(ReportingPersistenceConstants.TraceName);
+
+			Configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(ReportingPersistenceConstants.ConfigurationSectionName) as ReportingConfiguration;
+
 			try
 			{
-				ModelMapper = new ModelMapper(typeof(ReportingService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Persistence.Reporting.PSQL.Data.ModelMap.xml"));
+				ModelMapper = new ModelMapper(typeof(ReportingPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(ReportingPersistenceConstants.MapResourceName));
+				QueryBuilder = new QueryBuilder(ModelMapper, Configuration.Provider);
 			}
-			catch (ModelMapValidationException ex)
+			catch (ModelMapValidationException e)
 			{
-				tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
-				throw ex;
+				tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error validating model map: {0}", e);
+				throw;
 			}
-			catch (Exception ex)
+			catch (Exception e)
 			{
-				tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error validating model map: {0}", ex);
-				throw ex;
+				tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error validating model map: {0}", e);
+				throw;
 			}
 		}
 
@@ -83,31 +88,18 @@ namespace OpenIZ.Persistence.Reporting.PSQL
 		/// <summary>
 		/// The internal reference to the configuration.
 		/// </summary>
-		public static ReportingConfiguration Configuration
-		{
-			get
-			{
-				var configurationManager = ApplicationContext.Current.GetService<IConfigurationManager>();
-
-				ReportingConfiguration config = null;
-
-				if (configurationManager == null)
-				{
-					config = ConfigurationManager.GetSection("openiz.persistence.reporting.psql") as ReportingConfiguration;
-				}
-				else
-				{
-					config = configurationManager.GetSection("openiz.persistence.reporting.psql") as ReportingConfiguration;
-				}
-
-				return config;
-			}
-		}
+		public static ReportingConfiguration Configuration { get; }
 
 		/// <summary>
 		/// Gets the model mapper.
 		/// </summary>
 		public static ModelMapper ModelMapper { get; }
+
+		/// <summary>
+		/// Gets the query builder.
+		/// </summary>
+		/// <value>The query builder.</value>
+		public static QueryBuilder QueryBuilder { get; }
 
 		/// <summary>
 		/// Gets the running state of the message handler.
@@ -120,18 +112,31 @@ namespace OpenIZ.Persistence.Reporting.PSQL
 		/// <returns>Returns true if the service started successfully.</returns>
 		public bool Start()
 		{
-			var status = false;
-
 			try
 			{
+				using (var dataContext = Configuration.Provider.GetReadonlyConnection())
+				{
+					dataContext.Open();
+
+					var databaseVersion = new Version(dataContext.FirstOrDefault<string>("get_sch_vrsn"));
+					var openizVersion = typeof(ReportingPersistenceService).Assembly.GetName().Version;
+
+					if (openizVersion < databaseVersion)
+					{
+						throw new InvalidOperationException($"Invalid schema version. OpenIZ version {openizVersion} is older than the database schema version: {databaseVersion}");
+					}
+
+					traceSource.TraceEvent(TraceEventType.Information, 0, $"OpenIZ schema version: {databaseVersion}");
+				}
+
 				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Loading reporting persistence services");
 
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
-				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Reporting configuration loaded, using connection string: { Configuration.ConnectionStringName }");
+				this.traceSource.TraceEvent(TraceEventType.Information, 0, $"Reporting configuration loaded, using connection string: { Configuration.ReadWriteConnectionString }");
 
 				// Iterate the persistence services
-				foreach (var t in typeof(ReportingService).GetTypeInfo().Assembly.DefinedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Reporting.PSQL.Services" && !o.GetTypeInfo().IsAbstract))
+				foreach (var t in typeof(ReportingPersistenceService).GetTypeInfo().Assembly.DefinedTypes.Where(o => o.Namespace == "OpenIZ.Persistence.Reporting.PSQL.Services" && !o.GetTypeInfo().IsAbstract && !o.IsGenericTypeDefinition))
 				{
 					try
 					{
@@ -145,15 +150,14 @@ namespace OpenIZ.Persistence.Reporting.PSQL
 				}
 
 				this.Started?.Invoke(this, EventArgs.Empty);
-				status = true;
 			}
 			catch (Exception e)
 			{
 				this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-				status = false;
+				throw;
 			}
 
-			return status;
+			return true;
 		}
 
 		/// <summary>

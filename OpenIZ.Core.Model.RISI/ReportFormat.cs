@@ -33,21 +33,36 @@ namespace OpenIZ.Core.Model.RISI
     public class ReportFormat : BaseEntityData
 	{
 		/// <summary>
+		/// The report definition key.
+		/// </summary>
+		private Guid reportDefinitionKey;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportFormat"/> class.
 		/// </summary>
 		public ReportFormat()
 		{
+			this.CreationTime = DateTimeOffset.Now;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ReportFormat"/> class
+		/// Initializes a new instance of the <see cref="ReportFormat"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		public ReportFormat(Guid key) : this()
+		{
+			this.Key = key;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportFormat" /> class
 		/// with a specific id and format.
 		/// </summary>
-		/// <param name="id">The id of the report format.</param>
+		/// <param name="key">The key.</param>
 		/// <param name="format">The format of the report format.</param>
-		public ReportFormat(Guid id, string format)
+		public ReportFormat(Guid key, string format) : this(key)
 		{
-			this.Key = id;
+			this.Key = key;
 			this.Format = format;
 		}
 
@@ -56,5 +71,30 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlAttribute("format"), JsonProperty("format")]
 		public string Format { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report definition.
+		/// </summary>
+		/// <value>The report definition.</value>
+		[XmlIgnore, JsonIgnore]
+		public ReportDefinition ReportDefinition { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report definition key.
+		/// </summary>
+		/// <value>The report definition key.</value>
+		[XmlElement("reportDefinition"), JsonProperty("reportDefinition")]
+		public Guid ReportDefinitionKey
+		{
+			get
+			{
+				return reportDefinitionKey;
+			}
+			set
+			{
+				this.reportDefinitionKey = value;
+				this.ReportDefinition = new ReportDefinition(this.reportDefinitionKey);
+			}
+		}
 	}
 }
