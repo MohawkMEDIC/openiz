@@ -32,20 +32,40 @@ namespace OpenIZ.Core.Model.RISI
 	public class ReportParameter : BaseEntityData
 	{
 		/// <summary>
+		/// The parameter type key.
+		/// </summary>
+		private Guid parameterTypeKey;
+
+		/// <summary>
+		/// The report definition key.
+		/// </summary>
+		private Guid reportDefinitionKey;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportParameter"/> class.
 		/// </summary>
 		public ReportParameter()
 		{
+			this.CreationTime = DateTimeOffset.Now;
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportParameter"/> class.
 		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <param name="value">The value.</param>
-		public ReportParameter(Guid id, byte[] value)
+		/// <param name="key">The key.</param>
+		public ReportParameter(Guid key) : this()
 		{
-			this.Key = id;
+			this.Key = key;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportParameter" /> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <param name="value">The value.</param>
+		public ReportParameter(Guid key, byte[] value) : this(key)
+		{
+			this.Key = key;
 			this.Value = value;
 		}
 
@@ -97,13 +117,49 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the parameter type associated with the report parameter.
 		/// </summary>
-		[XmlElement("type"), JsonProperty("type")]
+		[XmlIgnore, JsonIgnore]
 		public ParameterType ParameterType { get; set; }
+
+		/// <summary>
+		/// Gets or sets the parameter type key.
+		/// </summary>
+		/// <value>The parameter type key.</value>
+		[XmlElement("type"), JsonProperty("type")]
+		public Guid ParameterTypeKey
+		{
+			get
+			{
+				return parameterTypeKey;
+			}
+			set
+			{
+				this.parameterTypeKey = value;
+				this.ParameterType = new ParameterType(value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the report definition key.
+		/// </summary>
+		/// <value>The report definition key.</value>
+		[XmlElement("reportDefinition"), JsonProperty("reportDefinition")]
+		public Guid ReportDefinitionKey
+		{
+			get
+			{
+				return this.reportDefinitionKey;
+			}
+			set
+			{
+				this.reportDefinitionKey = value;
+				this.ReportDefinition = new ReportDefinition(value);
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the report definition associated with the report parameter.
 		/// </summary>
-		[XmlElement("reportDefinition"), JsonProperty("reportDefinition")]
+		[XmlIgnore, JsonIgnore]
 		public ReportDefinition ReportDefinition { get; set; }
 
 		/// <summary>

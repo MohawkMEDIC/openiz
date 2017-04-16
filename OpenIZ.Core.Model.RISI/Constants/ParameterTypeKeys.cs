@@ -58,6 +58,11 @@ namespace OpenIZ.Core.Model.RISI.Constants
 		public static readonly Guid Integer = Guid.Parse("295BF77E-BEBC-4DE0-A18A-F141DB6D987B");
 
 		/// <summary>
+		/// Represents an object value.
+		/// </summary>
+		public static readonly Guid Object = Guid.Parse("795BE824-A0E0-4C0C-8853-56FDC5673BC1");
+
+		/// <summary>
 		/// Represents a string value.
 		/// </summary>
 		public static readonly Guid String = Guid.Parse("60FC0E02-701F-48BD-81CD-8DE51B113B31");

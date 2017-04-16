@@ -78,8 +78,9 @@ CREATE TABLE report_parameter
 (
 	id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 	creation_time timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	correlation_id text NOT NULL,
 	description varchar(1024) NULL,
-	is_nullable bit NOT NULL,
+	is_nullable boolean NOT NULL,
 	name varchar(256) NOT NULL,
 	position int NOT NULL,
 	parameter_type_id uuid NOT NULL REFERENCES parameter_type ON UPDATE NO ACTION ON DELETE NO ACTION,

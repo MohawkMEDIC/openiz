@@ -140,8 +140,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		/// <param name="containerId">The container identifier.</param>
 		/// <param name="principal">The principal.</param>
 		/// <param name="loadFast">if set to <c>true</c> [load fast].</param>
-		/// <returns>TModel.</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
+		/// <returns>Returns the model instance.</returns>
 		public TModel Get<TIdentifier>(Identifier<TIdentifier> containerId, IPrincipal principal, bool loadFast)
 		{
 			var identifier = containerId as Identifier<Guid>;

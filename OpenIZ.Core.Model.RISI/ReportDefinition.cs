@@ -37,12 +37,20 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
 		/// </summary>
-		public ReportDefinition()
+		public ReportDefinition() : this(Guid.NewGuid())
 		{
 			this.CreationTime = DateTimeOffset.Now;
-			this.Key = Guid.NewGuid();
 			this.Parameters = new List<ReportParameter>();
 			this.Policies = new List<SecurityPolicyInstance>();
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportDefinition"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		public ReportDefinition(Guid key)
+		{
+			this.Key = key;
 		}
 
 		/// <summary>

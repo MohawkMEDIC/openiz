@@ -52,12 +52,20 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		/// <value>The controls layout.</value>
 		[XmlElement("controlsLayout")]
 		public string ControlsLayout { get; set; }
+
 		/// <summary>
 		/// Gets or sets the input control references.
 		/// </summary>
 		/// <value>The input control references.</value>
-		[XmlElement("inputControls")]
+		[XmlArray("inputControls")]
 		public List<InputControlReference> InputControlReferences { get; set; }
+
+		/// <summary>
+		/// Gets or sets the input control rendering view.
+		/// </summary>
+		/// <value>The input control rendering view.</value>
+		[XmlElement("inputControlRenderingView")]
+		public string InputControlRenderingView { get; set; }
 
 		/// <summary>
 		/// Gets or sets the report rendering view.
@@ -84,7 +92,7 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		/// Gets or sets the resources.
 		/// </summary>
 		/// <value>The resources.</value>
-		[XmlElement("resources")]
+		[XmlArray("resources")]
 		public List<ResourceFileReference> Resources { get; set; }
 
 		/// <summary>

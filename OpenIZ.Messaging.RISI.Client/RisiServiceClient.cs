@@ -147,9 +147,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
-		public RisiCollection<ReportParameter> GetAllReportParameterTypes()
+		public RisiCollection<ParameterType> GetAllReportParameterTypes()
 		{
-			return this.Client.Get<RisiCollection<ReportParameter>>("type", null);
+			return this.Client.Get<RisiCollection<ParameterType>>("type", null);
 		}
 
 		/// <summary>

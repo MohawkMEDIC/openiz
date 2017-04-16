@@ -20,8 +20,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Security.AccessControl;
 using System.Security.Principal;
 using OpenIZ.Core.Model.RISI;
+using OpenIZ.Core.Model.RISI.Constants;
 using OpenIZ.OrmLite;
 
 namespace OpenIZ.Persistence.Reporting.PSQL.Services
@@ -48,7 +51,33 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(PSQL.Model.ReportParameter) } to { nameof(ReportParameter) }");
 
-			return ModelMapper.MapModelInstance<ReportParameter, PSQL.Model.ReportParameter>(modelInstance);
+			var domainInstance = ModelMapper.MapModelInstance<ReportParameter, Model.ReportParameter>(modelInstance);
+
+			if (modelInstance.ReportDefinition?.Key.HasValue == true && modelInstance.ReportDefinition.Key.Value != Guid.Empty)
+			{
+				domainInstance.ReportId = modelInstance.ReportDefinition.Key.Value;
+			}
+			else
+			{
+				throw new InvalidOperationException("Cannot insert report parameter without report id");
+			}
+
+			domainInstance.ParameterTypeId = modelInstance.ParameterType?.Key ?? ParameterTypeKeys.Object;
+
+			return domainInstance;
+		}
+
+		/// <summary>
+		/// Gets a report parameter by correlation id.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="correlationId">The correlation identifier.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Returns a report parameter for a given correlation id.</returns>
+		internal ReportParameter Get(DataContext context, string correlationId, IPrincipal principal)
+		{
+			int totalResults;
+			return this.Query(context, r => r.CorrelationId == correlationId, 0, 1, out totalResults, false, principal).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -73,7 +102,11 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportParameter) } to { nameof(PSQL.Model.ReportParameter) }");
 
-			return ModelMapper.MapDomainInstance<PSQL.Model.ReportParameter, ReportParameter>((PSQL.Model.ReportParameter)domainInstance);
+			var modelInstance = ModelMapper.MapDomainInstance<PSQL.Model.ReportParameter, ReportParameter>((PSQL.Model.ReportParameter)domainInstance);
+
+			modelInstance.ParameterType = new ParameterType(((Model.ReportParameter)domainInstance).ParameterTypeId);
+
+			return modelInstance;
 		}
 	}
 }

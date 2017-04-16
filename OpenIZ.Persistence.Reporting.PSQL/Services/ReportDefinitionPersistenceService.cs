@@ -20,7 +20,11 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Principal;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.OrmLite;
 
@@ -61,7 +65,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		/// <exception cref="System.InvalidOperationException">Domain instance must not be null</exception>
 		public override ReportDefinition InsertInternal(DataContext context, ReportDefinition model, IPrincipal principal)
 		{
-			var domainInstance = this.FromModelInstance(model, context, principal) as PSQL.Model.ReportDefinition;
+			var domainInstance = this.FromModelInstance(model, context, principal) as Model.ReportDefinition;
 
 			if (domainInstance == null)
 			{
@@ -75,6 +79,16 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 			}
 
 			domainInstance = context.Insert(domainInstance);
+
+			if (model.Parameters.Any())
+			{
+				var reportParameterPersistenceService = new ReportParameterPersistenceService();
+
+				foreach (var reportParameter in model.Parameters)
+				{
+					reportParameterPersistenceService.Insert(context, reportParameter, principal);
+				}
+			}
 
 			return this.ToModelInstance(domainInstance, context, principal);
 		}
@@ -128,6 +142,25 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 			}
 
 			domainInstance = context.Update(domainInstance);
+
+			if (model.Parameters.Any())
+			{
+				var reportParameterPersistenceService = new ReportParameterPersistenceService();
+
+				foreach (var reportParameter in model.Parameters)
+				{
+					var existingReportParameter = reportParameterPersistenceService.Get(context, reportParameter.CorrelationId, principal);
+
+					if (existingReportParameter == null)
+					{
+						reportParameterPersistenceService.Insert(context, reportParameter, principal);
+					}
+					else
+					{
+						reportParameterPersistenceService.Update(context, reportParameter, principal);
+					}
+				}
+			}
 
 			return this.ToModelInstance(domainInstance, context, principal);
 		}

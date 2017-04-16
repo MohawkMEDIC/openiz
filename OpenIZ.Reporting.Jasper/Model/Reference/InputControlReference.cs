@@ -30,9 +30,8 @@ namespace OpenIZ.Reporting.Jasper.Model.Reference
 	/// Represents an input control reference.
 	/// </summary>
 	/// <seealso cref="OpenIZ.Reporting.Jasper.Model.Reference.ReferenceBase" />
-	[XmlType("inputControlsReference")]
-	public class InputControlReference : ReferenceBase
-	{
+	[XmlType("inputControlReference")]
+	public class InputControlReference : ReferenceBase	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="InputControlReference"/> class.
 		/// </summary>
@@ -47,6 +46,7 @@ namespace OpenIZ.Reporting.Jasper.Model.Reference
 		/// <param name="uri">The URI.</param>
 		public InputControlReference(string uri) : base(uri)
 		{
+
 		}
 	}
 }

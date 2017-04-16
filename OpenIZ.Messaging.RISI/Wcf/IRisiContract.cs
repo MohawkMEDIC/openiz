@@ -92,7 +92,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
 		[WebGet(UriTemplate = "/type", BodyStyle = WebMessageBodyStyle.Bare)]
-		RisiCollection<ReportParameter> GetAllReportParameterTypes();
+		RisiCollection<ParameterType> GetAllReportParameterTypes();
 
 		/// <summary>
 		/// Gets a report definition by id.

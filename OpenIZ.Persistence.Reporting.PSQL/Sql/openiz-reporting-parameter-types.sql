@@ -29,3 +29,4 @@ INSERT INTO parameter_type (id, type) VALUES ('295BF77E-BEBC-4DE0-A18A-F141DB6D9
 INSERT INTO parameter_type (id, type) VALUES ('52BAE88A-5239-4F83-A2C9-958CE07B0EBE', 'System.Single');
 INSERT INTO parameter_type (id, type) VALUES ('60FC0E02-701F-48BD-81CD-8DE51B113B31', 'System.String');
 INSERT INTO parameter_type (id, type) VALUES ('692C4A26-6010-4E62-9EAF-51F323517DA0', 'System.UInt32');
+INSERT INTO parameter_type (id, type) VALUES ('795BE824-A0E0-4C0C-8853-56FDC5673BC1', 'System.Object');

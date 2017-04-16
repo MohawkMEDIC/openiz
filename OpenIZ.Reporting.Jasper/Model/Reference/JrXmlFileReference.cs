@@ -27,7 +27,7 @@ namespace OpenIZ.Reporting.Jasper.Model.Reference
 	/// </summary>
 	/// <seealso cref="ReferenceBase" />
 	[XmlType("jrxmlFileReference")]
-	public class JrXmlFileReference
+	public class JrXmlFileReference : ReferenceBase
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="JrXmlFileReference"/> class.
@@ -36,12 +36,5 @@ namespace OpenIZ.Reporting.Jasper.Model.Reference
 		{
 			
 		}
-
-		/// <summary>
-		/// Gets or sets the URI.
-		/// </summary>
-		/// <value>The URI.</value>
-		[XmlElement("uri")]
-		public string Uri { get; set; }
 	}
 }
