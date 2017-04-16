@@ -27,14 +27,32 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Model
 	/// Represents a report definition report format association.
 	/// </summary>
 	[Table("report_definition_report_format_association")]
-	public class ReportDefinitionReportFormatAssociation : DbAssociation
+	public class ReportDefinitionFormatAssociation : DbAssociation
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="ReportDefinitionReportFormatAssociation"/> class.
+		/// Initializes a new instance of the <see cref="ReportDefinitionFormatAssociation"/> class.
+		/// </summary>
+		public ReportDefinitionFormatAssociation() : this(Guid.NewGuid())
+		{
+			
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportDefinitionFormatAssociation"/> class.
 		/// </summary>
 		/// <param name="key">The key.</param>
-		public ReportDefinitionReportFormatAssociation(Guid key) : base(key)
+		public ReportDefinitionFormatAssociation(Guid key) : base(key)
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ReportDefinitionFormatAssociation"/> class.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <param name="sourceKey">The source key.</param>
+		public ReportDefinitionFormatAssociation(Guid key, Guid sourceKey) : this(key)
+		{
+			this.SourceKey = sourceKey;
 		}
 
 		/// <summary>

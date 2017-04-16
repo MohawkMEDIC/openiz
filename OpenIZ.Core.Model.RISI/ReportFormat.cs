@@ -33,6 +33,11 @@ namespace OpenIZ.Core.Model.RISI
     public class ReportFormat : BaseEntityData
 	{
 		/// <summary>
+		/// The report definition key.
+		/// </summary>
+		private Guid reportDefinitionKey;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportFormat"/> class.
 		/// </summary>
 		public ReportFormat()
@@ -66,5 +71,30 @@ namespace OpenIZ.Core.Model.RISI
 		/// </summary>
 		[XmlAttribute("format"), JsonProperty("format")]
 		public string Format { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report definition.
+		/// </summary>
+		/// <value>The report definition.</value>
+		[XmlIgnore, JsonIgnore]
+		public ReportDefinition ReportDefinition { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report definition key.
+		/// </summary>
+		/// <value>The report definition key.</value>
+		[XmlElement("reportDefinition"), JsonProperty("reportDefinition")]
+		public Guid ReportDefinitionKey
+		{
+			get
+			{
+				return reportDefinitionKey;
+			}
+			set
+			{
+				this.reportDefinitionKey = value;
+				this.ReportDefinition = new ReportDefinition(this.reportDefinitionKey);
+			}
+		}
 	}
 }

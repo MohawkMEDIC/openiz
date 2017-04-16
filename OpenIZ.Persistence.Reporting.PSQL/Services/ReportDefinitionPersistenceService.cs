@@ -19,14 +19,17 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Entities;
-using OpenIZ.Core.Model.RISI;
 using OpenIZ.OrmLite;
+using OpenIZ.Persistence.Reporting.PSQL.Model;
+using ReportDefinition = OpenIZ.Core.Model.RISI.ReportDefinition;
 
 namespace OpenIZ.Persistence.Reporting.PSQL.Services
 {
@@ -80,15 +83,8 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			domainInstance = context.Insert(domainInstance);
 
-			if (model.Parameters.Any())
-			{
-				var reportParameterPersistenceService = new ReportParameterPersistenceService();
-
-				foreach (var reportParameter in model.Parameters)
-				{
-					reportParameterPersistenceService.Insert(context, reportParameter, principal);
-				}
-			}
+			UpdateReportFormats(context, principal, model);
+			UpdateReportParameters(context, principal, model);
 
 			return this.ToModelInstance(domainInstance, context, principal);
 		}
@@ -143,26 +139,60 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			domainInstance = context.Update(domainInstance);
 
-			if (model.Parameters.Any())
-			{
-				var reportParameterPersistenceService = new ReportParameterPersistenceService();
-
-				foreach (var reportParameter in model.Parameters)
-				{
-					var existingReportParameter = reportParameterPersistenceService.Get(context, reportParameter.CorrelationId, principal);
-
-					if (existingReportParameter == null)
-					{
-						reportParameterPersistenceService.Insert(context, reportParameter, principal);
-					}
-					else
-					{
-						reportParameterPersistenceService.Update(context, reportParameter, principal);
-					}
-				}
-			}
+			UpdateReportFormats(context, principal, model);
+			UpdateReportParameters(context, principal, model);
 
 			return this.ToModelInstance(domainInstance, context, principal);
+		}
+
+		/// <summary>
+		/// Updates the report formats.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="principal">The principal.</param>
+		/// <param name="reportDefinition">The report definition.</param>
+		private static void UpdateReportFormats(DataContext context, IPrincipal principal, ReportDefinition reportDefinition)
+		{
+			var reportDefinitionFormatService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinitionFormatAssociation>>();
+
+			foreach (var reportFormat in reportDefinition.Formats)
+			{
+				var existing = context.Query<ReportDefinitionFormatAssociation>(c => c.Key == reportFormat.Key.Value).FirstOrDefault();
+
+				if (existing == null)
+				{
+					reportDefinitionFormatService.Insert(new ReportDefinitionFormatAssociation(reportFormat.Key.Value, reportDefinition.Key.Value), principal, TransactionMode.Commit);
+				}
+				else
+				{
+					reportDefinitionFormatService.Update(new ReportDefinitionFormatAssociation(reportFormat.Key.Value, reportDefinition.Key.Value), principal, TransactionMode.Commit);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Updates the report parameters.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="principal">The principal.</param>
+		/// <param name="reportDefinition">The report definition.</param>
+		private static void UpdateReportParameters(DataContext context, IPrincipal principal, ReportDefinition reportDefinition)
+		{
+			var reportParameterPersistenceService = new ReportParameterPersistenceService();
+
+			foreach (var reportParameter in reportDefinition.Parameters)
+			{
+				var existingReportParameter = reportParameterPersistenceService.Get(context, reportParameter.CorrelationId, principal);
+
+				if (existingReportParameter == null)
+				{
+					reportParameterPersistenceService.Insert(context, reportParameter, principal);
+				}
+				else
+				{
+					reportParameterPersistenceService.Update(context, reportParameter, principal);
+				}
+			}
 		}
 	}
 }

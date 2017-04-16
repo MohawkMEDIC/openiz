@@ -40,6 +40,18 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 	public abstract class CorePersistenceService<TModel, TDomain, TQueryReturn> : ReportPersistenceServiceBase<TModel> where TModel : IdentifiedData, new() where TDomain : DbIdentified, new()
 	{
 		/// <summary>
+		/// Converts a model instance to a domain instance.
+		/// </summary>
+		/// <param name="modelInstance">The model instance to convert.</param>
+		/// <param name="context">The context.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		public override object FromModelInstance(TModel modelInstance, DataContext context, IPrincipal principal)
+		{
+			return ModelMapper.MapModelInstance<TModel, TDomain>(modelInstance);
+		}
+
+		/// <summary>
 		/// Inserts the model.
 		/// </summary>
 		/// <param name="context">The context.</param>
@@ -144,6 +156,18 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 				traceSource.TraceEvent(TraceEventType.Error, 0, $"Unable to query: {e}");
 				throw;
 			}
+		}
+
+		/// <summary>
+		/// Converts a domain instance to a model instance.
+		/// </summary>
+		/// <param name="domainInstance">The domain instance to convert.</param>
+		/// <param name="context">The context.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Returns the converted model instance.</returns>
+		public override TModel ToModelInstance(object domainInstance, DataContext context, IPrincipal principal)
+		{
+			return ModelMapper.MapDomainInstance<TDomain, TModel>(domainInstance as TDomain);
 		}
 
 		/// <summary>

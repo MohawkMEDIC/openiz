@@ -373,8 +373,6 @@ namespace OpenIZ.Reporting.Jasper
 
 			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId);
 
-			int totalResults;
-
 			reportDefinition.Parameters = reportUnit.InputControlReferences.Select(i => this.LookupResource<InputControl>(i.Uri))
 													.Select(i => new ReportParameter
 													{
@@ -431,7 +429,24 @@ namespace OpenIZ.Reporting.Jasper
 						var reportDefinition = new ReportDefinition(resourceLookup.Label)
 						{
 							CorrelationId = resourceLookup.Uri,
-							Description = resourceLookup.Description
+							Description = resourceLookup.Description,
+						};
+
+						// jasper reports supports the following formats
+						reportDefinition.Formats = new List<ReportFormat>
+						{
+							new ReportFormat(ReportFormatKeys.Csv),
+							new ReportFormat(ReportFormatKeys.Docx),
+							new ReportFormat(ReportFormatKeys.Html),
+							new ReportFormat(ReportFormatKeys.JPrint),
+							new ReportFormat(ReportFormatKeys.JPrint),
+							new ReportFormat(ReportFormatKeys.Ods),
+							new ReportFormat(ReportFormatKeys.Odt),
+							new ReportFormat(ReportFormatKeys.Pdf),
+							new ReportFormat(ReportFormatKeys.Rtf),
+							new ReportFormat(ReportFormatKeys.Xls),
+							new ReportFormat(ReportFormatKeys.Xlsx),
+							new ReportFormat(ReportFormatKeys.Xml)
 						};
 
 						var reportUnit = this.LookupResource<ReportUnit>(resourceLookup.Uri);
@@ -471,6 +486,7 @@ namespace OpenIZ.Reporting.Jasper
 				}
 				else
 				{
+					existingReport.Formats = report.Formats;
 					existingReport.Parameters = report.Parameters;
 					existingReport.Description = report.Description;
 					existingReport.Name = report.Name;

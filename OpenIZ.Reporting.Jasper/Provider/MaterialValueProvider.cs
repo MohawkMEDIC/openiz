@@ -50,7 +50,6 @@ namespace OpenIZ.Reporting.Jasper.Provider
 		/// <returns>Returns a list of values.</returns>
 		public IEnumerable<T> GetValues<T>() where T : IdentifiedData
 		{
-			return new List<T>();
 			var results = new List<Material>();
 
 			var materialPersistenceService = ApplicationContext.Current.GetService<IStoredQueryDataPersistenceService<Material>>();
