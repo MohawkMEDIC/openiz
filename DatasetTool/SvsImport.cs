@@ -38,9 +38,10 @@ namespace OizDevTool
     [Description("Tooling for import IHE Shared Value Sets (SVS) files")]
 	public class SvsImport
 	{
-
-
-        internal class SvsOptions
+		/// <summary>
+		/// Represents SVS import options.
+		/// </summary>
+		internal class SvsOptions
         {
             /// <summary>
             /// Gets or sets the file.
