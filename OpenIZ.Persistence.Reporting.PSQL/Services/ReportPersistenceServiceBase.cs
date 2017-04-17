@@ -162,7 +162,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 					connection.Open();
 					this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"GET: {containerId.Id}");
 
-					var result = this.Get(connection, identifier.Id, principal);
+					var result = this.Get(connection, identifier.Id, principal, loadFast);
 
 					var postRetrievalEventArgs = new PostRetrievalEventArgs<TModel>(result, principal);
 
@@ -184,11 +184,12 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		/// <param name="context">The context.</param>
 		/// <param name="key">The key.</param>
 		/// <param name="principal">The principal.</param>
+		/// <param name="loadFast">if set to <c>true</c> [load fast].</param>
 		/// <returns>Returns the model instance.</returns>
-		public virtual TModel Get(DataContext context, Guid key, IPrincipal principal)
+		public virtual TModel Get(DataContext context, Guid key, IPrincipal principal, bool loadFast)
 		{
 			int totalResults;
-			return this.QueryInternal(o => o.Key == key, 0, 1, principal, out totalResults, true)?.FirstOrDefault();
+			return this.QueryInternal(o => o.Key == key, 0, 1, principal, out totalResults, loadFast)?.FirstOrDefault();
 		}
 
 		/// <summary>
@@ -223,7 +224,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 				{
 					try
 					{
-						var existing = this.Get(connection, storageData.Key.Value, principal);
+						var existing = this.Get(connection, storageData.Key.Value, principal, false);
 
 						if (existing != null)
 						{

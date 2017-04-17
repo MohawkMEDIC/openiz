@@ -21,6 +21,7 @@
 using OpenIZ.Core.Model.RISI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using OpenIZ.Reporting.Core.Configuration;
 
 namespace OpenIZ.Reporting.Core

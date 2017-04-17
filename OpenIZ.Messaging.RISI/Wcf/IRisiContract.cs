@@ -20,6 +20,7 @@
 
 using OpenIZ.Core.Model.RISI;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 
@@ -148,7 +149,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
 		[WebGet(UriTemplate = "/report/{id}/source", BodyStyle = WebMessageBodyStyle.Bare)]
-		byte[] GetReportSource(string id);
+		Stream GetReportSource(string id);
 
 		/// <summary>
 		/// Executes a report.
@@ -158,7 +159,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
 		[WebInvoke(UriTemplate = "/report/{id}/{format}", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		byte[] RunReport(string id, string format, List<ReportParameter> parameters);
+		byte[] RunReport(string id, string format, RisiCollection<ReportParameter> parameters);
 
 		/// <summary>
 		/// Updates a parameter type definition.

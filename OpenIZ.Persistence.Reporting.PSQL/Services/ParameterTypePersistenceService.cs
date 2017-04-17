@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(PSQL.Model.ParameterType) } to { nameof(ParameterType) }");
 
-			return ModelMapper.MapModelInstance<ParameterType, PSQL.Model.ParameterType>(modelInstance);
+			return base.FromModelInstance(modelInstance, context, principal);
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ParameterType) } to { nameof(PSQL.Model.ParameterType) }");
 
-			return ModelMapper.MapDomainInstance<PSQL.Model.ParameterType, ParameterType>((PSQL.Model.ParameterType)domainInstance);
+			return base.ToModelInstance(domainInstance, context, principal);
 		}
 	}
 }

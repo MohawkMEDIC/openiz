@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(PSQL.Model.ReportParameter) } to { nameof(ReportParameter) }");
 
-			var domainInstance = ModelMapper.MapModelInstance<ReportParameter, Model.ReportParameter>(modelInstance);
+			var domainInstance = base.FromModelInstance(modelInstance, context, principal) as Model.ReportParameter;
 
 			if (modelInstance.ReportDefinition?.Key.HasValue == true && modelInstance.ReportDefinition.Key.Value != Guid.Empty)
 			{
@@ -67,6 +67,11 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 			return domainInstance;
 		}
 
+		public override ReportParameter Get(DataContext context, Guid key, IPrincipal principal, bool loadFast)
+		{
+			return base.Get(context, key, principal, loadFast);
+		}
+
 		/// <summary>
 		/// Gets a report parameter by correlation id.
 		/// </summary>
@@ -74,7 +79,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		/// <param name="correlationId">The correlation identifier.</param>
 		/// <param name="principal">The principal.</param>
 		/// <returns>Returns a report parameter for a given correlation id.</returns>
-		internal ReportParameter Get(DataContext context, string correlationId, IPrincipal principal)
+		public ReportParameter Get(DataContext context, string correlationId, IPrincipal principal)
 		{
 			int totalResults;
 			return this.Query(context, r => r.CorrelationId == correlationId, 0, 1, out totalResults, false, principal).FirstOrDefault();
@@ -102,7 +107,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportParameter) } to { nameof(PSQL.Model.ReportParameter) }");
 
-			var modelInstance = ModelMapper.MapDomainInstance<PSQL.Model.ReportParameter, ReportParameter>((PSQL.Model.ReportParameter)domainInstance);
+			var modelInstance = base.ToModelInstance(domainInstance, context, principal);
 
 			modelInstance.ParameterType = new ParameterType(((Model.ReportParameter)domainInstance).ParameterTypeId);
 
