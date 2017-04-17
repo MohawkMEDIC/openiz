@@ -28,6 +28,11 @@ namespace OpenIZ.Core.Services
         IEnumerable<AuditData> Find(Expression<Func<AuditData, bool>> query);
 
         /// <summary>
+        /// Get the specified audit
+        /// </summary>
+        AuditData Get(Object correlationKey);
+
+        /// <summary>
         /// Find an audit from the repository with the specified query controls
         /// </summary>
         /// <param name="query">Query to match</param>

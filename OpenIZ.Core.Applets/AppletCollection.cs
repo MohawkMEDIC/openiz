@@ -637,7 +637,7 @@ namespace OpenIZ.Core.Applets
                             key = db.Attributes(xs_binding + "key").FirstOrDefault(),
                             value = db.Attributes(xs_binding + "value").FirstOrDefault(),
                             orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
-                            orderBy = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault();
+                            orderBy = db.Attributes(xs_binding + "orderBy").FirstOrDefault();
 
                         var locale = preProcessLocalization;
                         int i = 0;
@@ -669,7 +669,7 @@ namespace OpenIZ.Core.Applets
                                 {
                                     var orderProperty = imsiType.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == (orderBy ?? orderByDescending).Value);
                                     ParameterExpression orderExpr = Expression.Parameter(dataSource.GetType());
-                                    var orderBody = orderExpr.Sort(orderBy?.Value ?? orderByDescending?.Value, orderBy == null ? SortOrderType.OrderByDescending : SortOrderType.OrderBy);
+                                    var orderBody = orderExpr.Sort(orderProperty.Name, orderBy == null ? SortOrderType.OrderByDescending : SortOrderType.OrderBy);
                                     dataSource = Expression.Lambda(orderBody, orderExpr).Compile().DynamicInvoke(dataSource);
                                 }
 

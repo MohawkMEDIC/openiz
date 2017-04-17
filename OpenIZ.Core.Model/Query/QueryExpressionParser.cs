@@ -384,7 +384,14 @@ namespace OpenIZ.Core.Model.Query
                         else if (thisAccessExpression.Type == typeof(Guid?))
                             valueExpr = Expression.Convert(Expression.Constant(Guid.Parse(pValue)), typeof(Guid?));
                         else if (thisAccessExpression.Type.GetTypeInfo().IsEnum)
-                            valueExpr = Expression.Constant(Enum.ToObject(thisAccessExpression.Type, Int32.Parse(pValue)));
+                        {
+                            int tryParse = 0;
+                            if(Int32.TryParse(pValue, out tryParse))
+                               valueExpr = Expression.Constant(Enum.ToObject(thisAccessExpression.Type, Int32.Parse(pValue)));
+                            else
+                                valueExpr = Expression.Constant(Enum.Parse(thisAccessExpression.Type, pValue));
+
+                        }
                         else
                             valueExpr = Expression.Constant(Convert.ChangeType(pValue, thisAccessExpression.Type));
                         if (valueExpr.Type != thisAccessExpression.Type)

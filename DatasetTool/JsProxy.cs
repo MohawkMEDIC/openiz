@@ -204,6 +204,8 @@ namespace OizDevTool
                 }
                 writer.WriteLine();
                 writer.WriteLine("\t */");
+
+                
                 writer.WriteLine("\t{0} : '{1}',", fi.Name, fi.GetValue(null));
             }
 
@@ -259,7 +261,9 @@ namespace OizDevTool
                 var itmJobject = itmType.GetCustomAttribute<JsonObjectAttribute>();
                 if (itmJobject == null)
                 {
-                    if (!primitives.TryGetValue(itmType, out itmJobject))
+                    if(itmType.StripNullable().IsEnum)
+                        itmJobject = new JsonObjectAttribute(String.Format("{0}.{1}", parms.Namespace, itmType.Name));
+                    else if (!primitives.TryGetValue(itmType, out itmJobject))
                         itmJobject = new JsonObjectAttribute(itmType.Name);
                 }
                 else
@@ -314,6 +318,9 @@ namespace OizDevTool
                 }
 
                 var bindAttr = itm.GetCustomAttribute<BindingAttribute>();
+                if (itmType.StripNullable().IsEnum)
+                    bindAttr = new BindingAttribute(itmType.StripNullable());
+
                 if (bindAttr != null)
                 {
                     enumerationTypes.Add(bindAttr.Binding);

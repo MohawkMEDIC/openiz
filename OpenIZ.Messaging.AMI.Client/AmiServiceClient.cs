@@ -109,6 +109,15 @@ namespace OpenIZ.Messaging.AMI.Client
         }
 
         /// <summary>
+        /// Create audit
+        /// </summary>
+        public void CreateAudit(AuditInfo audit)
+        {
+
+            this.Client.Post<AuditInfo, object>("audit", this.Client.Accept, audit);
+        }
+
+        /// <summary>
         /// Creates a device in the IMS.
         /// </summary>
         /// <param name="device">The device to be created.</param>
