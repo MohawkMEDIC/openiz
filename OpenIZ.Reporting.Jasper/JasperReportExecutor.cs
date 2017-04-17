@@ -398,7 +398,7 @@ namespace OpenIZ.Reporting.Jasper
 		{
 			this.Authenticate(this.username, this.password);
 
-			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}").Result;
+			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}?type=reportUnit").Result;
 
 			tracer.TraceEvent(TraceEventType.Information, 0, $"Jasper report server response: {response.Content}");
 
@@ -430,23 +430,21 @@ namespace OpenIZ.Reporting.Jasper
 						{
 							CorrelationId = resourceLookup.Uri,
 							Description = resourceLookup.Description,
-						};
-
-						// jasper reports supports the following formats
-						reportDefinition.Formats = new List<ReportFormat>
-						{
-							new ReportFormat(ReportFormatKeys.Csv),
-							new ReportFormat(ReportFormatKeys.Docx),
-							new ReportFormat(ReportFormatKeys.Html),
-							new ReportFormat(ReportFormatKeys.JPrint),
-							new ReportFormat(ReportFormatKeys.JPrint),
-							new ReportFormat(ReportFormatKeys.Ods),
-							new ReportFormat(ReportFormatKeys.Odt),
-							new ReportFormat(ReportFormatKeys.Pdf),
-							new ReportFormat(ReportFormatKeys.Rtf),
-							new ReportFormat(ReportFormatKeys.Xls),
-							new ReportFormat(ReportFormatKeys.Xlsx),
-							new ReportFormat(ReportFormatKeys.Xml)
+							// jasper reports supports the following formats
+							Formats = new List<ReportFormat>
+							{
+								new ReportFormat(ReportFormatKeys.Csv),
+								new ReportFormat(ReportFormatKeys.Docx),
+								new ReportFormat(ReportFormatKeys.Html),
+								new ReportFormat(ReportFormatKeys.JPrint),
+								new ReportFormat(ReportFormatKeys.Ods),
+								new ReportFormat(ReportFormatKeys.Odt),
+								new ReportFormat(ReportFormatKeys.Pdf),
+								new ReportFormat(ReportFormatKeys.Rtf),
+								new ReportFormat(ReportFormatKeys.Xls),
+								new ReportFormat(ReportFormatKeys.Xlsx),
+								new ReportFormat(ReportFormatKeys.Xml)
+							}
 						};
 
 						var reportUnit = this.LookupResource<ReportUnit>(resourceLookup.Uri);

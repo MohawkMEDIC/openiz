@@ -83,7 +83,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			domainInstance = context.Insert(domainInstance);
 
-			UpdateReportFormats(context, principal, model);
+			InsertReportFormatAssociations(context, model);
 			UpdateReportParameters(context, principal, model);
 
 			return this.ToModelInstance(domainInstance, context, principal);
@@ -139,7 +139,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			domainInstance = context.Update(domainInstance);
 
-			UpdateReportFormats(context, principal, model);
+			InsertReportFormatAssociations(context, model);
 			UpdateReportParameters(context, principal, model);
 
 			return this.ToModelInstance(domainInstance, context, principal);
@@ -149,24 +149,19 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		/// Updates the report formats.
 		/// </summary>
 		/// <param name="context">The context.</param>
-		/// <param name="principal">The principal.</param>
 		/// <param name="reportDefinition">The report definition.</param>
-		private static void UpdateReportFormats(DataContext context, IPrincipal principal, ReportDefinition reportDefinition)
+		private static void InsertReportFormatAssociations(DataContext context, ReportDefinition reportDefinition)
 		{
-			var reportDefinitionFormatService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinitionFormatAssociation>>();
-
 			foreach (var reportFormat in reportDefinition.Formats)
 			{
-				var existing = context.Query<ReportDefinitionFormatAssociation>(c => c.Key == reportFormat.Key.Value).FirstOrDefault();
+				var existing = context.Query<ReportDefinitionFormatAssociation>(c => c.Key == reportFormat.Key.Value && c.SourceKey == reportDefinition.Key.Value).FirstOrDefault();
 
-				if (existing == null)
+				if (existing != null)
 				{
-					reportDefinitionFormatService.Insert(new ReportDefinitionFormatAssociation(reportFormat.Key.Value, reportDefinition.Key.Value), principal, TransactionMode.Commit);
+					context.Delete<ReportDefinitionFormatAssociation>(c => c.Key == reportFormat.Key.Value && c.SourceKey == reportDefinition.Key.Value);
 				}
-				else
-				{
-					reportDefinitionFormatService.Update(new ReportDefinitionFormatAssociation(reportFormat.Key.Value, reportDefinition.Key.Value), principal, TransactionMode.Commit);
-				}
+
+				context.Insert(new ReportDefinitionFormatAssociation(reportFormat.Key.Value, reportDefinition.Key.Value));
 			}
 		}
 
