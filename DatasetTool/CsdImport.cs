@@ -654,7 +654,6 @@ namespace OizDevTool
 					CreationTime = csdOrganization.record?.created ?? DateTimeOffset.Now,
 					Extensions = csdOrganization.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
 					Identifiers = csdOrganization.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
-					IndustryConceptKey = csdOrganization.codedType?.Select(c => MapCodedType(c.code, c.codingScheme)).FirstOrDefault()?.Key,
 					StatusConceptKey = MapStatusCode(csdOrganization.record?.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes"),
 					Tags = new List<EntityTag>
 					{
@@ -676,7 +675,16 @@ namespace OizDevTool
 
 				if (csdOrganization.codedType?.Any() == true)
 				{
+					// we don't support multiple specialties for a organization at the moment, so we only take the first one
+					// TODO: cleanup
 					organization.TypeConceptKey = MapCodedType(csdOrganization.codedType[0].code, csdOrganization.codedType[0].codingScheme)?.Key;
+				}
+
+				if (csdOrganization.specialization?.Any() == true)
+				{
+					// we don't support multiple industry values for a organization at the moment, so we only take the first one
+					// TODO: cleanup
+					organization.IndustryConceptKey = MapCodedType(csdOrganization.specialization[0].code, csdOrganization.specialization[0].codingScheme)?.Key;
 				}
 
 				if (csdOrganization.parent?.entityID != null)
@@ -707,6 +715,11 @@ namespace OizDevTool
 				if (csdOrganization.contact?.Any() == true)
 				{
 					organization.Relationships.AddRange(csdOrganization.contact.Select(MapEntityRelationshipOrganizationContact));
+				}
+
+				if (csdOrganization.contactPoint?.Any() == true)
+				{
+					organization.Telecoms.AddRange(csdOrganization.contactPoint.Select(MapContactPoint));
 				}
 
 				organizations.Add(organization);
@@ -765,6 +778,8 @@ namespace OizDevTool
 
 				if (facility.codedType?.Any() == true)
 				{
+					// we don't support multiple types for a place at the moment, so we only take the first one
+					// TODO: cleanup
 					place.TypeConceptKey = MapCodedType(facility.codedType[0].code, facility.codedType[0].codingScheme)?.Key;
 				}
 
@@ -776,6 +791,11 @@ namespace OizDevTool
 				if (facility.otherName?.Any() == true)
 				{
 					place.Names.AddRange(facility.otherName.Select(f => new EntityName(NameUseKeys.Assigned, f.Value)));
+				}
+
+				if (facility.contactPoint?.Any() == true)
+				{
+					place.Telecoms.AddRange(facility.contactPoint.Select(MapContactPoint));
 				}
 
 				places.Add(place);
@@ -813,6 +833,20 @@ namespace OizDevTool
 					},
 					Telecoms = csdProvider.demographic?.contactPoint?.Select(MapContactPoint).ToList() ?? new List<EntityTelecomAddress>()
 				};
+
+				if (csdProvider.specialty?.Any() == true)
+				{
+					// we don't support multiple specialties for a provider at the moment, so we only take the first one
+					// TODO: cleanup
+					provider.ProviderSpecialtyKey = MapCodedType(csdProvider.specialty[0].code, csdProvider.specialty[0].codingScheme)?.Key;
+				}
+
+				if (csdProvider.codedType?.Any() == true)
+				{
+					// we don't support multiple types for a provider at the moment, so we only take the first one
+					// TODO: cleanup
+					provider.TypeConceptKey = MapCodedType(csdProvider.codedType[0].code, csdProvider.codedType[0].codingScheme)?.Key;
+				}
 
 				Guid key;
 
