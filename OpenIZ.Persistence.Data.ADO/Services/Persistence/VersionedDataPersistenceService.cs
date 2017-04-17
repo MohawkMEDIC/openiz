@@ -202,9 +202,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 {
                     int ofs = 1000;
                     var rkeys = o as Guid[];
+	                if (rkeys == null)
+	                {
+		                return;
+	                }
                     while (ofs < rkeys.Length)
                     {
-                        this.m_queryPersistence.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
+                        this.m_queryPersistence?.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
                         ofs += 1000;
                     }
                 }, resultKeys.ToArray());
