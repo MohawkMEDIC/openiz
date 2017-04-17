@@ -243,10 +243,9 @@ namespace OpenIZ.Messaging.IMSI.Client
                 queryParms.Add(new KeyValuePair<string, object>("_count", count));
             }
 
-            if (expandProperties == null && expandProperties.Length > 0)
+            if (expandProperties != null && expandProperties.Length > 0)
             {
-                foreach(var i in expandProperties)
-                    queryParms.Add(new KeyValuePair<string, object>("_expand", expandProperties));
+	            queryParms.AddRange(expandProperties.Select(i => new KeyValuePair<string, object>("_expand", i)));
             }
 
             if (queryId.HasValue)
