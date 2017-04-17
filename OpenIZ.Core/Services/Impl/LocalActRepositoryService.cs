@@ -236,9 +236,9 @@ namespace OpenIZ.Core.Services.Impl
         /// <exception cref="System.NotImplementedException"></exception>
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteClinicalData)]
         public Act Obsolete(Guid key)
-		{
-			throw new NotImplementedException();
-		}
+        {
+	        return this.Obsolete<Act>(key);
+        }
 
         /// <summary>
         /// Inserts or updates the specific act.
