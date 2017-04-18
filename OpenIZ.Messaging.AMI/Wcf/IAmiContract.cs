@@ -76,6 +76,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(ServiceOptions))]
 	[ServiceKnownType(typeof(X509Certificate2Info))]
 	[ServiceKnownType(typeof(AssigningAuthorityInfo))]
+	[ServiceKnownType(typeof(CodeSystem))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<AppletManifestInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityApplicationInfo>))]
@@ -89,6 +90,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(AmiCollection<SecurityDevice>))]
 	[ServiceKnownType(typeof(AmiCollection<AlertMessageInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityUserInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<CodeSystem>))]
 	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	public interface IAmiContract
 	{
@@ -224,6 +226,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SubmissionResult DeleteCertificate(string id, string reason);
 
 		/// <summary>
+		/// Deletes the code system.
+		/// </summary>
+		/// <param name="codeSystemId">The code system identifier.</param>
+		/// <returns>Returns the deleted code system.</returns>
+		[WebInvoke(UriTemplate = "/codeSystem/{codeSystemId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		CodeSystem DeleteCodeSystem(string codeSystemId);
+
+		/// <summary>
 		/// Deletes a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be deleted.</param>
@@ -347,10 +357,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Gets the code system.
 		/// </summary>
-		/// <param name="id">The identifier.</param>
+		/// <param name="codeSystemId">The code system identifier.</param>
 		/// <returns>Returns a code system.</returns>
-		[WebGet(UriTemplate = "/codeSystem/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
-		CodeSystem GetCodeSystem(string id);
+		[WebGet(UriTemplate = "/codeSystem/{codeSystemId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		CodeSystem GetCodeSystem(string codeSystemId);
 
 		/// <summary>
 		/// Gets the code systems.
@@ -521,6 +531,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated assigning authority.</returns>
 		[WebInvoke(UriTemplate = "/assigningAuthority/{assigningAuthorityId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo);
+
+		/// <summary>
+		/// Updates the code system.
+		/// </summary>
+		/// <param name="codeSystemId">The code system identifier.</param>
+		/// <param name="codeSystem">The code system.</param>
+		/// <returns>Return the updated code system.</returns>
+		[WebInvoke(UriTemplate = "/codeSystem/{codeSystemId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		CodeSystem UpdateCodeSystem(string codeSystemId, CodeSystem codeSystem);
 
 		/// <summary>
 		/// Updates a device.

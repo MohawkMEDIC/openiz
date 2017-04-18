@@ -1,26 +1,30 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: khannan
  * Date: 2016-8-2
  */
+
 using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Interop;
 using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model.AMI.Alerting;
+using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Diagnostics;
@@ -33,9 +37,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using OpenIZ.Core.Interop;
-using OpenIZ.Core.Model.AMI.Applet;
-using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Messaging.AMI.Client
 {
@@ -51,8 +52,8 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <param name="client">The <see cref="IRestClient"/> instance.</param>
 		public AmiServiceClient(IRestClient client) : base(client)
 		{
-            this.Client.Accept = client.Accept ?? "application/xml";
-        }
+			this.Client.Accept = client.Accept ?? "application/xml";
+		}
 
 		/// <summary>
 		/// Accepts a certificate signing request.
@@ -62,6 +63,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SubmissionResult AcceptCertificateSigningRequest(string id)
 		{
 			return this.Client.Put<object, SubmissionResult>($"csr/accept/{id}", this.Client.Accept, null);
+		}
+
+		/// <summary>
+		/// Gets a specific assigning authority.
+		/// </summary>
+		/// <param name="id">The id of the assigning authority to retrieve.</param>
+		/// <returns>Returns the assigning authority.</returns>
+		public AssigningAuthorityInfo AssigningAuthority(string id)
+		{
+			return this.Client.Get<AssigningAuthorityInfo>($"assigningAuthority/{id}");
 		}
 
 		/// <summary>
@@ -80,12 +91,12 @@ namespace OpenIZ.Messaging.AMI.Client
 		/// <returns>Returns the created applet manifest info.</returns>
 		public AppletManifestInfo CreateApplet(AppletPackage appletPackage)
 		{
-            using (MemoryStream ms = new MemoryStream())
-            {
-                appletPackage.Save(ms);
-                ms.Flush();
-                return this.Client.Post<byte[], AppletManifestInfo>("applet", "application/octet-stream", ms.ToArray());
-            }
+			using (MemoryStream ms = new MemoryStream())
+			{
+				appletPackage.Save(ms);
+				ms.Flush();
+				return this.Client.Post<byte[], AppletManifestInfo>("applet", "application/octet-stream", ms.ToArray());
+			}
 		}
 
 		/// <summary>
@@ -98,31 +109,40 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Post<SecurityApplicationInfo, SecurityApplicationInfo>("application", this.Client.Accept, applicationInfo);
 		}
 
-        /// <summary>
-        /// Creates an assigning authority.
-        /// </summary>
-        /// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
-        /// <returns>Returns the created assigning authority.</returns>
-        public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
-        {
-            return this.Client.Post<AssigningAuthorityInfo, AssigningAuthorityInfo>("assigningAuthority", this.Client.Accept, assigningAuthorityInfo);
-        }
+		/// <summary>
+		/// Creates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
+		/// <returns>Returns the created assigning authority.</returns>
+		public AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo)
+		{
+			return this.Client.Post<AssigningAuthorityInfo, AssigningAuthorityInfo>("assigningAuthority", this.Client.Accept, assigningAuthorityInfo);
+		}
 
-        /// <summary>
-        /// Create audit
-        /// </summary>
-        public void CreateAudit(AuditInfo audit)
-        {
+		/// <summary>
+		/// Create audit
+		/// </summary>
+		public void CreateAudit(AuditInfo audit)
+		{
+			this.Client.Post<AuditInfo, object>("audit", this.Client.Accept, audit);
+		}
 
-            this.Client.Post<AuditInfo, object>("audit", this.Client.Accept, audit);
-        }
+		/// <summary>
+		/// Creates the code system.
+		/// </summary>
+		/// <param name="codeSystem">The code system.</param>
+		/// <returns>Returns the created code system.</returns>
+		public CodeSystem CreateCodeSystem(CodeSystem codeSystem)
+		{
+			return this.Client.Post<CodeSystem, CodeSystem>("codeSystem", this.Client.Accept, codeSystem);
+		}
 
-        /// <summary>
-        /// Creates a device in the IMS.
-        /// </summary>
-        /// <param name="device">The device to be created.</param>
-        /// <returns>Returns the newly created device.</returns>
-        public SecurityDeviceInfo CreateDevice(SecurityDeviceInfo device)
+		/// <summary>
+		/// Creates a device in the IMS.
+		/// </summary>
+		/// <param name="device">The device to be created.</param>
+		/// <returns>Returns the newly created device.</returns>
+		public SecurityDeviceInfo CreateDevice(SecurityDeviceInfo device)
 		{
 			return this.Client.Post<SecurityDeviceInfo, SecurityDeviceInfo>("device", this.Client.Accept, device);
 		}
@@ -196,6 +216,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SubmissionResult DeleteCertificate(string certificateId, RevokeReason reason)
 		{
 			return this.Client.Delete<SubmissionResult>($"certificate/{certificateId}/revokeReason/{reason}");
+		}
+
+		/// <summary>
+		/// Deletes the code system.
+		/// </summary>
+		/// <param name="codeSystemId">The code system identifier.</param>
+		/// <returns>Returns the deleted code system.</returns>
+		public CodeSystem DeleteCodeSystem(string codeSystemId)
+		{
+			return this.Client.Delete<CodeSystem>($"codeSystem/{codeSystemId}");
 		}
 
 		/// <summary>
@@ -290,7 +320,7 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return new MemoryStream(this.Client.Get($"applet/{appletId}/pak"));
 		}
-		
+
 		/// <summary>
 		/// Retrieves the specified role from the AMI
 		/// </summary>
@@ -316,26 +346,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return this.Client.Get<AlertMessageInfo>($"alert/{id}");
 		}
-
-        /// <summary>
-        /// Stats the update via a HEAD command
-        /// </summary>
-        public AppletInfo StatUpdate(String packageId)
-        {
-
-            var headers = this.Client.Head($"applet/{packageId}");
-            String versionKey = String.Empty,
-                packId = String.Empty,
-                hash = String.Empty;
-            headers.TryGetValue("X-OpenIZ-PakID", out packId);
-            headers.TryGetValue("ETag", out versionKey);
-
-            return new AppletInfo()
-            {
-                Id = packageId,
-                Version = versionKey
-            };
-        }
 
 		/// <summary>
 		/// Gets a list of alerts.
@@ -396,16 +406,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
-		/// Gets a specific assigning authority.
-		/// </summary>
-		/// <param name="id">The id of the assigning authority to retrieve.</param>
-		/// <returns>Returns the assigning authority.</returns>
-		public AssigningAuthorityInfo AssigningAuthority(string id)
-		{
-			return this.Client.Get<AssigningAuthorityInfo>($"assigningAuthority/{id}");
-		}
-
-		/// <summary>
 		/// Gets a list of certificates.
 		/// </summary>
 		/// <returns>Returns a collection of certificates which match the specified query.</returns>
@@ -435,9 +435,29 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets the code system.
+		/// </summary>
+		/// <param name="codeSystemId">The code system identifier.</param>
+		/// <returns>Returns a code system.</returns>
+		public CodeSystem GetCodeSystem(string codeSystemId)
+		{
+			return this.Client.Get<CodeSystem>($"codeSystem/{codeSystemId}");
+		}
+
+		/// <summary>
+		/// Gets the code systems.
+		/// </summary>
+		/// <param name="query">The query.</param>
+		/// <returns>Returns a list of code systems.</returns>
+		public AmiCollection<CodeSystem> GetCodeSystems(Expression<Func<CodeSystem, bool>> query)
+		{
+			return this.Client.Get<AmiCollection<CodeSystem>>("codeSystem", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
 		/// Gets a specific device.
 		/// </summary>
-		/// <param name=")">The id of the security device to be retrieved.</param>
+		/// <param name="id">The identifier.</param>
 		/// <returns>Returns the security device.</returns>
 		public SecurityDeviceInfo GetDevice(string id)
 		{
@@ -495,6 +515,14 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets a list of two-factor mechanisms
+		/// </summary>
+		public AmiCollection<TfaMechanismInfo> GetTwoFactorMechanisms()
+		{
+			return this.Client.Get<AmiCollection<TfaMechanismInfo>>("tfa", null);
+		}
+
+		/// <summary>
 		/// Gets a specific user.
 		/// </summary>
 		/// <param name="id">The id of the user to be retrieved.</param>
@@ -524,6 +552,36 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Create security password reset request.
+		/// </summary>
+		/// <param name="resetInfo">The reset information.</param>
+		public void SendTfaSecret(TfaRequestInfo resetInfo)
+		{
+			this.Client.Post<TfaRequestInfo, object>("tfa", this.Client.Accept, resetInfo);
+		}
+
+		/// <summary>
+		/// Stats the update via a HEAD command
+		/// </summary>
+		/// <param name="packageId">The package identifier.</param>
+		/// <returns>Returns the applet info.</returns>
+		public AppletInfo StatUpdate(String packageId)
+		{
+			var headers = this.Client.Head($"applet/{packageId}");
+			String versionKey = String.Empty,
+				packId = String.Empty,
+				hash = String.Empty;
+			headers.TryGetValue("X-OpenIZ-PakID", out packId);
+			headers.TryGetValue("ETag", out versionKey);
+
+			return new AppletInfo()
+			{
+				Id = packageId,
+				Version = versionKey
+			};
+		}
+
+		/// <summary>
 		/// Submits a certificate signing request to the AMI.
 		/// </summary>
 		/// <param name="submissionRequest">The certificate signing request.</param>
@@ -531,6 +589,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SubmissionResult SubmitCertificateSigningRequest(SubmissionRequest submissionRequest)
 		{
 			return this.Client.Post<SubmissionRequest, SubmissionResult>("csr", this.Client.Accept, submissionRequest);
+		}
+
+		/// <summary>
+		/// Submits a diagnostic report.
+		/// </summary>
+		/// <param name="report">The diagnostic report.</param>
+		/// <returns>Returns the submitted diagnostic report.</returns>
+		public DiagnosticReport SubmitDiagnosticReport(DiagnosticReport report)
+		{
+			return this.Client.Post<DiagnosticReport, DiagnosticReport>("sherlock", this.Client.Accept, report);
 		}
 
 		/// <summary>
@@ -544,20 +612,20 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>($"alert/{alertId}", this.Client.Accept, alertMessageInfo);
 		}
 
-        /// <summary>
-        /// Updates an applet.
-        /// </summary>
-        /// <param name="appletId">The id of the applet to be updated.</param>
-        /// <param name="appletPackage">The applet containing the updated information.</param>
-        /// <returns>Returns the updated applet.</returns>
-        public AppletManifestInfo UpdateApplet(string appletId, AppletPackage appletPackage)
+		/// <summary>
+		/// Updates an applet.
+		/// </summary>
+		/// <param name="appletId">The id of the applet to be updated.</param>
+		/// <param name="appletPackage">The applet containing the updated information.</param>
+		/// <returns>Returns the updated applet.</returns>
+		public AppletManifestInfo UpdateApplet(string appletId, AppletPackage appletPackage)
 		{
-            using (var ms = new MemoryStream())
-            {
-                appletPackage.Save(ms);
-                ms.Flush();
-                return this.Client.Put<byte[], AppletManifestInfo>($"applet/{appletId}", "application/octet-stream", ms.ToArray());
-            }
+			using (var ms = new MemoryStream())
+			{
+				appletPackage.Save(ms);
+				ms.Flush();
+				return this.Client.Put<byte[], AppletManifestInfo>($"applet/{appletId}", "application/octet-stream", ms.ToArray());
+			}
 		}
 
 		/// <summary>
@@ -572,6 +640,28 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Updates an assigning authority.
+		/// </summary>
+		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
+		/// <param name="assigningAuthorityInfo">The assigning authority info containing the updated information.</param>
+		/// <returns>Returns the updated assigning authority.</returns>
+		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
+		{
+			return this.Client.Put<AssigningAuthorityInfo, AssigningAuthorityInfo>($"assigningAuthority/{assigningAuthorityId}", this.Client.Accept, assigningAuthorityInfo);
+		}
+
+		/// <summary>
+		/// Updates the code system.
+		/// </summary>
+		/// <param name="codeSystemId">The code system identifier.</param>
+		/// <param name="codeSystem">The code system.</param>
+		/// <returns>Return the updated code system.</returns>
+		public CodeSystem UpdateCodeSystem(string codeSystemId, CodeSystem codeSystem)
+		{
+			return this.Client.Put<CodeSystem, CodeSystem>($"codeSystem/{codeSystemId}", this.Client.Accept, codeSystem);
+		}
+
+		/// <summary>
 		/// Updates a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be updated.</param>
@@ -581,17 +671,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return this.Client.Put<SecurityDeviceInfo, SecurityDeviceInfo>($"device/{deviceId}", this.Client.Accept, deviceInfo);
 		}
-
-		/// <summary>
-		/// Updates an assigning authority.
-		/// </summary>
-		/// <param name="assigningAuthorityId">The id of the assigning authority to be updated.</param>
-		/// <param name="assigningAuthorityInfo">The assigning authority info containing the updated information.</param>
-		/// <returns>Returns the updated assigning authority.</returns>
-		public AssigningAuthorityInfo UpdateAssigningAuthority(string assigningAuthorityId, AssigningAuthorityInfo assigningAuthorityInfo)
-        {
-            return this.Client.Put<AssigningAuthorityInfo, AssigningAuthorityInfo>($"assigningAuthority/{assigningAuthorityId}", this.Client.Accept, assigningAuthorityInfo);
-        }
 
 		/// <summary>
 		/// Updates a role.
@@ -613,32 +692,6 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SecurityUserInfo UpdateUser(Guid id, SecurityUserInfo user)
 		{
 			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>($"user/{id}", this.Client.Accept, user);
-		}
-
-        /// <summary>
-        /// Gets a list of two-factor mechanisms
-        /// </summary>
-        public AmiCollection<TfaMechanismInfo> GetTwoFactorMechanisms()
-        {
-            return this.Client.Get<AmiCollection<TfaMechanismInfo>>("tfa", null);
-        }
-
-        /// <summary>
-        /// Create security password reset request
-        /// </summary>
-        public void SendTfaSecret(TfaRequestInfo resetInfo)
-        {
-            this.Client.Post<TfaRequestInfo, object>("tfa", this.Client.Accept, resetInfo);
-        }
-
-		/// <summary>
-		/// Submits a diagnostic report.
-		/// </summary>
-		/// <param name="report">The diagnostic report.</param>
-		/// <returns>Returns the submitted diagnostic report.</returns>
-		public DiagnosticReport SubmitDiagnosticReport(DiagnosticReport report)
-		{
-			return this.Client.Post<DiagnosticReport, DiagnosticReport>(string.Format("sherlock"), this.Client.Accept, report);
 		}
 	}
 }
