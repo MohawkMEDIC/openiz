@@ -224,7 +224,7 @@ namespace OpenIZ.OrmLite
                         var subTableColumn = linkColumn;
                         if (linkColumn == null)
                         {
-                            var tableWithJoin = scopedTables.Select(o => o.AssociationWith(subTableMap)).FirstOrDefault();
+                            var tableWithJoin = scopedTables.Select(o => o.AssociationWith(subTableMap)).FirstOrDefault(o=>o != null);
                             linkColumn = tableWithJoin.Columns.SingleOrDefault(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
                             var targetColumn = tableWithJoin.Columns.SingleOrDefault(o => o.ForeignKey.Table == subTableMap.OrmType);
                             subTableColumn = subTableMap.GetColumn(targetColumn.ForeignKey.Column);

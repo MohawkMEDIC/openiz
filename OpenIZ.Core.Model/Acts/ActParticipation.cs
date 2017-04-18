@@ -245,6 +245,9 @@ namespace OpenIZ.Core.Model.Acts
             return this.Quantity > 0;
         }
 
-        
+        /// <summary>
+        /// Should serialize act key
+        /// </summary>
+        public bool ShouldSerializeActKey() => ActKey.HasValue;
     }
 }

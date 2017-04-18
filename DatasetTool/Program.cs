@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OizDevTool
@@ -58,7 +59,45 @@ namespace OizDevTool
                         if (operation == null)
                             Console.WriteLine("Tool {0} does not have operation named {1}", consoleParms.ToolName, consoleParms.OperationName);
                         else
-                            operation.Invoke(null, new Object[] { args });
+                        {
+                            bool exitDoodad = false;
+                            try
+                            {
+                                Console.CursorVisible = false;
+                                // Draws a doo-dad on the screen
+                                Task<Action> doodadTask = new Task<Action>(() =>
+                                {
+                                    int cp = 0;
+                                    char[] b = { '|', '/', '-', '\\' };
+                                    int lastCursorTop = 0;
+                                    while (!exitDoodad)
+                                    {
+                                        if (Console.CursorTop == lastCursorTop)
+                                        {
+                                            Console.CursorLeft = 0;
+                                            Console.Write(b[cp++ % b.Length]);
+                                            Console.CursorLeft = 0;
+                                            Thread.Sleep(100);
+                                        }
+                                        else
+                                        {
+                                            lastCursorTop = Console.CursorTop;
+                                            Thread.Sleep(2000);
+                                        }
+                                    }
+                                    return null;
+                                });
+                                doodadTask.Start();
+                                operation.Invoke(null, new Object[] { args });
+
+                            }
+                            finally
+                            {
+                                Console.CursorVisible = true;
+
+                                exitDoodad = true;
+                            }
+                        }
                     }
                 }
 

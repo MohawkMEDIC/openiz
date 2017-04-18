@@ -15,15 +15,19 @@ using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
-
+using OpenIZ.Core.Services;
+using System.ComponentModel;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
     /// <summary>
     /// Bundle persistence service
     /// </summary>
-    public class BundlePersistenceService : AdoBasePersistenceService<Bundle>
+    public class BundlePersistenceService : AdoBasePersistenceService<Bundle>, IReportProgressChanged
     {
+        // Progress has changed
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+
         /// <summary>
         /// From model instance
         /// </summary>
@@ -39,8 +43,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Bundle InsertInternal(DataContext context, Bundle data, IPrincipal principal)
         {
             context.PrepareStatements = true;
-            foreach (var itm in data.Item)
+            for(int i  = 0; i < data.Item.Count; i++)
             {
+                var itm = data.Item[i];
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
                 var svc = ApplicationContext.Current.GetService(idp);
 				var method = "Insert";
@@ -50,9 +55,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 					method = "Update";
 				}
 
+                this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((int)(((float)i / data.Item.Count) * 100), itm));
+
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
 
-                itm.CopyObjectData(mi.Invoke(svc, new object[] { context, itm, principal }));
+                data.Item[i] = mi.Invoke(svc, new object[] { context, itm, principal }) as IdentifiedData;
             }
             return data;
         }

@@ -471,6 +471,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
 
+                    // Is there an obsoletion item already specified?
                     if ((count ?? 1000) > 25)
                         connection.PrepareStatements = true;
                     if (fastQuery)

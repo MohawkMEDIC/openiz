@@ -159,7 +159,7 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         public void Add(TEntity item)
         {
-            if(!this.IsReadOnly)
+            if(!this.IsReadOnly && item != null)
                 this.Ensure().Add(item);
         }
 

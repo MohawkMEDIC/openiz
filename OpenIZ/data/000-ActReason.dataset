@@ -32,7 +32,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-BROKE</mnemonic>
+      <mnemonic>REASON-Broken</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
       <referenceTerm>
@@ -74,7 +74,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-OSTOCK</mnemonic>
+      <mnemonic>REASON-OutOfStock</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -116,7 +116,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-EXPIRE</mnemonic>
+      <mnemonic>REASON-Expired</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
       <referenceTerm>
@@ -158,7 +158,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-PATCAR</mnemonic>
+      <mnemonic>REASON-PatientCare</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -200,7 +200,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-PREFUS</mnemonic>
+      <mnemonic>REASON-PatientRefused</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -242,7 +242,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-PPT</mnemonic>
+      <mnemonic>REASON-PerProtocol</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -284,7 +284,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-ALGINT</mnemonic>
+      <mnemonic>REASON-AllergyOrIntolerance</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -326,7 +326,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-AGE</mnemonic>
+      <mnemonic>REASON-AgeAlert</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -368,7 +368,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-PROFJ</mnemonic>
+      <mnemonic>REASON-ProfessionalJudgement</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -410,7 +410,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-RELIG</mnemonic>
+      <mnemonic>REASON-ReligiousObjection</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -452,7 +452,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-STRTLATE</mnemonic>
+      <mnemonic>REASON-StartedTooLate</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -491,7 +491,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-__VACSAF</mnemonic>
+      <mnemonic>REASON-VaccineSafety</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
       <referenceTerm>
@@ -532,7 +532,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-CSTORE</mnemonic>
+      <mnemonic>REASON-ColdStorageFailure</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
       <referenceTerm>
@@ -560,7 +560,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-PCOUNT</mnemonic>
+      <mnemonic>REASON-PhysicalCount</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
       <name>
@@ -581,7 +581,7 @@
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
-      <mnemonic>REASON-WASTE</mnemonic>
+      <mnemonic>REASON-Wasted</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
       <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
       <name>

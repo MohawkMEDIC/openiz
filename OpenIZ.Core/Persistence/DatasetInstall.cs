@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -97,6 +98,12 @@ namespace OpenIZ.Core.Persistence
         [XmlElement("Patient", typeof(Patient), Namespace = "http://openiz.org/model")]
         [XmlElement("Place", typeof(Place), Namespace = "http://openiz.org/model")]
         [XmlElement("Bundle", typeof(Bundle), Namespace = "http://openiz.org/model")]
+        [XmlElement("Act", typeof(Act), Namespace = "http://openiz.org/model")]
+        [XmlElement("SubstanceAdministration", typeof(SubstanceAdministration), Namespace = "http://openiz.org/model")]
+        [XmlElement("QuantityObservation", typeof(QuantityObservation), Namespace = "http://openiz.org/model")]
+        [XmlElement("CodedObservation", typeof(CodedObservation), Namespace = "http://openiz.org/model")]
+        [XmlElement("TextObservation", typeof(TextObservation), Namespace = "http://openiz.org/model")]
+        [XmlElement("PatientEncounter", typeof(PatientEncounter), Namespace = "http://openiz.org/model")]
         public IdentifiedData Element { get; set; }
 
         /// <summary>

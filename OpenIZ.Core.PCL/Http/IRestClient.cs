@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 using OpenIZ.Core.Http.Description;
+using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -27,7 +28,7 @@ namespace OpenIZ.Core.Http
 	/// <summary>
 	/// Represents a RESTFul client which encapsulates some of the functions of the request
 	/// </summary>
-	public interface IRestClient : IDisposable
+	public interface IRestClient : IDisposable, IReportProgressChanged
 	{
 		/// <summary>
 		/// Gets or sets the credentials to be used for this client
@@ -154,10 +155,6 @@ namespace OpenIZ.Core.Http
 		/// Fired after the request has been finished
 		/// </summary>
 		event EventHandler<RestResponseEventArgs> Responded;
-
-        /// <summary>
-        /// Fired when progress has changed
-        /// </summary>
-        event EventHandler<RestStatusEventArgs> ProgressChanged;
+        
 	}
 }

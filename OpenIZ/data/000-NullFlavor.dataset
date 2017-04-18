@@ -34,7 +34,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-AskedUnknown</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -76,7 +76,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-Derived</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -118,7 +118,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-Invalid</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -160,7 +160,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-Masked</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -202,7 +202,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-NotApplicable</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -244,7 +244,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-NotAsked</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -286,7 +286,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-Unavailable</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -328,7 +328,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-NoInformation</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -370,7 +370,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-NegativeInfinity</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -412,7 +412,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-Other</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -454,7 +454,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-PositiveInfinity</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -496,7 +496,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-SufficientQuantity</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -538,7 +538,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-Trace</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -580,7 +580,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-UnEncoded</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -622,7 +622,7 @@
       <isReadonly>false</isReadonly>
       <mnemonic>NullFlavor-Unknown</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <conceptClass>05ac7b93-1b1e-47dd-87dd-e56e353ecb94</conceptClass>
       <referenceTerm>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />

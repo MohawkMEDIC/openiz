@@ -22,6 +22,7 @@ using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Model.Query;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -54,14 +55,14 @@ namespace OpenIZ.Core.Http
         /// <summary>
         /// Progress has changed
         /// </summary>
-        public event EventHandler<RestStatusEventArgs> ProgressChanged;
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
         /// <summary>
         /// Fire that progress has changed
         /// </summary>
-        protected void FireProgressChanged(String method, String url, NameValueCollection query, String contentType, int status, float progress)
+        protected void FireProgressChanged(object state, float progress)
         {
-            RestStatusEventArgs e = new RestStatusEventArgs(method, url, query, contentType, null, status, progress);
+            ProgressChangedEventArgs e = new ProgressChangedEventArgs((int)(progress* 100), state);
             this.ProgressChanged?.Invoke(this, e);
         }
 
@@ -228,7 +229,7 @@ namespace OpenIZ.Core.Http
                                     br = httpStream.Read(buffer, 0, 2048);
                                     ms.Write(buffer, 0, br);
                                     // Raise event 
-                                    this.FireProgressChanged("GET", url, null, o.Result.ContentType, 200, ms.Length / (float)o.Result.ContentLength);
+                                    this.FireProgressChanged(o.Result.ContentType, ms.Length / (float)o.Result.ContentLength);
                                 }
                                 retVal = ms.ToArray();
                             }

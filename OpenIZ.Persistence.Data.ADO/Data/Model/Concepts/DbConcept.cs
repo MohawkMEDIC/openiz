@@ -29,6 +29,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Concepts
 	/// Physical data layer implemntation of concept
 	/// </summary>
 	[Table("cd_tbl")]
+    [AssociativeTable(typeof(DbConceptSet), typeof(DbConceptSetConceptAssociation))]
 	public class DbConcept : DbIdentified, IDbReadonly
 	{
 

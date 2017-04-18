@@ -90,7 +90,7 @@ namespace OpenIZ.OrmLite
                     return this.VisitUnary((UnaryExpression)node);
 
                 default:
-                    return this.Visit(node);
+                    return base.Visit(node);
             }
         }
 

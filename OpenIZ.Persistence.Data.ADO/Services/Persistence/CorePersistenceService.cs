@@ -151,6 +151,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     return resultKeys.Select(p => p.Id).OfType<Object>();
                 }
 
+                // Is obsoletion time already specified?
+                if (!query.ToString().Contains("ObsoletionTime") && typeof(BaseEntityData).IsAssignableFrom(typeof(TModel)))
+                {
+                    var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(query.Parameters[0], typeof(TModel).GetProperty(nameof(BaseEntityData.ObsoletionTime))), Expression.Constant(null));
+                    query = Expression.Lambda<Func<TModel, bool>>(Expression.MakeBinary(ExpressionType.AndAlso, obsoletionReference, query.Body), query.Parameters);
+                }
+
                 // Domain query
                 SqlStatement domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom();
                 var expression = m_mapper.MapModelExpression<TModel, TDomain>(query, false);
