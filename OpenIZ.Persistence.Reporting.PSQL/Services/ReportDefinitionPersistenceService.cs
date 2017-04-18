@@ -55,7 +55,28 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(PSQL.Model.ReportDefinition) } to { nameof(ReportDefinition) }");
 
-			return ModelMapper.MapModelInstance<ReportDefinition, PSQL.Model.ReportDefinition>(modelInstance);
+			return base.FromModelInstance(modelInstance, context, principal);
+		}
+
+		/// <summary>
+		/// Gets the specified model.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="key">The key.</param>
+		/// <param name="principal">The principal.</param>
+		/// <param name="loadFast">if set to <c>true</c> [load fast].</param>
+		/// <returns>Returns the model instance.</returns>
+		public override ReportDefinition Get(DataContext context, Guid key, IPrincipal principal, bool loadFast)
+		{
+			var reportDefinition = base.Get(context, key, principal, loadFast);
+
+			if (!loadFast)
+			{
+				var reportParameterPersistenceService = new ReportParameterPersistenceService();
+				reportDefinition.Parameters = context.Query<ReportParameter>(r => r.ReportId == key).Select(r => reportParameterPersistenceService.ToModelInstance(r, context, principal)).ToList();
+			}
+
+			return reportDefinition;
 		}
 
 		/// <summary>
@@ -111,7 +132,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportDefinition) } to { nameof(PSQL.Model.ReportDefinition) }");
 
-			return ModelMapper.MapDomainInstance<PSQL.Model.ReportDefinition, ReportDefinition>((PSQL.Model.ReportDefinition)domainInstance);
+			return base.ToModelInstance(domainInstance, context, principal);
 		}
 
 		/// <summary>
@@ -124,7 +145,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		/// <exception cref="System.InvalidOperationException">Domain instance must not be null</exception>
 		public override ReportDefinition UpdateInternal(DataContext context, ReportDefinition model, IPrincipal principal)
 		{
-			var domainInstance = this.FromModelInstance(model, context, principal) as Model.ReportDefinition;
+			var domainInstance = base.FromModelInstance(model, context, principal) as Model.ReportDefinition;
 
 			if (domainInstance == null)
 			{

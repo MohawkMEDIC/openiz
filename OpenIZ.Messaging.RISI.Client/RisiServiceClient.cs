@@ -22,6 +22,7 @@ using OpenIZ.Core.Http;
 using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model.RISI;
 using System;
+using System.IO;
 
 namespace OpenIZ.Messaging.RISI.Client
 {
@@ -217,9 +218,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
-		public byte[] GetReportSource(Guid id)
+		public Stream GetReportSource(Guid id)
 		{
-			return this.Client.Get<byte[]>($"report/{id}/source");
+			return new MemoryStream(this.Client.Get($"report/{id}/source"));
 		}
 
 		/// <summary>
@@ -231,7 +232,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <returns>Returns the report in raw format.</returns>
 		public byte[] RunReport(Guid id, string format, RisiCollection<ReportParameter> parameters)
 		{
-			return this.Client.Post<ReportParameter[], byte[]>($"report/{id}/{format}", this.Client.Accept, parameters.Items.ToArray());
+			return this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
 		}
 
 		/// <summary>

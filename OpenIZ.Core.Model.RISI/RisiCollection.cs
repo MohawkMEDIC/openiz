@@ -29,7 +29,15 @@ namespace OpenIZ.Core.Model.RISI
 	/// Represents a RISI collection.
 	/// </summary>
 	/// <typeparam name="T">The type of the collection.</typeparam>
-	[XmlType(Namespace = "http://openiz.org/risi")]
+	[XmlType("RisiCollection", Namespace = "http://openiz.org/risi")]
+	[XmlRoot("RisiCollection", Namespace = "http://openiz.org/model")]
+	[XmlInclude(typeof(ReportFormat))]
+	[XmlInclude(typeof(ParameterType))]
+	[XmlInclude(typeof(ReportParameter))]
+	[XmlInclude(typeof(ReportDefinition))]
+	[XmlInclude(typeof(AutoCompleteSourceDefinition))]
+	[XmlInclude(typeof(ListAutoCompleteSourceDefinition))]
+	[XmlInclude(typeof(QueryAutoCompleteSourceDefinition))]
 	[JsonObject(nameof(RisiCollection<T>))]
 	public class RisiCollection<T>
 	{

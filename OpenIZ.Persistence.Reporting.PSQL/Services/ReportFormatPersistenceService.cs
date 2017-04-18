@@ -25,6 +25,7 @@ using System.Linq;
 using System.Security.Principal;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.OrmLite;
 
@@ -52,7 +53,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(PSQL.Model.ReportFormat) } to { nameof(ReportFormat) }");
 
-			return ModelMapper.MapModelInstance<ReportFormat, PSQL.Model.ReportFormat>(modelInstance);
+			return base.FromModelInstance(modelInstance, context, principal);
 		}
 
 		/// <summary>
@@ -121,7 +122,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			this.traceSource.TraceEvent(TraceEventType.Verbose, 0, $"Mapping { nameof(ReportFormat) } to { nameof(PSQL.Model.ReportFormat) }");
 
-			return ModelMapper.MapDomainInstance<PSQL.Model.ReportFormat, ReportFormat>((PSQL.Model.ReportFormat)domainInstance);
+			return base.ToModelInstance(domainInstance, context, principal);
 		}
 	}
 }

@@ -373,13 +373,13 @@ namespace OpenIZ.Reporting.Jasper
 
 			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId);
 
+			int totalResults;
 			reportDefinition.Parameters = reportUnit.InputControlReferences.Select(i => this.LookupResource<InputControl>(i.Uri))
 													.Select(i => new ReportParameter
 													{
 														CorrelationId = i.Uri,
 														Description = i.Description,
-														//Key = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>()?.Query(r => r.CorrelationId == i.Uri, 0, 1, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault()?.Key,
-														Key = Guid.NewGuid(),
+														Key = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>()?.Query(r => r.CorrelationId == i.Uri, 0, 1, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault()?.Key,
 														IsNullable = i.Mandatory,
 														Name = i.Label,
 														ParameterTypeKey = ParameterTypeKeys.Object,
@@ -615,9 +615,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			var report = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId);
 
-			var reportSource = this.LookupReference<JrXmlFileReference>(report.JrXmlFileReference.Uri);
-
-			return this.ToByteArray(reportSource);
+			return client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{report.JrXmlFileReference.Uri}").Result.Content.ReadAsByteArrayAsync().Result;
 		}
 
 		/// <summary>
@@ -694,7 +692,6 @@ namespace OpenIZ.Reporting.Jasper
 		/// <param name="reportFormatId">The format of the report.</param>
 		/// <param name="parameters">The parameters of the report.</param>
 		/// <returns>Returns the raw report.</returns>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedClinicalData)]
 		public byte[] RunReport(Guid reportId, Guid reportFormatId, IEnumerable<ReportParameter> parameters)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
@@ -718,7 +715,7 @@ namespace OpenIZ.Reporting.Jasper
 				throw new InvalidOperationException($"Unable to locate report format using id: {reportFormatId}");
 			}
 
-			var reportDefinition = persistenceService.Get(new Identifier<Guid>(reportId), AuthenticationContext.Current.Principal, true);
+			var reportDefinition = persistenceService.Get(new Identifier<Guid>(reportId), AuthenticationContext.Current.Principal, false);
 
 			if (reportDefinition == null)
 			{
@@ -752,30 +749,10 @@ namespace OpenIZ.Reporting.Jasper
 
 			if (!response.IsSuccessStatusCode)
 			{
-				return null;
+				return new byte[0];
 			}
 
 			return response.Content.ReadAsByteArrayAsync().Result;
-		}
-
-		/// <summary>
-		/// Converts an <see cref="object"/> instance to a <see cref="byte"/> instance.
-		/// </summary>
-		/// <param name="content">The content.</param>
-		/// <returns>System.Byte[].</returns>
-		protected byte[] ToByteArray(object content)
-		{
-			byte[] value = null;
-
-			var binaryFormatter = new BinaryFormatter();
-
-			using (var memoryStream = new MemoryStream())
-			{
-				binaryFormatter.Serialize(memoryStream, content);
-				value = memoryStream.ToArray();
-			}
-
-			return value;
 		}
 
 		/// <summary>

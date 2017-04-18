@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.RISI;
 using OpenIZ.Reporting.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 using System.Linq;
 
@@ -244,7 +245,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
 		/// <returns>Returns the report source.</returns>
 		/// <exception cref="System.ArgumentException">If the id is not in a valid format.</exception>
-		public byte[] GetReportSource(string id)
+		public Stream GetReportSource(string id)
 		{
 			var key = Guid.Empty;
 
@@ -253,7 +254,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportExecutor.GetReportSource(key);
+			return new MemoryStream(this.reportExecutor.GetReportSource(key));
 		}
 
 		/// <summary>
@@ -264,7 +265,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
 		/// <exception cref="System.ArgumentException">If the id or format is not in a valid format.</exception>
-		public byte[] RunReport(string id, string format, List<ReportParameter> parameters)
+		public byte[] RunReport(string id, string format, RisiCollection<ReportParameter> parameters)
 		{
 			var reportId = Guid.Empty;
 			var formatId = Guid.Empty;
@@ -279,7 +280,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportExecutor.RunReport(reportId, formatId, parameters);
+			return this.reportExecutor.RunReport(reportId, formatId, parameters.Items);
 		}
 
 		/// <summary>
