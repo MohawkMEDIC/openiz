@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.AMI.BusinessRules;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using System;
@@ -36,7 +37,6 @@ using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
-using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -45,6 +45,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	/// </summary>
 	[ServiceContract(ConfigurationName = "AMI_1.0", Name = "AMI"), XmlSerializerFormat]
 	[ServiceKnownType(typeof(Entity))]
+	[ServiceKnownType(typeof(ExtensionType))]
 	[ServiceKnownType(typeof(AlertMessage))]
 	[ServiceKnownType(typeof(AlertMessageInfo))]
 	[ServiceKnownType(typeof(SecurityApplication))]
@@ -78,6 +79,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(AssigningAuthorityInfo))]
 	[ServiceKnownType(typeof(CodeSystem))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<ExtensionType>))]
 	[ServiceKnownType(typeof(AmiCollection<AppletManifestInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityApplicationInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityDeviceInfo>))]
@@ -123,7 +125,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Creates an applet.
 		/// </summary>
-		/// <param name="appletManifestInfo">The applet manifest info to be created.</param>
+		/// <param name="pakData">The pak data.</param>
 		/// <returns>Returns the created applet manifest info.</returns>
 		[WebInvoke(UriTemplate = "/applet", Method = "POST")]
 		AppletManifestInfo CreateApplet(Stream pakData);
@@ -167,6 +169,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the created diagnostic report.</returns>
 		[WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
+
+		/// <summary>
+		/// Creates the type of the extension.
+		/// </summary>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the created extension type.</returns>
+		[WebInvoke(UriTemplate = "/extensionType", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		ExtensionType CreateExtensionType(ExtensionType extensionType);
 
 		/// <summary>
 		/// Creates a security policy.
@@ -234,6 +244,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		CodeSystem DeleteCodeSystem(string codeSystemId);
 
 		/// <summary>
+		/// Deletes the type of the extension.
+		/// </summary>
+		/// <param name="extensionTypeId">The extension type identifier.</param>
+		/// <returns>Returns the deleted extension type.</returns>
+		[WebInvoke(UriTemplate = "/extensionType/{extensionTypeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		ExtensionType DeleteExtensionType(string extensionTypeId);
+
+		/// <summary>
 		/// Deletes a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be deleted.</param>
@@ -266,6 +284,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		SecurityUserInfo DeleteUser(string userId);
 
 		/// <summary>
+		/// Downloads the applet.
+		/// </summary>
+		/// <param name="appletId">The applet identifier.</param>
+		/// <returns>Stream.</returns>
+		[WebGet(UriTemplate = "/applet/{appletId}/pak")]
+		Stream DownloadApplet(string appletId);
+
+		/// <summary>
 		/// Gets a specific alert.
 		/// </summary>
 		/// <param name="alertId">The id of the alert to retrieve.</param>
@@ -289,26 +315,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AppletManifestInfo GetApplet(string appletId);
 
 		/// <summary>
-		/// Downloads the applet.
+		/// Gets a list of applets for a specific query.
 		/// </summary>
-		/// <param name="appletId">The applet identifier.</param>
-		/// <returns>Stream.</returns>
-		[WebGet(UriTemplate = "/applet/{appletId}/pak")]
-        Stream DownloadApplet(string appletId);
-
-        /// <summary>
-        /// Return just the headers of the applet id
-        /// </summary>
-        [WebInvoke(Method = "HEAD", UriTemplate = "/applet/{appletId}")]
-        void HeadApplet(string appletId);
-
-        /// <summary>
-        /// Gets a list of applets for a specific query.
-        /// </summary>
-        /// <returns>Returns a list of applet which match the specific query.</returns>
-        [WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
+		/// <returns>Returns a list of applet which match the specific query.</returns>
+		[WebGet(UriTemplate = "/applet", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<AppletManifestInfo> GetApplets();
-        
+
 		/// <summary>
 		/// Gets a specific application.
 		/// </summary>
@@ -407,6 +419,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		AmiCollection<SecurityDeviceInfo> GetDevices();
 
 		/// <summary>
+		/// Gets the type of the extension.
+		/// </summary>
+		/// <param name="extensionTypeId">The extension type identifier.</param>
+		/// <returns>Returns the extension type, or null if no extension type is found.</returns>
+		[WebGet(UriTemplate = "/extensionType/{extensionTypeId}", BodyStyle = WebMessageBodyStyle.Bare)]
+		ExtensionType GetExtensionType(string extensionTypeId);
+
+		/// <summary>
+		/// Gets the extension types.
+		/// </summary>
+		/// <returns>Returns a list of extension types.</returns>
+		[WebGet(UriTemplate = "/extensionType", BodyStyle = WebMessageBodyStyle.Bare)]
+		AmiCollection<ExtensionType> GetExtensionTypes();
+
+		/// <summary>
 		/// Gets a list of policies.
 		/// </summary>
 		/// <returns>Returns a list of policies.</returns>
@@ -465,6 +492,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns a list of security users.</returns>
 		[WebGet(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare)]
 		AmiCollection<SecurityUserInfo> GetUsers();
+
+		/// <summary>
+		/// Return just the headers of the applet id
+		/// </summary>
+		[WebInvoke(Method = "HEAD", UriTemplate = "/applet/{appletId}")]
+		void HeadApplet(string appletId);
 
 		/// <summary>
 		/// Gets options for the AMI service.
@@ -549,6 +582,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the updated device.</returns>
 		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo);
+
+		/// <summary>
+		/// Updates the type of the extension.
+		/// </summary>
+		/// <param name="extensionTypeId">The extension type identifier.</param>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the updated extension type.</returns>
+		[WebInvoke(UriTemplate = "/extensionType/{extensionTypeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		ExtensionType UpdateExtensionType(string extensionTypeId, ExtensionType extensionType);
 
 		/// <summary>
 		/// Updates a policy.

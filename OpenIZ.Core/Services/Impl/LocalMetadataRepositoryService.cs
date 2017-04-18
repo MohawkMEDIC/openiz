@@ -73,6 +73,42 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Creates the type of the extension.
+		/// </summary>
+		/// <param name="extensionType">Type of the extension.</param>sd
+		/// <returns>Returns the created extension type.s</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
+		public ExtensionType CreateExtensionType(ExtensionType extensionType)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ExtensionType>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ExtensionType>)}");
+			}
+
+			return persistenceService.Insert(extensionType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
+		/// Deletes the type of the extension.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Returns the deleted extension type.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
+		public ExtensionType DeleteExtensionType(Guid id)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ExtensionType>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ExtensionType>)}");
+			}
+
+			return persistenceService.Obsolete(this.GetExtensionType(id), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
 		/// Find an assigning authority
 		/// </summary>
 		/// <param name="query">The query.</param>
@@ -271,14 +307,41 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
 		public ExtensionType GetExtensionType(Uri value)
 		{
-			var extensionTypePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ExtensionType>>();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ExtensionType>>();
 
-			if (extensionTypePersistenceService == null)
+			if (persistenceService == null)
 			{
 				throw new InvalidOperationException($"Unable to locate persistence service:{nameof(IDataPersistenceService<ExtensionType>)}");
 			}
 
-			return extensionTypePersistenceService.Query(e => e.Name == value.ToString(), AuthenticationContext.Current.Principal).FirstOrDefault();
+			return persistenceService.Query(e => e.Name == value.ToString(), AuthenticationContext.Current.Principal).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Updates the type of the extension.
+		/// </summary>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the updated extension type.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
+		public ExtensionType UpdateExtensionType(ExtensionType extensionType)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ExtensionType>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service:{nameof(IDataPersistenceService<ExtensionType>)}");
+			}
+
+			try
+			{
+				extensionType = persistenceService.Update(extensionType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+			catch (DataPersistenceException e)
+			{
+				extensionType = persistenceService.Insert(extensionType, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+
+			return extensionType;
 		}
 
 		/// <summary>

@@ -148,6 +148,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Creates the type of the extension.
+		/// </summary>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the created extension type.</returns>
+		public ExtensionType CreateExtensionType(ExtensionType extensionType)
+		{
+			return this.Client.Post<ExtensionType, ExtensionType>("extensionType", this.Client.Accept, extensionType);
+		}
+
+		/// <summary>
 		/// Creates a policy in the IMS.
 		/// </summary>
 		/// <param name="policy">The policy to be created.</param>
@@ -236,6 +246,16 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SecurityDeviceInfo DeleteDevice(string id)
 		{
 			return this.Client.Delete<SecurityDeviceInfo>($"device/{id}");
+		}
+
+		/// <summary>
+		/// Deletes the type of the extension.
+		/// </summary>
+		/// <param name="extensionTypeId">The extension type identifier.</param>
+		/// <returns>Returns the deleted extension type.</returns>
+		public ExtensionType DeleteExtensionType(string extensionTypeId)
+		{
+			return this.Client.Delete<ExtensionType>($"extensionType/{extensionTypeId}");
 		}
 
 		/// <summary>
@@ -475,6 +495,26 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets the type of the extension.
+		/// </summary>
+		/// <param name="extensionTypeId">The extension type identifier.</param>
+		/// <returns>Returns the extension type, or null if no extension type is found.</returns>
+		public ExtensionType GetExtensionType(string extensionTypeId)
+		{
+			return this.Client.Get<ExtensionType>($"extensionType/{extensionTypeId}");
+		}
+
+		/// <summary>
+		/// Gets the extension types.
+		/// </summary>
+		/// <param name="expression">The expression.</param>
+		/// <returns>Returns a list of extension types.</returns>
+		public AmiCollection<ExtensionType> GetExtensionTypes(Expression<Func<ExtensionType, bool>> expression)
+		{
+			return this.Client.Get<AmiCollection<ExtensionType>>("extensionType", QueryExpressionBuilder.BuildQuery(expression).ToArray());
+		}
+
+		/// <summary>
 		/// Retrieves a specified policy.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the policy.</param>
@@ -670,6 +710,17 @@ namespace OpenIZ.Messaging.AMI.Client
 		public SecurityDeviceInfo UpdateDevice(string deviceId, SecurityDeviceInfo deviceInfo)
 		{
 			return this.Client.Put<SecurityDeviceInfo, SecurityDeviceInfo>($"device/{deviceId}", this.Client.Accept, deviceInfo);
+		}
+
+		/// <summary>
+		/// Updates the type of the extension.
+		/// </summary>
+		/// <param name="extensionTypeId">The extension type identifier.</param>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the updated extension type.</returns>
+		public ExtensionType UpdateExtensionType(string extensionTypeId, ExtensionType extensionType)
+		{
+			return this.Client.Put<ExtensionType, ExtensionType>($"extensionType/{extensionTypeId}", this.Client.Accept, extensionType);
 		}
 
 		/// <summary>

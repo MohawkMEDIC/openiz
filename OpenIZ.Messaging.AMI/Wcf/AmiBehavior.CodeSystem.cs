@@ -143,9 +143,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="codeSystemId">The code system identifier.</param>
 		/// <param name="codeSystem">The code system.</param>
 		/// <returns>Return the updated code system.</returns>
-		/// <exception cref="System.InvalidOperationException">IMetadataRepositoryService</exception>
+		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
 		public CodeSystem UpdateCodeSystem(string codeSystemId, CodeSystem codeSystem)
 		{
+			Guid id;
+
+			if (!Guid.TryParse(codeSystemId, out id))
+			{
+				throw new ArgumentException($"{nameof(codeSystemId)} must be a valid GUID");
+			}
+
+			if (id != codeSystem.Key)
+			{
+				throw new ArgumentException($"Unable to update extension type using id: {id}, and id: {codeSystem.Key}");
+			}
+
 			var metadataService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
 
 			if (metadataService == null)

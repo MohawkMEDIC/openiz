@@ -46,6 +46,20 @@ namespace OpenIZ.Core.Services
 		CodeSystem DeleteCodeSystem(Guid key);
 
 		/// <summary>
+		/// Creates the type of the extension.
+		/// </summary>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the created extension type.s</returns>
+		ExtensionType CreateExtensionType(ExtensionType extensionType);
+
+		/// <summary>
+		/// Deletes the type of the extension.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Returns the deleted extension type.</returns>
+		ExtensionType DeleteExtensionType(Guid id);
+
+		/// <summary>
 		/// Finds the specified assigning authority
 		/// </summary>
 		/// <param name="expression">The expression.</param>
@@ -135,6 +149,13 @@ namespace OpenIZ.Core.Services
 		/// <param name="value">The URI of the extension.</param>
 		/// <returns>Returns an extension type or null of no extension type is found.</returns>
 		ExtensionType GetExtensionType(Uri value);
+
+		/// <summary>
+		/// Updates the type of the extension.
+		/// </summary>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the updated extension type.</returns>
+		ExtensionType UpdateExtensionType(ExtensionType extensionType);
 
 		/// <summary>
 		/// Updates the code system.
