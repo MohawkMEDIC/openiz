@@ -35,8 +35,6 @@ CREATE TABLE report_format
 	name varchar(64) NOT NULL
 );
 
-ALTER TABLE public.report_format OWNER TO oiz_reporting;
-
 -- @TABLE
 -- REPORT DEFINITION TABLE
 --
@@ -52,8 +50,6 @@ CREATE TABLE report_definition
 	name varchar(256) NOT NULL
 );
 
-ALTER TABLE public.report_definition OWNER TO oiz_reporting;
-
 -- @TABLE
 -- PARAMETER TYPE TABLE
 -- 
@@ -66,8 +62,6 @@ CREATE TABLE parameter_type
 	type varchar NOT NULL,
 	values_provider varchar
 );
-
-ALTER TABLE public.parameter_type OWNER TO oiz_reporting;
 
 -- @TABLE
 -- REPORT PARAMETER TABLE
@@ -88,8 +82,6 @@ CREATE TABLE report_parameter
 	value bytea NULL
 );
 
-ALTER TABLE public.report_parameter OWNER TO oiz_reporting;
-
 -- @TABLE
 -- REPORT DEFINITION REPORT FORMAT ASSOCIATION TABLE
 -- 
@@ -101,5 +93,3 @@ CREATE TABLE report_definition_report_format_association
 	report_format_id uuid REFERENCES report_format ON UPDATE NO ACTION ON DELETE NO ACTION,
 	CONSTRAINT report_definition_report_format_association_key PRIMARY KEY (report_definition_id, report_format_id)
 );
-
-ALTER TABLE public.report_definition_report_format_association OWNER TO oiz_reporting;

@@ -254,7 +254,7 @@ namespace OpenIZ.Core.Model.Map
                     }
                     else
                     {
-                        Debug.WriteLine(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
+                        //Debug.WriteLine(String.Format("Cannot find property information for {0}({1}).{2}", memberExpression.Expression, memberExpression.Expression.Type.Name, memberExpression.Member.Name));
                         return null;
                     }
                 }

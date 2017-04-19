@@ -4,13 +4,13 @@
 
 -- VIEW FOR CURRENT VERSIONS OF ENTITIES
 CREATE OR REPLACE VIEW ENT_CUR_VRSN_VW AS
-	SELECT * FROM ENT_VRSN_TBL INNER JOIN ENT_TBL USING (ENT_ID)
-	WHERE OBSLT_UTC IS NULL;
+	SELECT ENT_TBL.CLS_CD_ID, ENT_TBL.DTR_CD_ID, TPL_ID, ENT_VRSN_TBL.*, STS_CD.MNEMONIC AS STS_CS FROM ENT_VRSN_TBL INNER JOIN ENT_TBL USING (ENT_ID)
+	INNER JOIN CD_CUR_VRSN_VW AS STS_CD on (ENT_VRSN_TBL.STS_CD_ID = STS_CD.CD_ID)
+	WHERE ENT_VRSN_TBL.OBSLT_UTC IS NULL;
 
 -- VIEW FOR CURRENT VERSION OF PERSONS
 CREATE OR REPLACE VIEW PSN_CUR_VRSN_VW AS
-	SELECT ENT_CUR_VRSN_VW.*, PSN_TBL.DOB, PSN_TBL.DOB_PREC, STS_CD.MNEMONIC AS STS_CS FROM ENT_CUR_VRSN_VW INNER JOIN PSN_TBL USING (ENT_VRSN_ID)
-	INNER JOIN CD_CUR_VRSN_VW AS STS_CD on (ENT_CUR_VRSN_VW.STS_CD_ID = STS_CD.CD_ID);
+	SELECT ENT_CUR_VRSN_VW.*, PSN_TBL.DOB, PSN_TBL.DOB_PREC FROM ENT_CUR_VRSN_VW INNER JOIN PSN_TBL USING (ENT_VRSN_ID);
 	
 -- VIEW FOR CURRENT VERSION OF PATIENTS
 CREATE OR REPLACE VIEW PAT_CUR_VRSN_VW AS 
@@ -79,3 +79,30 @@ CREATE OR REPLACE VIEW ENT_CUR_ID_VW AS
 	SELECT ent_id_tbl.ent_id, id_val, aut_name, oid, nsid FROM 
 		ENT_ID_TBL INNER JOIN ASGN_AUT_TBL USING(AUT_ID)
 		WHERE ENT_ID_TBL.OBSLT_VRSN_SEQ_ID IS NULL;
+
+-- ACT TABLE
+CREATE OR REPLACE VIEW ACT_CUR_VRSN_VW AS 
+	SELECT * FROM ACT_VRSN_TBL NATURAL JOIN ACT_TBL 
+	WHERE OBSLT_UTC IS NULL;
+
+select * from cd_set_mem_vw where cd_mnemonic = 'AccountManagement' or cd_mnemonic = 'Consumable'
+
+WITH cons_ptcpt AS (
+	select * from act_ptcpt_tbl 
+SELECT * 
+	FROM act_cur_vrsn_vw
+	
+
+WITH manuf_rel AS (
+	select src_ent_id, trg_ent_id as ent_id, ent_cur_name_vw.val from ent_rel_tbl inner join ent_cur_name_vw on (ent_cur_name_vw.ent_id = src_ent_id) where rel_typ_cd_id = '639b4b8f-afd3-4963-9e79-ef0d3928796a' and obslt_vrsn_seq_id is null
+), mmat_rel AS (
+	select src_ent_id, trg_ent_id from ent_rel_tbl where rel_typ_cd_id = '6780df3b-afbd-44a3-8627-cbb3dc2f02f6' and obslt_vrsn_seq_id is null
+), gtin_rel AS (
+	select * from ent_cur_id_vw where nsid = 'GTIN'
+)
+SELECT mmat_cur_vrsn_vw.*, typ.mnemonic as type_cs, manuf_rel.val AS manufacturer, mmat_rel.src_ent_id, gtin_rel.id_val as gtin
+	FROM MMAT_CUR_VRSN_VW 
+	INNER JOIN CD_CUR_VRSN_VW AS TYP ON (TYP.CD_ID = MMAT_CUR_VRSN_VW.TYP_CD_ID)
+	INNER JOIN manuf_rel ON (mmat_cur_vrsn_vw.ent_id = manuf_rel.ent_id)
+	INNER JOIN mmat_rel ON (mmat_rel.trg_ent_id = manuf_rel.ent_id)
+	LEFT JOIN gtin_rel ON (mmat_cur_vrsn_vw.ent_id = gtin_rel.ent_id)
