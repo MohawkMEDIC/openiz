@@ -633,7 +633,25 @@ namespace OpenIZ.Core.Services.Impl
 			return persistenceService.Obsolete(new ConceptSet { Key = key }, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
-        /// <summary>
+		/// <summary>
+		/// Obsoletes the reference term.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the obsoleted reference term.</returns>
+		/// <exception cref="System.InvalidOperationException">Unable to locate persistence service</exception>
+		public ReferenceTerm ObsoleteReferenceTerm(Guid key)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReferenceTerm>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ReferenceTerm>)} not found");
+			}
+
+			return persistenceService.Obsolete(this.GetReferenceTerm(key), AuthenticationContext.Current.Principal, TransactionMode.Commit);
+		}
+
+		/// <summary>
         /// Insert or updates a concept.
         /// </summary>
         /// <param name="concept">The concept to be saved.</param>

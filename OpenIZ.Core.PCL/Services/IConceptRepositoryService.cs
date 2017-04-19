@@ -276,6 +276,13 @@ namespace OpenIZ.Core.Services
 		ConceptSet ObsoleteConceptSet(Guid key);
 
 		/// <summary>
+		/// Obsoletes the reference term.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the obsoleted reference term.</returns>
+		ReferenceTerm ObsoleteReferenceTerm(Guid key);
+
+		/// <summary>
 		/// Insert or updates a concept.
 		/// </summary>
 		/// <param name="concept">The concept to be saved.</param>

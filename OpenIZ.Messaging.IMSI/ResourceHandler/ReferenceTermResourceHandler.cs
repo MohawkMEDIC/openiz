@@ -119,7 +119,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Obsolete(Guid key)
 		{
-			return this.repository.GetReferenceTerm(key);
+			return this.repository.ObsoleteReferenceTerm(key);
 		}
 
 		/// <summary>

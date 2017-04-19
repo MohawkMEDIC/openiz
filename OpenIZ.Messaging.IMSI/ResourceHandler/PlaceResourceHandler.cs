@@ -39,7 +39,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Create the specified place
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
         public override IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
             return base.Create(data, updateIfExists);
