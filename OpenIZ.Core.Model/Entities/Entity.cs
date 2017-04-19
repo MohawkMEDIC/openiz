@@ -466,42 +466,42 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Should serialize identifiers
         /// </summary>
-        public bool ShouldSerializeIdentifiers() => this.Identifiers.Count > 0;
+        public bool ShouldSerializeIdentifiers() => this.Identifiers?.Count > 0;
 
         /// <summary>
         /// Should serialize Names
         /// </summary>
-        public bool ShouldSerializeNames() => this.Names.Count > 0;
+        public bool ShouldSerializeNames() => this.Names?.Count > 0;
 
         /// <summary>
         /// Should serialize addresses
         /// </summary>
-        public bool ShouldSerializeAddresses () => this.Addresses.Count > 0;
+        public bool ShouldSerializeAddresses () => this.Addresses?.Count > 0;
 
         /// <summary>
         /// Should serialize participations
         /// </summary>
-        public bool ShouldSerializeParticipations() => this.Participations.Count > 0;
+        public bool ShouldSerializeParticipations() => this.Participations?.Count > 0;
 
         /// <summary>
         /// Should serialize tags
         /// </summary>
-        public bool ShouldSerializeTags () =>this.Tags.Count > 0;
+        public bool ShouldSerializeTags () =>this.Tags?.Count > 0;
 
         /// <summary>
         /// Shoudl serialize extensions
         /// </summary>
-        public bool ShouldSerializeExtensions() =>this.Extensions.Count > 0;
+        public bool ShouldSerializeExtensions() =>this.Extensions?.Count > 0;
 
         /// <summary>
         /// Should serialize notes
         /// </summary>
-        public bool ShouldSerializeNotes() => this.Notes.Count > 0;
+        public bool ShouldSerializeNotes() => this.Notes?.Count > 0;
 
         /// <summary>
         /// Should serialize telecoms
         /// </summary>
-        public bool ShouldSerializeTelecoms() => this.Telecoms.Count > 0;
+        public bool ShouldSerializeTelecoms() => this.Telecoms?.Count > 0;
         
     }
 }
