@@ -1,23 +1,25 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-2
  */
+
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Map;
 using System;
 using System.Collections;
@@ -25,285 +27,302 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model
 {
-    /// <summary>
-    /// Reflection tools
-    /// </summary>
-    public static class ExtensionMethods
-    {
+	/// <summary>
+	/// Reflection tools
+	/// </summary>
+	public static class ExtensionMethods
+	{
+		// Property cache
+		private static Dictionary<String, PropertyInfo> s_propertyCache = new Dictionary<string, PropertyInfo>();
 
-        /// <summary>
-        /// The purpose of this method is to convert object <paramref name="me"/> to <typeparamref name="TReturn"/>. Why? 
-        /// Because if you have an instance of Act that actually needs to be a SubstanceAdministration we can't just cast
-        /// so we have to copy.
-        /// </summary>
-        public static TReturn Convert<TReturn>(this Object me) where TReturn : new()
-        {
+		private static Dictionary<Type, PropertyInfo[]> s_typePropertyCache = new Dictionary<Type, PropertyInfo[]>();
 
-            if (me is TReturn) return (TReturn)me;
-            else
-            {
-                var retVal = new TReturn();
-                retVal.CopyObjectData(me);
-                return retVal;
-            }
-        }
+		/// <summary>
+		/// Create aggregation functions
+		/// </summary>
+		public static Expression Aggregate(this Expression me, AggregationFunctionType aggregation)
+		{
+			var aggregateMethod = typeof(Enumerable).GetGenericMethod(aggregation.ToString(),
+			   new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0] },
+			   new Type[] { me.Type });
+			return Expression.Call(aggregateMethod as MethodInfo, me);
+		}
 
-        // Property cache
-        private static Dictionary<String, PropertyInfo> s_propertyCache = new Dictionary<string, PropertyInfo>();
+		/// <summary>
+		/// The purpose of this method is to convert object <paramref name="me"/> to <typeparamref name="TReturn"/>. Why?
+		/// Because if you have an instance of Act that actually needs to be a SubstanceAdministration we can't just cast
+		/// so we have to copy.
+		/// </summary>
+		public static TReturn Convert<TReturn>(this Object me) where TReturn : new()
+		{
+			if (me is TReturn) return (TReturn)me;
+			else
+			{
+				var retVal = new TReturn();
+				retVal.CopyObjectData(me);
+				return retVal;
+			}
+		}
 
-        /// <summary>
-        /// Compute a basic hash string
-        /// </summary>
-        public static String HashCode(this byte[] me)
-        {
-            long hash = 1009;
-            foreach (var b in me)
-                hash = ((hash << 5) + hash) ^ b;
-            return BitConverter.ToString(BitConverter.GetBytes(hash)).Replace("-", "");
-        }
+		/// <summary>
+		/// Update property data if required
+		/// </summary>
+		public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
+		{
+			if (toEntity == null)
+				throw new ArgumentNullException(nameof(toEntity));
+			else if (fromEntity == null)
+				throw new ArgumentNullException(nameof(fromEntity));
+			else if (!fromEntity.GetType().GetTypeInfo().IsAssignableFrom(toEntity.GetType().GetTypeInfo()))
+				throw new ArgumentException("Type mismatch", nameof(fromEntity));
 
-        /// <summary>
-        /// Determine semantic equality of each item in me and other
-        /// </summary>
-        public static bool SemanticEquals<TEntity>(this IEnumerable<TEntity> me, IEnumerable<TEntity> other) where TEntity : IdentifiedData
-        {
+			PropertyInfo[] properties = null;
+			if (!s_typePropertyCache.TryGetValue(toEntity.GetType(), out properties))
+			{
+				properties = toEntity.GetType().GetRuntimeProperties().Where(destinationPi => destinationPi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
+					destinationPi.CanWrite).ToArray();
+				lock (s_typePropertyCache)
+					if (!s_typePropertyCache.ContainsKey(toEntity.GetType()))
+						s_typePropertyCache.Add(toEntity.GetType(), properties);
+			}
+			foreach (var destinationPi in properties.AsParallel())
+			{
+				var sourcePi = fromEntity.GetType().GetRuntimeProperty(destinationPi.Name);
+				// Skip properties no in the source
+				if (sourcePi == null)
+					continue;
 
-            if (other == null) return false;
-            bool equals = me.Count() == other.Count();
-            foreach (var itm in me)
-                equals &= other.Any(o => o.SemanticEquals(itm));
-            foreach (var itm in other)
-                equals &= me.Any(o => o.SemanticEquals(itm));
+				// Skip data ignore
+				if (destinationPi.PropertyType.GetTypeInfo().IsGenericType &&
+					destinationPi.PropertyType.GetGenericTypeDefinition().Namespace.StartsWith("System.Data.Linq") ||
+					destinationPi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
+					continue;
 
-            return equals;
-        }
+				object newValue = sourcePi.GetValue(fromEntity),
+					oldValue = destinationPi.GetValue(toEntity);
 
-        /// <summary>
-        /// Strips list
-        /// </summary>
-        public static Type StripGeneric(this Type t)
-        {
-            if (t.GetTypeInfo().IsGenericType)
-                return t.GetTypeInfo().GenericTypeArguments[0];
-            return t;
-        }
+				// HACK: New value wrap for nullables
+				if (newValue is Guid? && newValue != null)
+					newValue = (newValue as Guid?).Value;
 
-        /// <summary>
-        /// Strips any nullable typing
-        /// </summary>
-        public static Type StripNullable(this Type t)
-        {
-            if (t.GetTypeInfo().IsGenericType &&
-                t.GetTypeInfo().GetGenericTypeDefinition() == typeof(Nullable<>))
-                return t.GetTypeInfo().GenericTypeArguments[0];
-            return t;
-        }
+				// HACK: Empty lists are NULL
+				if ((newValue as IList)?.Count == 0)
+					newValue = null;
 
-        private static Dictionary<Type, PropertyInfo[]> s_typePropertyCache = new Dictionary<Type, PropertyInfo[]>();
+				if (newValue != null &&
+					!newValue.Equals(oldValue) == true &&
+					(destinationPi.PropertyType.GetTypeInfo().IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !destinationPi.PropertyType.GetTypeInfo().IsValueType))
+					destinationPi.SetValue(toEntity, newValue);
+			}
+		}
 
-        /// <summary>
-        /// Update property data if required
-        /// </summary>
-        public static void CopyObjectData<TObject>(this TObject toEntity, TObject fromEntity)
-        {
-            if (toEntity == null)
-                throw new ArgumentNullException(nameof(toEntity));
-            else if (fromEntity == null)
-                throw new ArgumentNullException(nameof(fromEntity));
-            else if (!fromEntity.GetType().GetTypeInfo().IsAssignableFrom(toEntity.GetType().GetTypeInfo()))
-                throw new ArgumentException("Type mismatch", nameof(fromEntity));
+		/// <summary>
+		/// Get generic method
+		/// </summary>
+		public static MethodBase GetGenericMethod(this Type type, string name, Type[] typeArgs, Type[] argTypes)
+		{
+			int typeArity = typeArgs.Length;
+			var methods = type.GetRuntimeMethods()
+				.Where(m => m.Name == name)
+				.Where(m => m.GetGenericArguments().Length == typeArity)
+				.Where(m => m.GetParameters().Length == argTypes.Length)
+				.Select(m => m.MakeGenericMethod(typeArgs)).ToList()
+				.Where(m => m.GetParameters().All(o => argTypes.Any(p => o.ParameterType.GetTypeInfo().IsAssignableFrom(p.GetTypeInfo()))));
 
-            PropertyInfo[] properties = null;
-            if (!s_typePropertyCache.TryGetValue(toEntity.GetType(), out properties))
-            {
-                properties = toEntity.GetType().GetRuntimeProperties().Where(destinationPi => destinationPi.GetCustomAttribute<DataIgnoreAttribute>() == null &&
-                    destinationPi.CanWrite).ToArray();
-                lock (s_typePropertyCache)
-                    if (!s_typePropertyCache.ContainsKey(toEntity.GetType()))
-                        s_typePropertyCache.Add(toEntity.GetType(), properties);
-            }
-            foreach (var destinationPi in properties.AsParallel())
-            {
-                var sourcePi = fromEntity.GetType().GetRuntimeProperty(destinationPi.Name);
-                // Skip properties no in the source
-                if (sourcePi == null)
-                    continue;
+			return methods.FirstOrDefault();
+			//return Type.DefaultBinder.SelectMethod(flags, methods.ToArray(), argTypes, null);
+		}
 
-                // Skip data ignore
-                if (destinationPi.PropertyType.GetTypeInfo().IsGenericType &&
-                    destinationPi.PropertyType.GetGenericTypeDefinition().Namespace.StartsWith("System.Data.Linq") ||
-                    destinationPi.PropertyType.Namespace.StartsWith("OpenIZ.Persistence"))
-                    continue;
+		/// <summary>
+		/// Get a property based on XML property and/or serialization redirect
+		/// </summary>
+		public static PropertyInfo GetXmlProperty(this Type type, string propertyName, bool followReferences = false)
+		{
+			PropertyInfo retVal = null;
+			var key = String.Format("{0}.{1}[{2}]", type.FullName, propertyName, followReferences);
+			if (!s_propertyCache.TryGetValue(key, out retVal))
+			{
+				retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>()?.FirstOrDefault()?.ElementName == propertyName);
+				if (followReferences) retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
 
+				if (retVal.Name.EndsWith("Xml"))
+					retVal = type.GetRuntimeProperty(retVal.Name.Substring(0, retVal.Name.Length - 3));
 
-                object newValue = sourcePi.GetValue(fromEntity),
-                    oldValue = destinationPi.GetValue(toEntity);
+				lock (s_propertyCache)
+					if (!s_propertyCache.ContainsKey(key))
+						s_propertyCache.Add(key, retVal);
+			}
+			return retVal;
+		}
 
-                // HACK: New value wrap for nullables
-                if (newValue is Guid? && newValue != null)
-                    newValue = (newValue as Guid?).Value;
+		/// <summary>
+		/// Compute a basic hash string
+		/// </summary>
+		public static String HashCode(this byte[] me)
+		{
+			long hash = 1009;
+			foreach (var b in me)
+				hash = ((hash << 5) + hash) ^ b;
+			return BitConverter.ToString(BitConverter.GetBytes(hash)).Replace("-", "");
+		}
 
-                // HACK: Empty lists are NULL
-                if ((newValue as IList)?.Count == 0)
-                    newValue = null;
+		/// <summary>
+		/// Create a version filter
+		/// </summary>
+		/// <param name="me">Me.</param>
+		/// <param name="domainInstance">The domain instance.</param>
+		/// <returns>Expression.</returns>
+		public static Expression IsActive(this Expression me, Object domainInstance)
+		{
+			// Extract boundary properties
+			var effectiveVersionMethod = me.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("EffectiveVersionSequenceId");
+			var obsoleteVersionMethod = me.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("ObsoleteVersionSequenceId");
+			if (effectiveVersionMethod == null || obsoleteVersionMethod == null)
+				return me;
 
-                if (newValue != null &&
-                    !newValue.Equals(oldValue) == true &&
-                    (destinationPi.PropertyType.GetTypeInfo().IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !destinationPi.PropertyType.GetTypeInfo().IsValueType))
-                    destinationPi.SetValue(toEntity, newValue);
+			// Create predicate type and find WHERE method
+			Type predicateType = typeof(Func<,>).MakeGenericType(me.Type.GetTypeInfo().GenericTypeArguments[0], typeof(bool));
+			var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
+				new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0] },
+				new Type[] { me.Type, predicateType });
 
-            }
-        }
+			// Create Where Expression
+			var guardParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "x");
+			var currentSequenceId = domainInstance?.GetType().GetRuntimeProperty("VersionSequenceId").GetValue(domainInstance);
+			var bodyExpression = Expression.MakeBinary(ExpressionType.AndAlso,
+				Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
+				Expression.MakeBinary(ExpressionType.OrElse,
+					Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null)),
+					Expression.MakeBinary(ExpressionType.GreaterThan, Expression.MakeMemberAccess(
+						Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod),
+						typeof(Nullable<Decimal>).GetRuntimeProperty("Value")), Expression.Constant(currentSequenceId))
+				)
+			);
 
-        /// <summary>
-        /// Create a version filter
-        /// </summary>
-        /// <typeparam name="TDomain"></typeparam>
-        /// <param name="parm"></param>
-        /// <param name="domainInstance"></param>
-        /// <returns></returns>
-        public static Expression IsActive(this Expression me, Object domainInstance)
-        {
-            // Extract boundary properties
-            var effectiveVersionMethod = me.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("EffectiveVersionSequenceId");
-            var obsoleteVersionMethod = me.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("ObsoleteVersionSequenceId");
-            if (effectiveVersionMethod == null || obsoleteVersionMethod == null)
-                return me;
+			// Build strongly typed lambda
+			var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+			var sortLambda = builderMethod.Invoke(null, new object[] { bodyExpression, new ParameterExpression[] { guardParameter } }) as Expression;
+			return Expression.Call(whereMethod as MethodInfo, me, sortLambda);
+		}
 
-            // Create predicate type and find WHERE method
-            Type predicateType = typeof(Func<,>).MakeGenericType(me.Type.GetTypeInfo().GenericTypeArguments[0], typeof(bool));
-            var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
-                new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0] },
-                new Type[] { me.Type, predicateType });
+		/// <summary>
+		/// Create a version filter
+		/// </summary>
+		/// <param name="me">Me.</param>
+		/// <returns>Expression.</returns>
+		public static Expression IsActive(this Expression me)
+		{
+			// Extract boundary properties
+			var obsoleteVersionMethod = me.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("ObsoleteVersionSequenceId");
+			if (obsoleteVersionMethod == null)
+				return me;
 
-            // Create Where Expression
-            var guardParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "x");
-            var currentSequenceId = domainInstance?.GetType().GetRuntimeProperty("VersionSequenceId").GetValue(domainInstance);
-            var bodyExpression = Expression.MakeBinary(ExpressionType.AndAlso,
-                Expression.MakeBinary(ExpressionType.LessThanOrEqual, Expression.MakeMemberAccess(guardParameter, effectiveVersionMethod), Expression.Constant(currentSequenceId)),
-                Expression.MakeBinary(ExpressionType.OrElse,
-                    Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null)),
-                    Expression.MakeBinary(ExpressionType.GreaterThan, Expression.MakeMemberAccess(
-                        Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod),
-                        typeof(Nullable<Decimal>).GetRuntimeProperty("Value")), Expression.Constant(currentSequenceId))
-                )
-            );
+			// Create predicate type and find WHERE method
+			Type predicateType = typeof(Func<,>).MakeGenericType(me.Type.GetTypeInfo().GenericTypeArguments[0], typeof(bool));
+			var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
+				new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0] },
+				new Type[] { me.Type, predicateType });
 
-            // Build strongly typed lambda
-            var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-            var sortLambda = builderMethod.Invoke(null, new object[] { bodyExpression, new ParameterExpression[] { guardParameter } }) as Expression;
-            return Expression.Call(whereMethod as MethodInfo, me, sortLambda);
+			// Create Where Expression
+			var guardParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "x");
+			var bodyExpression = Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null));
 
-        }
+			// Build strongly typed lambda
+			var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+			var sortLambda = builderMethod.Invoke(null, new object[] { bodyExpression, new ParameterExpression[] { guardParameter } }) as Expression;
+			return Expression.Call(whereMethod as MethodInfo, me, sortLambda);
+		}
 
-        /// <summary>
-        /// Create a version filter
-        /// </summary>
-        /// <typeparam name="TDomain"></typeparam>
-        /// <param name="parm"></param>
-        /// <param name="domainInstance"></param>
-        /// <returns></returns>
-        public static Expression IsActive(this Expression me)
-        {
-            // Extract boundary properties
-            var obsoleteVersionMethod = me.Type.GetTypeInfo().GenericTypeArguments[0].GetRuntimeProperty("ObsoleteVersionSequenceId");
-            if (obsoleteVersionMethod == null)
-                return me;
+		/// <summary>
+		/// Gets the latest version of the versioned entity data instance from a given list.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source">The source.</param>
+		/// <returns>Returns a list of the versioned entity data which contains only the latest version of the entity.</returns>
+		public static IEnumerable<T> LatestVersionOnly<T>(this IEnumerable<T> source) where T : VersionedEntityData<Entity>
+		{
+			var latestVersions = new List<T>();
 
-            // Create predicate type and find WHERE method
-            Type predicateType = typeof(Func<,>).MakeGenericType(me.Type.GetTypeInfo().GenericTypeArguments[0], typeof(bool));
-            var whereMethod = typeof(Enumerable).GetGenericMethod("Where",
-                new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0] },
-                new Type[] { me.Type, predicateType });
+			var keys = source.Select(e => e.Key.Value).Distinct();
 
-            // Create Where Expression
-            var guardParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "x");
-            var bodyExpression = Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(guardParameter, obsoleteVersionMethod), Expression.Constant(null));
+			foreach (var key in keys)
+			{
+				var maxVersionSequence = source.Select(e => source.Where(a => a.Key == key).Max<T>(a => a.VersionSequence)).FirstOrDefault();
 
-            // Build strongly typed lambda
-            var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-            var sortLambda = builderMethod.Invoke(null, new object[] { bodyExpression, new ParameterExpression[] { guardParameter } }) as Expression;
-            return Expression.Call(whereMethod as MethodInfo, me, sortLambda);
+				var latestVersion = source.FirstOrDefault(a => a.Key == key && a.VersionSequence == maxVersionSequence);
 
-        }
+				if (latestVersion != null)
+				{
+					latestVersions.Add(latestVersion);
+				}
+			}
 
+			return latestVersions;
+		}
 
-        /// <summary>
-        /// Create aggregation functions
-        /// </summary>
-        public static Expression Aggregate(this Expression me, AggregationFunctionType aggregation)
-        {
-            var aggregateMethod = typeof(Enumerable).GetGenericMethod(aggregation.ToString(),
-               new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0] },
-               new Type[] { me.Type });
-            return Expression.Call(aggregateMethod as MethodInfo, me);
+		/// <summary>
+		/// Determine semantic equality of each item in me and other
+		/// </summary>
+		public static bool SemanticEquals<TEntity>(this IEnumerable<TEntity> me, IEnumerable<TEntity> other) where TEntity : IdentifiedData
+		{
+			if (other == null) return false;
+			bool equals = me.Count() == other.Count();
+			foreach (var itm in me)
+				equals &= other.Any(o => o.SemanticEquals(itm));
+			foreach (var itm in other)
+				equals &= me.Any(o => o.SemanticEquals(itm));
 
-        }
+			return equals;
+		}
 
-        /// <summary>
-        /// Create sort expression
-        /// </summary>
-        public static Expression Sort(this Expression me, String orderByProperty, SortOrderType sortOrder)
-        {
-            // Get sort property
-            var sortProperty = me.Type.GenericTypeArguments[0].GetRuntimeProperty(orderByProperty);
-            Type predicateType = typeof(Func<,>).MakeGenericType(me.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType);
-            var sortMethod = typeof(Enumerable).GetGenericMethod(sortOrder.ToString(),
-                new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType },
-                new Type[] { me.Type, predicateType });
+		/// <summary>
+		/// Create sort expression.
+		/// </summary>
+		/// <param name="me">Me.</param>
+		/// <param name="orderByProperty">The order by property.</param>
+		/// <param name="sortOrder">The sort order.</param>
+		/// <returns>Expression.</returns>
+		public static Expression Sort(this Expression me, String orderByProperty, SortOrderType sortOrder)
+		{
+			// Get sort property
+			var sortProperty = me.Type.GenericTypeArguments[0].GetRuntimeProperty(orderByProperty);
+			Type predicateType = typeof(Func<,>).MakeGenericType(me.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType);
+			var sortMethod = typeof(Enumerable).GetGenericMethod(sortOrder.ToString(),
+				new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0], sortProperty.PropertyType },
+				new Type[] { me.Type, predicateType });
 
-            // Get builder methods
-            var sortParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "sort");
-            var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
-            var sortLambda = builderMethod.Invoke(null, new object[] { Expression.MakeMemberAccess(sortParameter, sortProperty), new ParameterExpression[] { sortParameter } }) as Expression;
-            return Expression.Call(sortMethod as MethodInfo, me, sortLambda);
-        }
+			// Get builder methods
+			var sortParameter = Expression.Parameter(me.Type.GetTypeInfo().GenericTypeArguments[0], "sort");
+			var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { predicateType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+			var sortLambda = builderMethod.Invoke(null, new object[] { Expression.MakeMemberAccess(sortParameter, sortProperty), new ParameterExpression[] { sortParameter } }) as Expression;
+			return Expression.Call(sortMethod as MethodInfo, me, sortLambda);
+		}
 
-        /// <summary>
-        /// Get generic method
-        /// </summary>
-        public static MethodBase GetGenericMethod(this Type type, string name, Type[] typeArgs, Type[] argTypes)
-        {
-            int typeArity = typeArgs.Length;
-            var methods = type.GetRuntimeMethods()
-                .Where(m => m.Name == name)
-                .Where(m => m.GetGenericArguments().Length == typeArity)
-                .Where(m => m.GetParameters().Length == argTypes.Length)
-                .Select(m => m.MakeGenericMethod(typeArgs)).ToList()
-                .Where(m => m.GetParameters().All(o => argTypes.Any(p => o.ParameterType.GetTypeInfo().IsAssignableFrom(p.GetTypeInfo()))));
+		/// <summary>
+		/// Strips list
+		/// </summary>
+		/// <param name="t">The type.</param>
+		/// <returns>Returns the type.</returns>
+		public static Type StripGeneric(this Type t)
+		{
+			return t.GetTypeInfo().IsGenericType ? t.GetTypeInfo().GenericTypeArguments[0] : t;
+		}
 
-
-            return methods.FirstOrDefault();
-            //return Type.DefaultBinder.SelectMethod(flags, methods.ToArray(), argTypes, null);
-        }
-
-        /// <summary>
-        /// Get a property based on XML property and/or serialization redirect
-        /// </summary>
-        public static PropertyInfo GetXmlProperty(this Type type, string propertyName, bool followReferences = false)
-        {
-            PropertyInfo retVal = null;
-            var key = String.Format("{0}.{1}[{2}]", type.FullName, propertyName, followReferences);
-            if (!s_propertyCache.TryGetValue(key, out retVal))
-            {
-                retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>()?.FirstOrDefault()?.ElementName == propertyName);
-                if (followReferences) retVal = type.GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == retVal.Name) ?? retVal;
-
-                if (retVal.Name.EndsWith("Xml"))
-                    retVal = type.GetRuntimeProperty(retVal.Name.Substring(0, retVal.Name.Length - 3));
-
-                lock (s_propertyCache)
-                    if (!s_propertyCache.ContainsKey(key))
-                        s_propertyCache.Add(key, retVal);
-            }
-            return retVal;
-        }
-
-    }
+		/// <summary>
+		/// Strips any nullable typing.
+		/// </summary>
+		/// <param name="t">The typ.</param>
+		/// <returns>Returns the type.</returns>
+		public static Type StripNullable(this Type t)
+		{
+			if (t.GetTypeInfo().IsGenericType &&
+				t.GetTypeInfo().GetGenericTypeDefinition() == typeof(Nullable<>))
+				return t.GetTypeInfo().GenericTypeArguments[0];
+			return t;
+		}
+	}
 }

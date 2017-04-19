@@ -70,6 +70,11 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		{
 			var reportDefinition = base.Get(context, key, principal, loadFast);
 
+			if (reportDefinition == null)
+			{
+				return null;
+			}
+
 			if (!loadFast)
 			{
 				var reportParameterPersistenceService = new ReportParameterPersistenceService();

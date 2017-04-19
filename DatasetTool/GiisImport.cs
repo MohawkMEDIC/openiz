@@ -141,10 +141,10 @@ namespace OizDevTool
         public static readonly Guid PT_DISTRICT_COUNCIL = Guid.NewGuid();
         public static readonly Guid PT_VILLAGE = Guid.NewGuid();
 
-        private static EntityAddress MapAddress(GIIS.DataLayer.Place place)
+        private static EntityAddress MapAddress(GIIS.DataLayer.Place place, Guid typeKey)
         {
             var retVal = new EntityAddress();
-            retVal.AddressUseKey = AddressUseKeys.Direct;
+            retVal.AddressUseKey = typeKey;
             if (!String.IsNullOrEmpty(place.Code))
                 retVal.Component.Add(new EntityAddressComponent(AddressComponentKeys.CensusTract, place.Code));
 
@@ -293,6 +293,7 @@ namespace OizDevTool
                     {
                         Key = Guid.NewGuid(),
                         ActTime = o.VaccinationDate,
+                        StatusConceptKey = StatusKeys.Completed,
                         DoseQuantity = 1,
                         Identifiers = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<ActIdentifier>()
                 {
@@ -334,6 +335,7 @@ namespace OizDevTool
             {
                 Key = Guid.NewGuid(),
                 ActTime = o.Date,
+                StatusConceptKey = StatusKeys.Completed,
                 MoodConceptKey = ActMoodKeys.Eventoccurrence,
                 TypeConceptKey = Guid.Parse("a261f8cd-69b0-49aa-91f4-e6d3e5c612ed"),
                 Value = (decimal)o.Weight,
@@ -357,7 +359,7 @@ namespace OizDevTool
             var retVal = new Patient()
             {
                 Key = id,
-                Addresses = child.Domicile == null ? null : new List<EntityAddress>() { MapAddress(child.Domicile) },
+                Addresses = child.Domicile == null ? null : new List<EntityAddress>() { MapAddress(child.Domicile, AddressUseKeys.HomeAddress) },
                 DateOfBirth = child.Birthdate,
                 DateOfBirthPrecision = DatePrecision.Day,
                 DeceasedDate = child.Status.Name == "Dead" ? (DateTime?)DateTime.MinValue : null,
@@ -369,7 +371,7 @@ namespace OizDevTool
                 },
                 Names = new List<EntityName>()
                 {
-                    new EntityName(NameUseKeys.Legal, child.Lastname1, child.Firstname1, child.Firstname2)
+                    new EntityName(NameUseKeys.OfficialRecord, child.Lastname1, child.Firstname1, child.Firstname2)
                 },
                 StatusConceptKey = child.IsActive ? StatusKeys.Active : StatusKeys.Obsolete,
                 Telecoms = new List<EntityTelecomAddress>()
@@ -394,7 +396,7 @@ namespace OizDevTool
                     Key = Guid.NewGuid(),
                     Names = new List<EntityName>()
                     {
-                        new EntityName(NameUseKeys.Legal, child.MotherLastname, child.MotherFirstname)
+                        new EntityName(NameUseKeys.OfficialRecord, child.MotherLastname, child.MotherFirstname)
                     },
                     Telecoms = new List<EntityTelecomAddress>()
                     {
@@ -414,7 +416,7 @@ namespace OizDevTool
                     Key = Guid.NewGuid(),
                     Names = new List<EntityName>()
                     {
-                        new EntityName(NameUseKeys.Legal, child.FatherLastname, child.FatherFirstname)
+                        new EntityName(NameUseKeys.OfficialRecord, child.FatherLastname, child.FatherFirstname)
                     },
                     Telecoms = new List<EntityTelecomAddress>()
                     {
@@ -429,7 +431,7 @@ namespace OizDevTool
                     Key = Guid.NewGuid(),
                     Names = new List<EntityName>()
                     {
-                        new EntityName(NameUseKeys.Legal, child.CaretakerLastname, child.CaretakerFirstname)
+                        new EntityName(NameUseKeys.OfficialRecord, child.CaretakerLastname, child.CaretakerFirstname)
                     },
                     Telecoms = new List<EntityTelecomAddress>()
                     {
@@ -541,6 +543,8 @@ namespace OizDevTool
                 // first add stock relationship
                 var itml = ItemLot.GetItemLotByGtinAndLotNo(itm.Gtin, itm.LotNumber);
                 var mmat = manufacturedMaterialMap[itml.Id];
+                if (itml.ExpireDate < DateTime.Now)
+                    continue;
 
                 retVal.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.OwnedEntity, mmat) { Quantity = (int)0 });
                 stockPolicyObject.Add(new
@@ -642,7 +646,7 @@ namespace OizDevTool
                 },
                 Addresses = new List<EntityAddress>()
                 {
-                    MapAddress(plc)
+                    MapAddress(plc, AddressUseKeys.Direct)
                 },
                 Tags = new List<EntityTag>()
                             {
@@ -1136,7 +1140,7 @@ namespace OizDevTool
 
                 Guid facilityId = Guid.Empty;
                 if (facilityMap.TryGetValue(itm.HealthFacilityId, out facilityId))
-                    userEntity.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Employee, new Entity() { Key = facilityId }));
+                    userEntity.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, new Entity() { Key = facilityId }));
 
                 // data element 
                 var securityUserData = new DataInsert()
@@ -1144,6 +1148,9 @@ namespace OizDevTool
                     Element = securityUser,
                     Association = new List<DataAssociation>()
                 };
+
+                roleMap.Add(Role.GetRoleByName("Vaccinator").Id, Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434"));
+                roleMap.Add(Role.GetRoleByName("Administrator").Id, Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"));
 
                 // Role
                 foreach (var r in Role.GetRolesOfUser(itm.Id))
@@ -1171,6 +1178,8 @@ namespace OizDevTool
                     });
 
                     // Add role
+                    if(role.Key != Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434") &&
+                        role.Key != Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"))
                     userDataset.Action.Add(new DataInsert()
                     {
                         Element = role
