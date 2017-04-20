@@ -39,6 +39,7 @@
     <Compile Include="Acts\ActParticipation.cs" />
     <Compile Include="Acts\ActProtocol.cs" />
     <Compile Include="Acts\ActRelationship.cs" />
+    <Compile Include="Acts\CarePlan.cs" />
     <Compile Include="Acts\ControlAct.cs" />
     <Compile Include="Acts\Observation.cs" />
     <Compile Include="Acts\PatientEncounter.cs" />

@@ -11,6 +11,7 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
 using System.ServiceModel.Web;
 using OpenIZ.Messaging.IMSI.Util;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -37,7 +38,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         {
             get
             {
-                return typeof(Bundle);
+                return typeof(CarePlan);
             }
         }
 
@@ -57,7 +58,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
             var plan = carePlanner.CreateCarePlan(data as Patient, 
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_asEncounters"] == "true",
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery().ToDictionary(o=>o.Key, o=>(Object)o.Value));
-            var retVal = new Bundle()
+            var retVal = new CarePlan()
             {
                 Item = plan.OfType<IdentifiedData>().ToList(),
                 TotalResults = plan.Count(),
@@ -80,7 +81,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_asEncounters"] == "true",
                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery().ToDictionary(o => o.Key, o => (Object)o.Value));
 
-            var retVal = new Bundle()
+            var retVal = new CarePlan()
             {
                 Item = plan.OfType<IdentifiedData>().ToList(),
                 TotalResults = plan.Count(),
@@ -105,15 +106,23 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters)
         {
-            throw new NotSupportedException();
+            int tr = 0;
+            return this.Query(queryParameters, 0, 100, out tr);
         }
 
         /// <summary>
-        /// Query for care plan objects
+        /// Query for care plan objects... Constructs a care plan for all patients matching the specified query parameters
         /// </summary>
         public IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
-            throw new NotSupportedException();
+            var repositoryService = ApplicationContext.Current.GetService<IRepositoryService<Patient>>();
+            if (repositoryService == null)
+                throw new InvalidOperationException("Could not find patient repository service");
+            
+            // Query
+            var carePlanner = ApplicationContext.Current.GetService<ICarePlanService>();
+            totalCount = 0;
+            return null;
         }
 
         /// <summary>

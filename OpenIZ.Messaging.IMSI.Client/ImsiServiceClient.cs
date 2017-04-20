@@ -345,21 +345,6 @@ namespace OpenIZ.Messaging.IMSI.Client
             return this.Client.Options<ServiceOptions>("/");
         }
 
-        /// <summary>
-        /// Get care plan
-        /// </summary>
-        public Bundle CreateCarePlan(Guid patientId)
-        {
-            return this.Client.Get<Bundle>($"CarePlan/{patientId}");
-        }
-
-        /// <summary>
-        /// Creates a care plan with the specified patient data
-        /// </summary>
-        public Bundle CreateCarePlan(Patient patient)
-        {
-            return this.Client.Post<Patient, Bundle>($"CarePlan", this.Client.Accept, patient);
-        }
 
         #region IDisposable Support
 
