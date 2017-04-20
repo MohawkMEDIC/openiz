@@ -159,7 +159,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
 		[WebInvoke(UriTemplate = "/report/{id}/{format}", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		byte[] RunReport(string id, string format, RisiCollection<ReportParameter> parameters);
+		Stream RunReport(string id, string format, RisiCollection<ReportParameter> parameters);
 
 		/// <summary>
 		/// Updates a parameter type definition.
