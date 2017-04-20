@@ -24,6 +24,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.Roles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -342,6 +343,22 @@ namespace OpenIZ.Messaging.IMSI.Client
         public ServiceOptions Options()
         {
             return this.Client.Options<ServiceOptions>("/");
+        }
+
+        /// <summary>
+        /// Get care plan
+        /// </summary>
+        public Bundle CreateCarePlan(Guid patientId)
+        {
+            return this.Client.Get<Bundle>($"CarePlan/{patientId}");
+        }
+
+        /// <summary>
+        /// Creates a care plan with the specified patient data
+        /// </summary>
+        public Bundle CreateCarePlan(Patient patient)
+        {
+            return this.Client.Post<Patient, Bundle>($"CarePlan", this.Client.Accept, patient);
         }
 
         #region IDisposable Support

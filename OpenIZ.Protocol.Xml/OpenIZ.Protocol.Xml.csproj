@@ -43,6 +43,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppletClinicalProtocolRepository.cs" />
     <Compile Include="Model\DecisionSupportBaseElement.cs" />
     <Compile Include="Model\ProtocolCollection.cs" />
     <Compile Include="Model\ProtocolDefinition.cs" />

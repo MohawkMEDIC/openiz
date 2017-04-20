@@ -86,7 +86,7 @@ namespace OpenIZ
                     Console.WriteLine("{0}", entryAsm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright);
                     Console.WriteLine("Complete Copyright information available at http://openiz.codeplex.com/wikipage?title=Contributions");
                     ServiceUtil.Start(typeof(Program).GUID);
-
+                    ApplicationServiceContext.Current = ApplicationContext.Current;
                     if (!parameters.StartupTest)
                     {
                         Console.WriteLine("Press [ENTER] to stop...");

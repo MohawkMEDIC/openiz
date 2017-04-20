@@ -36,7 +36,7 @@ namespace OpenIZ.Core.Model.Collection
     /// Represents a collection of entities
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model")]
-    [JsonObject]
+    [JsonObject(nameof(VersionedAssociationCollection<TEntity>))]
     public class VersionedAssociationCollection<TEntity> : SimpleAssociationCollection<TEntity> where TEntity : IdentifiedData, IVersionedAssociation, new()
     {
 
