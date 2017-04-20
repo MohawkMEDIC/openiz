@@ -64,6 +64,7 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(Place))]
     [XmlInclude(typeof(Material))]
     [XmlInclude(typeof(ManufacturedMaterial))]
+    [XmlInclude(typeof(CarePlan))]
     [XmlInclude(typeof(DeviceEntity))]
     [XmlInclude(typeof(ApplicationEntity))]
     [XmlInclude(typeof(DeviceEntity))]

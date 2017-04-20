@@ -223,7 +223,7 @@ namespace OizDevTool
                 Console.WriteLine("Generated Patient: {0} ({1} mo)", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30);
 
                 // Schedule
-                var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Where(o => o.ActTime <= DateTime.Now);
+                var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now);
                 foreach (var act in acts)
                 {
                     act.MoodConceptKey = ActMoodKeys.Eventoccurrence;

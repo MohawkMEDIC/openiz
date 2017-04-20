@@ -140,7 +140,7 @@ namespace OpenIZ.Core.Protocol
         /// <summary>
         /// Create a care plan for the specified patient
         /// </summary>
-        public IEnumerable<Act> CreateCarePlan(Patient p)
+        public CarePlan CreateCarePlan(Patient p)
         {
             return this.CreateCarePlan(p, false, null);
         }
@@ -150,7 +150,7 @@ namespace OpenIZ.Core.Protocol
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
-        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters)
+        public CarePlan CreateCarePlan(Patient p, bool asEncounters)
         {
             return this.CreateCarePlan(p, asEncounters, null, this.Protocols.Select(o => o.Id).ToArray());
         }
@@ -158,16 +158,16 @@ namespace OpenIZ.Core.Protocol
         /// <summary>
         /// Create a care plan
         /// </summary>
-        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters)
+        public CarePlan CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters)
         {
             return this.CreateCarePlan(p, asEncounters, parameters, this.Protocols.Select(o => o.Id).ToArray());
         }
         /// <summary>
         /// Create a care plan with the specified protocols only
         /// </summary>
-        public IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters, params Guid[] protocols)
+        public CarePlan CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters, params Guid[] protocols)
         {
-            if (p == null) return new List<Act>();
+            if (p == null) return null;
 
             bool isMyProcessing = false;
 
@@ -312,12 +312,15 @@ namespace OpenIZ.Core.Protocol
                     while (itm.ActTime.DayOfWeek == DayOfWeek.Sunday || itm.ActTime.DayOfWeek == DayOfWeek.Saturday)
                         itm.ActTime = itm.ActTime.AddDays(1);
 
-                return protocolActs.ToList();
+                return new CarePlan(p, protocolActs.ToList())
+                {
+                    CreatedByKey = Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8")
+                };
             }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error creating care plan: {0}", e);
-                return new List<Act>();
+                throw;
             }
             finally
             {

@@ -41,6 +41,11 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		dynamic Get(Guid datamartId, Guid tupleId);
 
+        /// <summary>
+        /// Executes the specified query 
+        /// </summary>
+        IEnumerable<dynamic> AdhocQuery(String queryText);
+
 		/// <summary>
 		/// Perform an adhoc query on data
 		/// </summary>

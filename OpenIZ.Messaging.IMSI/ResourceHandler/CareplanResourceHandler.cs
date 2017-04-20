@@ -12,6 +12,8 @@ using OpenIZ.Core.Services;
 using System.ServiceModel.Web;
 using OpenIZ.Messaging.IMSI.Util;
 using OpenIZ.Core.Model.Acts;
+using System.Linq.Expressions;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
 {
@@ -58,15 +60,9 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
             var plan = carePlanner.CreateCarePlan(data as Patient, 
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_asEncounters"] == "true",
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery().ToDictionary(o=>o.Key, o=>(Object)o.Value));
-            var retVal = new CarePlan()
-            {
-                Item = plan.OfType<IdentifiedData>().ToList(),
-                TotalResults = plan.Count(),
-                Count = plan.Count(),
-                Offset = 0
-            };
-            retVal.Key = null;
-            return retVal;
+            
+            return plan;
+
         }
 
         /// <summary>
@@ -81,15 +77,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_asEncounters"] == "true",
                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery().ToDictionary(o => o.Key, o => (Object)o.Value));
 
-            var retVal = new CarePlan()
-            {
-                Item = plan.OfType<IdentifiedData>().ToList(),
-                TotalResults = plan.Count(),
-                Count = plan.Count(),
-                Offset = 0
-            };
-            retVal.Key = null;
-            return retVal;
+            return plan;
 
         }
 
@@ -121,8 +109,18 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
             
             // Query
             var carePlanner = ApplicationContext.Current.GetService<ICarePlanService>();
-            totalCount = 0;
-            return null;
+
+            Expression<Func<Patient, bool>> queryExpr = QueryExpressionParser.BuildLinqExpression<Patient>(queryParameters);
+            List<String> queryId = null;
+            IEnumerable<Patient> patients = null;
+            if (queryParameters.TryGetValue("_queryId", out queryId) && repositoryService is IPersistableQueryRepositoryService)
+                patients = (repositoryService as IPersistableQueryRepositoryService).Find(queryExpr, offset, count, out totalCount, new Guid(queryId[0]));
+            else
+                patients = repositoryService.Find(queryExpr, offset, count, out totalCount);
+
+            // Create care plan for the patients
+            return patients.AsParallel().Select(o => carePlanner.CreateCarePlan(o));
+
         }
 
         /// <summary>

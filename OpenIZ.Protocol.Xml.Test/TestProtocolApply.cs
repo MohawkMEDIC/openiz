@@ -291,16 +291,16 @@ namespace OpenIZ.Protocol.Xml.Test
             var acts = scp.CreateCarePlan(newborn);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
-            Assert.AreEqual(83, acts.Count());
-            Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
+            Assert.AreEqual(83, acts.Action.Count());
+            Assert.IsFalse(acts.Action.Any(o => o.Protocols.Count() > 1));
             acts = scp.CreateCarePlan(newborn);
-            //Assert.AreEqual(60, acts.Count());
+            //Assert.AreEqual(60, acts.Action.Count());
             newborn.Participations.RemoveAll(o => o.Act is QuantityObservation);
             Assert.AreEqual(23, newborn.Participations.Count);
             acts = scp.CreateCarePlan(newborn);
-            //Assert.AreEqual(60, acts.Count());
+            //Assert.AreEqual(60, acts.Action.Count());
             Assert.AreEqual(83, newborn.Participations.Count());
-            Assert.IsFalse(acts.Any(o => !o.Participations.Any(p => p.ParticipationRoleKey == ActParticipationKey.RecordTarget)));
+            Assert.IsFalse(acts.Action.Any(o => !o.Participations.Any(p => p.ParticipationRoleKey == ActParticipationKey.RecordTarget)));
         }
 
 
@@ -326,7 +326,7 @@ namespace OpenIZ.Protocol.Xml.Test
             var acts = scp.CreateCarePlan(adult);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(adult);
-            Assert.AreEqual(0, acts.Count());
+            Assert.AreEqual(0, acts.Action.Count());
         }
 
 
@@ -351,8 +351,8 @@ namespace OpenIZ.Protocol.Xml.Test
             var acts = scp.CreateCarePlan(newborn);
             var jsonSerializer = new JsonViewModelSerializer();
             String json = jsonSerializer.Serialize(newborn);
-            Assert.AreEqual(83, acts.Count());
-            Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
+            Assert.AreEqual(83, acts.Action.Count());
+            Assert.IsFalse(acts.Action.Any(o => o.Protocols.Count() > 1));
         }
 
         /// <summary>
@@ -375,8 +375,8 @@ namespace OpenIZ.Protocol.Xml.Test
             var acts = scp.CreateCarePlan(newborn, true);
             var jsonSerializer = new JsonViewModelSerializer();
 			string json = jsonSerializer.Serialize(newborn);
-            Assert.AreEqual(61, acts.Count());
-            Assert.IsFalse(acts.Any(o => o.Protocols.Count() > 1));
+            Assert.AreEqual(61, acts.Action.Count());
+            Assert.IsFalse(acts.Action.Any(o => o.Protocols.Count() > 1));
 
         }
 

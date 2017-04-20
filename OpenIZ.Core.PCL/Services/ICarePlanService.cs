@@ -36,24 +36,24 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		List<IClinicalProtocol> Protocols { get; }
 
-		/// <summary>
-		/// Create a care plam
-		/// </summary>
-		IEnumerable<Act> CreateCarePlan(Patient p);
+        /// <summary>
+        /// Create a care plam
+        /// </summary>
+        CarePlan CreateCarePlan(Patient p);
 
-		/// <summary>
-		/// Create a care plan controlling the creation of encounters
-		/// </summary>
-		IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters);
+        /// <summary>
+        /// Create a care plan controlling the creation of encounters
+        /// </summary>
+        CarePlan CreateCarePlan(Patient p, bool asEncounters);
 
         /// <summary>
         /// Creates a care plan for the patient with the specified protocolsonly
         /// </summary>
-        IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters);
-        
+        CarePlan CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters);
+
         /// <summary>
         /// Creates a care plan for the patient with the specified protocolsonly
         /// </summary>
-        IEnumerable<Act> CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters, params Guid[] protocols);
+        CarePlan CreateCarePlan(Patient p, bool asEncounters, IDictionary<String, Object> parameters, params Guid[] protocols);
 	}
 }
