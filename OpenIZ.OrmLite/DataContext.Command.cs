@@ -9,6 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Data.Warehouse;
 
 namespace OpenIZ.OrmLite
 {
@@ -190,10 +191,26 @@ namespace OpenIZ.OrmLite
             }
             else if (BaseTypes.Contains(typeof(TModel)))
                 return (TModel)rdr[0];
+            else if (typeof(ExpandoObject).IsAssignableFrom(typeof(TModel)))
+                return this.MapExpando<TModel>(rdr);
             else
                 return (TModel)this.MapObject(typeof(TModel), rdr);
         }
 
+        /// <summary>
+        /// Map expando object
+        /// </summary>
+        private TModel MapExpando<TModel>(IDataReader rdr) 
+        {
+            var retVal = new ExpandoObject() as IDictionary<String, Object>;
+            for (int i = 0; i < rdr.FieldCount; i++)
+            {
+                var value = rdr[i];
+                var name = rdr.GetName(i);
+                retVal.Add(name, value);
+            }
+            return (TModel)retVal;
+        }
 
         /// <summary>
         /// Map an object 
@@ -410,6 +427,7 @@ namespace OpenIZ.OrmLite
             }
 #endif
         }
+
 
 
         /// <summary>

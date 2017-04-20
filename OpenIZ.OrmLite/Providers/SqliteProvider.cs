@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Model;
 using System.Data.Common;
+using OpenIZ.Core.Data.Warehouse;
 
 namespace OpenIZ.OrmLite.Providers
 {
@@ -51,6 +52,17 @@ namespace OpenIZ.OrmLite.Providers
             get
             {
                 return SqlEngineFeatures.AutoGenerateTimestamps;
+            }
+        }
+
+        /// <summary>
+        /// Get the name of the provider
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return "sqlite";
             }
         }
 
@@ -263,6 +275,36 @@ namespace OpenIZ.OrmLite.Providers
                     return " UPPER ";
                 default:
                     throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Map datatype
+        /// </summary>
+        public string MapDatatype(SchemaPropertyType type)
+        {
+            switch (type)
+            {
+                case SchemaPropertyType.Binary:
+                    return "blob";
+                case SchemaPropertyType.Boolean:
+                    return "boolean";
+                case SchemaPropertyType.Date:
+                case SchemaPropertyType.TimeStamp:
+                case SchemaPropertyType.DateTime:
+                    return "bigint";
+                case SchemaPropertyType.Decimal:
+                    return "decimal";
+                case SchemaPropertyType.Float:
+                    return "float";
+                case SchemaPropertyType.Integer:
+                    return "integer";
+                case SchemaPropertyType.String:
+                    return "varchar(128)";
+                case SchemaPropertyType.Uuid:
+                    return "blob(16)";
+                default:
+                    return null;
             }
         }
     }

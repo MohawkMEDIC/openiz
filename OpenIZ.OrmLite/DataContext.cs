@@ -10,6 +10,7 @@ using OpenIZ.Core.Diagnostics;
 using System.Threading;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Map;
+using OpenIZ.Core.Data.Warehouse;
 
 namespace OpenIZ.OrmLite
 {
@@ -120,6 +121,15 @@ namespace OpenIZ.OrmLite
             if (this.m_transaction == null)
                 this.m_transaction = this.m_connection.BeginTransaction();
             return this.m_transaction;
+        }
+
+
+        /// <summary>
+        /// Get the datatype
+        /// </summary>
+        public String GetDataType(SchemaPropertyType type)
+        {
+            return this.m_provider.MapDatatype(type);
         }
 
         /// <summary>

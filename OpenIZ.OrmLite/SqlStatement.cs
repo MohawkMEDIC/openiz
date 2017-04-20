@@ -288,7 +288,7 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Removes the last statement from the list
         /// </summary>
-        internal void RemoveLast()
+        public void RemoveLast()
         {
             var t = this;
             while (t.m_rhs?.m_rhs != null)

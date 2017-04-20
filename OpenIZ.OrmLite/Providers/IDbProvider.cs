@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Data.Warehouse;
 
 namespace OpenIZ.OrmLite.Providers
 {
@@ -33,6 +34,11 @@ namespace OpenIZ.OrmLite.Providers
         /// Read/write connection string
         /// </summary>
         String ConnectionString { get; set; }
+
+        /// <summary>
+        /// Get name of the provider
+        /// </summary>
+        string Name { get; }
 
         /// <summary>
         /// Create SQL keyword
@@ -95,5 +101,9 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         Object ConvertValue(Object value, Type toType);
 
+        /// <summary>
+        /// Map datatype
+        /// </summary>
+        string MapDatatype(SchemaPropertyType type);
     }
 }

@@ -121,6 +121,14 @@ namespace OpenIZ.Core.Data.Warehouse
         /// Identifies the column is an object which has other data
         /// </summary>
         [XmlEnum("object")]
-        Object = 8
+        Object = 8,
+        /// <summary>
+        /// Identifies a column has a date and a time
+        /// </summary>
+        DateTime = 9,
+        /// <summary>
+        /// Represents a timestamp (with timezone)
+        /// </summary>
+        TimeStamp = 10
     }
 }

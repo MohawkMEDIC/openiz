@@ -9,5 +9,10 @@
         /// The trace source name for the trace source name
         /// </summary>
         public const string TraceSourceName = "OpenIZ.Warehouse.ADO";
+
+        /// <summary>
+        /// Warehouse ADO
+        /// </summary>
+        public const string ConfigurationSectionName = "openiz.warehouse.ado";
     }
 }

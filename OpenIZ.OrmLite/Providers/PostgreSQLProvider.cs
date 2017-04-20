@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Diagnostics;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.Map;
+using OpenIZ.Core.Data.Warehouse;
 
 namespace OpenIZ.OrmLite.Providers
 {
@@ -48,6 +49,17 @@ namespace OpenIZ.OrmLite.Providers
             get
             {
                 return SqlEngineFeatures.AutoGenerateGuids | SqlEngineFeatures.AutoGenerateTimestamps | SqlEngineFeatures.ReturnedInserts;
+            }
+        }
+
+        /// <summary>
+        /// Get name of provider
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return "pgsql";
             }
         }
 
@@ -266,6 +278,38 @@ namespace OpenIZ.OrmLite.Providers
                     return " UPPER ";
                 default:
                     throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Map datatype
+        /// </summary>
+        public string MapDatatype(SchemaPropertyType type)
+        {
+            switch (type)
+            {
+                case SchemaPropertyType.Binary:
+                    return "VARBINARY";
+                case SchemaPropertyType.Boolean:
+                    return "BOOLEAN";
+                case SchemaPropertyType.Date:
+                    return "DATE";
+                case SchemaPropertyType.DateTime:
+                    return "TIMESTAMP";
+                case SchemaPropertyType.TimeStamp:
+                    return "TIMESTAMPTZ";
+                case SchemaPropertyType.Decimal:
+                    return "decimal";
+                case SchemaPropertyType.Float:
+                    return "float";
+                case SchemaPropertyType.Integer:
+                    return "integer";
+                case SchemaPropertyType.String:
+                    return "varchar(128)";
+                case SchemaPropertyType.Uuid:
+                    return "blob(16)";
+                default:
+                    return null;
             }
         }
     }
