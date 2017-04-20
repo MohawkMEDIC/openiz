@@ -69,7 +69,7 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		/// Gets or sets the query.
 		/// </summary>
 		/// <value>The query.</value>
-		[XmlElement("query")]
+		[XmlElement("queryReference")]
 		public Query Query { get; set; }
 
 		/// <summary>

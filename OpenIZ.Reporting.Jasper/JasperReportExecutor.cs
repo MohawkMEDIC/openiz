@@ -51,6 +51,8 @@ using ReportParameter = OpenIZ.Core.Model.RISI.ReportParameter;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using OpenIZ.Core.Model.RISI.Constants;
+using OpenIZ.Core.Services;
+using OpenIZ.Reporting.Jasper.Model.Collection;
 
 namespace OpenIZ.Reporting.Jasper
 {
@@ -454,6 +456,24 @@ namespace OpenIZ.Reporting.Jasper
 						foreach (var reportUnitInputControlReference in reportUnit.InputControlReferences)
 						{
 							var inputControl = this.LookupResource<InputControl>(reportUnitInputControlReference.Uri);
+
+							if (inputControl.Query != null)
+							{
+								var query = this.LookupResource<Query>(inputControl.Query.Uri);
+
+								this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Jasper Query: {query.Value}");
+
+								var adhocQueryService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+
+								if (adhocQueryService == null)
+								{
+									throw new InvalidOperationException($"Unable to locate service: {nameof(IAdHocDatawarehouseService)}");
+								}
+
+								// TODO: execute against adhoc service
+								// TODO: get GUID values if entity or mnemonic if concept
+								// TODO: fetch entity or concept of value
+							}
 
 							var reportParameter = new ReportParameter(inputControl.Label, count++, null)
 							{
