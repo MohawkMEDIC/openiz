@@ -24,7 +24,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         public static CarePlan CreateCarePlanRequest(Patient p)
         {
-            return new CarePlan() { Item = new List<IdentifiedData>() { p });
+            return new CarePlan() { Item = new List<IdentifiedData>() { p } };
         }
     }
 }
