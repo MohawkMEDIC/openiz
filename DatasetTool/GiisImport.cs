@@ -116,16 +116,16 @@ namespace OizDevTool
         private static Dictionary<Int32, Guid> placeEntityMap = new Dictionary<int, Guid>();
         private static Dictionary<Int32, Guid> manufacturerMap = new Dictionary<int, Guid>();
         private static Dictionary<Int32, Guid> manufacturedMaterialMap = new Dictionary<Int32, Guid>();
-        private static Dictionary<Int32, Guid> materialMap = new Dictionary<int, Guid>()
+        private static Dictionary<String, Guid> materialMap = new Dictionary<String, Guid>()
         {
-            { 42, Guid.Parse("ED144BD2-A334-40A2-9A8F-B767A1397D07") },
-            { 45, Guid.Parse("41B008A6-FCF8-40BC-AB96-7567E94BCF8F") },
-            { 48, Guid.Parse("DD53B8FF-2F4D-4359-A031-9405AD384893") },
-            { 61, Guid.Parse("6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B") },
-            { 46, Guid.Parse("7C5A4FF6-4E81-4C6C-88E9-FC75CE61A4FB") },
-            { 60, Guid.Parse("E829C3D1-5243-474E-A2D6-BA35D99610C4") },
-            { 59, Guid.Parse("D8049BE9-19D7-4DD8-9DC1-7D8F3886FF97") },
-            { 44, Guid.Parse("790BE5CA-D07D-46C6-8FA0-9D4F5ADF388C") }
+            { "BCG", Guid.Parse("ED144BD2-A334-40A2-9A8F-B767A1397D07") },
+            { "DTP-HepB-Hib", Guid.Parse("41B008A6-FCF8-40BC-AB96-7567E94BCF8F") },
+            { "Rota", Guid.Parse("DD53B8FF-2F4D-4359-A031-9405AD384893") },
+            { "Measles Rubella", Guid.Parse("6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B") },
+            { "measles virus vaccine", Guid.Parse("7C5A4FF6-4E81-4C6C-88E9-FC75CE61A4FB") },
+            { "PCV-13", Guid.Parse("E829C3D1-5243-474E-A2D6-BA35D99610C4") },
+            { "TT", Guid.Parse("D8049BE9-19D7-4DD8-9DC1-7D8F3886FF97") },
+            { "OPV", Guid.Parse("790BE5CA-D07D-46C6-8FA0-9D4F5ADF388C") }
         };
         private static Dictionary<String, Guid> nonVaccinationReasonMap = new Dictionary<String, Guid>()
         {
@@ -187,7 +187,12 @@ namespace OizDevTool
 
             // Now map
             while (domicileParts.Count > 0)
-                retVal.Component.Add(new EntityAddressComponent(addressParts.Dequeue(), domicileParts.Dequeue().Name));
+            {
+                var domPart = domicileParts.Dequeue().Name;
+                if (String.IsNullOrEmpty(domPart))
+                    continue;
+                retVal.Component.Add(new EntityAddressComponent(addressParts.Dequeue(), domPart));
+            }
             return retVal;
         }
 
@@ -200,14 +205,14 @@ namespace OizDevTool
             manufacturedMaterialMap.Add(item.Id, id);
 
             Guid materialId = Guid.Empty;
-            if (!materialMap.TryGetValue(item.ItemId, out materialId))
+            if (!materialMap.TryGetValue(item.ItemObject.Code, out materialId))
             {
                 materialId = Guid.NewGuid();
                 Material material = new Material()
                 {
                     Key = materialId,
                     ExpiryDate = item.ItemObject.ExitDate,
-                    FormConceptKey = Guid.Parse(item.ItemObject.Name == "OPV" || item.ItemObject.Name.ToLower().Contains("rota") ? "66CBCE3A-2E77-401D-95D8-EE0361F4F076" : "9902267C-8F77-4233-BFD3-E6B068AB326A"),
+                    FormConceptKey = Guid.Parse(item.ItemObject.Name == "OPV" || item.ItemObject.Code.ToLower().Contains("rota") ? "66CBCE3A-2E77-401D-95D8-EE0361F4F076" : "9902267C-8F77-4233-BFD3-E6B068AB326A"),
                     DeterminerConceptKey = DeterminerKeys.Described,
                     Identifiers = new List<EntityIdentifier>()
                     {
@@ -220,7 +225,7 @@ namespace OizDevTool
                     StatusConceptKey = item.ItemObject.IsActive ? StatusKeys.Active : StatusKeys.Obsolete
                 };
                 context.Action.Add(new DataUpdate() { InsertIfNotExists = true, Element = material });
-                materialMap.Add(item.ItemId, materialId);
+                materialMap.Add(item.ItemObject.Code, materialId);
             }
 
             // Organization map?
@@ -282,7 +287,7 @@ namespace OizDevTool
             return retVal;
         }
 
-        private static Dictionary<Int32, Int32> m_cachedDose = new Dictionary<int, Int32>();
+        private static Dictionary<Int32, String> m_cachedDose = new Dictionary<int, String>();
 
         /// <summary>
         /// Map substance administration
@@ -293,10 +298,10 @@ namespace OizDevTool
             return VaccinationEvent.GetChildVaccinationEvent(child.Id).Where(o => o.NonvaccinationReasonId != 0 || o.VaccinationStatus).AsParallel().Select(o =>
             {
 
-                Int32 matId = 0;
+                String matId = null;
                 if (!m_cachedDose.TryGetValue(o.VaccineLotId, out matId))
                 {
-                    matId = o.Dose.ScheduledVaccination.ItemId;
+                    matId = o.Dose.ScheduledVaccination.Item.Code;
                     lock (m_cachedDose)
                         if (!m_cachedDose.ContainsKey(o.VaccineLotId))
                             m_cachedDose.Add(o.VaccineLotId, matId);
@@ -862,13 +867,13 @@ namespace OizDevTool
 
                             bdone = (int)((pdone) * (Console.WindowWidth - 55) / 2);
                             Console.CursorLeft = 0;
-                            if ((int)e.Progress != lastPerc)
+                            if ((int)(e.Progress * 200) != lastPerc)
                             {
                                 Console.Write("  DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", (e.State as IIdentifiedEntity)?.Key.Value,
                                        Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
                                        Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2) - bdone)) : "",
                                        pdone * 100, remaining.ToString("mm'm 'ss's'"));
-                                lastPerc = (int)e.Progress;
+                                lastPerc = (int)(e.Progress * 200);
                             }
                         };
 

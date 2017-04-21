@@ -213,6 +213,43 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <summary>
         /// Generic association persistence service
         /// </summary>
+        internal class GenericBaseAssociationPersistenceService<TModel, TDomain> :
+            GenericBasePersistenceService<TModel, TDomain>, IAdoAssociativePersistenceService
+            where TModel : BaseEntityData, ISimpleAssociation, new()
+            where TDomain : class, IDbBaseData, new()
+        {
+            /// <summary>
+            /// Get all the matching TModel object from source
+            /// </summary>
+            public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
+            {
+                int tr = 0;
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId), Guid.Empty, 0, null, out tr, principal);
+            }
+        }
+
+        /// <summary>
+        /// Generic association persistence service
+        /// </summary>
+        internal class GenericBaseVersionedAssociationPersistenceService<TModel, TDomain> :
+            GenericBasePersistenceService<TModel, TDomain>, IAdoAssociativePersistenceService
+            where TModel : BaseEntityData, IVersionedAssociation, new()
+            where TDomain : class, IDbBaseData, new()
+        {
+            /// <summary>
+            /// Get all the matching TModel object from source
+            /// </summary>
+            public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
+            {
+                int tr = 0;
+                // TODO: Check that this query is actually building what it is supposed to.
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), Guid.Empty, 0, null, out tr, principal);
+            }
+        }
+
+        /// <summary>
+        /// Generic association persistence service
+        /// </summary>
         internal class GenericIdentityAssociationPersistenceService<TModel, TDomain> :
             GenericIdentityPersistenceService<TModel, TDomain>, IAdoAssociativePersistenceService
             where TModel : IdentifiedData, ISimpleAssociation, new()
@@ -356,7 +393,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         domainClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IDbBaseData)))
                     {
                         // Construct a type
-                        var pclass = typeof(GenericBasePersistenceService<,>);
+                        Type pclass = null;
+                        if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IVersionedAssociation)))
+                            pclass = typeof(GenericBaseVersionedAssociationPersistenceService<,>);
+                        else if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ISimpleAssociation)))
+                            pclass = typeof(GenericBaseAssociationPersistenceService<,>);
+                        else
+                            pclass = typeof(GenericBasePersistenceService<,>);
                         pclass = pclass.MakeGenericType(modelClassType, domainClassType);
                         ApplicationContext.Current.AddServiceProvider(pclass);
                         // Add to cache since we're here anyways

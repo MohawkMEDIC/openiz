@@ -212,6 +212,8 @@ namespace OizDevTool
             WaitThreadPool wtp = new WaitThreadPool(4);
             Random r = new Random();
 
+            int npatients = 0;
+
             WaitCallback genFunc = (s) =>
             {
                 AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
@@ -219,8 +221,9 @@ namespace OizDevTool
                 var patient = GeneratePatient(maxAge, parameters.BarcodeAuth, places, r);
                 var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                 // Insert
+                int pPatient = Interlocked.Increment(ref npatients);
                 patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-                Console.WriteLine("Generated Patient: {0} ({1} mo)", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30);
+                Console.WriteLine("Generated Patient #{2:#,###,###}: {0} ({1} mo)", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient);
 
                 // Schedule
                 var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now);

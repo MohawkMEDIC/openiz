@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// The entity that this relationship targets
         /// </summary>
         [SerializationReference(nameof(SourceEntityKey))]
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, DataIgnore]
         public TSourceType SourceEntity
         {
             get

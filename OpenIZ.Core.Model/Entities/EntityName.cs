@@ -53,7 +53,8 @@ namespace OpenIZ.Core.Model.Entities
 			if (!String.IsNullOrEmpty(family))
 				this.Component.Add(new EntityNameComponent(NameComponentKeys.Family, family));
 			foreach (var nm in given)
-				this.Component.Add(new EntityNameComponent(NameComponentKeys.Given, nm));
+                if(!String.IsNullOrEmpty(nm))
+				    this.Component.Add(new EntityNameComponent(NameComponentKeys.Given, nm));
 		}
 
 		/// <summary>

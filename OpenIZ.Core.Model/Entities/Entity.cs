@@ -486,7 +486,7 @@ namespace OpenIZ.Core.Model.Entities
         /// <summary>
         /// Should serialize tags
         /// </summary>
-        public bool ShouldSerializeTags () =>this.Tags?.Count > 0;
+        public bool ShouldSerializeTags () => this.Tags?.Count > 0;
 
         /// <summary>
         /// Shoudl serialize extensions
