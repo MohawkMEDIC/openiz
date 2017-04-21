@@ -209,7 +209,7 @@ namespace OizDevTool
             int tr = 0;
             var places = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, 20 ,out tr);
             places = places.Union(ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, 20, out tr));
-            WaitThreadPool wtp = new WaitThreadPool(4);
+            WaitThreadPool wtp = new WaitThreadPool(16);
             Random r = new Random();
 
             int npatients = 0;
