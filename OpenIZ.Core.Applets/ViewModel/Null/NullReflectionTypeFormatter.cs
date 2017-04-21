@@ -20,13 +20,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
     {
 
         // Lock object
-        private object m_syncLock = new object();
+        private static object m_syncLock = new object();
 
         // JSON property information
-        private Dictionary<Type, Dictionary<String, PropertyInfo>> m_jsonPropertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+        private static Dictionary<Type, Dictionary<String, PropertyInfo>> m_jsonPropertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 
         // JSON Property names
-        private Dictionary<PropertyInfo, String> m_jsonPropertyNames = new Dictionary<PropertyInfo, string>();
+        private static Dictionary<PropertyInfo, String> m_jsonPropertyNames = new Dictionary<PropertyInfo, string>();
 
         /// <summary>
         /// Constructs a new reflection type formatter
@@ -51,7 +51,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
         {
 
             String retVal = null;
-            if (!this.m_jsonPropertyNames.TryGetValue(info, out retVal))
+            if (!m_jsonPropertyNames.TryGetValue(info, out retVal))
             {
                 if (info.GetCustomAttribute<JsonIgnoreAttribute>() != null && info.GetCustomAttribute<SerializationReferenceAttribute>() == null)
                     retVal = null;
@@ -67,14 +67,14 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
                         // get the key of the SRA redir
                         var redirProp = info.DeclaringType.GetRuntimeProperty(sra.RedirectProperty);
                         String sraRetVal = null;
-                        if (!this.m_jsonPropertyNames.TryGetValue(redirProp, out sraRetVal))
+                        if (!m_jsonPropertyNames.TryGetValue(redirProp, out sraRetVal))
                         {
                             jpa = redirProp.GetCustomAttribute<JsonPropertyAttribute>();
                             if (jpa != null)
                                 retVal = jpa.PropertyName + "Model";
-                            lock (this.m_jsonPropertyNames)
-                                if (!this.m_jsonPropertyNames.ContainsKey(redirProp))
-                                    this.m_jsonPropertyNames.Add(redirProp, jpa.PropertyName);
+                            lock (m_jsonPropertyNames)
+                                if (!m_jsonPropertyNames.ContainsKey(redirProp))
+                                    m_jsonPropertyNames.Add(redirProp, jpa.PropertyName);
                         }
                         else
                             retVal = sraRetVal + "Model";
@@ -84,9 +84,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
                         retVal = info.Name.ToLower() + "Model";
                 }
 
-                lock (this.m_syncLock)
-                    if (!this.m_jsonPropertyNames.ContainsKey(info))
-                        this.m_jsonPropertyNames.Add(info, retVal);
+                lock (m_syncLock)
+                    if (!m_jsonPropertyNames.ContainsKey(info))
+                        m_jsonPropertyNames.Add(info, retVal);
             }
             return retVal;
 

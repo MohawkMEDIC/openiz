@@ -99,8 +99,7 @@ namespace OpenIZ.Core.Model.Map
                         if (!m_converterMaps.ContainsKey(key))
                             m_converterMaps.Add(key, retVal);
             }
-            else
-                System.Diagnostics.Debugger.Break();
+
             return retVal;
 
         }

@@ -288,6 +288,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 foreach (var p in data.Protocols)
                 {
                     var proto = p.Protocol?.EnsureExists(context, principal);
+                    if(proto == null) // maybe we can retrieve the protocol from the protocol repository?
+                    {
+                        int t = 0;
+                        proto = ApplicationContext.Current.GetService<IClinicalProtocolRepositoryService>().FindProtocol(o => o.Key == p.ProtocolKey, 0, 1, out t).FirstOrDefault();
+                        proto.EnsureExists(context, principal);
+                    }
                     context.Insert(new DbActProtocol()
                     {
                         SourceKey = retVal.Key.Value,
