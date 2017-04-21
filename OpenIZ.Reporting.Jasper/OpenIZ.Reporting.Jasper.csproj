@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\StringValueAttribute.cs" />
+    <Compile Include="Extensions\StringValueExtensions.cs" />
     <Compile Include="JasperReportExecutor.cs" />
     <Compile Include="Model\Collection\Item.cs" />
     <Compile Include="Model\Collection\ListOfValues.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="Model\Connection\XmlAConnection.cs" />
     <Compile Include="Model\Core\File.cs" />
     <Compile Include="Model\Core\InputControl.cs" />
+    <Compile Include="Model\Core\ReportParameterType.cs" />
     <Compile Include="Model\Core\ReportOptions.cs" />
     <Compile Include="Model\Core\ReportParameter.cs" />
     <Compile Include="Model\Reference\DataSourceReference.cs" />

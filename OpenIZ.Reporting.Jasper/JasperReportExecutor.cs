@@ -465,10 +465,10 @@ namespace OpenIZ.Reporting.Jasper
 
 								var adhocQueryService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
 
-								if (adhocQueryService == null)
-								{
-									throw new InvalidOperationException($"Unable to locate service: {nameof(IAdHocDatawarehouseService)}");
-								}
+								//if (adhocQueryService == null)
+								//{
+								//	throw new InvalidOperationException($"Unable to locate service: {nameof(IAdHocDatawarehouseService)}");
+								//}
 
 								// TODO: execute against adhoc service
 								// TODO: get GUID values if entity or mnemonic if concept
@@ -485,7 +485,6 @@ namespace OpenIZ.Reporting.Jasper
 
 							reportDefinition.Parameters.Add(reportParameter);
 						}
-
 
 						reports.Add(reportDefinition);
 						break;

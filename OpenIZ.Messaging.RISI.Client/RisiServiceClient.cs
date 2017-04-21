@@ -230,9 +230,9 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="format">The output format of the report.</param>
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
-		public byte[] RunReport(Guid id, string format, RisiCollection<ReportParameter> parameters)
+		public Stream RunReport(Guid id, string format, RisiCollection<ReportParameter> parameters)
 		{
-			return this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters);
+			return new MemoryStream(this.Client.Post<RisiCollection<ReportParameter>, byte[]>($"report/{id}/{format}", this.Client.Accept, parameters));
 		}
 
 		/// <summary>

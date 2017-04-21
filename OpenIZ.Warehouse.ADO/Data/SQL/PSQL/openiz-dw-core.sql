@@ -150,7 +150,6 @@ CREATE TABLE PAT_TBL (
 
 -- NO MORE THAN ONE PATIENT CAN BE ASGN TO A PERSON
 CREATE UNIQUE INDEX PAT_PSN_ID_IDX ON PAT_TBL(PSN_ID);
-CREATE INDEX PAT_PLC_ID_IDX ON PAT_TBL(PLC_ID);
 CREATE INDEX PAT_ASGN_FAC_ID_IDX ON PAT_TBL(ASGN_FAC_ID);
 
 -- MATERIALS TABLE
@@ -399,10 +398,10 @@ select * from
 
 -- VIEW FOR COMPLETE FACILITY INFORMATION
 CREATE VIEW FAC_VW AS
-	SELECT FAC_TBL.*, name.other AS loc_name, mother.StreetAddressLine, mother.City, mother.County, mother.State, mother.Censustract, mother.Country, mother.PostalCode, mother.AdditionalLocator
+	SELECT FAC_TBL.*, name.other AS loc_name, addr.StreetAddressLine, addr.City, addr.County, addr.State, addr.Censustract, addr.Country, addr.PostalCode, addr.AdditionalLocator
 	FROM FAC_TBL
 	LEFT JOIN ent_name_pivot_vw AS name ON (name.ent_id = fac_tbl.fac_id)
-	LEFT JOIN ent_addr_pivot_vw AS addr ON (mother.ent_id = fac_tbl.fac_id);
+	LEFT JOIN ent_addr_pivot_vw AS addr ON (addr.ent_id = fac_tbl.fac_id);
 
 -- PERSON VIEW
 CREATE OR REPLACE VIEW psn_vw AS 

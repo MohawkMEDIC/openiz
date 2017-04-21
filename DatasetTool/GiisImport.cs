@@ -11,7 +11,6 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.EntityLoader;
-using OpenIZ.Core.Model.Extensions;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;

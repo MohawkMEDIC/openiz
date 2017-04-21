@@ -265,7 +265,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <param name="parameters">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
 		/// <exception cref="System.ArgumentException">If the id or format is not in a valid format.</exception>
-		public byte[] RunReport(string id, string format, RisiCollection<ReportParameter> parameters)
+		public Stream RunReport(string id, string format, RisiCollection<ReportParameter> parameters)
 		{
 			var reportId = Guid.Empty;
 			var formatId = Guid.Empty;
@@ -280,7 +280,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
 			}
 
-			return this.reportExecutor.RunReport(reportId, formatId, parameters.Items);
+			return new MemoryStream(this.reportExecutor.RunReport(reportId, formatId, parameters.Items));
 		}
 
 		/// <summary>
