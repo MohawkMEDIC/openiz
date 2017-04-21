@@ -95,72 +95,80 @@ namespace OpenIZ.Core.Persistence
                 foreach (var itm in ds.Action)
                 {
 
-                    // IDP Type
-                    Type idpType = typeof(IDataPersistenceService<>);
-                    idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
-                    var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
-
-                    // Don't insert duplicates
-                    var getMethod = idpType.GetMethod("Get");
-
-                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} {1}", itm.ActionName, itm.Element);
-
-                    Object target = null, existing = null;
-                    if (itm.Element.Key.HasValue)
-                        existing = idpInstance.Get(itm.Element.Key.Value);
-                    if (existing != null)
+                    try
                     {
-                        target = (existing as IdentifiedData).Clone();
-                        target.CopyObjectData(itm.Element);
-                    }
-                    else
-                        target = itm.Element;
+                        // IDP Type
+                        Type idpType = typeof(IDataPersistenceService<>);
+                        idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
+                        var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
 
-                    // Association
-                    if (itm.Association != null)
-                        foreach (var ascn in itm.Association)
+                        // Don't insert duplicates
+                        var getMethod = idpType.GetMethod("Get");
+
+                        this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "{0} {1}", itm.ActionName, itm.Element);
+
+                        Object target = null, existing = null;
+                        if (itm.Element.Key.HasValue)
+                            existing = idpInstance.Get(itm.Element.Key.Value);
+                        if (existing != null)
                         {
-                            var pi = target.GetType().GetRuntimeProperty(ascn.PropertyName);
-                            var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
-                            mi.Invoke(pi.GetValue(target), new object[] { ascn.Element });
+                            if ((itm as DataInsert)?.SkipIfExists == true) continue;
+                            target = (existing as IdentifiedData).Clone();
+                            target.CopyObjectData(itm.Element);
+                        }
+                        else
+                            target = itm.Element;
+
+                        // Association
+                        if (itm.Association != null)
+                            foreach (var ascn in itm.Association)
+                            {
+                                var pi = target.GetType().GetRuntimeProperty(ascn.PropertyName);
+                                var mi = pi.PropertyType.GetRuntimeMethod("Add", new Type[] { ascn.Element.GetType() });
+                                mi.Invoke(pi.GetValue(target), new object[] { ascn.Element });
+                            }
+
+                        // ensure version sequence is set
+                        // the reason this exists is because in FHIR code system values have the same mnemonic values in different code systems
+                        // since we cannot insert duplicate mnemonic values, we want to associate the existing concept with the new reference term
+                        // for the new code system
+                        //
+                        // i.e.
+                        //
+                        // Code System Address Use has the following codes:
+                        // home
+                        // work
+                        // temp
+                        // old
+                        // we want to insert reference terms and concepts so we can find an associated concept
+                        // for a given reference term and code system
+                        // 
+                        // Code System Contact Point Use has the following codes:
+                        // home
+                        // work
+                        // temp
+                        // old
+                        // mobile
+                        //
+                        // we can insert new reference terms for these reference terms, but cannot insert new concept using the same values for the mnemonic
+                        // so we associate the new reference term and the concept
+                        if (target is ConceptReferenceTerm)
+                        {
+                            var conceptReferenceTerm = target as ConceptReferenceTerm;
+                            conceptReferenceTerm.EffectiveVersionSequenceId = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Get(new Identifier<Guid>(conceptReferenceTerm.SourceEntityKey.Value), AuthenticationContext.Current.Principal, true)?.VersionSequence;
+                            target = conceptReferenceTerm;
                         }
 
-					// ensure version sequence is set
-					// the reason this exists is because in FHIR code system values have the same mnemonic values in different code systems
-					// since we cannot insert duplicate mnemonic values, we want to associate the existing concept with the new reference term
-					// for the new code system
-					//
-					// i.e.
-					//
-					// Code System Address Use has the following codes:
-					// home
-					// work
-					// temp
-					// old
-					// we want to insert reference terms and concepts so we can find an associated concept
-					// for a given reference term and code system
-					// 
-					// Code System Contact Point Use has the following codes:
-					// home
-					// work
-					// temp
-					// old
-					// mobile
-					//
-					// we can insert new reference terms for these reference terms, but cannot insert new concept using the same values for the mnemonic
-					// so we associate the new reference term and the concept
-	                if (target is ConceptReferenceTerm)
-	                {
-		                var conceptReferenceTerm = target as ConceptReferenceTerm;
-		                conceptReferenceTerm.EffectiveVersionSequenceId = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Get(new Identifier<Guid>(conceptReferenceTerm.SourceEntityKey.Value), AuthenticationContext.Current.Principal, true)?.VersionSequence;
-		                target = conceptReferenceTerm;
-	                }
-
-                    if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
-                        idpInstance.Insert(target);
-                    else if (!(itm is DataInsert))
-                        typeof(IDataPersistenceService).GetMethod(itm.ActionName, new Type[] { typeof(Object) }).Invoke(idpInstance, new object[] { target });
-
+                        if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))
+                            idpInstance.Insert(target);
+                        else if (!(itm is DataInsert))
+                            typeof(IDataPersistenceService).GetMethod(itm.ActionName, new Type[] { typeof(Object) }).Invoke(idpInstance, new object[] { target });
+                    }
+                    catch
+                    {
+                        if (!itm.IgnoreErrors)
+                            throw;
+                    }
                 }
                 this.m_traceSource.TraceInformation("Applied {0} changes", ds.Action.Count);
 

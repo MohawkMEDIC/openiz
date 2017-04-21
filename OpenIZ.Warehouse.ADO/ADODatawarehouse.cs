@@ -21,6 +21,9 @@ using OpenIZ.OrmLite;
 using OpenIZ.Core.Model.Query;
 using Newtonsoft.Json;
 using OpenIZ.Warehouse.ADO.Data.SQL.Model;
+using OpenIZ.Core.Security.Attribute;
+using System.Security.Permissions;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Warehouse.ADO
 {
@@ -88,6 +91,7 @@ namespace OpenIZ.Warehouse.ADO
         /// <param name="datamartId"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteWarehouseData)]
         public Guid Add(Guid datamartId, dynamic obj)
         {
             this.ThrowIfDisposed();
@@ -174,6 +178,7 @@ namespace OpenIZ.Warehouse.ADO
         /// <summary>
         /// Perform an ad-hoc query
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryWarehouseData)]
         public IEnumerable<dynamic> AdhocQuery(Guid datamartId, dynamic queryParameters, int offset, int count, out int totalResults)
         {
             this.ThrowIfDisposed();
@@ -218,6 +223,7 @@ namespace OpenIZ.Warehouse.ADO
         /// <summary>
         /// Create a datamart
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerWarehouse)]
         public DatamartDefinition CreateDatamart(string name, object schema)
         {
             this.ThrowIfDisposed();
@@ -346,6 +352,7 @@ namespace OpenIZ.Warehouse.ADO
         /// </summary>
         /// <param name="datamartId"></param>
         /// <param name="tupleId"></param>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.DeleteWarehouseData)]
         public void Delete(Guid datamartId, dynamic deleteQuery)
         {
 
@@ -406,17 +413,33 @@ namespace OpenIZ.Warehouse.ADO
                 this.DeleteProperties(context, String.Format("{0}_{1}", path, p.Name), p);
             }
         }
-
+        
+        /// <summary>
+        /// Delete the datamart
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerWarehouse)]
         public void DeleteDatamart(Guid datamartId)
         {
             this.ThrowIfDisposed();
 
-            throw new NotImplementedException();
+            using(var context = this.m_configuration.Provider.GetWriteConnection())
+            {
+                try
+                {
+
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error deleting datamart: {0}", e);
+                    throw;
+                }
+            }
         }
 
         /// <summary>
         /// Get the specified tuple id from the specified datamart
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadWarehouseData)]
         public dynamic Get(Guid datamartId, Guid tupleId)
         {
             this.ThrowIfDisposed();
@@ -427,6 +450,7 @@ namespace OpenIZ.Warehouse.ADO
         /// <summary>
         /// Get the specified data mart
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public DatamartDefinition GetDatamart(String name)
         {
 
@@ -457,8 +481,43 @@ namespace OpenIZ.Warehouse.ADO
         }
 
         /// <summary>
+        /// Get the specified data mart
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public DatamartDefinition GetDatamart(Guid id)
+        {
+
+            using (var context = this.m_configuration.Provider.GetReadonlyConnection())
+            {
+                try
+                {
+                    context.Open();
+
+                    var dbMart = context.FirstOrDefault<AdhocDatamart>(o => o.DatamartId == id);      
+                    if (dbMart != null)
+                        return new DatamartDefinition()
+                        {
+                            Id = dbMart.DatamartId,
+                            Name = dbMart.Name,
+                            CreationTime = dbMart.CreationTime.DateTime,
+                            Schema = this.LoadSchema(context, dbMart.SchemaId)
+                        };
+                    else return null;
+                }
+
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error getting datamart {0} : {1}", id, e);
+                    throw;
+                }
+            }
+        }
+
+
+        /// <summary>
         /// Get data marts
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public List<DatamartDefinition> GetDatamarts()
         {
             this.ThrowIfDisposed();
@@ -489,6 +548,7 @@ namespace OpenIZ.Warehouse.ADO
         /// <summary>
         /// Execute a stored query
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryWarehouseData)]
         public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters)
         {
             this.ThrowIfDisposed();
@@ -709,7 +769,7 @@ namespace OpenIZ.Warehouse.ADO
         /// <summary>
         /// Create stored query internally 
         /// </summary>
-        private void CreateStoredQueryInternal(DataContext context, Guid datamartId, object queryDefinition)
+        private DatamartStoredQuery CreateStoredQueryInternal(DataContext context, Guid datamartId, object queryDefinition)
         {
             var dmQuery = queryDefinition as DatamartStoredQuery;
             if (queryDefinition is ExpandoObject)
@@ -720,7 +780,7 @@ namespace OpenIZ.Warehouse.ADO
 
             var mySql = dmQuery.Definition.FirstOrDefault(o => o.ProviderId == this.m_configuration.Provider.Name);
 
-            if (mySql == null) return;
+            if (mySql == null) return null;
             else if (!mySql.Query.Trim().StartsWith("select", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("Only SELECT allowed for stored queries");
 
@@ -748,6 +808,8 @@ namespace OpenIZ.Warehouse.ADO
                     SchemaId = mart.Schema.Id
                 });
                 this.CreateProperties(context, String.Empty, mart.Schema, dmQuery);
+
+                return dmQuery;
             }
             catch (Exception e)
             {
@@ -759,7 +821,8 @@ namespace OpenIZ.Warehouse.ADO
         /// <summary>
         /// Create a stored query
         /// </summary>
-        public void CreateStoredQuery(Guid datamartId, object queryDefinition)
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerWarehouse)]
+        public DatamartStoredQuery CreateStoredQuery(Guid datamartId, object queryDefinition)
         {
             this.ThrowIfDisposed();
 
@@ -771,8 +834,11 @@ namespace OpenIZ.Warehouse.ADO
                 {
                     context.Open();
                     context.BeginTransaction();
-                    this.CreateStoredQueryInternal(context, datamartId, queryDefinition);
+                    var retVal = this.CreateStoredQueryInternal(context, datamartId, queryDefinition);
+                    if (retVal == null)
+                        throw new KeyNotFoundException(datamartId.ToString());
                     context.Transaction.Commit();
+                    return retVal;
                 }
                 catch (Exception e)
                 {
@@ -853,6 +919,8 @@ namespace OpenIZ.Warehouse.ADO
         /// <summary>
         /// Executes an adhoc query 
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadWarehouseData)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryWarehouseData)]
         public IEnumerable<dynamic> AdhocQuery(string queryText)
         {
             this.ThrowIfDisposed();

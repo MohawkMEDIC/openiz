@@ -20,9 +20,9 @@
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Http
         /// </summary>
         protected void FireProgressChanged(object state, float progress)
         {
-            ProgressChangedEventArgs e = new ProgressChangedEventArgs((int)(progress* 100), state);
+            ProgressChangedEventArgs e = new ProgressChangedEventArgs(progress, state);
             this.ProgressChanged?.Invoke(this, e);
         }
 

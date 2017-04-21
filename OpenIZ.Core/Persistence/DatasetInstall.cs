@@ -111,6 +111,13 @@ namespace OpenIZ.Core.Persistence
         /// </summary>
         [XmlElement("associate")]
         public List<DataAssociation> Association { get; set; }
+
+        /// <summary>
+        /// Skip if errored
+        /// </summary>
+        [XmlAttribute("skipIfError")]
+        public bool IgnoreErrors { get; set; }
+
     }
 
     /// <summary>
@@ -130,6 +137,7 @@ namespace OpenIZ.Core.Persistence
                 return "Add";
             }
         }
+
 
         /// <summary>
         /// The name of the property
@@ -181,5 +189,10 @@ namespace OpenIZ.Core.Persistence
         /// </summary>
         public override string ActionName { get { return "Insert"; } }
 
+        /// <summary>
+        /// True if the insert should be skipped if it exists
+        /// </summary>
+        [XmlAttribute("skipIfExists")]
+        public bool SkipIfExists { get; set; }
     }
 }

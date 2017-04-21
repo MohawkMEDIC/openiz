@@ -50,13 +50,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wcf\Behavior\RisiRestEndpointBehavior.cs" />
     <Compile Include="Wcf\Behavior\RisiSerializerOperationBehavior.cs" />
+    <Compile Include="Wcf\HttpHelperExtensions.cs" />
     <Compile Include="Wcf\IRisiContract.cs" />
+    <Compile Include="Wcf\RisiBehavior.Adhoc.cs" />
     <Compile Include="Wcf\RisiBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <Compile Include="Wcf\IRisiContract.Adhoc.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

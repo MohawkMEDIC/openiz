@@ -89,6 +89,11 @@ namespace OpenIZ.Core.Security
         public const string AlterPolicy = "1.3.6.1.4.1.33349.3.1.5.9.2.0.9";
 
         /// <summary>
+        /// Administer data warehouse
+        /// </summary>
+        public const string AdministerWarehouse  = "1.3.6.1.4.1.33349.3.1.5.9.2.0.10";
+
+        /// <summary>
         /// Policy identifier for allowance of login
         /// </summary>
         public const string Login = "1.3.6.1.4.1.33349.3.1.5.9.2.1";
@@ -138,15 +143,40 @@ namespace OpenIZ.Core.Security
         /// </summary>
         public const string ReadMetadata = "1.3.6.1.4.1.33349.3.1.5.9.2.4.0";
 
+        /// <summary>
+        /// Allow a user all access to the warehouse 
+        /// </summary>
+        public const string UnrestrictedWarehouse = "1.3.6.1.4.1.33349.3.1.5.9.2.5";
 
-		#endregion
+        /// <summary>
+        /// Allow a user to write data to the warehouse 
+        /// </summary>
+        public const string WriteWarehouseData = UnrestrictedWarehouse + ".0";
 
-		#region OpenIZ Client Functions
+        /// <summary>
+        /// Allow a user to write data to the warehouse 
+        /// </summary>
+        public const string DeleteWarehouseData = UnrestrictedWarehouse + ".1";
 
-		/// <summary>
-		/// Access administrative function on the OpenIZ Client
-		/// </summary>
-		public const string AccessClientAdministrativeFunction = "1.3.6.1.4.1.33349.3.1.5.9.2.10";
+        /// <summary>
+        /// Allow a user to write data to the warehouse 
+        /// </summary>
+        public const string ReadWarehouseData = UnrestrictedWarehouse + ".2";
+
+        /// <summary>
+        /// Allow a user to write data to the warehouse 
+        /// </summary>
+        public const string QueryWarehouseData = UnrestrictedWarehouse + ".3";
+
+
+        #endregion
+
+        #region OpenIZ Client Functions
+
+        /// <summary>
+        /// Access administrative function on the OpenIZ Client
+        /// </summary>
+        public const string AccessClientAdministrativeFunction = "1.3.6.1.4.1.33349.3.1.5.9.2.10";
 
         #endregion
     }

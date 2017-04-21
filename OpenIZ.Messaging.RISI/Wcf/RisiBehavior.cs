@@ -34,7 +34,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	/// Provides operations for running and managing reports.
 	/// </summary>
 	[ServiceBehavior(ConfigurationName = "RISI")]
-	public class RisiBehavior : IRisiContract
+	public partial class RisiBehavior : IRisiContract
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="IReportExecutor"/> instance.

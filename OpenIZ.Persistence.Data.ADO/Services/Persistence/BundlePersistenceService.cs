@@ -16,7 +16,6 @@ using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
 using OpenIZ.Core.Services;
-using System.ComponentModel;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -55,7 +54,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 					method = "Update";
 				}
 
-                this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((int)(((float)i / data.Item.Count) * 100), itm));
+                this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((float)(i + 1) / data.Item.Count, itm));
 
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
 

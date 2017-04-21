@@ -19,6 +19,7 @@ using OpenIZ.Core.Persistence;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -59,6 +60,21 @@ namespace OizDevTool
             [Parameter("aut")]
             [Description("The assigning authority of barcode IDs")]
             public String BarcodeAuthority { get; set; }
+        }
+
+        /// <summary>
+        /// Patient import parameters
+        /// </summary>
+        public class FacilitySearchParameters
+        {
+
+            /// <summary>
+            /// Gets or sets the facility identiifer
+            /// </summary>
+            [Parameter("query")]
+            [Description("The facility from which data should be extracted")]
+            public String FacilityName { get; set; }
+
         }
 
         /// <summary>
@@ -282,8 +298,8 @@ namespace OizDevTool
                 if (!m_cachedDose.TryGetValue(o.VaccineLotId, out matId))
                 {
                     matId = o.Dose.ScheduledVaccination.ItemId;
-                    lock(m_cachedDose)
-                        if(!m_cachedDose.ContainsKey(o.VaccineLotId))
+                    lock (m_cachedDose)
+                        if (!m_cachedDose.ContainsKey(o.VaccineLotId))
                             m_cachedDose.Add(o.VaccineLotId, matId);
                 }
 
@@ -316,7 +332,7 @@ namespace OizDevTool
                 }
                     };
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.Error.WriteLine("Error: Data consistency issue on vaccination record {0}, skipping", o.Id);
                     return null;
@@ -691,6 +707,8 @@ namespace OizDevTool
             DBManager.ExecuteNonQueryCommand("UPDATE \"CHILD\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
             DBManager.ExecuteNonQueryCommand("UPDATE \"VACCINATION_EVENT\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIEDON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity' OR \"MODIFIEDON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
             DBManager.ExecuteNonQueryCommand("UPDATE \"CHILD_WEIGHT\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"USER\" SET \"LASTLOGIN\" = NULL WHERE \"LASTLOGIN\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"USER\" SET \"PREVLOGIN\" = NULL WHERE \"PREVLOGIN\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
             //DBManager.ExecuteNonQueryCommand("UPDATE \"CHILD\" SET \"PREVLOGIN\" = NULL WHERE \"PREVLOGIN\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
 
             // Step 1: Load mapping arrays
@@ -739,7 +757,10 @@ namespace OizDevTool
 
             DatasetInstall resultSet = new DatasetInstall() { Id = $"Ad-hoc GIIS import {String.Join(":", parms.FacilityId)}" };
 
-            foreach (var facId in parms.FacilityId)
+            IEnumerable facilityIdentifiers = parms.FacilityId;
+            if (facilityIdentifiers == null || facilityIdentifiers.OfType<String>().Count() == 0)
+                facilityIdentifiers = facilityMap.Keys.Select(o => o.ToString());
+            foreach (var facId in facilityIdentifiers.OfType<String>())
             {
                 HealthFacility giisHf = HealthFacility.GetHealthFacilityById(Int32.Parse(facId));
                 if (giisHf == null)
@@ -797,7 +818,7 @@ namespace OizDevTool
                     var chld = children[i];
                     var dbChild = MapChild(chld, barcodeAut);
                     Console.CursorLeft = 0;
-                    float pdone = i / (float)children.Count;
+                    float pdone = (i + 1) / (float)children.Count;
 
                     int bdone = (int)(pdone * (Console.WindowWidth - 55) / 2);
                     Console.Write("  Child: {0} > {1} [{2}{3}] [{4:#0}% - ETA:{5}] ", chld.Id, dbChild.Key,
@@ -821,45 +842,93 @@ namespace OizDevTool
 
                 }
                 Console.WriteLine();
+
+                if (parms.SingleTransaction)
+                {
+                    Bundle b = new Bundle() { Item = resultSet.Action.Select(o => o.Element).ToList() };
+                    start = DateTime.Now;
+                    remaining = TimeSpan.MaxValue;
+                    float pdone = 0;
+                    int bdone = 0, lastPerc = 0;
+
+
+                    // Progress has changed
+                    if (bundlePersister is IReportProgressChanged)
+                        (bundlePersister as IReportProgressChanged).ProgressChanged += (o, e) =>
+                        {
+                            var ips = ((double)(DateTime.Now - start).Ticks / e.Progress) * (1 - e.Progress);
+                            remaining = new TimeSpan((long)ips);
+
+                            pdone = e.Progress;
+
+                            bdone = (int)((pdone) * (Console.WindowWidth - 55) / 2);
+                            Console.CursorLeft = 0;
+                            if ((int)e.Progress != lastPerc)
+                            {
+                                Console.Write("  DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", (e.State as IIdentifiedEntity)?.Key.Value,
+                                       Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
+                                       Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2) - bdone)) : "",
+                                       pdone * 100, remaining.ToString("mm'm 'ss's'"));
+                                lastPerc = (int)e.Progress;
+                            }
+                        };
+
+
+
+                    bundlePersister.Insert(b, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+                    resultSet.Action.Clear();
+                    pdone = 1;
+                    bdone = (int)((pdone) * (Console.WindowWidth - 55) / 2);
+                    Console.CursorLeft = 0;
+                    Console.Write("  DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", Guid.Empty,
+                           Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
+                           Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2) - bdone)) : "",
+                           pdone * 100, remaining.ToString("mm'm 'ss's'"));
+
+                    Console.WriteLine();
+                }
             }
 
             if (!parms.LiveMigration)
             {
 
                 XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
+                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "990-GIIS.authorities.dataset")))
+                    xsz.Serialize(fs, new DatasetInstall()
+                    {
+                        Action = resultSet.Action
+                        .Where(o => o.Element is Entity || o.Element is Act)
+                        .Select(o =>
+                            (o.Element as Entity)?.Identifiers?.Select(a => a?.Authority) ?? (o.Element as Act)?.Identifiers?.Select(a => a?.Authority)
+                        ).SelectMany(o => o).Where(o => o != null).Distinct(new AuthorityComparer()).Select(a => new DataInsert()
+                        {
+                            SkipIfExists = true,
+                            Element = a
+                        }).OfType<DataInstallAction>().ToList()
+                    });
+
                 using (var fs = File.Create(Path.Combine(parms.OutputDirectory, $"999-Facility-{String.Join("-", parms.FacilityId.OfType<String>().ToArray())}.dataset")))
                     xsz.Serialize(fs, resultSet);
             }
-            else
-            {
-                Bundle b = new Bundle() { Item = resultSet.Action.Select(o => o.Element).ToList() };
-                Console.WriteLine("Applying database {0} changes in single transaction...", b.Item.Count);
 
-                var start = DateTime.Now;
-                TimeSpan remaining = TimeSpan.MaxValue;
+        }
 
-                // Progress has changed
-                if (bundlePersister is IReportProgressChanged)
-                    (bundlePersister as IReportProgressChanged).ProgressChanged += (o, e) =>
-                    {
-                        if (e.ProgressPercentage % 2 == 0)
-                        {
-                            var ips = ((double)(DateTime.Now - start).Ticks / e.ProgressPercentage) * (100 - e.ProgressPercentage);
-                            remaining = new TimeSpan((long)ips);
-                        }
+        /// <summary>
+        /// Imports the Core data
+        /// </summary>
+        [Description("Searches facility list from GIIS")]
+        [ParameterClass(typeof(FacilitySearchParameters))]
+        [Example("Search for facility data from GIIS for all facilities containing Kal", "--query=Kal")]
+        public static void SearchFacility(string[] args)
+        {
+            DBManager.ExecuteNonQueryCommand("UPDATE \"CHILD\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"VACCINATION_EVENT\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIEDON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity' OR \"MODIFIEDON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"CHILD_WEIGHT\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
 
-                        float pdone = (float)e.ProgressPercentage / 100;
-                        Console.CursorLeft = 0;
-
-                        int bdone = (int)(pdone * (Console.WindowWidth - 55) / 2);
-                        Console.Write("  DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", (e.UserState as IIdentifiedEntity)?.Key.Value,
-                               Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
-                               Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2)-bdone)) : "",
-                               pdone * 100, remaining.ToString("mm'm 'ss's'"));
-                    };
-                bundlePersister.Insert(b, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-            }
-
+            var parms = new ParameterParser<FacilitySearchParameters>().Parse(args);
+            Console.WriteLine("FID\tNAME{0}CHILD#", new String(' ', 36));
+            foreach (var itm in HealthFacility.GetHealthFacilityList().Where(o => o.Name.Contains(parms.FacilityName)))
+                Console.WriteLine("{0}\t{1}{2}{3}", itm.Id, itm.Name, new String(' ', 40 - itm.Name.Length), Child.GetChildByHealthFacilityId(itm.Id).Count);
         }
 
         /// <summary>
@@ -871,6 +940,16 @@ namespace OizDevTool
         [Example("Extract all core data from connection and push into OpenIZ Database", "--live")]
         public static void ImportCoreData(string[] args)
         {
+
+            DBManager.ExecuteNonQueryCommand("UPDATE \"CHILD\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"VACCINATION_EVENT\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIEDON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity' OR \"MODIFIEDON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"CHILD_WEIGHT\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"ITEM_MANUFACTURER\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"ITEM\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"MANUFACTURER\" SET \"MODIFIED_ON\" = CURRENT_TIMESTAMP, \"MODIFIED_BY\" = 1 WHERE \"MODIFIED_ON\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"USER\" SET \"LASTLOGIN\" = NULL WHERE \"LASTLOGIN\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+            DBManager.ExecuteNonQueryCommand("UPDATE \"USER\" SET \"PREVLOGIN\" = NULL WHERE \"PREVLOGIN\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
+
 
             ConsoleParameters parms = new ParameterParser<ConsoleParameters>().Parse(args);
 
@@ -1090,6 +1169,10 @@ namespace OizDevTool
             Console.WriteLine("Exporting GIIS Users to OpenIZ IMS Format");
             DatasetInstall userDataset = new DatasetInstall() { Action = new List<DataInstallAction>() };
             userDataset.Id = "Users from GIIS";
+            roleMap.Add(Role.GetRoleByName("Vaccinator").Id, Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434"));
+            roleMap.Add(Role.GetRoleByName("Administrator").Id, Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"));
+
+
             foreach (var itm in User.GetUserList())
             {
                 if (userDataset.Action.Any(o => (o.Element as SecurityUser)?.UserName.Trim().ToLower() == itm.Username.Trim().ToLower()) ||
@@ -1149,9 +1232,6 @@ namespace OizDevTool
                     Association = new List<DataAssociation>()
                 };
 
-                roleMap.Add(Role.GetRoleByName("Vaccinator").Id, Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434"));
-                roleMap.Add(Role.GetRoleByName("Administrator").Id, Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"));
-
                 // Role
                 foreach (var r in Role.GetRolesOfUser(itm.Id))
                 {
@@ -1178,12 +1258,12 @@ namespace OizDevTool
                     });
 
                     // Add role
-                    if(role.Key != Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434") &&
+                    if (role.Key != Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434") &&
                         role.Key != Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"))
-                    userDataset.Action.Add(new DataInsert()
-                    {
-                        Element = role
-                    });
+                        userDataset.Action.Add(new DataInsert()
+                        {
+                            Element = role
+                        });
 
                     // Vaccinator?
                     if (r.Name == "Vaccinator")
@@ -1227,16 +1307,32 @@ namespace OizDevTool
             if (!parms.LiveMigration)
             {
                 XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
+                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "990-GIIS.authorities.dataset")))
+                    xsz.Serialize(fs, new DatasetInstall()
+                    {
+                        Id = "GIIS Authorities",
+                        Action = facilityDataset.Action.Union(placeDataset.Action).Union(userDataset.Action).Union(materialDataset.Action)
+                        .Where(o => o.Element is Entity || o.Element is Act)
+                        .Select(o =>
+                            (o.Element as Entity)?.Identifiers?.Select(a => a?.Authority) ?? (o.Element as Act)?.Identifiers?.Select(a => a?.Authority)
+                        ).SelectMany(o => o).Where(o => o != null).Distinct(new AuthorityComparer()).Select(a => new DataInsert()
+                        {
+                            IgnoreErrors = true,
+                            SkipIfExists = true,
+                            Element = a
+                        }).OfType<DataInstallAction>().ToList()
+                    });
+
                 using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "990-GIIS.concepts.dataset")))
                     xsz.Serialize(fs, conceptDataset);
-                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "991-GIIS.facilities.dataset")))
-                    xsz.Serialize(fs, facilityDataset);
-                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "992-GIIS.places.dataset")))
-                    xsz.Serialize(fs, placeDataset);
-                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "993-GIIS.users.dataset")))
-                    xsz.Serialize(fs, userDataset);
-                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "994-GIIS.materials.dataset")))
+                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "991-GIIS.materials.dataset")))
                     xsz.Serialize(fs, materialDataset);
+                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "992-GIIS.facilities.dataset")))
+                    xsz.Serialize(fs, facilityDataset);
+                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "993-GIIS.places.dataset")))
+                    xsz.Serialize(fs, placeDataset);
+                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "994-GIIS.users.dataset")))
+                    xsz.Serialize(fs, userDataset);
             }
             else
             {
@@ -1250,6 +1346,24 @@ namespace OizDevTool
             }
         }
 
+        /// <summary>
+        /// Comparer
+        /// </summary>
+        private class AuthorityComparer : IEqualityComparer<AssigningAuthority>
+        {
+            /// <summary>
+            /// Two items equal one another
+            /// </summary>
+            public bool Equals(AssigningAuthority x, AssigningAuthority y)
+            {
+                return x.DomainName == y.DomainName;
+            }
+
+            public int GetHashCode(AssigningAuthority obj)
+            {
+                return obj.DomainName.GetHashCode();
+            }
+        }
     }
 
 

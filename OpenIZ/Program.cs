@@ -87,6 +87,11 @@ namespace OpenIZ
                     Console.WriteLine("Complete Copyright information available at http://openiz.codeplex.com/wikipage?title=Contributions");
                     ServiceUtil.Start(typeof(Program).GUID);
                     ApplicationServiceContext.Current = ApplicationContext.Current;
+#if DEBUG
+                    Core.Diagnostics.Tracer.AddWriter(new Core.Diagnostics.LogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ.data"), System.Diagnostics.Tracing.EventLevel.LogAlways);
+#else
+                    Core.Diagnostics.Tracer.AddWriter(new Core.Diagnostics.LogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ.data"), System.Diagnostics.Tracing.EventLevel.Warning);
+#endif
                     if (!parameters.StartupTest)
                     {
                         Console.WriteLine("Press [ENTER] to stop...");

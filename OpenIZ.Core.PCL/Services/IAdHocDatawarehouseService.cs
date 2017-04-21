@@ -31,10 +31,15 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		DatamartDefinition GetDatamart(String name);
 
-		/// <summary>
-		/// Deletes a datamart
-		/// </summary>
-		void DeleteDatamart(Guid datamartId);
+        /// <summary>
+        /// Gets the specified datamart
+        /// </summary>
+        DatamartDefinition GetDatamart(Guid id);
+
+        /// <summary>
+        /// Deletes a datamart
+        /// </summary>
+        void DeleteDatamart(Guid datamartId);
 
 		/// <summary>
 		/// Gets data from an ad-hoc data mart
@@ -59,7 +64,7 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Create the specified stored query on the warehouse provider
 		/// </summary>
-		void CreateStoredQuery(Guid datamartId, object queryDefinition);
+		DatamartStoredQuery CreateStoredQuery(Guid datamartId, object queryDefinition);
 
 		/// <summary>
 		/// Executes a predefined query against a datamart

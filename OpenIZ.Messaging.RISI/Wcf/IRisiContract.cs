@@ -38,7 +38,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	[ServiceKnownType(typeof(ListAutoCompleteSourceDefinition))]
 	[ServiceKnownType(typeof(QueryAutoCompleteSourceDefinition))]
 	[ServiceContract(Namespace = "http://openiz.org/risi/1.0", Name = "RISI", ConfigurationName = "RISI_1.0")]
-	public interface IRisiContract
+	public partial interface IRisiContract
 	{
 		/// <summary>
 		/// Creates a new parameter type.
@@ -187,5 +187,6 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <returns>Returns the update report format.</returns>
 		[WebInvoke(UriTemplate = "/format/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		ReportFormat UpdateReportFormat(string id, ReportFormat reportFormat);
+        
 	}
 }
