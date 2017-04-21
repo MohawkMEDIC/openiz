@@ -920,7 +920,6 @@ namespace OpenIZ.Warehouse.ADO
         /// Executes an adhoc query 
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadWarehouseData)]
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryWarehouseData)]
         public IEnumerable<dynamic> AdhocQuery(string queryText)
         {
             this.ThrowIfDisposed();
