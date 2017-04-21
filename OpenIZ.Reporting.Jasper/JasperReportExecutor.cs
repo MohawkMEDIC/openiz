@@ -537,6 +537,23 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
+		/// Gets the report formats.
+		/// </summary>
+		/// <returns>Returns a list of report formats.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public RisiCollection<ReportFormat> GetReportFormats()
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportFormat>)}");
+			}
+
+			return new RisiCollection<ReportFormat>(persistenceService.Query(r => r.Key != null, AuthenticationContext.Current.Principal));
+		}
+
+		/// <summary>
 		/// Gets a report parameter by id.
 		/// </summary>
 		/// <param name="id">The id of the report parameter to retrieve.</param>
