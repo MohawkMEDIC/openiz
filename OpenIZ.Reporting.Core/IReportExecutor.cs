@@ -118,6 +118,12 @@ namespace OpenIZ.Reporting.Core
 		ReportFormat GetReportFormat(Guid id);
 
 		/// <summary>
+		/// Gets the report formats.
+		/// </summary>
+		/// <returns>Returns a list of report formats.</returns>
+		RisiCollection<ReportFormat> GetReportFormats();
+
+			/// <summary>
 		/// Gets a report parameter by id.
 		/// </summary>
 		/// <param name="id">The id of the report parameter to retrieve.</param>

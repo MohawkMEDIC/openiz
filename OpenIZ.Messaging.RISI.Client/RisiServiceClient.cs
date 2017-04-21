@@ -18,6 +18,7 @@
  * Date: 2016-8-28
  */
 
+using OpenIZ.Core.Data.Warehouse;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Interop.Clients;
 using OpenIZ.Core.Model.RISI;
@@ -38,6 +39,16 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="restClient">The REST client instance.</param>
 		public RisiServiceClient(IRestClient restClient) : base(restClient)
 		{
+		}
+
+		/// <summary>
+		/// Creates the datamart.
+		/// </summary>
+		/// <param name="definition">The definition.</param>
+		/// <returns>Returns the created datamart.</returns>
+		public DatamartDefinition CreateDatamart(DatamartDefinition definition)
+		{
+			return this.Client.Post<DatamartDefinition, DatamartDefinition>("datamart", this.Client.Accept, definition);
 		}
 
 		/// <summary>
@@ -71,6 +82,37 @@ namespace OpenIZ.Messaging.RISI.Client
 		}
 
 		/// <summary>
+		/// Creates the stored query.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="queryDefinition">The query definition.</param>
+		/// <returns>Returns the created stored query.</returns>
+		public DatamartStoredQuery CreateStoredQuery(Guid id, DatamartStoredQuery queryDefinition)
+		{
+			return this.Client.Post<DatamartStoredQuery, DatamartStoredQuery>($"datamart/{id}/query", this.Client.Accept, queryDefinition);
+		}
+
+		/// <summary>
+		/// Creates the warehouse object.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="dataWarehouseObject">The data warehouse object.</param>
+		/// <returns>Returns the created warehouse object.</returns>
+		public DataWarehouseObject CreateWarehouseObject(Guid id, DataWarehouseObject dataWarehouseObject)
+		{
+			return this.Client.Post<DataWarehouseObject, DataWarehouseObject>($"/datamart/{id}/data", this.Client.Accept, dataWarehouseObject);
+		}
+
+		/// <summary>
+		/// Deletes the datamart.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		public void DeleteDatamart(Guid id)
+		{
+			this.Client.Delete<DatamartDefinition>("datamart/{id}");
+		}
+
+		/// <summary>
 		/// Deletes a report parameter type.
 		/// </summary>
 		/// <param name="id">The id of the report parameter type to delete.</param>
@@ -98,6 +140,155 @@ namespace OpenIZ.Messaging.RISI.Client
 		public ReportFormat DeleteReportFormat(Guid id)
 		{
 			return this.Client.Delete<ReportFormat>($"format/{id}");
+		}
+
+		/// <summary>
+		/// Executes the adhoc query.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Returns the executed datawarehouse object.</returns>
+		public RisiCollection<DataWarehouseObject> ExecuteAdhocQuery(Guid id)
+		{
+			return this.Client.Get<RisiCollection<DataWarehouseObject>>($"datamart/{id}/data");
+		}
+
+		/// <summary>
+		/// Executes the stored query.
+		/// </summary>
+		/// <param name="datamartId">The datamart identifier.</param>
+		/// <param name="queryId">The query identifier.</param>
+		/// <returns>Returns the list of object which were executed as a prt of the stored query.</returns>
+		public RisiCollection<DataWarehouseObject> ExecuteStoredQuery(Guid datamartId, Guid queryId)
+		{
+			return this.Client.Get<RisiCollection<DataWarehouseObject>>($"datamart/{datamartId}/query/{queryId}");
+		}
+
+		/// <summary>
+		/// Gets a list of all report parameter types.
+		/// </summary>
+		/// <returns>Returns a list of report parameter types.</returns>
+		public RisiCollection<ParameterType> GetAllReportParameterTypes()
+		{
+			return this.Client.Get<RisiCollection<ParameterType>>("type", null);
+		}
+
+		/// <summary>
+		/// Gets the datamart.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Returns the datamar definition.</returns>
+		public DatamartDefinition GetDatamart(Guid id)
+		{
+			return this.Client.Get<DatamartDefinition>($"datamart/{id}");
+		}
+
+		/// <summary>
+		/// Gets the datamarts.
+		/// </summary>
+		/// <returns>Returns a list of datamarts.</returns>
+		public RisiCollection<DatamartDefinition> GetDatamarts()
+		{
+			return this.Client.Get<RisiCollection<DatamartDefinition>>("datamart");
+		}
+
+		/// <summary>
+		/// Gets a report definition by id.
+		/// </summary>
+		/// <param name="id">The id of the report definition to retrieve.</param>
+		/// <returns>Returns a report definition.</returns>
+		public ReportDefinition GetReportDefinition(Guid id)
+		{
+			return this.Client.Get<ReportDefinition>($"report/{id}");
+		}
+
+		/// <summary>
+		/// Gets a list of report definitions based on a specific query.
+		/// </summary>
+		/// <returns>Returns a list of report definitions.</returns>
+		public RisiCollection<ReportDefinition> GetReportDefinitions()
+		{
+			return this.Client.Get<RisiCollection<ReportDefinition>>("report", null);
+		}
+
+		/// <summary>
+		/// Gets a report format by id.
+		/// </summary>
+		/// <param name="id">The id of the report format to retrieve.</param>
+		/// <returns>Returns a report format.</returns>
+		public ReportFormat GetReportFormat(Guid id)
+		{
+			return this.Client.Get<ReportFormat>($"format/{id}", null);
+		}
+
+		/// <summary>
+		/// Gets the report formats.
+		/// </summary>
+		/// <returns>Returns a list of report formats.</returns>
+		public RisiCollection<ReportFormat> GetReportFormats()
+		{
+			return this.Client.Get<RisiCollection<ReportFormat>>("format");
+		}
+
+		/// <summary>
+		/// Gets a report parameter by id.
+		/// </summary>
+		/// <param name="id">The id of the report parameter to retrieve.</param>
+		/// <returns>Returns a report parameter.</returns>
+		public ReportParameter GetReportParameter(Guid id)
+		{
+			return this.Client.Get<ReportParameter>($"type/{id}");
+		}
+
+		/// <summary>
+		/// Gets a list of report parameters.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve parameters.</param>
+		/// <returns>Returns a list of parameters.</returns>
+		public RisiCollection<ReportParameter> GetReportParameters(Guid id)
+		{
+			return this.Client.Get<RisiCollection<ReportParameter>>($"report/{id}/parm");
+		}
+
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
+		{
+			return this.Client.Get<AutoCompleteSourceDefinition>($"report/{id}/parm/{parameterId}/values");
+		}
+
+		/// <summary>
+		/// Gets the report source.
+		/// </summary>
+		/// <param name="id">The id of the report for which to retrieve the source.</param>
+		/// <returns>Returns the report source.</returns>
+		public Stream GetReportSource(Guid id)
+		{
+			return new MemoryStream(this.Client.Get($"report/{id}/source"));
+		}
+
+		/// <summary>
+		/// Gets the stored queries.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <returns>Returns the storied queries on the datamart.</returns>
+		public RisiCollection<DatamartStoredQuery> GetStoredQueries(Guid id)
+		{
+			return this.Client.Get<RisiCollection<DatamartStoredQuery>>($"datamart/{id}/query");
+		}
+
+		/// <summary>
+		/// Gets the warehouse object.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		/// <param name="objectId">The object identifier.</param>
+		/// <returns>Returns the warehouse object.</returns>
+		public DataWarehouseObject GetWarehouseObject(Guid id, Guid objectId)
+		{
+			return this.Client.Get<DataWarehouseObject>($"datamart/{id}/data/{objectId}");
 		}
 
 		#region IDisposable Support
@@ -143,85 +334,6 @@ namespace OpenIZ.Messaging.RISI.Client
 		// }
 
 		#endregion IDisposable Support
-
-		/// <summary>
-		/// Gets a list of all report parameter types.
-		/// </summary>
-		/// <returns>Returns a list of report parameter types.</returns>
-		public RisiCollection<ParameterType> GetAllReportParameterTypes()
-		{
-			return this.Client.Get<RisiCollection<ParameterType>>("type", null);
-		}
-
-		/// <summary>
-		/// Gets a report definition by id.
-		/// </summary>
-		/// <param name="id">The id of the report definition to retrieve.</param>
-		/// <returns>Returns a report definition.</returns>
-		public ReportDefinition GetReportDefinition(Guid id)
-		{
-			return this.Client.Get<ReportDefinition>($"report/{id}");
-		}
-
-		/// <summary>
-		/// Gets a list of report definitions based on a specific query.
-		/// </summary>
-		/// <returns>Returns a list of report definitions.</returns>
-		public RisiCollection<ReportDefinition> GetReportDefinitions()
-		{
-			return this.Client.Get<RisiCollection<ReportDefinition>>("report", null);
-		}
-
-		/// <summary>
-		/// Gets a report format by id.
-		/// </summary>
-		/// <param name="id">The id of the report format to retrieve.</param>
-		/// <returns>Returns a report format.</returns>
-		public ReportFormat GetReportFormat(Guid id)
-		{
-			return this.Client.Get<ReportFormat>($"format/{id}", null);
-		}
-
-		/// <summary>
-		/// Gets a report parameter by id.
-		/// </summary>
-		/// <param name="id">The id of the report parameter to retrieve.</param>
-		/// <returns>Returns a report parameter.</returns>
-		public ReportParameter GetReportParameter(Guid id)
-		{
-			return this.Client.Get<ReportParameter>($"type/{id}");
-		}
-
-		/// <summary>
-		/// Gets a list of report parameters.
-		/// </summary>
-		/// <param name="id">The id of the report for which to retrieve parameters.</param>
-		/// <returns>Returns a list of parameters.</returns>
-		public RisiCollection<ReportParameter> GetReportParameters(Guid id)
-		{
-			return this.Client.Get<RisiCollection<ReportParameter>>($"report/{id}/parm");
-		}
-
-		/// <summary>
-		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
-		/// </summary>
-		/// <param name="id">The id of the report.</param>
-		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
-		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
-		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
-		{
-			return this.Client.Get<AutoCompleteSourceDefinition>($"report/{id}/parm/{parameterId}/values");
-		}
-
-		/// <summary>
-		/// Gets the report source.
-		/// </summary>
-		/// <param name="id">The id of the report for which to retrieve the source.</param>
-		/// <returns>Returns the report source.</returns>
-		public Stream GetReportSource(Guid id)
-		{
-			return new MemoryStream(this.Client.Get($"report/{id}/source"));
-		}
 
 		/// <summary>
 		/// Executes a report.

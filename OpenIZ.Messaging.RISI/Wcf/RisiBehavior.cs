@@ -182,6 +182,16 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		}
 
 		/// <summary>
+		/// Gets the report formats.
+		/// </summary>
+		/// <returns>Returns a list of report formats.</returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public RisiCollection<ReportFormat> GetReportFormats()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// Gets a report parameter by id.
 		/// </summary>
 		/// <param name="id">The id of the report parameter to retrieve.</param>
