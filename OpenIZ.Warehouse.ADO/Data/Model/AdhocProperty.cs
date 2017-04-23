@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Warehouse.ADO.Data.SQL.Model
+namespace OpenIZ.Warehouse.ADO.Data.Model
 {
     /// <summary>
     /// Represents an adhoc property

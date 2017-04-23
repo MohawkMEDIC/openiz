@@ -12,7 +12,7 @@ namespace OpenIZ.Core.Services
 		/// Performs a DIFF and creates the related patch which can be used to update <paramref name="existing"/>
 		/// to <paramref name="updated"/>
 		/// </summary>
-		Patch Diff(IdentifiedData existing, IdentifiedData updated);
+		Patch Diff(IdentifiedData existing, IdentifiedData updated, params string[] ignoreProperties);
 
 		/// <summary>
 		/// Apples the specified <paramref name="patch"/> onto <paramref name="data"/> returning the updated object

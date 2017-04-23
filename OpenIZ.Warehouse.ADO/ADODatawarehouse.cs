@@ -20,7 +20,7 @@ using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.OrmLite;
 using OpenIZ.Core.Model.Query;
 using Newtonsoft.Json;
-using OpenIZ.Warehouse.ADO.Data.SQL.Model;
+using OpenIZ.Warehouse.ADO.Data.Model;
 using OpenIZ.Core.Security.Attribute;
 using System.Security.Permissions;
 using OpenIZ.Core.Security;

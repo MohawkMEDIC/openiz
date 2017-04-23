@@ -52,10 +52,10 @@
     <Compile Include="Configuration\AdoConfiguration.cs" />
     <Compile Include="Configuration\AdoConfigurationSectionHandler.cs" />
     <Compile Include="DataWarehouseConstants.cs" />
-    <Compile Include="Data\SQL\Model\AdhocDatamart.cs" />
-    <Compile Include="Data\SQL\Model\AdhocProperty.cs" />
-    <Compile Include="Data\SQL\Model\AdhocQuery.cs" />
-    <Compile Include="Data\SQL\Model\AdhocSchema.cs" />
+    <Compile Include="Data\Model\AdhocDatamart.cs" />
+    <Compile Include="Data\Model\AdhocProperty.cs" />
+    <Compile Include="Data\Model\AdhocQuery.cs" />
+    <Compile Include="Data\Model\AdhocSchema.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ADODataWarehouse.cs" />
   </ItemGroup>

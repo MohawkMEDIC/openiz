@@ -124,6 +124,7 @@ namespace OizDevTool
             { "Measles Rubella", Guid.Parse("6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B") },
             { "measles virus vaccine", Guid.Parse("7C5A4FF6-4E81-4C6C-88E9-FC75CE61A4FB") },
             { "PCV-13", Guid.Parse("E829C3D1-5243-474E-A2D6-BA35D99610C4") },
+            { "PCV13", Guid.Parse("E829C3D1-5243-474E-A2D6-BA35D99610C4") },
             { "TT", Guid.Parse("D8049BE9-19D7-4DD8-9DC1-7D8F3886FF97") },
             { "OPV", Guid.Parse("790BE5CA-D07D-46C6-8FA0-9D4F5ADF388C") }
         };
@@ -387,7 +388,6 @@ namespace OizDevTool
                 Identifiers = new List<EntityIdentifier>()
                 {
                     new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("GIIS_CHILD", "GIIS Child Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.6"), child.Id.ToString()),
-                    new OpenIZ.Core.Model.DataTypes.EntityIdentifier(barcodeAut, child.BarcodeId)
                 },
                 Names = new List<EntityName>()
                 {
@@ -403,6 +403,9 @@ namespace OizDevTool
                     new EntityTag("http://openiz.org/tags/contrib/importedData", "true")
                 }
             };
+
+            if (!String.IsNullOrEmpty(child.BarcodeId))
+                retVal.Identifiers.Add(new OpenIZ.Core.Model.DataTypes.EntityIdentifier(barcodeAut, child.BarcodeId));
 
             // Child health centre
             var hfAssigned = facilityMap[child.HealthcenterId];
@@ -546,7 +549,7 @@ namespace OizDevTool
                             }
             };
 
-            if (hf.ParentId != 0)
+            if (hf.ParentId != 0 && facilityMap.ContainsKey(hf.ParentId))
                 retVal.Relationships = new List<EntityRelationship>()
                 {
                     new EntityRelationship(EntityRelationshipTypeKeys.Parent, new Entity() { Key = facilityMap[hf.ParentId] })
@@ -724,6 +727,7 @@ namespace OizDevTool
             var bundlePersister = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
             var materialPersister = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
             var conceptPersister = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+            var patientPersister = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
             var uePersister = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
             var barcodeAut = ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Query(o => o.DomainName == parms.BarcodeAuthority, AuthenticationContext.SystemPrincipal).FirstOrDefault();
 
@@ -754,13 +758,13 @@ namespace OizDevTool
             Console.WriteLine("Map OpenIZ Places...");
             placeEntityMap = places.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
             facilityMap = facilities.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
-            facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(t => o.Mnemonic.EndsWith(t.Name.Replace(" ", ""))).Id, o => o.Key.Value);
+            facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", ""))).Id, o => o.Key.Value);
 
             Console.WriteLine("Map OpenIZ Materials...");
             manufacturedMaterialMap = materials.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
 
             DatasetInstall resultSet = new DatasetInstall() { Id = $"Ad-hoc GIIS import {String.Join(":", parms.FacilityId)}" };
-
+            
             IEnumerable facilityIdentifiers = parms.FacilityId;
             if (facilityIdentifiers == null || facilityIdentifiers.OfType<String>().Count() == 0)
                 facilityIdentifiers = facilityMap.Keys.Select(o => o.ToString());
@@ -812,20 +816,30 @@ namespace OizDevTool
 
                 // Now map the children... think of the children!!!!!
                 var start = DateTime.Now;
+
                 for (int i = 0; i < children.Count; i++)
                 {
+
                     //remainSw.Stop();
                     var ips = (((double)(DateTime.Now - start).Ticks / i) * (children.Count - i));
                     remaining = new TimeSpan((long)ips);
                     //remainSw.Start();
 
                     var chld = children[i];
+
+                    // Child exists?
+                    if (patientPersister.Count(o => o.Identifiers.Any(n => n.Authority.DomainName == "GIIS_CHILD" && n.Value == chld.Id.ToString()), AuthenticationContext.SystemPrincipal) > 0)
+                    {
+                        Console.WriteLine("Child ID # {0} was previously imported, skipping this child. Please manually reconcile this record if desired.", chld.Id);
+                        continue;
+                    }
+
                     var dbChild = MapChild(chld, barcodeAut);
-                    Console.CursorLeft = 0;
                     float pdone = (i + 1) / (float)children.Count;
 
                     int bdone = (int)(pdone * (Console.WindowWidth - 55) / 2);
-                    Console.Write("  Child: {0} > {1} [{2}{3}] [{4:#0}% - ETA:{5}] ", chld.Id, dbChild.Key,
+                    Console.CursorLeft = 2;
+                    Console.Write("Child: {0} > {1} [{2}{3}] [{4:#0}% - ETA:{5}] ", chld.Id, dbChild.Key,
                         Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
                         Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2) - bdone)) : "",
                         pdone * 100, remaining.ToString("mm'm 'ss's'"));
@@ -866,10 +880,10 @@ namespace OizDevTool
                             pdone = e.Progress;
 
                             bdone = (int)((pdone) * (Console.WindowWidth - 55) / 2);
-                            Console.CursorLeft = 0;
+                            Console.CursorLeft = 2;
                             if ((int)(e.Progress * 200) != lastPerc)
                             {
-                                Console.Write("  DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", (e.State as IIdentifiedEntity)?.Key.Value,
+                                Console.Write("DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", (e.State as IIdentifiedEntity)?.Key.Value,
                                        Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
                                        Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2) - bdone)) : "",
                                        pdone * 100, remaining.ToString("mm'm 'ss's'"));

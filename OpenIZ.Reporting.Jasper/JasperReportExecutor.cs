@@ -75,7 +75,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <summary>
 		/// The configuration.
 		/// </summary>
-		private static readonly ReportingConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.reporting.core") as ReportingConfiguration;
+		private static readonly ReportingConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.reporting.jasper") as ReportingConfiguration;
 
 		/// <summary>
 		/// The jasper authentication path.

@@ -30,6 +30,8 @@ using System.Threading.Tasks;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {
+
+
     /// <summary>
     /// Represents a rule service base binding
     /// </summary>
@@ -111,5 +113,6 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
             return JavascriptBusinessRulesEngine.Current.Validate(data);
         }
+        
     }
 }

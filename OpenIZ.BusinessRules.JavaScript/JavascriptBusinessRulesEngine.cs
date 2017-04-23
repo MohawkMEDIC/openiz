@@ -37,6 +37,8 @@ using Jint;
 using OpenIZ.Core.Model;
 using System.Text.RegularExpressions;
 using OpenIZ.Core.Interfaces;
+using Jint.Parser.Ast;
+using Jint.Parser;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {
@@ -81,13 +83,19 @@ namespace OpenIZ.BusinessRules.JavaScript
         public BusinessRulesBridge Bridge {  get { return this.m_bridge; } }
 
         /// <summary>
+        /// Rules program
+        /// </summary>
+        public Dictionary<String, Program> RulesPrograms { get; private set; }
+
+        /// <summary>
         /// Initialize javascript BRE
         /// </summary>
         private void Initialize()
         {
             // Set up javascript ening 
             this.m_tracer.TraceInfo("OpenIZ Javascript Business Rules Host Initialize");
-            
+            this.RulesPrograms = new Dictionary<string, Program>();
+
             this.m_engine = new Jint.Engine(cfg => cfg.AllowClr(
                     typeof(OpenIZ.Core.Model.BaseEntityData).GetTypeInfo().Assembly,
                     typeof(IBusinessRulesService<>).GetTypeInfo().Assembly
@@ -99,31 +107,15 @@ namespace OpenIZ.BusinessRules.JavaScript
                 ).SetValue("OpenIZBre", this.m_bridge)
                 .SetValue("console", new JsConsoleProvider());
 
-            // Break
-#if DEBUG
-            this.m_engine.Break += M_engine_Break;
-#endif 
-
             foreach(var itm in typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceNames().Where(o=>o.EndsWith(".js")))
             using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))
-                this.AddRules(sr);
+                this.AddRules(itm.Replace(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.FullName, ""), sr);
         }
 
         /// <summary>
-        /// Break at the current line of execution
+        /// Gets the executing file key 
         /// </summary>
-        private Jint.Runtime.Debugger.StepMode M_engine_Break(object sender, Jint.Runtime.Debugger.DebugInformation e)
-        {
-
-            if (System.Diagnostics.Debugger.IsAttached)
-                System.Diagnostics.Debugger.Break();
-            else
-                return Jint.Runtime.Debugger.StepMode.None;
-
-            // Modify this value on the VS debugger to control debugging
-            var retVal = Jint.Runtime.Debugger.StepMode.None;
-            return retVal;
-        }
+        public String ExecutingFile { get; set; }
 
         /// <summary>
         /// Current BRE
@@ -150,26 +142,47 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Add the specified script
         /// </summary>
-        public void AddRules(StreamReader script)
+        public void AddRules(String ruleId, StreamReader script)
         {
             try
             {
+
+                // Already ran
+                if (this.RulesPrograms.ContainsKey(ruleId))
+                    return; 
+
                 this.m_tracer.TraceVerbose("Adding rules to BRE");
                 var rawScript = script.ReadToEnd();
                 // Find all reference paths
                 Regex includeReg = new Regex(@"\/\/\/\s*?\<reference\s*?path\=[""'](.*?)[""']\s?\/\>", RegexOptions.Multiline);
                 var incMatches = includeReg.Matches(rawScript);
+
                 foreach(Match match in incMatches)
                 {
                     var include = match.Groups[1].Value;
+                    var incFile = include;
+                    if (incFile.Contains("/"))
+                        incFile = incFile.Substring(incFile.LastIndexOf("/"));
+                    else if (incFile.Contains("\\"))
+                        incFile = incFile.Substring(incFile.LastIndexOf("\\"));
+
                     var incStream = (ApplicationServiceContext.Current.GetService(typeof(IDataReferenceResolver)) as IDataReferenceResolver)?.Resolve(include);
                     if (incStream == null)
                         this.m_tracer.TraceWarning("Include {0} not found", include);
                     else
                         using (StreamReader sr = new StreamReader(incStream))
-                            this.m_engine.Execute(rawScript);
+                            this.AddRules(incFile, sr);
                 }
 
+                var pgm = new JavaScriptParser(false).Parse(rawScript);
+                pgm.LabelSet = ruleId;
+                lock (this.RulesPrograms)
+                {
+                    this.RulesPrograms.Add(ruleId, pgm);
+                    this.ExecutingFile = ruleId;
+                    this.m_engine.Execute(pgm);
+                    this.ExecutingFile = null;
+                }
             }
             catch(JavaScriptException ex)
             {

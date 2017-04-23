@@ -36,6 +36,7 @@
     <Reference Include="GIIS.DataLayer">
       <HintPath>..\Solution Items\GIIS.DataLayer.dll</HintPath>
     </Reference>
+    <Reference Include="jint, Version=2.10.2.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f" />
     <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
@@ -65,7 +66,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreDebugger\BreDebugger.cs" />
+    <Compile Include="BreDebugger\Debug.cs" />
+    <Compile Include="BreDebugger\DebuggerBase.cs" />
+    <Compile Include="BreDebugger\DebuggerCommandAttribute.cs" />
     <Compile Include="ExampleAttribute.cs" />
+    <Compile Include="InteractiveAttribute.cs" />
     <Compile Include="ParameterClassAttribute.cs" />
     <Compile Include="VocabTool.cs" />
     <Compile Include="ConsoleParameters.cs" />
@@ -112,6 +118,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.BusinessRules.JavaScript\OpenIZ.BusinessRules.JavaScript.csproj">
+      <Project>{3BFD6EE6-0267-4D82-BE7D-9B48B2F6F3D4}</Project>
+      <Name>OpenIZ.BusinessRules.JavaScript</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
       <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
       <Name>OpenIZ.Core.Applets</Name>

@@ -59,7 +59,7 @@ namespace OpenIZ.Core.Model.Serialization
                 }
             if (type == null)
                 type = asm.GetType(typeName);
-            return type ?? typeof(IdentifiedData);
+            return type ?? null;
         }
     }
 }

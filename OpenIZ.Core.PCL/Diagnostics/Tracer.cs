@@ -66,7 +66,7 @@ namespace OpenIZ.Core.Diagnostics
 		{
 			foreach (var w in m_writers)
 			{
-                if(level < w.Value || level == EventLevel.LogAlways)
+                if(level < w.Value || w.Value == EventLevel.LogAlways)
 				    w.Key.TraceEvent(level, this.m_source, format, args);
 			}
 		}

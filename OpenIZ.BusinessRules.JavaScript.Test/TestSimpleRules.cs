@@ -60,7 +60,7 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
                 using (stream)
                 using (StreamReader streamReader = new StreamReader(stream))
                 {
-                    JavascriptBusinessRulesEngine.Current.AddRules(streamReader);
+                    JavascriptBusinessRulesEngine.Current.AddRules(Guid.NewGuid().ToString(), streamReader);
                 }
             }
         }

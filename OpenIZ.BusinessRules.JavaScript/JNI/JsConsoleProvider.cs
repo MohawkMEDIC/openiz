@@ -29,7 +29,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
     /// <summary>
     /// Supplies console
     /// </summary>
-    public class JsConsoleProvider
+    public class JsConsoleProvider 
     {
         // Tracker
         private Tracer m_tracer = Tracer.GetTracer(typeof(JsConsoleProvider));

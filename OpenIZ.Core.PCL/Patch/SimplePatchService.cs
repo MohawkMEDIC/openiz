@@ -43,13 +43,13 @@ namespace OpenIZ.Core.Services.Impl
         /// Perform a diff using a simple .compare() method
         /// </summary>
         /// <remarks>This method only performs a diff on the root object passed and does not cascade to collections</remarks>
-        public Patch Diff(IdentifiedData existing, IdentifiedData updated)
+        public Patch Diff(IdentifiedData existing, IdentifiedData updated, params string[] ignoreProperties)
         {
             var retVal = new Patch()
             {
                 Key = Guid.NewGuid(),
                 CreationTime = DateTimeOffset.Now,
-                Operation = this.DiffInternal(existing, updated, null),
+                Operation = this.DiffInternal(existing, updated, null, ignoreProperties),
                 AppliesTo = new PatchTarget(existing)
             };
             this.m_tracer.TraceVerbose("-->> DIFF {0} > {1}\r\n{2}", existing, updated, retVal);
@@ -59,7 +59,7 @@ namespace OpenIZ.Core.Services.Impl
         /// <summary>
         /// Difference internal
         /// </summary>
-        private List<PatchOperation> DiffInternal(IdentifiedData existing, IdentifiedData updated, String path)
+        private List<PatchOperation> DiffInternal(IdentifiedData existing, IdentifiedData updated, String path, String[] ignoreProperties)
         {
             // First are they the same?
             this.m_tracer.TraceVerbose("Generating DIFF: {0} > {1}", existing, updated);
@@ -87,6 +87,8 @@ namespace OpenIZ.Core.Services.Impl
                 foreach (var pi in properties)
                 {
                     var serializationName = pi.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
+                    if (ignoreProperties?.Contains($"{path}{serializationName}") == true) continue;
+
                     object existingValue = pi.GetValue(existing),
                         updatedValue = pi.GetValue(updated);
 
@@ -110,7 +112,7 @@ namespace OpenIZ.Core.Services.Impl
                             IdentifiedData existingId = existingValue as IdentifiedData,
                                 updatedId = updatedValue as IdentifiedData;
                             if(existingId.Key == updatedId.Key)
-                                retVal.AddRange(this.DiffInternal(existingId, updatedId, $"{path}{serializationName}."));
+                                retVal.AddRange(this.DiffInternal(existingId, updatedId, $"{path}{serializationName}.", ignoreProperties));
                             else
                             {
                                 retVal.AddRange(this.GenerateTests(existingValue, $"{path}{serializationName}"));

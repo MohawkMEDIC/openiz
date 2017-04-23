@@ -362,34 +362,6 @@
   </update>
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
-      <id>9902267c-8f77-4233-bfd3-e6b068ab326a</id>
-      
-      <previousVersion xsi:nil="true" />
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>AdministrableDrugForm-Injection</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
-      <referenceTerm>
-        <source xsi:nil="true" />
-        <effectiveVersionSequence xsi:nil="true" />
-        <obsoleteVersionSequence xsi:nil="true" />
-        <term>2839824e-f62d-4844-9b9e-189a7ab5d81d</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <source xsi:nil="true" />
-        <effectiveVersionSequence xsi:nil="true" />
-        <obsoleteVersionSequence xsi:nil="true" />
-        <language>en</language>
-        <value>sprays</value>
-        <phoneticAlgorithm xsi:nil="true" />
-      </name>
-    </Concept>
-  </update>
-  <update insertIfNotExists="true">
-    <Concept xmlns="http://openiz.org/model">
       <id>3b02267c-8f77-4233-bfd3-e6b068ab326a</id>
       
       <previousVersion xsi:nil="true" />
@@ -412,6 +384,50 @@
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
         <value>sprays</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>9902267c-8f77-4233-bfd3-e6b068ab326a</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Injection</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Injection</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>aa02267c-8f77-4233-bfd3-e6b068ab326a</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>AdministrableDrugForm-Pill</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>17EE5254-8C25-4ABB-B246-083FBE9AFA15</conceptClass>
+      
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Pill Capsule</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>

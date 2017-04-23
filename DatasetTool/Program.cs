@@ -39,7 +39,7 @@ namespace OizDevTool
                Path.GetDirectoryName(typeof(Program).Assembly.Location));
 
 
-            Console.WriteLine("Open Immunize Data Tool v{0}", typeof(Program).Assembly.GetName().Version);
+            Console.WriteLine("Open Immunize Development Tool v{0}", typeof(Program).Assembly.GetName().Version);
             Console.WriteLine("Copyright (C) 2015 - 2017, Mohawk College of Applied Arts and Technology");
 
             try
@@ -87,7 +87,8 @@ namespace OizDevTool
                                     }
                                     return null;
                                 });
-                                doodadTask.Start();
+                                if(operation.GetCustomAttribute<InteractiveAttribute>() == null)
+                                    doodadTask.Start();
                                 operation.Invoke(null, new Object[] { args });
 
                             }
@@ -129,7 +130,7 @@ namespace OizDevTool
 
                 // Output help for each tool
                 Console.WriteLine("\r\n\r\nInstalled --tool Options:\r\n");
-                foreach (var t in typeof(Program).Assembly.GetTypes().Where(o=>o.GetCustomAttribute<DescriptionAttribute>() != null))
+                foreach (var t in typeof(Program).Assembly.GetTypes().Where(o=>o.GetCustomAttribute<DescriptionAttribute>() != null && o.IsAbstract && o.IsSealed))
                 {
                     Console.WriteLine("{0}{1}{2}", t.Name, new String(' ', 20 - t.Name.Length) ,t.GetCustomAttribute<DescriptionAttribute>().Description);
                 }
