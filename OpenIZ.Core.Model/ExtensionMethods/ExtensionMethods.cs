@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.Map;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -168,6 +169,29 @@ namespace OpenIZ.Core.Model
 			foreach (var b in me)
 				hash = ((hash << 5) + hash) ^ b;
 			return BitConverter.ToString(BitConverter.GetBytes(hash)).Replace("-", "");
+		}
+
+		/// <summary>
+		/// Determines whether the specified property name has property.
+		/// </summary>
+		/// <param name="source">The source.</param>
+		/// <param name="propertyName">Name of the property.</param>
+		/// <returns><c>true</c> if the specified property name has property; otherwise, <c>false</c>.</returns>
+		/// <exception cref="System.ArgumentNullException">source - Value cannot be null</exception>
+		/// <exception cref="System.ArgumentException">Value cannot be null or empty - propertyName</exception>
+		public static bool HasProperty(this ExpandoObject source, string propertyName)
+		{
+			if (source == null)
+			{
+				throw new ArgumentNullException(nameof(source), "Value cannot be null");
+			}
+
+			if (string.IsNullOrEmpty(propertyName) || string.IsNullOrWhiteSpace(propertyName))
+			{
+				throw new ArgumentException("Value cannot be null or empty", nameof(propertyName));
+			}
+
+			return ((IDictionary<string, object>)source).ContainsKey(propertyName);
 		}
 
 		/// <summary>

@@ -29,10 +29,13 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	/// <summary>
 	/// Provides operations for running and managing reports.
 	/// </summary>
+	[ServiceKnownType(typeof(ReportBundle))]
 	[ServiceKnownType(typeof(ReportFormat))]
 	[ServiceKnownType(typeof(ParameterType))]
 	[ServiceKnownType(typeof(ReportDefinition))]
+	[ServiceKnownType(typeof(ReportParameter))]
 	[ServiceKnownType(typeof(AutoCompleteSourceDefinition))]
+	[ServiceKnownType(typeof(RisiCollection<ReportFormat>))]
 	[ServiceKnownType(typeof(RisiCollection<ReportParameter>))]
 	[ServiceKnownType(typeof(RisiCollection<ReportDefinition>))]
 	[ServiceKnownType(typeof(ListAutoCompleteSourceDefinition))]
@@ -163,10 +166,10 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report.</param>
 		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <param name="bundle">The report parameters.</param>
 		/// <returns>Returns the report in raw format.</returns>
-		[WebInvoke(UriTemplate = "/report/{id}/{format}", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		Stream RunReport(string id, string format, RisiCollection<ReportParameter> parameters);
+		[WebInvoke(UriTemplate = "/report/{id}/format/{format}", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		Stream RunReport(string id, string format, ReportBundle bundle);
 
 		/// <summary>
 		/// Updates a parameter type definition.

@@ -77,8 +77,14 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			if (!loadFast)
 			{
-				var reportParameterPersistenceService = new ReportParameterPersistenceService();
-				reportDefinition.Parameters = context.Query<ReportParameter>(r => r.ReportId == key).Select(r => reportParameterPersistenceService.ToModelInstance(r, context, principal)).ToList();
+				reportDefinition.Parameters = context.Query<ReportParameter>(r => r.ReportId == key).Select(r => new Core.Model.RISI.ReportParameter
+				{
+					Key = r.Key,
+					Name = r.Name,
+					CorrelationId = r.CorrelationId,
+					Description = r.Description,
+					Position = r.Position
+				}).ToList();
 			}
 
 			return reportDefinition;

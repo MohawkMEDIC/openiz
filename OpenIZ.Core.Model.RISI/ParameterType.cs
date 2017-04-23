@@ -39,7 +39,6 @@ namespace OpenIZ.Core.Model.RISI
 		public ParameterType()
 		{
 			this.CreationTime = DateTimeOffset.Now;
-			this.ReportParameters = new List<ReportParameter>();
 		}
 
 		/// <summary>
@@ -57,12 +56,6 @@ namespace OpenIZ.Core.Model.RISI
 		[XmlElement("listAutoComplete", Type = typeof(ListAutoCompleteSourceDefinition))]
 		[XmlElement("queryAutoComplete", Type = typeof(QueryAutoCompleteSourceDefinition))]
 		public AutoCompleteSourceDefinition AutoCompleteSourceDefinition { get; set; }
-
-		/// <summary>
-		/// Gets or sets a list of report parameters associated with the parameter type.
-		/// </summary>
-		[XmlElement("reportParameters")]
-		public List<ReportParameter> ReportParameters { get; set; }
 
 		/// <summary>
 		/// Gets or sets the system type.

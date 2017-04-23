@@ -48,7 +48,7 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		/// Gets or sets the type of the data.
 		/// </summary>
 		/// <value>The type of the data.</value>
-		[XmlElement("dataType")]
+		[XmlElement("dataTypeReference")]
 		public DataType DataType { get; set; }
 
 		/// <summary>
@@ -84,7 +84,7 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		/// </summary>
 		/// <value>The type.</value>
 		[XmlElement("type")]
-		public byte[] Type { get; set; }
+		public int Type { get; set; }
 
 		/// <summary>
 		/// Gets or sets the used fields.

@@ -51,6 +51,7 @@
     <Compile Include="Constants\ReportFormatKeys.cs" />
     <Compile Include="Interfaces\IParameterValueProvider.cs" />
     <Compile Include="ListAutoCompleteSourceDefinition.cs" />
+    <Compile Include="ReportBundle.cs" />
     <Compile Include="ReportFormat.cs" />
     <Compile Include="ReportParameter.cs" />
     <Compile Include="ParameterType.cs" />

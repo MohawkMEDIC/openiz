@@ -185,10 +185,9 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// Gets the report formats.
 		/// </summary>
 		/// <returns>Returns a list of report formats.</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
 		public RisiCollection<ReportFormat> GetReportFormats()
 		{
-			throw new NotImplementedException();
+			return reportExecutor.GetReportFormats();
 		}
 
 		/// <summary>
@@ -272,10 +271,10 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the report.</param>
 		/// <param name="format">The output format of the report.</param>
-		/// <param name="parameters">The list of parameters of the report.</param>
+		/// <param name="bundle">The list of parameters of the report.</param>
 		/// <returns>Returns the report in raw format.</returns>
 		/// <exception cref="System.ArgumentException">If the id or format is not in a valid format.</exception>
-		public Stream RunReport(string id, string format, RisiCollection<ReportParameter> parameters)
+		public Stream RunReport(string id, string format, ReportBundle bundle)
 		{
 			var reportId = Guid.Empty;
 			var formatId = Guid.Empty;
@@ -290,7 +289,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
 			}
 
-			return new MemoryStream(this.reportExecutor.RunReport(reportId, formatId, parameters.Items));
+			return new MemoryStream(this.reportExecutor.RunReport(reportId, formatId, bundle.Parameters.Items));
 		}
 
 		/// <summary>
