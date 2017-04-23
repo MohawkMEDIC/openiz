@@ -37,9 +37,19 @@ namespace OpenIZ.Core.Model.RISI
 		private Guid parameterTypeKey;
 
 		/// <summary>
+		/// The parameter type.
+		/// </summary>
+		private ParameterType parameterType;
+
+		/// <summary>
 		/// The report definition key.
 		/// </summary>
 		private Guid reportDefinitionKey;
+
+		/// <summary>
+		/// The report definition.
+		/// </summary>
+		private ReportDefinition reportDefinition;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ReportParameter"/> class.
@@ -117,26 +127,8 @@ namespace OpenIZ.Core.Model.RISI
 		/// <summary>
 		/// Gets or sets the parameter type associated with the report parameter.
 		/// </summary>
-		[XmlIgnore, JsonIgnore]
+		[XmlElement("parameterType"), JsonProperty("parameterType")]
 		public ParameterType ParameterType { get; set; }
-
-		/// <summary>
-		/// Gets or sets the parameter type key.
-		/// </summary>
-		/// <value>The parameter type key.</value>
-		[XmlElement("type"), JsonProperty("type")]
-		public Guid ParameterTypeKey
-		{
-			get
-			{
-				return parameterTypeKey;
-			}
-			set
-			{
-				this.parameterTypeKey = value;
-				this.ParameterType = new ParameterType(value);
-			}
-		}
 
 		/// <summary>
 		/// Gets or sets the report definition key.
@@ -152,7 +144,7 @@ namespace OpenIZ.Core.Model.RISI
 			set
 			{
 				this.reportDefinitionKey = value;
-				this.ReportDefinition = new ReportDefinition(value);
+				this.reportDefinition = null;
 			}
 		}
 
@@ -160,7 +152,18 @@ namespace OpenIZ.Core.Model.RISI
 		/// Gets or sets the report definition associated with the report parameter.
 		/// </summary>
 		[XmlIgnore, JsonIgnore]
-		public ReportDefinition ReportDefinition { get; set; }
+		public ReportDefinition ReportDefinition
+		{
+			get
+			{
+				return this.reportDefinition;
+			}
+			set
+			{
+				this.reportDefinition = value;
+				this.reportDefinitionKey = value.Key ?? Guid.Empty;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the value of the parameter.

@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
+using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -50,6 +51,13 @@ using OpenIZ.Reporting.Jasper.Model.Reference;
 using ReportParameter = OpenIZ.Core.Model.RISI.ReportParameter;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Reflection;
+using OpenIZ.Core;
+using OpenIZ.Core.Data.Warehouse;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.RISI.Constants;
 using OpenIZ.Core.Services;
 using OpenIZ.Reporting.Jasper.Model.Collection;
@@ -80,7 +88,7 @@ namespace OpenIZ.Reporting.Jasper
 		/// <summary>
 		/// The jasper authentication path.
 		/// </summary>
-		private const string JasperAuthPath = "/rest/login";
+		private const string JasperAuthenticationPath = "/rest/login";
 
 		/// <summary>
 		/// The jasper report path.
@@ -188,7 +196,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			tracer.TraceEvent(TraceEventType.Information, 0, "Authenticating against jasper server");
 
-			var response = this.client.PostAsync($"{this.ReportUri}{JasperAuthPath}", content).Result;
+			var response = this.client.PostAsync($"{this.ReportUri}{JasperAuthenticationPath}", content).Result;
 
 			if (response.IsSuccessStatusCode)
 			{
@@ -257,7 +265,7 @@ namespace OpenIZ.Reporting.Jasper
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportDefinition CreateReportDefinition(ReportDefinition reportDefinition)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -286,7 +294,7 @@ namespace OpenIZ.Reporting.Jasper
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ParameterType DeleteParameterType(Guid id)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -297,7 +305,7 @@ namespace OpenIZ.Reporting.Jasper
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportDefinition DeleteReportDefinition(Guid id)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -308,7 +316,7 @@ namespace OpenIZ.Reporting.Jasper
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportFormat DeleteReportFormat(Guid id)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -320,13 +328,38 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
+		/// Converts a <see cref="byte"/> array instance to an <see cref="object"/> instance.
+		/// </summary>
+		/// <param name="data">The data.</param>
+		/// <returns>Returns the converted object instance.</returns>
+		public object FromByteArray(byte[] data)
+		{
+			object content;
+
+			var binaryFormatter = new BinaryFormatter();
+			using (var memoryStream = new MemoryStream(data))
+			{
+				content = binaryFormatter.Deserialize(memoryStream);
+			}
+
+			return content;
+		}
+
+		/// <summary>
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public RisiCollection<ParameterType> GetAllReportParameterTypes()
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ParameterType>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate service: {nameof(IDataPersistenceService<ParameterType>)}");
+			}
+
+			return new RisiCollection<ParameterType>(persistenceService.Query(r => r.Key != null, AuthenticationContext.Current.Principal));
 		}
 
 		/// <summary>
@@ -364,7 +397,7 @@ namespace OpenIZ.Reporting.Jasper
 				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
 			}
 
-			var reportDefinition = persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
+			var reportDefinition = persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, true);
 
 			if (reportDefinition == null)
 			{
@@ -375,18 +408,99 @@ namespace OpenIZ.Reporting.Jasper
 
 			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId);
 
-			int totalResults;
-			reportDefinition.Parameters = reportUnit.InputControlReferences.Select(i => this.LookupResource<InputControl>(i.Uri))
-													.Select(i => new ReportParameter
-													{
-														CorrelationId = i.Uri,
-														Description = i.Description,
-														Key = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>()?.Query(r => r.CorrelationId == i.Uri, 0, 1, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault()?.Key,
-														IsNullable = i.Mandatory,
-														Name = i.Label,
-														ParameterTypeKey = ParameterTypeKeys.Object,
-														ReportDefinitionKey = reportDefinition.Key.Value
-													}).ToList();
+			var count = 0;
+
+			foreach (var reportUnitInputControlReference in reportUnit.InputControlReferences)
+			{
+				var inputControl = this.LookupResource<InputControl>(reportUnitInputControlReference.Uri);
+
+				var reportParameter = new ReportParameter(inputControl.Label, count++, null)
+				{
+					CorrelationId = inputControl.Uri,
+					Description = inputControl.Description,
+					ReportDefinition = reportDefinition,
+					Name = inputControl.Label,
+					IsNullable = inputControl.Mandatory,
+					ReportDefinitionKey = reportDefinition.Key.Value
+				};
+
+				if (inputControl.DataType != null)
+				{
+					var dataType = this.LookupResource<DataType>(inputControl.DataType.Uri);
+
+					switch (dataType.Type.ToLower())
+					{
+						case "text":
+							reportParameter.ParameterType = new ParameterType(ParameterTypeKeys.String)
+							{
+								SystemTypeXml = typeof(string).AssemblyQualifiedName
+							};
+							break;
+						case "date":
+						case "datetime":
+							reportParameter.ParameterType = new ParameterType(ParameterTypeKeys.DateTime)
+							{
+								SystemTypeXml = typeof(DateTime).AssemblyQualifiedName
+							};
+							break;
+						case "number":
+							reportParameter.ParameterType = new ParameterType(ParameterTypeKeys.Integer)
+							{
+								SystemTypeXml = typeof(int).AssemblyQualifiedName
+							};
+							break;
+					}
+				}
+
+				if (inputControl.Query != null)
+				{
+					var query = this.LookupResource<Query>(inputControl.Query.Uri);
+
+					this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Jasper Query: {query.Value}");
+
+					var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+
+					if (warehouseService == null)
+					{
+						throw new InvalidOperationException($"Unable to locate service: {nameof(IAdHocDatawarehouseService)}");
+					}
+
+					IEnumerable<ExpandoObject> queryResult = null;
+
+					try
+					{
+						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
+					}
+					catch (Exception e)
+					{
+						tracer.TraceEvent(TraceEventType.Warning, 0, $"Unable to execute query: {e}");
+					}
+
+					var sourceDefinition = new ListAutoCompleteSourceDefinition();
+
+					if (queryResult != null)
+					{
+
+						try
+						{
+							sourceDefinition.Items.AddRange(queryResult.Where(o => o.HasProperty(inputControl.ValueColumn)).Select(p => MapIdentifiedData(p, inputControl.ValueColumn, inputControl.VisibleColumns.FirstOrDefault())));
+							reportParameter.ParameterType = new ParameterType(Guid.Parse("516D80B2-FDE3-4731-9FE8-30719C5EB9AC"))
+							{
+								AutoCompleteSourceDefinition = sourceDefinition,
+								SystemTypeXml = typeof(Entity).AssemblyQualifiedName
+							};
+						}
+						catch (Exception e)
+						{
+							tracer.TraceEvent(TraceEventType.Error, 0, $"Error: {e}");
+						}
+					}
+				}
+
+				int totalResults;
+				reportParameter.Key = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>()?.Query(r => r.CorrelationId == inputControl.Uri, 0, 1, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault()?.Key;
+				reportDefinition.Parameters.Add(reportParameter);
+			}
 
 			return reportDefinition;
 		}
@@ -457,24 +571,6 @@ namespace OpenIZ.Reporting.Jasper
 						{
 							var inputControl = this.LookupResource<InputControl>(reportUnitInputControlReference.Uri);
 
-							if (inputControl.Query != null)
-							{
-								var query = this.LookupResource<Query>(inputControl.Query.Uri);
-
-								this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Jasper Query: {query.Value}");
-
-								var adhocQueryService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-
-								//if (adhocQueryService == null)
-								//{
-								//	throw new InvalidOperationException($"Unable to locate service: {nameof(IAdHocDatawarehouseService)}");
-								//}
-
-								// TODO: execute against adhoc service
-								// TODO: get GUID values if entity or mnemonic if concept
-								// TODO: fetch entity or concept of value
-							}
-
 							var reportParameter = new ReportParameter(inputControl.Label, count++, null)
 							{
 								CorrelationId = inputControl.Uri,
@@ -540,7 +636,6 @@ namespace OpenIZ.Reporting.Jasper
 		/// Gets the report formats.
 		/// </summary>
 		/// <returns>Returns a list of report formats.</returns>
-		/// <exception cref="System.NotImplementedException"></exception>
 		public RisiCollection<ReportFormat> GetReportFormats()
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
@@ -711,6 +806,47 @@ namespace OpenIZ.Reporting.Jasper
 		}
 
 		/// <summary>
+		/// Maps the identified data.
+		/// </summary>
+		/// <param name="expandoObject">The expando object.</param>
+		/// <param name="keyPropertyName">Name of the key property.</param>
+		/// <param name="valuePropertyName">Name of the value property.</param>
+		/// <returns>Return</returns>
+		private IdentifiedData MapIdentifiedData(ExpandoObject expandoObject, string keyPropertyName, string valuePropertyName = null)
+		{
+			var dictionary = expandoObject as IDictionary<string, object>;
+
+			IdentifiedData identifiedData = null;
+
+			if (dictionary.ContainsKey(keyPropertyName))
+			{
+				Guid key;
+
+				if (!Guid.TryParse(dictionary[keyPropertyName].ToString(), out key))
+				{
+					identifiedData = new Concept
+					{
+						Mnemonic = dictionary[keyPropertyName].ToString()
+					};
+				}
+				else
+				{
+					identifiedData = new Entity
+					{
+						Key = Guid.Parse(dictionary[keyPropertyName].ToString())
+					};
+
+					if (valuePropertyName != null && dictionary.ContainsKey(valuePropertyName))
+					{
+						((Entity)identifiedData).Names.Add(new EntityName(NameUseKeys.OfficialRecord, dictionary[valuePropertyName].ToString()));
+					}
+				}
+			}
+
+			return identifiedData;
+		}
+
+		/// <summary>
 		/// Handles the <see cref="E:Authenticated" /> event.
 		/// </summary>
 		/// <param name="sender">The sender.</param>
@@ -778,14 +914,19 @@ namespace OpenIZ.Reporting.Jasper
 
 			foreach (var reportParameter in reportParameters.Where(p => reportDefinition.Parameters.Select(r => r.Key).Contains(p.Key)).OrderBy(r => r.Position))
 			{
-				builder.Append($"&{reportParameter.CorrelationId}={reportParameter.Value}");
+				var value = parameters.First(p => p.Key == reportParameter.Key).Value;
+
+				if (value != null)
+				{
+					builder.Append($"&{reportParameter.Name}={FromByteArray(value)}");
+				}
 			}
 
 			var response = client.GetAsync(builder.ToString()).Result;
 
 			if (!response.IsSuccessStatusCode)
 			{
-				return new byte[0];
+				throw new InvalidOperationException($"Unable to run report: {response.Content.ReadAsStringAsync().Result}");
 			}
 
 			return response.Content.ReadAsByteArrayAsync().Result;
@@ -817,7 +958,7 @@ namespace OpenIZ.Reporting.Jasper
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportDefinition UpdateReportDefinition(ReportDefinition reportDefinition)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -828,14 +969,22 @@ namespace OpenIZ.Reporting.Jasper
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
 		public ReportFormat UpdateReportFormat(ReportFormat reportFormat)
 		{
-			var reportFormatPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportFormat>>();
+			throw new NotSupportedException();
+		}
 
-			if (reportFormatPersistenceService == null)
+		/// <summary>
+		/// Converts an object to a byte array.
+		/// </summary>
+		/// <param name="data">The data.</param>
+		/// <returns>Returns the object as a byte array.</returns>
+		public byte[] ToByteArray(object data)
+		{
+			var bf = new BinaryFormatter();
+			using (var ms = new MemoryStream())
 			{
-				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportFormat>)}");
+				bf.Serialize(ms, data);
+				return ms.ToArray();
 			}
-
-			return reportFormatPersistenceService.Update(reportFormat, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 	}
 }

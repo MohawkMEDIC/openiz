@@ -19,10 +19,9 @@
  */
 
 using OpenIZ.Core.Model.RISI;
+using OpenIZ.Reporting.Core.Configuration;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using OpenIZ.Reporting.Core.Configuration;
 
 namespace OpenIZ.Reporting.Core
 {
@@ -32,15 +31,15 @@ namespace OpenIZ.Reporting.Core
 	public interface IReportExecutor : IDisposable
 	{
 		/// <summary>
-		/// Gets or sets the report URI.
-		/// </summary>
-		Uri ReportUri { get; }
-
-		/// <summary>
 		/// Gets the configuration.
 		/// </summary>
 		/// <value>The configuration.</value>
 		ReportingConfiguration Configuration { get; }
+
+		/// <summary>
+		/// Gets or sets the report URI.
+		/// </summary>
+		Uri ReportUri { get; }
 
 		/// <summary>
 		/// Creates a new report parameter type.
@@ -85,6 +84,13 @@ namespace OpenIZ.Reporting.Core
 		ReportFormat DeleteReportFormat(Guid id);
 
 		/// <summary>
+		/// Converts a <see cref="byte" /> array instance to an <see cref="object" /> instance.
+		/// </summary>
+		/// <param name="data">The data.</param>
+		/// <returns>Returns the converted object instance.</returns>
+		object FromByteArray(byte[] data);
+
+		/// <summary>
 		/// Gets a list of all report parameter types.
 		/// </summary>
 		/// <returns>Returns a list of report parameter types.</returns>
@@ -123,7 +129,7 @@ namespace OpenIZ.Reporting.Core
 		/// <returns>Returns a list of report formats.</returns>
 		RisiCollection<ReportFormat> GetReportFormats();
 
-			/// <summary>
+		/// <summary>
 		/// Gets a report parameter by id.
 		/// </summary>
 		/// <param name="id">The id of the report parameter to retrieve.</param>
@@ -160,6 +166,13 @@ namespace OpenIZ.Reporting.Core
 		/// <param name="parameters">The parameters of the report.</param>
 		/// <returns>Returns the raw report.</returns>
 		byte[] RunReport(Guid reportId, Guid reportFormatId, IEnumerable<ReportParameter> parameters);
+
+		/// <summary>
+		/// Converts an object to a byte array.
+		/// </summary>
+		/// <param name="data">The data.</param>
+		/// <returns>Returns the converted byte array.</returns>
+		byte[] ToByteArray(object data);
 
 		/// <summary>
 		/// Updates a parameter type.
