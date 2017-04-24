@@ -115,7 +115,8 @@ namespace OpenIZ.Core.Model
 					newValue = null;
 
 				if (newValue != null &&
-					!newValue.Equals(oldValue) == true)
+					!newValue.Equals(oldValue) == true &&
+                    (destinationPi.PropertyType.GetTypeInfo().IsValueType && !newValue.Equals(Activator.CreateInstance(newValue.GetType())) || !destinationPi.PropertyType.GetTypeInfo().IsValueType))
 					destinationPi.SetValue(toEntity, newValue);
 			}
 		}
