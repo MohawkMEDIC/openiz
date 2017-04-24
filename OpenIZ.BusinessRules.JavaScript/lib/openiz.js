@@ -681,7 +681,7 @@ var OpenIZ = OpenIZ || {
          * @memberof OpenIZ.App
          */
         loadDataAsset: function (dataId) {
-            return atob(OpenIZBre.GetDataAsset(dataId));
+            return OpenIZBre.GetDataAsset(dataId);
         },
         /**
          * @description Because JavaScript lacks native UUID generation, this function calls a JNI method to generate a new UUID which can be appended to IMS objects

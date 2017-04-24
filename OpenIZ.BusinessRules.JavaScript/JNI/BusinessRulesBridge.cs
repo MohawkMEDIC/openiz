@@ -242,7 +242,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             using (MemoryStream ms = new MemoryStream())
             {
                 ins.CopyTo(ms);
-                return Convert.ToBase64String(ms.ToArray());
+                return Encoding.UTF8.GetString(ms.ToArray(), 0, ms.ToArray().Length);
             }
         }
 

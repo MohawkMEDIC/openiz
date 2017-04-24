@@ -495,8 +495,20 @@ namespace OizDevTool.BreDebugger
                 this.DumpObject(this.m_currentDebug.Globals, path);
             else
             {
-                var kobj = this.GetScopeObject(this.m_currentDebug.Globals, $"[{id}]");
-                this.DumpObject((kobj as JsValue)?.AsObject()?.GetOwnProperties() ?? kobj, path);
+                var kobj = this.m_currentDebug.Globals[id];
+                try
+                {
+                    kobj = JavascriptBusinessRulesEngine.Current.Engine.GetValue(kobj);
+                    if (kobj.Is<Jint.Runtime.Interop.ObjectWrapper>())
+                        this.DumpObject((kobj.AsObject() as ObjectWrapper).Target, path);
+                    else
+                        this.DumpObject(kobj?.AsObject()?.GetOwnProperties(), path);
+
+                }
+                catch
+                {
+                    this.DumpObject(kobj?.AsObject()?.GetOwnProperties(), path);
+                }
             }
 
         }

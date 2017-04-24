@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -701,7 +702,7 @@ namespace OizDevTool.BreDebugger
                     if (!String.IsNullOrEmpty(p))
                         obj = obj?.GetType().GetProperty(p).GetValue(obj);
                     p = pp;
-                    while (p.Contains("[") && p.Contains("]") && obj is IList || obj is IDictionary)
+                    while (p.Contains("[") && p.Contains("]") && (obj is IList || obj is IDictionary))
                     {
                         var idx = p.Substring(p.IndexOf("[") + 1, p.IndexOf("]") - p.IndexOf("[") - 1);
                         if (obj is IDictionary)
@@ -712,7 +713,10 @@ namespace OizDevTool.BreDebugger
                         }
                         else
                             obj = (obj as IList)[Int32.Parse(idx)];
-                        p = p.Substring(p.IndexOf("]"));
+                        p = p.Substring(p.IndexOf("]") + 1);
+
+                        if (obj is ExpandoObject)
+                            obj = new Dictionary<String, Object>(obj as ExpandoObject);
                     }
                 }
             }
