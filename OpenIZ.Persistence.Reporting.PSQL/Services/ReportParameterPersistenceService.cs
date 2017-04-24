@@ -23,9 +23,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Data;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.Core.Model.RISI.Constants;
+using OpenIZ.Core.Services;
 using OpenIZ.OrmLite;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Persistence.Reporting.PSQL.Services
 {
@@ -53,9 +57,9 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			var domainInstance = base.FromModelInstance(modelInstance, context, principal) as Model.ReportParameter;
 
-			if (modelInstance.ReportDefinition?.Key.HasValue == true && modelInstance.ReportDefinition.Key.Value != Guid.Empty)
+			if (modelInstance.ReportDefinitionKey != Guid.Empty)
 			{
-				domainInstance.ReportId = modelInstance.ReportDefinition.Key.Value;
+				domainInstance.ReportId = modelInstance.ReportDefinitionKey;
 			}
 			else
 			{
@@ -65,11 +69,6 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 			domainInstance.ParameterTypeId = modelInstance.ParameterType?.Key ?? ParameterTypeKeys.Object;
 
 			return domainInstance;
-		}
-
-		public override ReportParameter Get(DataContext context, Guid key, IPrincipal principal, bool loadFast)
-		{
-			return base.Get(context, key, principal, loadFast);
 		}
 
 		/// <summary>

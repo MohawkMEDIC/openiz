@@ -115,6 +115,8 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			domainInstance = context.Insert(domainInstance);
 
+			model.Key = domainInstance.Key;
+
 			InsertReportFormatAssociations(context, model);
 			UpdateReportParameters(context, principal, model);
 
@@ -171,6 +173,8 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			domainInstance = context.Update(domainInstance);
 
+			model.Key = domainInstance.Key;
+
 			InsertReportFormatAssociations(context, model);
 			UpdateReportParameters(context, principal, model);
 
@@ -210,6 +214,8 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 			foreach (var reportParameter in reportDefinition.Parameters)
 			{
 				var existingReportParameter = reportParameterPersistenceService.Get(context, reportParameter.CorrelationId, principal);
+
+				reportParameter.ReportDefinitionKey = reportDefinition.Key.Value;
 
 				if (existingReportParameter == null)
 				{
