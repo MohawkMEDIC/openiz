@@ -51,7 +51,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// Gets or sets the quantity
         /// </summary>
         [Column("qty")]
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         /// <summary>
         /// Target entity key

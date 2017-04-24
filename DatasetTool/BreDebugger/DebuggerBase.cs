@@ -2,7 +2,9 @@
 using MARC.HI.EHRS.SVC.Core.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
@@ -63,6 +65,7 @@ namespace OizDevTool.BreDebugger
 
         protected string m_workingDirectory;
         protected string m_prompt = "dbg >";
+        private ConsoleColor m_promptColor = Console.ForegroundColor;
 
         /// <summary>
         /// Sets the root path
@@ -74,13 +77,30 @@ namespace OizDevTool.BreDebugger
         }
 
         /// <summary>
+        /// Get response color
+        /// </summary>
+        protected ConsoleColor GetResponseColor()
+        {
+            return this.m_promptColor != ConsoleColor.Blue ? ConsoleColor.Blue : ConsoleColor.Red;
+        }
+
+        /// <summary>
+        /// Prompt
+        /// </summary>
+        protected void Prompt()
+        {
+            Console.ForegroundColor = this.m_promptColor;
+            Console.Write(this.m_prompt);
+        }
+
+        /// <summary>
         /// Perform debugger
         /// </summary>
         public void Debug()
         {
 
             Console.CursorVisible = true;
-
+            EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
             Console.WriteLine("{0} for help use ?", this.GetType().GetCustomAttribute<DescriptionAttribute>()?.Description ?? this.GetType().Name);
             Console.WriteLine("Working Directory: {0}", this.m_workingDirectory);
 
@@ -89,10 +109,10 @@ namespace OizDevTool.BreDebugger
             // Now drop to a command prompt
             while (!m_exitRequested)
             {
-                Console.Write(this.m_prompt);
+                this.Prompt();
                 var cmd = Console.ReadLine();
 
-                Console.ForegroundColor = col != ConsoleColor.Blue ? ConsoleColor.Blue : ConsoleColor.Red;
+                Console.ForegroundColor = this.GetResponseColor();
                 if (String.IsNullOrEmpty(cmd)) continue;
 
                 // Get tokens / parms
@@ -160,6 +180,66 @@ namespace OizDevTool.BreDebugger
         }
 
         /// <summary>
+        /// Print data query
+        /// </summary>
+        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        public void PrintDataQuery(String type, String qry)
+        {
+            this.PrintDataQuery(type, qry, null, null);
+        }
+
+        /// <summary>
+        /// Print data query
+        /// </summary>
+        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        public void PrintDataQuery(String type, String qry, String skip, String take)
+        {
+            this.PrintDataQuery(type, qry, skip, take, null);
+        }
+
+        /// <summary>
+        /// Print data query
+        /// </summary>
+        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        public void PrintDataQuery(String type, String qry, String path)
+        {
+            this.PrintDataQuery(type, qry, null, null, path);
+        }
+        /// <summary>
+        /// Print data query
+        /// </summary>
+        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        public void PrintDataQuery(String type, String qry, String skip, String take, String path)
+        {
+            var t = Type.GetType(type);
+            if (t == null)
+                t = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType(typeof(IdentifiedData).Assembly.FullName, type);
+            if (t == null)
+            {
+                t = typeof(Int32).Assembly.ExportedTypes.FirstOrDefault(tr => tr.Namespace == "System" && tr.Name == type);
+                if (t == null)
+                    throw new MissingMethodException(type, (string)null);
+            }
+
+            var idp = typeof(IDataPersistenceService<>).MakeGenericType(t);
+            var ids = ApplicationContext.Current.GetService(idp) as IDataPersistenceService;
+            if (ids == null)
+                throw new InvalidOperationException($"Persistence service for {type} not found");
+
+            var mi = typeof(QueryExpressionParser).GetGenericMethod("BuildLinqExpression", new Type[] { t }, new Type[] { typeof(NameValueCollection) });
+            var qd = mi.Invoke(null, new object[] { NameValueCollection.ParseQueryString(qry) }) as Expression;
+
+            int? o = String.IsNullOrEmpty(skip) ? 0 : Int32.Parse(skip),
+                c = String.IsNullOrEmpty(take) ? (int?)null : Int32.Parse(take);
+
+            Console.WriteLine("INF: {0} where {1} ({2}..{3})", type, qd, o, c);
+            int tc = 0;
+            var retVal = ids.Query(qd, o.Value, c, out tc);
+
+            this.DumpObject(retVal, path);
+        }
+
+        /// <summary>
         /// Changes working directory
         /// </summary>
         [DebuggerCommand("cd", "Changes the working directory")]
@@ -211,7 +291,7 @@ namespace OizDevTool.BreDebugger
             {
                 var disp = Path.GetFileName(d);
                 if (disp.Length > 35)
-                    disp = disp.Substring(0,32) + "...";
+                    disp = disp.Substring(0, 32) + "...";
                 Console.WriteLine("{0}{1}[DIRECTORY]", disp, new String(' ', 35 - disp.Length));
             }
 
@@ -235,7 +315,7 @@ namespace OizDevTool.BreDebugger
         {
             this.Breakpoints.Add(Int32.Parse(line));
         }
-        
+
         /// <summary>
         /// Set breakpoint
         /// </summary>
@@ -245,7 +325,7 @@ namespace OizDevTool.BreDebugger
             foreach (var itm in this.Breakpoints)
                 Console.WriteLine(itm);
         }
-        
+
         /// <summary>
         /// Set breakpoint
         /// </summary>
@@ -318,6 +398,31 @@ namespace OizDevTool.BreDebugger
             });
         }
 
+        /// <summary>
+        /// Set scope json
+        /// </summary>
+        [DebuggerCommand("sfv", "Sets the current scope the contents of a JSON view model file")]
+        public object SetScopeJsonFile(String type, String file)
+        {
+
+            var filePath = file;
+            if (!Path.IsPathRooted(filePath))
+                filePath = Path.Combine(this.m_workingDirectory, file);
+
+            var t = Type.GetType(type);
+            if (t == null)
+                t = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType(typeof(IdentifiedData).Assembly.FullName, type);
+            if (t == null)
+            {
+                t = typeof(Int32).Assembly.ExportedTypes.FirstOrDefault(o => o.Namespace == "System" && o.Name == type);
+                if (t == null)
+                    throw new MissingMethodException(type, (string)null);
+            }
+
+            using (var str = File.OpenText(file))
+                return new JsonViewModelSerializer().DeSerialize(str, t);
+
+        }
         /// <summary>
         /// Set scope json
         /// </summary>
@@ -435,10 +540,13 @@ namespace OizDevTool.BreDebugger
             else
             {
 
+                if (obj is System.Dynamic.ExpandoObject)
+                    obj = new Dictionary<String, Object>(obj as System.Dynamic.ExpandoObject);
+
                 obj = this.GetScopeObject(obj, path);
 
                 int maxWidth = (Console.WindowWidth / 6);
-
+                
                 if (obj is IList)
                 {
                     int i = 0;
@@ -449,7 +557,7 @@ namespace OizDevTool.BreDebugger
                         if (i > 99) break;
                     }
                 }
-                else if(obj is IDictionary)
+                else if (obj is IDictionary)
                 {
                     Console.WriteLine("Count:{0}", (obj as IDictionary).Count);
                     int i = 0;
@@ -467,7 +575,7 @@ namespace OizDevTool.BreDebugger
                 {
                     foreach (var itm in (obj as IEnumerable))
                     {
-                            Console.WriteLine("{0}", itm);
+                        Console.WriteLine("{0}", itm);
                     }
                 }
                 else
@@ -550,6 +658,31 @@ namespace OizDevTool.BreDebugger
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Dump scope
+        /// </summary>
+        /// <param name="path"></param>
+        [DebuggerCommand("dv", "Dumps scope as ViewModel (mobile) to screen")]
+        public void DumpScopeView()
+        {
+            this.DumpScopeView(null);
+        }
+
+         /// <summary>
+        /// Dump scope
+        /// </summary>
+        /// <param name="path"></param>
+        [DebuggerCommand("dv", "Dumps scope as ViewModel (mobile) to screen")]
+        public void DumpScopeView(String path)
+        {
+            var obj = this.GetScopeObject(this.m_scopeObject, path);
+            JsonViewModelSerializer xsz = new JsonViewModelSerializer();
+            using (var jv = new JsonTextWriter(Console.Out) { Formatting = Newtonsoft.Json.Formatting.Indented })
+            {
+                xsz.Serialize(jv, obj as IdentifiedData);
+            }
+            Console.WriteLine();
+        }
         /// <summary>
         /// Get scope object
         /// </summary>
@@ -679,16 +812,16 @@ namespace OizDevTool.BreDebugger
         /// Load specified data as scope
         /// </summary>
         [DebuggerCommand("sdq", "Sets scope to the result of the specified database query")]
-        public Object SetScopeDatabaseQuery(String type, String query)
+        public Object SetScopeDatabaseQuery(String type, String qry)
         {
-            return this.SetScopeDatabaseQuery(type, query, null, null);
+            return this.SetScopeDatabaseQuery(type, qry, null, null);
         }
 
         /// <summary>
         /// Load specified data as scope
         /// </summary>
         [DebuggerCommand("sdq", "Sets scope to the result of the specified database query")]
-        public Object SetScopeDatabaseQuery(String type, String query, String offset, String count)
+        public Object SetScopeDatabaseQuery(String type, String qry, String skip, String take)
         {
             var t = Type.GetType(type);
             if (t == null)
@@ -706,10 +839,10 @@ namespace OizDevTool.BreDebugger
                 throw new InvalidOperationException($"Persistence service for {type} not found");
 
             var mi = typeof(QueryExpressionParser).GetGenericMethod("BuildLinqExpression", new Type[] { t }, new Type[] { typeof(NameValueCollection) });
-            var qd = mi.Invoke(null, new object[] { NameValueCollection.ParseQueryString(query) }) as Expression;
+            var qd = mi.Invoke(null, new object[] { NameValueCollection.ParseQueryString(qry) }) as Expression;
 
-            int? o = String.IsNullOrEmpty(offset) ? 0 : Int32.Parse(offset),
-                c = String.IsNullOrEmpty(count) ? (int?)null : Int32.Parse(count);
+            int? o = String.IsNullOrEmpty(skip) ? 0 : Int32.Parse(skip),
+                c = String.IsNullOrEmpty(take) ? (int?)null : Int32.Parse(take);
 
             Console.WriteLine("INF: {0} where {1} ({2}..{3})", type, qd, o, c);
             int tc = 0;

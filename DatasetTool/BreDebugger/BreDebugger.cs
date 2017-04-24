@@ -20,6 +20,11 @@ using Jint.Native;
 using Newtonsoft.Json;
 using OpenIZ.Core.Diagnostics;
 using System.Diagnostics.Tracing;
+using OpenIZ.BusinessRules.JavaScript.JNI;
+using Jint.Runtime.Interop;
+using Newtonsoft.Json.Converters;
+using System.Dynamic;
+using OpenIZ.Core.Applets.ViewModel.Json;
 
 namespace OizDevTool.BreDebugger
 {
@@ -30,6 +35,7 @@ namespace OizDevTool.BreDebugger
     public class BreDebugger : DebuggerBase
     {
 
+        private bool m_blocPrint = false;
         private bool m_isStepRegistered = false;
 
         // Running thread
@@ -46,7 +52,7 @@ namespace OizDevTool.BreDebugger
         /// <summary>
         /// Step mode
         /// </summary>
-        private StepMode m_stepMode;
+        private StepMode? m_stepMode;
 
         /// <summary>
         /// Current debug information
@@ -69,7 +75,8 @@ namespace OizDevTool.BreDebugger
 
             protected override void WriteTrace(EventLevel level, string source, string format, params object[] args)
             {
-                Console.WriteLine(format, args);
+                if (source == typeof(JsConsoleProvider).FullName)
+                    Console.WriteLine(format, args);
             }
 
         }
@@ -172,8 +179,8 @@ namespace OizDevTool.BreDebugger
         /// </summary>
         public void StepRegister(bool state)
         {
-            
-                this.m_isStepRegistered = state;
+
+            this.m_isStepRegistered = state;
         }
 
         /// <summary>
@@ -181,20 +188,36 @@ namespace OizDevTool.BreDebugger
         /// </summary>
         private Jint.Runtime.Debugger.StepMode JreStep(object sender, Jint.Runtime.Debugger.DebugInformation e)
         {
-            if (this.m_stepMode == StepMode.Over || this.m_stepMode == StepMode.Into || this.m_isStepRegistered || this.Breakpoints.Contains(e.CurrentStatement.Location.Start.Line))
+            if (this.m_stepMode.HasValue && (this.m_stepMode == StepMode.Over || this.m_stepMode == StepMode.Into) || this.m_isStepRegistered || this.Breakpoints.Contains(e.CurrentStatement.Location.Start.Line))
             {
+                var col = Console.ForegroundColor;
+                Console.ForegroundColor = this.GetResponseColor();
                 this.m_prompt = $"{e.CurrentStatement.LabelSet ?? JavascriptBusinessRulesEngine.Current.ExecutingFile ?? this.m_loadFile} @ {e.CurrentStatement.Location.Start.Line} (step) >";
                 this.m_currentDebug = e;
-                Console.Write("\r\n{0}", this.m_prompt);
+                int l = Console.CursorLeft;
+                Console.CursorLeft = 0;
+                Console.Write(new string(' ', l));
+                Console.CursorLeft = 0;
+                if (this.m_blocPrint)
+                    this.PrintBlock();
+                else
+                    this.PrintLoc();
+                Console.ForegroundColor = col;
+                this.Prompt();
                 this.m_resetEvent.WaitOne();
                 this.m_resetEvent.Reset();
                 this.m_currentDebug = null;
-                return this.m_stepMode;
+                return this.m_stepMode ?? StepMode.Into;
             }
             else
-                return StepMode.Over;
+                return StepMode.Into;
         }
 
+        [DebuggerCommand("ob", "Sets the break output to block mode")]
+        public void OutputBlock() => this.m_blocPrint = true;
+
+        [DebuggerCommand("ol", "Sets the break output to line mode")]
+        public void OutputLine() => this.m_blocPrint = false;
 
         /// <summary>
         /// Loads a script to be debugged
@@ -244,7 +267,8 @@ namespace OizDevTool.BreDebugger
                     JavascriptBusinessRulesEngine.Current.AddRules(Path.GetFileName(this.m_loadFile), sr);
                 this.m_prompt = Path.GetFileName(this.m_loadFile) + " (idle) >";
                 this.m_loadFile = Path.GetFileName(this.m_loadFile);
-                Console.Write("\r\nExecution Finished\r\n{0}", this.m_prompt);
+                Console.WriteLine("\r\nExecution Finished");
+                this.Prompt();
 
             });
             this.m_runThread.Start();
@@ -260,6 +284,24 @@ namespace OizDevTool.BreDebugger
             this.Execute();
         }
 
+        /// <summary>
+        /// Set a breakpoint
+        /// </summary>
+        [DebuggerCommand("gn", "Go until next breakpoint")]
+        public void GoNext()
+        {
+            this.StepRegister(false);
+
+            if (this.m_currentDebug != null)
+            {
+
+                this.m_stepMode = null;
+                this.m_resetEvent.Set();
+
+            }
+            else
+                throw new InvalidOperationException("Step-in can only be done when loaded but not executing");
+        }
 
         /// <summary>
         /// Set a breakpoint
@@ -355,10 +397,74 @@ namespace OizDevTool.BreDebugger
             else
             {
                 var kobj = this.m_currentDebug.Locals[id];
-                this.DumpObject(kobj?.AsObject()?.GetOwnProperties(), path);
+                try
+                {
+                    kobj = JavascriptBusinessRulesEngine.Current.Engine.GetValue(kobj);
+                    if (kobj.Is<Jint.Runtime.Interop.ObjectWrapper>())
+                        this.DumpObject((kobj.AsObject() as ObjectWrapper).Target, path);
+                    else
+                        this.DumpObject(kobj?.AsObject()?.GetOwnProperties(), path);
+
+                }
+                catch
+                {
+                    this.DumpObject(kobj?.AsObject()?.GetOwnProperties(), path);
+                }
             }
         }
 
+        /// <summary>
+        /// Dump scope as json
+        /// </summary>
+        /// <param name="path"></param>
+        [DebuggerCommand("dlv", "Dumps local as ViewModel JSON to screen")]
+        public void DumpLocalsJson(String id)
+        {
+            this.DumpLocalsJson(id, null);
+        }
+
+        /// <summary>
+        /// Dump scope
+        /// </summary>
+        /// <param name="path"></param>
+        [DebuggerCommand("dlv", "Dumps local as ViewModel JSON to screen")]
+        public void DumpLocalsJson(String id, String path)
+        {
+
+            this.ThrowIfNotDebugging();
+            // Locals?
+            if (id == null)
+                this.DumpObject(this.m_currentDebug.Locals, path);
+            else
+            {
+                var kobj = this.m_currentDebug.Locals[id];
+                try
+                {
+                    kobj = JavascriptBusinessRulesEngine.Current.Engine.GetValue(kobj);
+                    if (kobj.Is<Jint.Runtime.Interop.ObjectWrapper>())
+                    {
+                        Object obj = new Dictionary<String, Object>((kobj.AsObject() as ObjectWrapper).Target as ExpandoObject);
+                        obj = JavascriptBusinessRulesEngine.Current.Bridge.ToModel(this.GetScopeObject(obj, path));
+                        JsonViewModelSerializer xsz = new JsonViewModelSerializer();
+                        using (var jv = new JsonTextWriter(Console.Out) { Formatting = Newtonsoft.Json.Formatting.Indented })
+                        {
+                            xsz.Serialize(jv, obj as IdentifiedData);
+                        }
+                        Console.WriteLine();
+                    }
+                    else
+                        this.DumpObject(kobj?.AsArray() ?? kobj?.AsObject(), path);
+
+                }
+                catch
+                {
+                    this.DumpObject(kobj?.AsObject()?.GetOwnProperties(), path);
+                }
+            }
+
+            
+
+        }
         /// <summary>
         /// Dump locals
         /// </summary>
@@ -392,7 +498,7 @@ namespace OizDevTool.BreDebugger
                 var kobj = this.GetScopeObject(this.m_currentDebug.Globals, $"[{id}]");
                 this.DumpObject((kobj as JsValue)?.AsObject()?.GetOwnProperties() ?? kobj, path);
             }
-            
+
         }
 
         /// <summary>
@@ -433,7 +539,7 @@ namespace OizDevTool.BreDebugger
         public void PrintBlock()
         {
             this.ThrowIfNotDebugging();
-            this.PrintFile((this.m_currentDebug.CurrentStatement.Location.Start.Line).ToString(), (this.m_currentDebug.CurrentStatement.Location.End.Line + 5).ToString());
+            this.PrintFile((this.m_currentDebug.CurrentStatement.Location.Start.Line - 5).ToString(), (this.m_currentDebug.CurrentStatement.Location.End.Line + 5).ToString());
 
         }
 
@@ -476,7 +582,7 @@ namespace OizDevTool.BreDebugger
                         sr.ReadLine();
                     ln++;
                 }
-                if(sr.EndOfStream)
+                if (sr.EndOfStream)
                     Console.WriteLine("<<EOF>>");
 
             }
@@ -502,7 +608,7 @@ namespace OizDevTool.BreDebugger
                 t = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType(typeof(IdentifiedData).Assembly.FullName, cast);
             if (t == null)
             {
-                    throw new ArgumentOutOfRangeException(nameof(cast));
+                throw new ArgumentOutOfRangeException(nameof(cast));
             }
             this.ExecuteValidator(true, t);
         }
@@ -536,7 +642,8 @@ namespace OizDevTool.BreDebugger
         /// <summary>
         /// Execute a validator
         /// </summary>
-        private void ExecuteValidator(bool stepIn, Type asType) {
+        private void ExecuteValidator(bool stepIn, Type asType)
+        {
             this.StepRegister(stepIn);
 
             if (this.m_scopeObject == null)
@@ -556,13 +663,32 @@ namespace OizDevTool.BreDebugger
 
                 this.m_runThread = new Thread(() =>
                 {
-                    var mi = rdb.GetMethod("Validate");
-                    foreach (var itm in mi.Invoke(rds, new object[] { this.m_scopeObject }) as List<DetectedIssue>)
+                    try
                     {
-                        Console.WriteLine("{0}\t{1}", itm.Priority, itm.Text);
+                        var mi = rdb.GetMethod("Validate");
+                        foreach (var itm in mi.Invoke(rds, new object[] { this.m_scopeObject }) as List<DetectedIssue>)
+                        {
+                            Console.WriteLine("{0}\t{1}", itm.Priority, itm.Text);
+                        }
+                        this.m_prompt = Path.GetFileName(this.m_loadFile) + " (idle) >";
+                        Console.WriteLine("\r\nExecution Complete");
+                        this.Prompt();
+
                     }
-                    this.m_prompt = Path.GetFileName(this.m_loadFile) + " (idle) >";
-                    Console.WriteLine("\r\nExecution Complete\r\n{0}", this.m_prompt);
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("\r\nERR: {0}", e.Message);
+                        var i = e.InnerException;
+                        var l = 0;
+                        while (i != null)
+                        {
+                            Console.WriteLine("\t{0} {1}", l++, i.Message);
+                            i = i.InnerException;
+                        }
+                        this.Prompt();
+
+                    }
+
                 });
                 this.m_runThread.Start();
             }
@@ -642,10 +768,27 @@ namespace OizDevTool.BreDebugger
 
                 this.m_runThread = new Thread(() =>
                 {
-                    var mi = rdb.GetMethod(@event);
-                    Console.WriteLine("\r\nExecution Complete, result set to scope\r\n{0}", this.m_prompt);
-                    this.m_scopeObject = mi.Invoke(rds, new object[] { this.m_scopeObject });
-                    this.m_prompt = Path.GetFileName(this.m_loadFile) + " (idle) >";
+                    try
+                    {
+                        var mi = rdb.GetMethod(@event);
+                        this.m_scopeObject = mi.Invoke(rds, new object[] { this.m_scopeObject });
+                        this.m_prompt = Path.GetFileName(this.m_loadFile) + " (idle) >";
+                        Console.WriteLine("\r\nExecution Complete, result set to scope");
+                        this.Prompt();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("\r\nERR: {0}", e.Message);
+                        var i = e.InnerException;
+                        var l = 0;
+                        while (i != null)
+                        {
+                            Console.WriteLine("\t{0} {1}", l++, i.Message);
+                            i = i.InnerException;
+                        }
+                        this.Prompt();
+
+                    }
                 });
                 this.m_runThread.Start();
             }

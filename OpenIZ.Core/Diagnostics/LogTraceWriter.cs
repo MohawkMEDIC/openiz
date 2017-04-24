@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics.Tracing;
 using System.Diagnostics;
 using OpenIZ.Core.Diagnostics;
+using System.Collections.Generic;
 
 namespace OpenIZ.Core.Diagnostics
 {
@@ -29,15 +30,13 @@ namespace OpenIZ.Core.Diagnostics
     /// </summary>
     public class LogTraceWriter : TraceWriter
     {
-        // Source name
-        private String m_sourceName;
+        private Dictionary<String, TraceSource> m_traceSources = new Dictionary<string, TraceSource>();
 
         /// <summary>
         /// Initialize the trace writer
         /// </summary>
         public LogTraceWriter(EventLevel filter, String initializationData) : base(filter, null)
         {
-            this.m_sourceName = initializationData;
         }
 
 
@@ -47,23 +46,31 @@ namespace OpenIZ.Core.Diagnostics
         /// </summary>
         protected override void WriteTrace(EventLevel level, string source, string format, params object[] args)
         {
-            String msg = String.Format("{0}:{1}", source, format);
+            TraceSource tsource = null;
+            if (!this.m_traceSources.TryGetValue(source, out tsource))
+                lock (this.m_traceSources)
+                    if (!this.m_traceSources.ContainsKey(source))
+                    {
+                        tsource = new TraceSource(source);
+                        this.m_traceSources.Add(source, tsource);
+                    }
+
             switch (level)
             {
                 case EventLevel.Error:
-                    Trace.TraceError(msg, args);
+                    tsource.TraceEvent(TraceEventType.Error, 0, format, args);
                     break;
                 case EventLevel.Informational:
-                    Trace.TraceInformation(msg, args);
+                    tsource.TraceEvent(TraceEventType.Information, 0, format, args);
                     break;
                 case EventLevel.Critical:
-                    Trace.TraceError(msg, args);
+                    tsource.TraceEvent(TraceEventType.Critical, 0, format, args);
                     break;
                 case EventLevel.Verbose:
-                    Trace.TraceInformation(msg, args);
+                    tsource.TraceEvent(TraceEventType.Verbose, 0, format, args);
                     break;
                 case EventLevel.Warning:
-                    Trace.TraceWarning(msg, args);
+                    tsource.TraceEvent(TraceEventType.Warning, 0, format, args);
                     break;
 
             }

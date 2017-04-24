@@ -41,10 +41,10 @@ namespace OpenIZ.Core.Model.Acts
     {
 
         private Guid? m_playerKey;
-        
+
         private Entity m_player;
         private Guid? m_participationRoleKey;
-        
+
         private Concept m_participationRole;
 
         /// <summary>
@@ -63,12 +63,12 @@ namespace OpenIZ.Core.Model.Acts
             this.PlayerEntity = player;
         }
 
-		/// <summary>
-		/// Entity relationship between <paramref name="roleType" /> and <paramref name="playerKey" />
-		/// </summary>
-		/// <param name="roleType">Type of the role.</param>
-		/// <param name="playerKey">The player key.</param>
-		public ActParticipation(Guid? roleType, Guid? playerKey)
+        /// <summary>
+        /// Entity relationship between <paramref name="roleType" /> and <paramref name="playerKey" />
+        /// </summary>
+        /// <param name="roleType">Type of the role.</param>
+        /// <param name="playerKey">The player key.</param>
+        public ActParticipation(Guid? roleType, Guid? playerKey)
         {
             this.ParticipationRoleKey = roleType;
             this.PlayerEntityKey = playerKey;
@@ -185,7 +185,7 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the quantity of player in the act
         /// </summary>
         [XmlElement("quantity"), JsonProperty("quantity")]
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
 
         /// <summary>
         /// Forces a delay load from the underlying model
@@ -242,12 +242,20 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         public bool ShouldSerializeQuantity()
         {
-            return this.Quantity > 0;
+            return this.Quantity.HasValue;
         }
 
         /// <summary>
         /// Should serialize act key
         /// </summary>
         public bool ShouldSerializeActKey() => ActKey.HasValue;
+
+        /// <summary>
+        /// Represent as string
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Format("({0}) {1} = {2}", this.ParticipationRole?.ToString() ?? this.ParticipationRoleKey?.ToString(), this.PlayerEntityKey, this.Quantity);
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Gets the resource name
         /// </summary>
-        public string ResourceName
+        public virtual string ResourceName
         {
             get
             {

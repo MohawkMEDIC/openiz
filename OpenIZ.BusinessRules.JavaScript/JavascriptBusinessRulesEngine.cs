@@ -83,18 +83,12 @@ namespace OpenIZ.BusinessRules.JavaScript
         public BusinessRulesBridge Bridge {  get { return this.m_bridge; } }
 
         /// <summary>
-        /// Rules program
-        /// </summary>
-        public Dictionary<String, Program> RulesPrograms { get; private set; }
-
-        /// <summary>
         /// Initialize javascript BRE
         /// </summary>
         private void Initialize()
         {
             // Set up javascript ening 
             this.m_tracer.TraceInfo("OpenIZ Javascript Business Rules Host Initialize");
-            this.RulesPrograms = new Dictionary<string, Program>();
 
             this.m_engine = new Jint.Engine(cfg => cfg.AllowClr(
                     typeof(OpenIZ.Core.Model.BaseEntityData).GetTypeInfo().Assembly,
@@ -148,9 +142,6 @@ namespace OpenIZ.BusinessRules.JavaScript
             {
 
                 // Already ran
-                if (this.RulesPrograms.ContainsKey(ruleId))
-                    return; 
-
                 this.m_tracer.TraceVerbose("Adding rules to BRE");
                 var rawScript = script.ReadToEnd();
                 // Find all reference paths
@@ -160,29 +151,23 @@ namespace OpenIZ.BusinessRules.JavaScript
                 foreach(Match match in incMatches)
                 {
                     var include = match.Groups[1].Value;
-                    var incFile = include;
-                    if (incFile.Contains("/"))
-                        incFile = incFile.Substring(incFile.LastIndexOf("/"));
-                    else if (incFile.Contains("\\"))
-                        incFile = incFile.Substring(incFile.LastIndexOf("\\"));
-
                     var incStream = (ApplicationServiceContext.Current.GetService(typeof(IDataReferenceResolver)) as IDataReferenceResolver)?.Resolve(include);
                     if (incStream == null)
                         this.m_tracer.TraceWarning("Include {0} not found", include);
                     else
-                        using (StreamReader sr = new StreamReader(incStream))
-                            this.AddRules(incFile, sr);
+                        try
+                        {
+                            using (StreamReader sr = new StreamReader(incStream))
+                                this.m_engine.Execute(sr.ReadToEnd());
+                        }
+                        catch(Exception e)
+                        {
+                            this.m_tracer.TraceWarning("Will skip {0} due to {1}", include, e.Message);
+                        }
+
                 }
 
-                var pgm = new JavaScriptParser(false).Parse(rawScript);
-                pgm.LabelSet = ruleId;
-                lock (this.RulesPrograms)
-                {
-                    this.RulesPrograms.Add(ruleId, pgm);
-                    this.ExecutingFile = ruleId;
-                    this.m_engine.Execute(pgm);
-                    this.ExecutingFile = null;
-                }
+                    this.m_engine.Execute(rawScript);
             }
             catch(JavaScriptException ex)
             {
@@ -323,7 +308,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             catch(Exception e)
             {
                 this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
-                return data;
+                throw new BusinessRulesExecutionException($"Error running business rule {action} for {data}", e);
             }
         }
 

@@ -156,7 +156,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                         // Classifier???
                         if (classifier == null || !isList)
                         {
-                            if(isList)
+                            if (isList)
                             {
                                 var retVal = Activator.CreateInstance(t) as IList;
                                 retVal.Add(formatter.Deserialize(r, t, context));
@@ -309,10 +309,10 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
 #endif
             // Have we already loaded this in the current serializer?
             IEnumerable association = null;
-            if(!this.m_loadedAssociations.TryGetValue(sourceKey, out association))
+            if (!this.m_loadedAssociations.TryGetValue(sourceKey, out association))
             {
                 association = EntitySource.Current.Provider.GetRelations<TAssociation>(sourceKey);
-                if(this.m_loadedAssociations.ContainsKey(sourceKey))
+                if (this.m_loadedAssociations.ContainsKey(sourceKey))
                     this.m_loadedAssociations.Add(sourceKey, association);
             }
             return association as IEnumerable<TAssociation>;
@@ -505,6 +505,19 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// </summary>
         public void Serialize(TextWriter tw, IdentifiedData data)
         {
+            using (JsonWriter jw = new JsonTextWriter(tw))
+            {
+                this.Serialize(jw, data);
+            }
+        }
+
+        /// <summary>
+        /// Serialize data
+        /// </summary>
+        /// <param name="jw"></param>
+        /// <param name="data"></param>
+        public void Serialize(JsonWriter jw, IdentifiedData data)
+        {
 #if DEBUG
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -512,10 +525,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
 #endif
             try
             {
-                using (JsonWriter jw = new JsonTextWriter(tw))
-                {
-                    this.WritePropertyUtil(jw, null, data, null);
-                }
+                this.WritePropertyUtil(jw, null, data, null);
             }
             catch (Exception e)
             {

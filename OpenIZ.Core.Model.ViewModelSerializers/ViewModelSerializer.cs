@@ -101,7 +101,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -205,7 +207,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.NonVersionedEntityData))) {
                                                                         OpenIZ.Core.Model.NonVersionedEntityData _nretVal = ((OpenIZ.Core.Model.NonVersionedEntityData)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -352,7 +354,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -472,7 +476,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityApplication))) {
                                                                                 OpenIZ.Core.Model.Security.SecurityApplication _nretVal = ((OpenIZ.Core.Model.Security.SecurityApplication)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -621,7 +625,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -741,7 +747,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityDevice))) {
                                                                                 OpenIZ.Core.Model.Security.SecurityDevice _nretVal = ((OpenIZ.Core.Model.Security.SecurityDevice)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -876,7 +882,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -980,7 +988,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityEntity))) {
                                                                         OpenIZ.Core.Model.Security.SecurityEntity _nretVal = ((OpenIZ.Core.Model.Security.SecurityEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -1134,7 +1142,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -1262,7 +1272,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         }
                                                                         else {
                                                                             if ("$type".Equals(r.Value)) {
-                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityPolicy))) {
                                                                                     OpenIZ.Core.Model.Security.SecurityPolicy _nretVal = ((OpenIZ.Core.Model.Security.SecurityPolicy)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -1404,7 +1414,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -1468,7 +1480,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                         }
                                         else {
                                             if ("$type".Equals(r.Value)) {
-                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                 if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityPolicyInstance))) {
                                                     OpenIZ.Core.Model.Security.SecurityPolicyInstance _nretVal = ((OpenIZ.Core.Model.Security.SecurityPolicyInstance)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                     _nretVal.CopyObjectData(_retVal);
@@ -1610,7 +1622,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -1730,7 +1744,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityRole))) {
                                                                                 OpenIZ.Core.Model.Security.SecurityRole _nretVal = ((OpenIZ.Core.Model.Security.SecurityRole)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -1956,7 +1970,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -2164,7 +2180,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                 }
                                                                                                                 else {
                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Security.SecurityUser))) {
                                                                                                                             OpenIZ.Core.Model.Security.SecurityUser _nretVal = ((OpenIZ.Core.Model.Security.SecurityUser)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -2734,7 +2750,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -3079,7 +3097,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                     }
                                                                                                                                                                                     else {
                                                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Roles.Patient))) {
                                                                                                                                                                                                 OpenIZ.Core.Model.Roles.Patient _nretVal = ((OpenIZ.Core.Model.Roles.Patient)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -3645,7 +3663,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -3966,7 +3986,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                         }
                                                                                                                                                                         else {
                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Roles.Provider))) {
                                                                                                                                                                                     OpenIZ.Core.Model.Roles.Provider _nretVal = ((OpenIZ.Core.Model.Roles.Provider)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -4127,7 +4147,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -4231,7 +4253,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                             }
                                                             else {
                                                                 if ("$type".Equals(r.Value)) {
-                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                     if ((_type != typeof(OpenIZ.Core.Model.Patch.Patch))) {
                                                                         OpenIZ.Core.Model.Patch.Patch _nretVal = ((OpenIZ.Core.Model.Patch.Patch)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                         _nretVal.CopyObjectData(_retVal);
@@ -4874,7 +4896,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -5291,7 +5315,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                                                         }
                                                                                                                                                                                                                         else {
                                                                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Entities.Container))) {
                                                                                                                                                                                                                                     OpenIZ.Core.Model.Entities.Container _nretVal = ((OpenIZ.Core.Model.Entities.Container)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -5847,7 +5871,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -6168,7 +6194,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                         }
                                                                                                                                                                         else {
                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Entities.UserEntity))) {
                                                                                                                                                                                     OpenIZ.Core.Model.Entities.UserEntity _nretVal = ((OpenIZ.Core.Model.Entities.UserEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -6718,7 +6744,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -7039,7 +7067,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                         }
                                                                                                                                                                         else {
                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Entities.ApplicationEntity))) {
                                                                                                                                                                                     OpenIZ.Core.Model.Entities.ApplicationEntity _nretVal = ((OpenIZ.Core.Model.Entities.ApplicationEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -7582,7 +7610,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -7895,7 +7925,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                     }
                                                                                                                                                                     else {
                                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.DeviceEntity))) {
                                                                                                                                                                                 OpenIZ.Core.Model.Entities.DeviceEntity _nretVal = ((OpenIZ.Core.Model.Entities.DeviceEntity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -8397,7 +8427,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -8678,7 +8710,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                     }
                                                                                                                                                     else {
                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.Entity))) {
                                                                                                                                                                 OpenIZ.Core.Model.Entities.Entity _nretVal = ((OpenIZ.Core.Model.Entities.Entity)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -8851,7 +8883,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -8931,7 +8965,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityAddress))) {
                                                             OpenIZ.Core.Model.Entities.EntityAddress _nretVal = ((OpenIZ.Core.Model.Entities.EntityAddress)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -9052,7 +9086,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -9116,7 +9152,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                         }
                                         else {
                                             if ("$type".Equals(r.Value)) {
-                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                 if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityAddressComponent))) {
                                                     OpenIZ.Core.Model.Entities.EntityAddressComponent _nretVal = ((OpenIZ.Core.Model.Entities.EntityAddressComponent)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                     _nretVal.CopyObjectData(_retVal);
@@ -9286,7 +9322,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -9366,7 +9404,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityName))) {
                                                             OpenIZ.Core.Model.Entities.EntityName _nretVal = ((OpenIZ.Core.Model.Entities.EntityName)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -9520,7 +9558,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -9608,7 +9648,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityNameComponent))) {
                                                                 OpenIZ.Core.Model.Entities.EntityNameComponent _nretVal = ((OpenIZ.Core.Model.Entities.EntityNameComponent)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -9808,7 +9848,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -9897,7 +9939,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     else {
                                                         if ("quantity".Equals(r.Value)) {
                                                             r.Read();
-                                                            int _instance = ((int)(context.JsonContext.ReadElementUtil(r, typeof(int), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("quantity", context.JsonContext, _retVal, context))));
+                                                            System.Nullable<int> _instance = ((System.Nullable<int>)(context.JsonContext.ReadElementUtil(r, typeof(System.Nullable<int>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("quantity", context.JsonContext, _retVal, context))));
                                                             if ((_instance != null)) {
                                                                 _retVal.Quantity = _instance;
                                                             }
@@ -9928,7 +9970,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityRelationship))) {
                                                                                 OpenIZ.Core.Model.Entities.EntityRelationship _nretVal = ((OpenIZ.Core.Model.Entities.EntityRelationship)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -10068,7 +10110,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -10148,7 +10192,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.EntityTelecomAddress))) {
                                                             OpenIZ.Core.Model.Entities.EntityTelecomAddress _nretVal = ((OpenIZ.Core.Model.Entities.EntityTelecomAddress)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -10701,7 +10745,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -11046,7 +11092,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                     }
                                                                                                                                                                                     else {
                                                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.ManufacturedMaterial))) {
                                                                                                                                                                                                 OpenIZ.Core.Model.Entities.ManufacturedMaterial _nretVal = ((OpenIZ.Core.Model.Entities.ManufacturedMaterial)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -11625,7 +11671,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -11962,7 +12010,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                 }
                                                                                                                                                                                 else {
                                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.Material))) {
                                                                                                                                                                                             OpenIZ.Core.Model.Entities.Material _nretVal = ((OpenIZ.Core.Model.Entities.Material)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -12493,7 +12541,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -12790,7 +12840,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                             }
                                                                                                                                                             else {
                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.Organization))) {
                                                                                                                                                                         OpenIZ.Core.Model.Entities.Organization _nretVal = ((OpenIZ.Core.Model.Entities.Organization)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -13324,7 +13374,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -13629,7 +13681,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                 }
                                                                                                                                                                 else {
                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.Person))) {
                                                                                                                                                                             OpenIZ.Core.Model.Entities.Person _nretVal = ((OpenIZ.Core.Model.Entities.Person)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -13773,7 +13825,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -13845,7 +13899,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.Entities.PersonLanguageCommunication))) {
                                                         OpenIZ.Core.Model.Entities.PersonLanguageCommunication _nretVal = ((OpenIZ.Core.Model.Entities.PersonLanguageCommunication)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -14358,7 +14412,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -14671,7 +14727,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                     }
                                                                                                                                                                     else {
                                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Entities.Place))) {
                                                                                                                                                                                 OpenIZ.Core.Model.Entities.Place _nretVal = ((OpenIZ.Core.Model.Entities.Place)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -14835,7 +14891,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -14915,7 +14973,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.Entities.PlaceService))) {
                                                             OpenIZ.Core.Model.Entities.PlaceService _nretVal = ((OpenIZ.Core.Model.Entities.PlaceService)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -15088,7 +15146,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -15248,7 +15308,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         }
                                                                                         else {
                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.DataTypes.AssigningAuthority))) {
                                                                                                     OpenIZ.Core.Model.DataTypes.AssigningAuthority _nretVal = ((OpenIZ.Core.Model.DataTypes.AssigningAuthority)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -15437,7 +15497,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -15597,7 +15659,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         }
                                                                                         else {
                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.DataTypes.CodeSystem))) {
                                                                                                     OpenIZ.Core.Model.DataTypes.CodeSystem _nretVal = ((OpenIZ.Core.Model.DataTypes.CodeSystem)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -15878,7 +15940,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -16079,7 +16143,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                             }
                                                                                                             else {
                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.Concept))) {
                                                                                                                         OpenIZ.Core.Model.DataTypes.Concept _nretVal = ((OpenIZ.Core.Model.DataTypes.Concept)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -16238,7 +16302,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -16358,7 +16424,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptClass))) {
                                                                                 OpenIZ.Core.Model.DataTypes.ConceptClass _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptClass)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -16512,7 +16578,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -16608,7 +16676,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                         }
                                                         else {
                                                             if ("$type".Equals(r.Value)) {
-                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                 if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptName))) {
                                                                     OpenIZ.Core.Model.DataTypes.ConceptName _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptName)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                     _nretVal.CopyObjectData(_retVal);
@@ -16788,7 +16856,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -16876,7 +16946,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm))) {
                                                                 OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -17031,7 +17101,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -17119,7 +17191,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptRelationship))) {
                                                                 OpenIZ.Core.Model.DataTypes.ConceptRelationship _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptRelationship)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -17264,7 +17336,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -17384,7 +17458,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptRelationshipType))) {
                                                                                 OpenIZ.Core.Model.DataTypes.ConceptRelationshipType _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptRelationshipType)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -17562,7 +17636,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -17714,7 +17790,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     }
                                                                                     else {
                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ConceptSet))) {
                                                                                                 OpenIZ.Core.Model.DataTypes.ConceptSet _nretVal = ((OpenIZ.Core.Model.DataTypes.ConceptSet)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -17858,7 +17934,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -17938,7 +18016,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityExtension))) {
                                                             OpenIZ.Core.Model.DataTypes.EntityExtension _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityExtension)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -18097,7 +18175,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -18177,7 +18257,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActExtension))) {
                                                             OpenIZ.Core.Model.DataTypes.ActExtension _nretVal = ((OpenIZ.Core.Model.DataTypes.ActExtension)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -18345,7 +18425,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -18465,7 +18547,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ExtensionType))) {
                                                                                 OpenIZ.Core.Model.DataTypes.ExtensionType _nretVal = ((OpenIZ.Core.Model.DataTypes.ExtensionType)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -18617,7 +18699,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -18697,7 +18781,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityIdentifier))) {
                                                             OpenIZ.Core.Model.DataTypes.EntityIdentifier _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityIdentifier)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -18844,7 +18928,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -18924,7 +19010,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActIdentifier))) {
                                                             OpenIZ.Core.Model.DataTypes.ActIdentifier _nretVal = ((OpenIZ.Core.Model.DataTypes.ActIdentifier)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -19092,7 +19178,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -19212,7 +19300,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.IdentifierType))) {
                                                                                 OpenIZ.Core.Model.DataTypes.IdentifierType _nretVal = ((OpenIZ.Core.Model.DataTypes.IdentifierType)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -19352,7 +19440,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -19432,7 +19522,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityNote))) {
                                                             OpenIZ.Core.Model.DataTypes.EntityNote _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityNote)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -19591,7 +19681,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -19671,7 +19763,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                 }
                                                 else {
                                                     if ("$type".Equals(r.Value)) {
-                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                         if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActNote))) {
                                                             OpenIZ.Core.Model.DataTypes.ActNote _nretVal = ((OpenIZ.Core.Model.DataTypes.ActNote)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                             _nretVal.CopyObjectData(_retVal);
@@ -19839,7 +19931,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -19959,7 +20053,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm))) {
                                                                                 OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm _nretVal = ((OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -20147,7 +20241,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -20283,7 +20379,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             }
                                                                             else {
                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ReferenceTerm))) {
                                                                                         OpenIZ.Core.Model.DataTypes.ReferenceTerm _nretVal = ((OpenIZ.Core.Model.DataTypes.ReferenceTerm)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -20460,7 +20556,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -20596,7 +20694,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             }
                                                                             else {
                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ReferenceTermName))) {
                                                                                         OpenIZ.Core.Model.DataTypes.ReferenceTermName _nretVal = ((OpenIZ.Core.Model.DataTypes.ReferenceTermName)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -20715,25 +20813,6 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "source", _strong.SourceEntityKey, context);
                 }
             }
-            if (context.ShouldSerialize("sourceModel")) {
-                if ((_strong.SourceEntity == null)) {
-                    if ((_strong.Key.HasValue && context.ShouldForceLoad("sourceModel", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Entities.Entity _delay = null;
-                        _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Entities.Entity>(_strong.SourceEntityKey);
-                        _strong.SourceEntity = _delay;
-                        if ((_delay != null)) {
-                            _loaded = true;
-                            context.JsonContext.WritePropertyUtil(w, "sourceModel", _strong.SourceEntity, context);
-                        }
-                        else {
-                            context.RegisterMissTarget("sourceModel", _strong.Key.Value);
-                        }
-                    }
-                }
-                else {
-                    context.JsonContext.WritePropertyUtil(w, "sourceModel", _strong.SourceEntity, context);
-                }
-            }
             if (context.ShouldSerialize("creationTimeModel")) {
                 if ((_strong.CreationTime == null)) {
                 }
@@ -20783,7 +20862,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -20903,7 +20984,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.EntityTag))) {
                                                                                 OpenIZ.Core.Model.DataTypes.EntityTag _nretVal = ((OpenIZ.Core.Model.DataTypes.EntityTag)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -21020,25 +21101,6 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "source", _strong.SourceEntityKey, context);
                 }
             }
-            if (context.ShouldSerialize("sourceModel")) {
-                if ((_strong.SourceEntity == null)) {
-                    if ((_strong.Key.HasValue && context.ShouldForceLoad("sourceModel", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Acts.Act _delay = null;
-                        _delay = context.JsonContext.LoadRelated<OpenIZ.Core.Model.Acts.Act>(_strong.SourceEntityKey);
-                        _strong.SourceEntity = _delay;
-                        if ((_delay != null)) {
-                            _loaded = true;
-                            context.JsonContext.WritePropertyUtil(w, "sourceModel", _strong.SourceEntity, context);
-                        }
-                        else {
-                            context.RegisterMissTarget("sourceModel", _strong.Key.Value);
-                        }
-                    }
-                }
-                else {
-                    context.JsonContext.WritePropertyUtil(w, "sourceModel", _strong.SourceEntity, context);
-                }
-            }
             if (context.ShouldSerialize("creationTimeModel")) {
                 if ((_strong.CreationTime == null)) {
                 }
@@ -21088,7 +21150,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -21208,7 +21272,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     }
                                                                     else {
                                                                         if ("$type".Equals(r.Value)) {
-                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                             if ((_type != typeof(OpenIZ.Core.Model.DataTypes.ActTag))) {
                                                                                 OpenIZ.Core.Model.DataTypes.ActTag _nretVal = ((OpenIZ.Core.Model.DataTypes.ActTag)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -21395,7 +21459,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -21531,7 +21597,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             }
                                                                             else {
                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                     if ((_type != typeof(OpenIZ.Core.Model.DataTypes.TemplateDefinition))) {
                                                                                         OpenIZ.Core.Model.DataTypes.TemplateDefinition _nretVal = ((OpenIZ.Core.Model.DataTypes.TemplateDefinition)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -21658,7 +21724,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -21722,7 +21790,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                         }
                                         else {
                                             if ("$type".Equals(r.Value)) {
-                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                 if ((_type != typeof(OpenIZ.Core.Model.Collection.Bundle))) {
                                                     OpenIZ.Core.Model.Collection.Bundle _nretVal = ((OpenIZ.Core.Model.Collection.Bundle)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                     _nretVal.CopyObjectData(_retVal);
@@ -22201,7 +22269,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -22506,7 +22576,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                 }
                                                                                                                                                                 else {
                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.Act))) {
                                                                                                                                                                             OpenIZ.Core.Model.Acts.Act _nretVal = ((OpenIZ.Core.Model.Acts.Act)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -22702,7 +22772,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -22759,7 +22831,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                     else {
                                         if ("quantity".Equals(r.Value)) {
                                             r.Read();
-                                            int _instance = ((int)(context.JsonContext.ReadElementUtil(r, typeof(int), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("quantity", context.JsonContext, _retVal, context))));
+                                            System.Nullable<int> _instance = ((System.Nullable<int>)(context.JsonContext.ReadElementUtil(r, typeof(System.Nullable<int>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("quantity", context.JsonContext, _retVal, context))));
                                             if ((_instance != null)) {
                                                 _retVal.Quantity = _instance;
                                             }
@@ -22814,7 +22886,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 }
                                                                 else {
                                                                     if ("$type".Equals(r.Value)) {
-                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.ActParticipation))) {
                                                                             OpenIZ.Core.Model.Acts.ActParticipation _nretVal = ((OpenIZ.Core.Model.Acts.ActParticipation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                             _nretVal.CopyObjectData(_retVal);
@@ -22946,7 +23018,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -23018,7 +23092,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                             }
                                             else {
                                                 if ("$type".Equals(r.Value)) {
-                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                     if ((_type != typeof(OpenIZ.Core.Model.Acts.ActProtocol))) {
                                                         OpenIZ.Core.Model.Acts.ActProtocol _nretVal = ((OpenIZ.Core.Model.Acts.ActProtocol)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                         _nretVal.CopyObjectData(_retVal);
@@ -23171,7 +23245,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -23259,7 +23335,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                     }
                                                     else {
                                                         if ("$type".Equals(r.Value)) {
-                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                             if ((_type != typeof(OpenIZ.Core.Model.Acts.ActRelationship))) {
                                                                 OpenIZ.Core.Model.Acts.ActRelationship _nretVal = ((OpenIZ.Core.Model.Acts.ActRelationship)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                 _nretVal.CopyObjectData(_retVal);
@@ -23268,6 +23344,252 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                         }
                                                         else {
                                                             r.Skip();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    if (((r.TokenType == Newtonsoft.Json.JsonToken.EndObject) 
+                                && (r.Depth == _depth))) {
+                        return _retVal;
+                    }
+                    else {
+                        throw new Newtonsoft.Json.JsonSerializationException("JSON in invalid state");
+                    }
+                }
+            }
+            return _retVal;
+        }
+        
+        public object FromSimpleValue(object o) {
+            return null;
+        }
+        
+        public object GetSimpleValue(object o) {
+            return null;
+        }
+    }
+    
+    public class CarePlanViewModelSerializer : OpenIZ.Core.Applets.ViewModel.Json.IJsonViewModelTypeFormatter {
+        
+        private OpenIZ.Core.Model.Serialization.ModelSerializationBinder m_binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
+        
+        private OpenIZ.Core.Diagnostics.Tracer m_tracer = OpenIZ.Core.Diagnostics.Tracer.GetTracer(typeof(CarePlanViewModelSerializer));
+        
+        public System.Type HandlesType {
+            get {
+                return typeof(OpenIZ.Core.Model.Acts.CarePlan);
+            }
+        }
+        
+        public void Serialize(Newtonsoft.Json.JsonWriter w, OpenIZ.Core.Model.IdentifiedData o, OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext context) {
+            if ((o == null)) {
+                throw new System.ArgumentNullException("o");
+            }
+            OpenIZ.Core.Model.Acts.CarePlan _strong = null;
+            OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext _jsonContext = null;
+            bool _loaded = false;
+            try {
+                _strong = ((OpenIZ.Core.Model.Acts.CarePlan)(o));
+            }
+            catch (System.Exception e) {
+                this.m_tracer.TraceError(string.Format("Casting Error: {0}", e));
+                throw new System.ArgumentException(string.Format("Invalid type {0} provided, expected {1}", o.GetType(), typeof(OpenIZ.Core.Model.Acts.CarePlan)));
+            }
+            if (context.ShouldSerialize("target")) {
+                if ((_strong.Target == null)) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("target", _strong.Key.Value))) {
+                        OpenIZ.Core.Model.Roles.Patient _delay = null;
+                    }
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "target", _strong.Target, context);
+                }
+            }
+            if (context.ShouldSerialize("act")) {
+                if (((_strong.Action == null) 
+                            || (_strong.Action.Count == 0))) {
+                    if ((_strong.Key.HasValue && context.ShouldForceLoad("act", _strong.Key.Value))) {
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.Act> _delay = null;
+                    }
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "act", _strong.Action, context);
+                }
+            }
+            if (context.ShouldSerialize("creationTimeModel")) {
+                if ((_strong.CreationTime == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "creationTimeModel", _strong.CreationTime, context);
+                }
+            }
+            if (context.ShouldSerialize("creationTime")) {
+                if ((_strong.CreationTimeXml == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "creationTime", _strong.CreationTimeXml, context);
+                }
+            }
+            if (context.ShouldSerialize("obsoletionTimeModel")) {
+                if ((_strong.ObsoletionTime == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "obsoletionTimeModel", _strong.ObsoletionTime, context);
+                }
+            }
+            if (context.ShouldSerialize("obsoletionTime")) {
+                if ((_strong.ObsoletionTimeXml == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "obsoletionTime", _strong.ObsoletionTimeXml, context);
+                }
+            }
+            if (context.ShouldSerialize("createdBy")) {
+                if ((_strong.CreatedByKey == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "createdBy", _strong.CreatedByKey, context);
+                }
+            }
+            if (context.ShouldSerialize("obsoletedBy")) {
+                if ((_strong.ObsoletedByKey == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "obsoletedBy", _strong.ObsoletedByKey, context);
+                }
+            }
+            if (context.ShouldSerialize("id")) {
+                if ((_strong.Key == null)) {
+                }
+                else {
+                    context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
+                }
+            }
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+            }
+        }
+        
+        public object Deserialize(Newtonsoft.Json.JsonReader r, System.Type asType, OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext context) {
+            OpenIZ.Core.Model.Acts.CarePlan _retVal = new OpenIZ.Core.Model.Acts.CarePlan();
+            int _depth = r.Depth;
+            if ((r.TokenType != Newtonsoft.Json.JsonToken.StartObject)) {
+                _depth = (_depth - 1);
+            }
+            for (
+            ; r.Read(); 
+            ) {
+                if ((r.TokenType == Newtonsoft.Json.JsonToken.PropertyName)) {
+                    if ("id".Equals(r.Value)) {
+                        r.Read();
+                        System.Nullable<System.Guid> _instance = ((System.Nullable<System.Guid>)(context.JsonContext.ReadElementUtil(r, typeof(System.Nullable<System.Guid>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("id", context.JsonContext, _retVal, context))));
+                        if ((_instance != null)) {
+                            _retVal.Key = _instance;
+                        }
+                    }
+                    else {
+                        if ("obsoletedBy".Equals(r.Value)) {
+                            r.Read();
+                            System.Nullable<System.Guid> _instance = ((System.Nullable<System.Guid>)(context.JsonContext.ReadElementUtil(r, typeof(System.Nullable<System.Guid>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("obsoletedBy", context.JsonContext, _retVal, context))));
+                            if ((_instance != null)) {
+                                _retVal.ObsoletedByKey = _instance;
+                            }
+                        }
+                        else {
+                            if ("createdBy".Equals(r.Value)) {
+                                r.Read();
+                                System.Nullable<System.Guid> _instance = ((System.Nullable<System.Guid>)(context.JsonContext.ReadElementUtil(r, typeof(System.Nullable<System.Guid>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("createdBy", context.JsonContext, _retVal, context))));
+                                if ((_instance != null)) {
+                                    _retVal.CreatedByKey = _instance;
+                                }
+                            }
+                            else {
+                                if ("obsoletedByModel".Equals(r.Value)) {
+                                    r.Read();
+                                    OpenIZ.Core.Model.Security.SecurityUser _instance = ((OpenIZ.Core.Model.Security.SecurityUser)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Security.SecurityUser), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("obsoletedByModel", context.JsonContext, _retVal, context))));
+                                    if ((_instance != null)) {
+                                        _retVal.ObsoletedBy = _instance;
+                                    }
+                                }
+                                else {
+                                    if ("createdByModel".Equals(r.Value)) {
+                                        r.Read();
+                                        OpenIZ.Core.Model.Security.SecurityUser _instance = ((OpenIZ.Core.Model.Security.SecurityUser)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Security.SecurityUser), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("createdByModel", context.JsonContext, _retVal, context))));
+                                        if ((_instance != null)) {
+                                            _retVal.CreatedBy = _instance;
+                                        }
+                                    }
+                                    else {
+                                        if ("obsoletionTime".Equals(r.Value)) {
+                                            r.Read();
+                                            string _instance = ((string)(context.JsonContext.ReadElementUtil(r, typeof(string), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("obsoletionTime", context.JsonContext, _retVal, context))));
+                                            if ((_instance != null)) {
+                                                _retVal.ObsoletionTimeXml = _instance;
+                                            }
+                                        }
+                                        else {
+                                            if ("obsoletionTimeModel".Equals(r.Value)) {
+                                                r.Read();
+                                                System.Nullable<System.DateTimeOffset> _instance = ((System.Nullable<System.DateTimeOffset>)(context.JsonContext.ReadElementUtil(r, typeof(System.Nullable<System.DateTimeOffset>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("obsoletionTimeModel", context.JsonContext, _retVal, context))));
+                                                if ((_instance != null)) {
+                                                    _retVal.ObsoletionTime = _instance;
+                                                }
+                                            }
+                                            else {
+                                                if ("creationTime".Equals(r.Value)) {
+                                                    r.Read();
+                                                    string _instance = ((string)(context.JsonContext.ReadElementUtil(r, typeof(string), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("creationTime", context.JsonContext, _retVal, context))));
+                                                    if ((_instance != null)) {
+                                                        _retVal.CreationTimeXml = _instance;
+                                                    }
+                                                }
+                                                else {
+                                                    if ("creationTimeModel".Equals(r.Value)) {
+                                                        r.Read();
+                                                        System.DateTimeOffset _instance = ((System.DateTimeOffset)(context.JsonContext.ReadElementUtil(r, typeof(System.DateTimeOffset), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("creationTimeModel", context.JsonContext, _retVal, context))));
+                                                        if ((_instance != null)) {
+                                                            _retVal.CreationTime = _instance;
+                                                        }
+                                                    }
+                                                    else {
+                                                        if ("act".Equals(r.Value)) {
+                                                            r.Read();
+                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.Act> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.Act>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.Act>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("act", context.JsonContext, _retVal, context))));
+                                                            if ((_instance != null)) {
+                                                                _retVal.Action = _instance;
+                                                            }
+                                                        }
+                                                        else {
+                                                            if ("target".Equals(r.Value)) {
+                                                                r.Read();
+                                                                OpenIZ.Core.Model.Roles.Patient _instance = ((OpenIZ.Core.Model.Roles.Patient)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Roles.Patient), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("target", context.JsonContext, _retVal, context))));
+                                                                if ((_instance != null)) {
+                                                                    _retVal.Target = _instance;
+                                                                }
+                                                            }
+                                                            else {
+                                                                if ("$type".Equals(r.Value)) {
+                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                    if ((_type != typeof(OpenIZ.Core.Model.Acts.CarePlan))) {
+                                                                        OpenIZ.Core.Model.Acts.CarePlan _nretVal = ((OpenIZ.Core.Model.Acts.CarePlan)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
+                                                                        _nretVal.CopyObjectData(_retVal);
+                                                                        return _nretVal;
+                                                                    }
+                                                                }
+                                                                else {
+                                                                    r.Skip();
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
@@ -23741,7 +24063,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -24046,7 +24370,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                 }
                                                                                                                                                                 else {
                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.ControlAct))) {
                                                                                                                                                                             OpenIZ.Core.Model.Acts.ControlAct _nretVal = ((OpenIZ.Core.Model.Acts.ControlAct)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -24581,7 +24905,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -24902,7 +25228,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                         }
                                                                                                                                                                         else {
                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Acts.Observation))) {
                                                                                                                                                                                     OpenIZ.Core.Model.Acts.Observation _nretVal = ((OpenIZ.Core.Model.Acts.Observation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -25472,7 +25798,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -25817,7 +26145,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                     }
                                                                                                                                                                                     else {
                                                                                                                                                                                         if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                            System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                             if ((_type != typeof(OpenIZ.Core.Model.Acts.QuantityObservation))) {
                                                                                                                                                                                                 OpenIZ.Core.Model.Acts.QuantityObservation _nretVal = ((OpenIZ.Core.Model.Acts.QuantityObservation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                                 _nretVal.CopyObjectData(_retVal);
@@ -26364,7 +26692,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -26693,7 +27023,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                             }
                                                                                                                                                                             else {
                                                                                                                                                                                 if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                    System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                     if ((_type != typeof(OpenIZ.Core.Model.Acts.TextObservation))) {
                                                                                                                                                                                         OpenIZ.Core.Model.Acts.TextObservation _nretVal = ((OpenIZ.Core.Model.Acts.TextObservation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                         _nretVal.CopyObjectData(_retVal);
@@ -27257,7 +27587,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -27594,7 +27926,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                 }
                                                                                                                                                                                 else {
                                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.CodedObservation))) {
                                                                                                                                                                                             OpenIZ.Core.Model.Acts.CodedObservation _nretVal = ((OpenIZ.Core.Model.Acts.CodedObservation)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);
@@ -28133,7 +28465,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -28454,7 +28788,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                         }
                                                                                                                                                                         else {
                                                                                                                                                                             if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                 if ((_type != typeof(OpenIZ.Core.Model.Acts.PatientEncounter))) {
                                                                                                                                                                                     OpenIZ.Core.Model.Acts.PatientEncounter _nretVal = ((OpenIZ.Core.Model.Acts.PatientEncounter)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                     _nretVal.CopyObjectData(_retVal);
@@ -28621,7 +28955,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if ((_loaded && _strong.Key.HasValue)) {
+            if ((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue))) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
         }
@@ -28733,7 +29069,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 }
                                                                 else {
                                                                     if ("$type".Equals(r.Value)) {
-                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.Protocol))) {
                                                                             OpenIZ.Core.Model.Acts.Protocol _nretVal = ((OpenIZ.Core.Model.Acts.Protocol)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                             _nretVal.CopyObjectData(_retVal);
@@ -29310,7 +29646,9 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
             }
-            if (((_loaded && _strong.Key.HasValue) 
+            if (((_loaded 
+                        && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
+                        && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
                 ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
             }
@@ -29679,7 +30017,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                                                                                                                                 }
                                                                                                                                                                                                 else {
                                                                                                                                                                                                     if ("$type".Equals(r.Value)) {
-                                                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.40331, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
+                                                                                                                                                                                                        System.Type _type = this.m_binder.BindToType("OpenIZ.Core.Model, Version=0.8.1.28019, Culture=neutral, PublicKeyToken=null", r.ReadAsString());
                                                                                                                                                                                                         if ((_type != typeof(OpenIZ.Core.Model.Acts.SubstanceAdministration))) {
                                                                                                                                                                                                             OpenIZ.Core.Model.Acts.SubstanceAdministration _nretVal = ((OpenIZ.Core.Model.Acts.SubstanceAdministration)(context.JsonContext.GetFormatter(_type).Deserialize(r, _type, context)));
                                                                                                                                                                                                             _nretVal.CopyObjectData(_retVal);

@@ -23,9 +23,11 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Entities
@@ -36,7 +38,7 @@ namespace OpenIZ.Core.Model.Entities
 	[XmlType("Entity", Namespace = "http://openiz.org/model"), JsonObject("Entity")]
 	[XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Entity")]
 	[Classifier(nameof(ClassConcept))]
-	public class Entity : VersionedEntityData<Entity>
+	public class Entity : VersionedEntityData<Entity>, ITaggable
 	{
 
         private TemplateDefinition m_template;
@@ -502,6 +504,8 @@ namespace OpenIZ.Core.Model.Entities
         /// Should serialize telecoms
         /// </summary>
         public bool ShouldSerializeTelecoms() => this.Telecoms?.Count > 0;
-        
+
+        [XmlIgnore, JsonIgnore]
+        IEnumerable<ITag> ITaggable.Tags { get { return this.Tags.OfType<ITag>(); } }
     }
 }

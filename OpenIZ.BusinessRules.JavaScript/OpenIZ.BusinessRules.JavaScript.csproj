@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="AppletBusinessRuleLoader.cs" />
     <Compile Include="AppletDataReferenceResolver.cs" />
+    <Compile Include="BusinessRulesExecutionException.cs" />
     <Compile Include="IDataReferenceResolver.cs" />
     <Compile Include="JavascriptBusinessRulesEngine.cs" />
     <Compile Include="JNI\BusinessRulesBridge.cs" />

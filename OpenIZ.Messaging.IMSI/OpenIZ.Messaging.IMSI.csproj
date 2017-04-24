@@ -70,6 +70,7 @@
     <Compile Include="ResourceHandler\BundleResourceHandler.cs" />
     <Compile Include="ResourceHandler\CareplanResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptClassResourceHandler.cs" />
+    <Compile Include="ResourceHandler\EntityRelationshipResourceHandler.cs" />
     <Compile Include="ResourceHandler\ExtensionTypeResourceHandler.cs" />
     <Compile Include="ResourceHandler\PatientEncounterResourceHandler.cs" />
     <Compile Include="ResourceHandler\PersonResourceHandler.cs" />

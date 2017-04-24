@@ -114,7 +114,7 @@ namespace OpenIZ.Core.Model.Entities
 		/// Represents the quantity of target in source
 		/// </summary>
 		[XmlElement("quantity"), JsonProperty("quantity")]
-		public int Quantity { get; set; }
+		public int? Quantity { get; set; }
 
 		/// <summary>
 		/// Gets or sets the association type
@@ -230,7 +230,8 @@ namespace OpenIZ.Core.Model.Entities
 			var other = obj as EntityRelationship;
 			if (other == null) return false;
 			return base.SemanticEquals(obj) && this.TargetEntityKey == other.TargetEntityKey &&
-				this.RelationshipTypeKey == other.RelationshipTypeKey;
+				this.RelationshipTypeKey == other.RelationshipTypeKey &&
+                this.Quantity == other.Quantity;
 		}
 
 		/// <summary>
@@ -246,7 +247,7 @@ namespace OpenIZ.Core.Model.Entities
 		/// </summary>
 		public bool ShouldSerializeQuantity()
 		{
-			return this.Quantity != 0;
+			return this.Quantity.HasValue;
 		}
         /// <summary>
         /// Shoudl serialize source entity?
@@ -254,6 +255,14 @@ namespace OpenIZ.Core.Model.Entities
         public override bool ShouldSerializeSourceEntityKey()
         {
             return false;
+        }
+
+        /// <summary>
+        /// Represent as string
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Format("({0}) {1} = {2}", this.RelationshipType?.ToString() ?? this.RelationshipTypeKey?.ToString(), this.TargetEntityKey, this.Quantity);
         }
     }
 }

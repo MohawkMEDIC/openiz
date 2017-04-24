@@ -58,7 +58,7 @@ namespace OpenIZ.Core.Exceptions
         /// </summary>
         public DetectedIssueException(List<DetectedIssue> issues, String message, Exception innerException) : base(message, innerException)
         {
-
+            this.Issues = issues;
         }
 
         /// <summary>
@@ -68,6 +68,16 @@ namespace OpenIZ.Core.Exceptions
         {
         }
 
+        /// <summary>
+        /// Write to string
+        /// </summary>
+        public override string ToString()
+        {
+            var sb = new StringBuilder("BRE Violations:");
+            foreach (var i in this.Issues)
+                sb.AppendFormat("\r\n{0}- {1}", i.Priority, i.Text);
+            return sb.ToString();
+        }
 
     }
 }

@@ -38,6 +38,7 @@ using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
 using System.Collections;
 using Jint.Runtime.Debugger;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI
 {
@@ -108,6 +109,30 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             var sData = this.ToModel(data);
             var retVal = JavascriptBusinessRulesEngine.Current.Invoke(action, sData);
             return this.ToViewModel(retVal);
+        }
+
+        /// <summary>
+        /// Saves tags associated with the specified object
+        /// </summary>
+        public object SaveTags(ExpandoObject obj)
+        {
+            var modelObj = this.ToModel(obj) as ITaggable;
+            if (modelObj != null)
+            {
+                var tags = modelObj.Tags;
+                if(tags.Count() > 0)
+                {
+                    var tpi = ApplicationServiceContext.Current.GetService(typeof(ITagPersistenceService)) as ITagPersistenceService;
+                    if (tpi == null)
+                        return obj ;
+                    foreach (var t in tags)
+                    {
+                        t.SourceEntityKey = (modelObj as IIdentifiedEntity).Key;
+                        tpi.Save(t.SourceEntityKey.Value, t);
+                    }
+                }
+            }
+            return obj;
         }
 
         /// <summary>

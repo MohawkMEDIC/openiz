@@ -170,7 +170,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
 
 					var mat = materialService.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "ManufacturedProduct").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
 
-					decimal balanceOH = rel.Quantity;
+					decimal balanceOH = rel.Quantity ?? 0;
 
 					// get the adjustments the adjustment acts are allocations and transfers
 					var adjustments = stockService.FindAdjustments(mmat.Key.Value, place.Key.Value, reportFrom, reportTo);
@@ -235,7 +235,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                         additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                         Value = o.ReferenceTerm.Mnemonic
                                     }).FirstOrDefault()?.Value,
-                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Broken).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
                                 },
                                 batchNumber = mmat.LotNumber,
                                 itemExpirationDate = mmat.ExpiryDate.Value,
@@ -266,7 +266,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                         additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                         Value = o.ReferenceTerm.Mnemonic
                                     }).FirstOrDefault()?.Value,
-                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
                                 },
                                 batchNumber = mmat.LotNumber,
                                 itemExpirationDate = mmat.ExpiryDate.Value,
@@ -297,7 +297,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                         additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                         Value = o.ReferenceTerm.Mnemonic
                                     }).FirstOrDefault()?.Value,
-                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
                                 },
                                 batchNumber = mmat.LotNumber,
                                 itemExpirationDate = mmat.ExpiryDate.Value,
@@ -328,7 +328,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                         additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                         Value = o.ReferenceTerm.Mnemonic
                                     }).FirstOrDefault()?.Value,
-                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == NullReasonKeys.Other).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity))
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == NullReasonKeys.Other).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
                                 },
                                 batchNumber = mmat.LotNumber,
                                 itemExpirationDate = mmat.ExpiryDate.Value,

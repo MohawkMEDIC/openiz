@@ -185,5 +185,14 @@ namespace OpenIZ.Core.Model.Acts
             if (other == null) return false;
             return base.SemanticEquals(obj) && this.TargetActKey == other.TargetActKey;
         }
+
+        /// <summary>
+        /// To string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return string.Format("({0}) {1} = {2}", this.RelationshipType?.ToString() ?? this.RelationshipTypeKey?.ToString(), this.TargetActKey);
+        }
     }
 }

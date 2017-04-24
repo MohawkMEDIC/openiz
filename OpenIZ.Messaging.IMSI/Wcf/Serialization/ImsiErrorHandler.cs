@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using MARC.HI.EHRS.SVC.Core.Exceptions;
+using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Wcf.Serialization;
 using OpenIZ.Messaging.IMSI.Model;
 using System;
@@ -61,6 +62,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
         {
             this.m_traceSource.TraceEvent(TraceEventType.Error, error.HResult, "Error on IMSI WCF Pipeline: {0}", error);
 
+            ErrorResult retVal = null;
+
             // Formulate appropriate response
             if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
@@ -81,31 +84,41 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
             }
             else if (error is DomainStateException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            else if (error is DetectedIssueException)
+            {
+                retVal = new ErrorResult()
+                {
+                    Key = Guid.NewGuid(),
+                    Type = "BusinessRuleViolation",
+                    Details = (error as DetectedIssueException).Issues.Select(o => new ResultDetail(o.Priority == Core.Services.DetectedIssuePriorityType.Error ? DetailType.Error : o.Priority == Core.Services.DetectedIssuePriorityType.Warning ? DetailType.Warning : DetailType.Information, o.Text)).ToList()
+                };
+            }
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
 
             // Construct an error result
-            var errorResult = new ErrorResult()
-            {
-                Key = Guid.NewGuid(),
-                Type = error.GetType().Name,
-                Details = new List<ResultDetail>()
+            if (retVal == null)
+                retVal = new ErrorResult()
+                {
+                    Key = Guid.NewGuid(),
+                    Type = error.GetType().Name,
+                    Details = new List<ResultDetail>()
                     {
                         new ResultDetail(DetailType.Error, error.Message)
                     }
-            };
+                };
 
             // Cascade inner exceptions
             var ie = error.InnerException;
             while (ie != null)
             {
-                errorResult.Details.Add(new ResultDetail(DetailType.Error, String.Format("Caused By: {0}", ie.Message)));
+                retVal.Details.Add(new ResultDetail(DetailType.Error, String.Format("Caused By: {0}", ie.Message)));
                 ie = ie.InnerException;
             }
             // Return error in XML only at this point
-            fault = new WcfMessageDispatchFormatter<IImsiServiceContract>().SerializeReply(version, null, errorResult);
+            fault = new WcfMessageDispatchFormatter<IImsiServiceContract>().SerializeReply(version, null, retVal);
 
-            
+
         }
     }
 }

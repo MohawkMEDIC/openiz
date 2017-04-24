@@ -212,7 +212,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             }
 
             // Loaded something, let's cache it
-            if (loadedProperties && o.Key.HasValue && ((o as IVersionedEntity) == null || (o as IVersionedEntity)?.VersionKey.HasValue == true))
+            if (loadedProperties && o.Key.HasValue && ((o as IVersionedEntity) == null || (o as IVersionedEntity)?.VersionKey.HasValue == true) &&
+                o.LoadState != LoadState.New)
                 (ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService).Add(o);
         }
 

@@ -453,7 +453,15 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             }
 
             // Do we need to write loaded properties
-            var shouldUpdateCacheExpression = new CodeBinaryOperatorExpression(_loaded, CodeBinaryOperatorType.BooleanAnd, new CodePropertyReferenceExpression(_strongKeyReference, "HasValue"));
+            var _loadStateReference = new CodePropertyReferenceExpression(_strongType, nameof(IdentifiedData.LoadState));
+            var _newLoadStateReference = new CodePropertyReferenceExpression(new CodeTypeReferenceExpression(typeof(LoadState)), nameof(LoadState.New));
+            var shouldUpdateCacheExpression = new CodeBinaryOperatorExpression(_loaded, CodeBinaryOperatorType.BooleanAnd, 
+                new CodeBinaryOperatorExpression(
+                    new CodeBinaryOperatorExpression(_newLoadStateReference, CodeBinaryOperatorType.IdentityInequality, _loadStateReference), 
+                    CodeBinaryOperatorType.BooleanAnd, 
+                    new CodePropertyReferenceExpression(_strongKeyReference, "HasValue")
+                )
+            );
             if (typeof(IVersionedEntity).IsAssignableFrom(forType))
                 shouldUpdateCacheExpression = new CodeBinaryOperatorExpression(shouldUpdateCacheExpression, CodeBinaryOperatorType.BooleanAnd, new CodePropertyReferenceExpression(new CodePropertyReferenceExpression(_strongType, "VersionKey"), "HasValue"));
             retVal.Statements.Add(new CodeConditionStatement(shouldUpdateCacheExpression,

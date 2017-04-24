@@ -82,16 +82,18 @@ namespace OpenIZ
                     parser.WriteHelp(Console.Out);
                 else if(parameters.ConsoleMode)
                 {
-                    Console.WriteLine("Open Immunize (OpenIZ) {0} ({1})", entryAsm.GetName().Version, entryAsm.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
-                    Console.WriteLine("{0}", entryAsm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright);
-                    Console.WriteLine("Complete Copyright information available at http://openiz.codeplex.com/wikipage?title=Contributions");
-                    ServiceUtil.Start(typeof(Program).GUID);
-                    ApplicationServiceContext.Current = ApplicationContext.Current;
 #if DEBUG
                     Core.Diagnostics.Tracer.AddWriter(new Core.Diagnostics.LogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ.data"), System.Diagnostics.Tracing.EventLevel.LogAlways);
 #else
                     Core.Diagnostics.Tracer.AddWriter(new Core.Diagnostics.LogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ.data"), System.Diagnostics.Tracing.EventLevel.Warning);
 #endif
+
+                    Console.WriteLine("Open Immunize (OpenIZ) {0} ({1})", entryAsm.GetName().Version, entryAsm.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+                    Console.WriteLine("{0}", entryAsm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright);
+                    Console.WriteLine("Complete Copyright information available at http://openiz.codeplex.com/wikipage?title=Contributions");
+                    ServiceUtil.Start(typeof(Program).GUID);
+                    ApplicationServiceContext.Current = ApplicationContext.Current;
+
                     if (!parameters.StartupTest)
                     {
                         Console.WriteLine("Press [ENTER] to stop...");

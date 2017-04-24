@@ -133,6 +133,7 @@
     <Compile Include="Interfaces\IIdentifiedEntity.cs" />
     <Compile Include="Interfaces\ISimpleAssociation.cs" />
     <Compile Include="Interfaces\ISecurable.cs" />
+    <Compile Include="Interfaces\ITaggable.cs" />
     <Compile Include="Interfaces\IVersionedAssociation.cs" />
     <Compile Include="Interfaces\IVersionedEntity.cs" />
     <Compile Include="Map\CastMap.cs" />

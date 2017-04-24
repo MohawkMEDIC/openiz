@@ -207,6 +207,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </summary>
         public bool ShouldSerialize(String childProperty)
         {
+            if (childProperty == "id") return true;
             var propertyDescription = this.ElementDescription?.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
             if (propertyDescription?.Action == SerializationBehaviorType.Never || // Never serialize
                 this.ElementDescription == null ||

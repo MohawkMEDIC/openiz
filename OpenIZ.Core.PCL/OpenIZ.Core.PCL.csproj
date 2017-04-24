@@ -113,6 +113,7 @@
     <Compile Include="Services\ISecurityRepositoryService.cs" />
     <Compile Include="Interfaces\IServiceManager.cs" />
     <Compile Include="Services\IStockManagementRepositoryService.cs" />
+    <Compile Include="Services\ITagPersistenceService.cs" />
     <Compile Include="Services\IThreadPoolService.cs" />
   </ItemGroup>
   <ItemGroup>

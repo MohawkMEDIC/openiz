@@ -496,6 +496,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
             if (e is NotSupportedException)
                 retCode = System.Net.HttpStatusCode.MethodNotAllowed;
+            else if(e is DetectedIssueException)
+            {
+                retCode = System.Net.HttpStatusCode.BadRequest;
+
+                result.Type = "BusinessRuleViolation";
+                result.Details = (e as DetectedIssueException).Issues.Select(o => new ResultDetail(o.Priority == Core.Services.DetectedIssuePriorityType.Error ? DetailType.Error : o.Priority == Core.Services.DetectedIssuePriorityType.Warning ? DetailType.Warning : DetailType.Information, o.Text)).ToList();
+            }
             else if (e is NotImplementedException)
                 retCode = System.Net.HttpStatusCode.NotImplemented;
             else if (e is InvalidDataException || e is ArgumentException)

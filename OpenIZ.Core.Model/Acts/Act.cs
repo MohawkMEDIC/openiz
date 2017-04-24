@@ -32,6 +32,7 @@ using Newtonsoft.Json;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Model.Acts
 {
@@ -42,7 +43,7 @@ namespace OpenIZ.Core.Model.Acts
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Act")]
     [JsonObject("Act")]
     [Classifier(nameof(ClassConcept))]
-    public class Act : VersionedEntityData<Act>
+    public class Act : VersionedEntityData<Act>, ITaggable
     {
 
         private Guid? m_classConceptKey;
@@ -528,5 +529,11 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializePolicies() => this.Policies.Count > 0;
+
+        /// <summary>
+        /// Gets the tags
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        IEnumerable<ITag> ITaggable.Tags { get { return this.Tags.OfType<ITag>(); } }
     }
 }

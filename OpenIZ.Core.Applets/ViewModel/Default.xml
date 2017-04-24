@@ -21,6 +21,7 @@
 
   <!-- Base types -->
   <type type="EntityRelationship" all="false">
+    <property name="id"/>
     <property name="source" all="true"/>
     <property name="target" all="true"/>
     <property name="key" all="true"/>
@@ -28,30 +29,36 @@
     <property name="relationshipType" all="true"/>
   </type>
   <type type="IdentifiedData" all="true">
+    <property name="id"/>
     <property name="etag" behavior="never"/>
   </type>
 
   <type type="EntityName" all="true">
+    <property name="id"/>
     <property name="source" behavior="never"/>
     <property name="component" all="true" behavior="always">
       <property name="*" all="true"/>
     </property>
   </type>
   <type type="EntityAddress" all="true">
+    <property name="id"/>
     <property name="source" behavior="never"/>
     <property name="component" all="true" behavior="always">
       <property name="*" all="true"/>
     </property>
   </type>
   <type type="EntityIdentifier" all="true">
+    <property name="id"/>
     <property name="source" behavior="never"/>
   </type>
   <type type="Bundle" all="true">
+    <property name="id"/>
     <property name="item" all="true"/>
   </type>
 
   <!-- Concepts -->
   <type type="Concept" all="true">
+    <property name="id"/>
     <property name="name" behavior="always" all="true"/>
     <property name="conceptClass" behavior="never"/>
     <property name="conceptClassModel" behavior="never"/>
@@ -64,6 +71,7 @@
 
   <!-- Entity Information -->
   <type type="Entity" all="true">
+    <property name="id"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -71,6 +79,7 @@
     <property name="name" all="true" ref="EntityName" behavior="always"/>
     <property name="relationship" all="true" behavior="always">
       <property name="*" all="true">
+        <property name="id"/>
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="targetModel" all="true" behavior="always"/>
@@ -79,6 +88,7 @@
     </property>
     <property name="participation" all="true" behavior="always">
       <property name="*" all="true">
+        <property name="id"/>
         <property name="actModel" all="true"/>
         <property name="participationRoleModel" behavior="never"/>
       </property>
@@ -86,6 +96,7 @@
   </type>
 
   <type type="Patient" all="true">
+    <property name="id"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -120,6 +131,7 @@
   </type>
 
   <type type="ManufacturedMaterial" all="true">
+    <property name="id"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -155,6 +167,7 @@
   </type>
 
   <type type="Material" all="true">
+    <property name="id"/>
 
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
@@ -191,6 +204,7 @@
   </type>
 
   <type type="Place" all="true">
+    <property name="id"/>
 
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
@@ -244,6 +258,7 @@
 
   <!-- Act Information -->
   <type type="Act" all="true">
+    <property name="id"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
