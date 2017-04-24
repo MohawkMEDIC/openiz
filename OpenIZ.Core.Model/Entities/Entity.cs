@@ -426,7 +426,7 @@ namespace OpenIZ.Core.Model.Entities
 			this.Extensions.RemoveAll(o => o.Clean().IsEmpty());
 			this.Identifiers.RemoveAll(o => o.Clean().IsEmpty());
 			this.Relationships.RemoveAll(o => o.Clean().IsEmpty());
-			this.Participations.RemoveAll(o => o.Clean().IsEmpty());
+			//this.Participations.RemoveAll(o => o.Clean().IsEmpty());
 			return this;
 		}
 
