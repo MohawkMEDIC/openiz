@@ -45,6 +45,12 @@ namespace OpenIZ.Core.Data.Warehouse
         }
 
         /// <summary>
+        /// Attachments
+        /// </summary>
+        [XmlElement("connection"), JsonProperty("connection")]
+        public String DataSource { get; set; }
+
+        /// <summary>
         /// Gets or sets the provider identifier
         /// </summary>
         [XmlAttribute("id"), JsonProperty("id")]

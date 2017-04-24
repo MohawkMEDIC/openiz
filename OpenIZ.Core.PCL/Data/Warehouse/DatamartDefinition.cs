@@ -57,5 +57,6 @@ namespace OpenIZ.Core.Data.Warehouse
         /// </summary>
         [XmlElement("schema"), JsonProperty("schema")]
         public DatamartSchema Schema { get; set; }
+        
     }
 }

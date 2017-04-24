@@ -1,55 +1,118 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xs:schema xmlns:tns="http://openiz.org/warehousing" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:q1="http://microsoft.com/wsdl/types/" xmlns:q2="http://microsoft.com/wsdl/types/" xmlns:q3="http://microsoft.com/wsdl/types/" targetNamespace="http://openiz.org/warehousing" elementFormDefault="qualified">
-	<xs:import namespace="http://microsoft.com/wsdl/types/" schemaLocation="BaseTypes.xsd"/>
-	<xs:element name="DatamartDefinition" type="tns:DatamartDefinition" nillable="true"/>
-	<xs:complexType name="DatamartDefinition">
-		<xs:sequence>
-			<xs:element name="schema" type="tns:DatamartSchema" minOccurs="0" maxOccurs="1"/>
-		</xs:sequence>
-		<xs:attribute name="id" type="q1:guid" use="required"/>
-		<xs:attribute name="name" type="xs:string"/>
-		<xs:attribute name="creationTime" type="xs:dateTime" use="required"/>
-	</xs:complexType>
-	<xs:complexType name="DatamartSchema">
-		<xs:sequence>
-			<xs:element name="property" type="tns:DatamartSchemaProperty" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
-		<xs:attribute name="id" type="q2:guid" use="required"/>
-		<xs:attribute name="name" type="xs:string"/>
-	</xs:complexType>
-	<xs:complexType name="DatamartSchemaProperty">
-		<xs:sequence>
-			<xs:element name="property" type="tns:DatamartSchemaProperty" minOccurs="0" maxOccurs="unbounded"/>
-		</xs:sequence>
-		<xs:attribute name="id" type="q3:guid" use="required"/>
-		<xs:attribute name="name" type="xs:string"/>
-		<xs:attribute name="type" type="tns:SchemaPropertyType" use="required"/>
-		<xs:attribute name="attributes" type="tns:SchemaPropertyAttributes" use="required"/>
-	</xs:complexType>
-	<xs:simpleType name="SchemaPropertyType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="string"/>
-			<xs:enumeration value="int"/>
-			<xs:enumeration value="float"/>
-			<xs:enumeration value="date"/>
-			<xs:enumeration value="bool"/>
-			<xs:enumeration value="uuid"/>
-			<xs:enumeration value="binary"/>
-			<xs:enumeration value="decimal"/>
-			<xs:enumeration value="object"/>
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="SchemaPropertyAttributes">
-		<xs:list>
-			<xs:simpleType>
-				<xs:restriction base="xs:string">
-					<xs:enumeration value="none"/>
-					<xs:enumeration value="index"/>
-					<xs:enumeration value="nonnull"/>
-					<xs:enumeration value="unique"/>
-				</xs:restriction>
-			</xs:simpleType>
-		</xs:list>
-	</xs:simpleType>
-	<xs:element name="DatamartSchema" type="tns:DatamartSchema" nillable="true"/>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://openiz.org/warehousing" elementFormDefault="qualified" targetNamespace="http://openiz.org/warehousing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://microsoft.com/wsdl/types/" schemaLocation="BaseTypes.xsd" />
+  <xs:element name="DatamartDefinition" nillable="true" type="tns:DatamartDefinition" />
+  <xs:complexType name="DatamartDefinition">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="schema" type="tns:DatamartSchema" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="etl" type="tns:DatamartLoadProcess" />
+    </xs:sequence>
+    <xs:attribute name="id" xmlns:q1="http://microsoft.com/wsdl/types/" type="q1:guid" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="creationTime" type="xs:dateTime" use="required" />
+  </xs:complexType>
+  <xs:complexType name="DatamartSchema">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:DatamartSchemaProperty" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="sqp" type="tns:DatamartStoredQuery" />
+    </xs:sequence>
+    <xs:attribute name="id" xmlns:q2="http://microsoft.com/wsdl/types/" type="q2:guid" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="DatamartSchemaProperty">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:DatamartSchemaProperty" />
+    </xs:sequence>
+    <xs:attribute name="id" xmlns:q3="http://microsoft.com/wsdl/types/" type="q3:guid" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="type" type="tns:SchemaPropertyType" use="required" />
+    <xs:attribute name="attributes" type="tns:SchemaPropertyAttributes" use="required" />
+  </xs:complexType>
+  <xs:simpleType name="SchemaPropertyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="string" />
+      <xs:enumeration value="int" />
+      <xs:enumeration value="float" />
+      <xs:enumeration value="date" />
+      <xs:enumeration value="bool" />
+      <xs:enumeration value="uuid" />
+      <xs:enumeration value="binary" />
+      <xs:enumeration value="decimal" />
+      <xs:enumeration value="object" />
+      <xs:enumeration value="DateTime" />
+      <xs:enumeration value="TimeStamp" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="SchemaPropertyAttributes">
+    <xs:list>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="none" />
+          <xs:enumeration value="index" />
+          <xs:enumeration value="nonnull" />
+          <xs:enumeration value="unique" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:list>
+  </xs:simpleType>
+  <xs:complexType name="DatamartStoredQuery">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:DatamartSchemaProperty" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="sql" type="tns:DatamartStoredQueryDefinition" />
+    </xs:sequence>
+    <xs:attribute name="id" xmlns:q4="http://microsoft.com/wsdl/types/" type="q4:guid" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="DatamartStoredQueryDefinition">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="provider" type="xs:string" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="DatamartLoadProcess">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="schedule" nillable="true" type="tns:TimeSpan" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="defn" type="tns:DatamartStoredQueryDefinition" />
+    </xs:sequence>
+    <xs:attribute name="trigger" type="tns:DatamartLoadTrigger" use="required" />
+  </xs:complexType>
+  <xs:complexType name="TimeSpan" />
+  <xs:simpleType name="DatamartLoadTrigger">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="start" />
+      <xs:enumeration value="init" />
+      <xs:enumeration value="timer" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DatamartLoadProcess" nillable="true" type="tns:DatamartLoadProcess" />
+  <xs:element name="DatamartSchema" nillable="true" type="tns:DatamartSchema" />
+  <xs:element name="DatamartStoredQuery" nillable="true" type="tns:DatamartStoredQuery" />
+  <xs:complexType name="DataWarehouseObjectPropertyValue">
+    <xs:sequence>
+      <xs:choice minOccurs="1" maxOccurs="1">
+        <xs:element minOccurs="0" maxOccurs="1" name="string" type="xs:string" />
+        <xs:element minOccurs="1" maxOccurs="1" name="decimal" type="xs:decimal" />
+        <xs:element minOccurs="1" maxOccurs="1" name="int" type="xs:int" />
+        <xs:element minOccurs="1" maxOccurs="1" name="uuid" xmlns:q5="http://microsoft.com/wsdl/types/" type="q5:guid" />
+        <xs:element minOccurs="1" maxOccurs="1" name="dateTime" type="xs:dateTime" />
+        <xs:element minOccurs="1" maxOccurs="1" name="timestamp" type="tns:DateTimeOffset" />
+        <xs:element minOccurs="0" maxOccurs="1" name="bytea" type="xs:base64Binary" />
+        <xs:element minOccurs="0" maxOccurs="1" name="object" type="tns:ArrayOfDataWarehouseObjectPropertyValue" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="DateTimeOffset" />
+  <xs:complexType name="ArrayOfDataWarehouseObjectPropertyValue">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="DataWarehouseObjectPropertyValue" nillable="true" type="tns:DataWarehouseObjectPropertyValue" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DataWarehouseObject" nillable="true" type="tns:DataWarehouseObject" />
+  <xs:complexType name="DataWarehouseObject">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="property" type="tns:DataWarehouseObjectPropertyValue" />
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>
