@@ -39,6 +39,7 @@ using OpenIZ.Core.Model.Query;
 using System.Collections;
 using Jint.Runtime.Debugger;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI
 {
@@ -180,7 +181,17 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         {
             var bdl = this.ToModel(bundle) as Bundle;
             foreach (var itm in bdl.Item)
-                JavascriptBusinessRulesEngine.Current.Invoke(trigger, itm);
+                try
+                {
+                    JavascriptBusinessRulesEngine.Current.Invoke(trigger, itm);
+                }
+                catch(Exception e)
+                {
+                    if (System.Diagnostics.Debugger.IsAttached)
+                        throw;
+                    else
+                        Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itm, e);
+                }
             return bundle;
 
         }

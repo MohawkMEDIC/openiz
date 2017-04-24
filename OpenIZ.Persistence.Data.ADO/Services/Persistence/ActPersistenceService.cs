@@ -79,7 +79,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             // Alright first, which type am I mapping to?
 
-            if(dataInstance == null) return null;
+            if (dataInstance == null) return null;
 
             DbActVersion dbActVersion = (dataInstance as CompositeResult)?.Values.OfType<DbActVersion>().FirstOrDefault() ?? dataInstance as DbActVersion ?? context.FirstOrDefault<DbActVersion>(o => o.VersionKey == (dataInstance as DbActSubTable).ParentKey);
             DbAct dbAct = (dataInstance as CompositeResult)?.Values.OfType<DbAct>().FirstOrDefault() ?? context.FirstOrDefault<DbAct>(o => o.Key == dbActVersion.Key);
@@ -180,7 +180,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             Act retVal = null;
             IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
 
-            if(!dbActVersion.ObsoletionTime.HasValue)
+            if (!dbActVersion.ObsoletionTime.HasValue)
                 switch (dbAct.ClassConceptKey.ToString().ToUpper())
                 {
                     case ControlAct:
@@ -224,7 +224,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Insert the act into the database
         /// </summary>
-        public  Core.Model.Acts.Act InsertCoreProperties(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
+        public Core.Model.Acts.Act InsertCoreProperties(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
         {
             if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
             if (data.MoodConcept != null) data.MoodConcept = data.MoodConcept?.EnsureExists(context, principal) as Concept;
@@ -264,21 +264,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     principal);
 
             if (data.Participations != null && data.Participations.Any())
-				base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
-                   data.Participations.GetLocked(),
+                base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
+                   data.Participations.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
 
             if (data.Relationships != null && data.Relationships.Any())
-				base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
+                base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
                    data.Relationships.GetLocked(),
                     retVal,
                     context,
                     principal);
 
             if (data.Tags != null && data.Tags.Any())
-				base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, DbActTag>(
+                base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, DbActTag>(
                    data.Tags.GetLocked(),
                     retVal,
                     context,
@@ -288,18 +288,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 foreach (var p in data.Protocols)
                 {
                     var proto = p.Protocol?.EnsureExists(context, principal);
-                    if(proto == null) // maybe we can retrieve the protocol from the protocol repository?
+                    if (proto == null) // maybe we can retrieve the protocol from the protocol repository?
                     {
                         int t = 0;
                         proto = ApplicationContext.Current.GetService<IClinicalProtocolRepositoryService>().FindProtocol(o => o.Key == p.ProtocolKey, 0, 1, out t).FirstOrDefault();
-                        proto.EnsureExists(context, principal);
+                        proto = proto.EnsureExists(context, principal);
                     }
-                    context.Insert(new DbActProtocol()
-                    {
-                        SourceKey = retVal.Key.Value,
-                        ProtocolKey = proto.Key.Value,
-                        Sequence = p.Sequence
-                    });
+                    if (proto != null)
+                        context.Insert(new DbActProtocol()
+                        {
+                            SourceKey = retVal.Key.Value,
+                            ProtocolKey = proto.Key.Value,
+                            Sequence = p.Sequence
+                        });
                 }
 
             return retVal;
@@ -308,7 +309,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <summary>
         /// Update the specified data
         /// </summary>
-        public  Core.Model.Acts.Act UpdateCoreProperties(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
+        public Core.Model.Acts.Act UpdateCoreProperties(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
         {
             if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept?.EnsureExists(context, principal) as Concept;
             if (data.MoodConcept != null) data.MoodConcept = data.MoodConcept?.EnsureExists(context, principal) as Concept;
@@ -316,7 +317,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context, principal) as Concept;
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept?.EnsureExists(context, principal) as Concept;
             if (data.Template != null) data.Template = data.Template?.EnsureExists(context, principal) as TemplateDefinition;
-            
+
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
             data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
@@ -348,7 +349,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (data.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
-                   data.Participations.GetLocked(),
+                                      data.Participations.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
