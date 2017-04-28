@@ -49,5 +49,15 @@ namespace OpenIZ.Caching.Memory.Configuration
         /// </summary>
         public List<TypeCacheConfigurationInfo> Types { get; set; }
 
+        /// <summary>
+        /// Gets or sets the items in the cache
+        /// </summary>
+        public int MaxCacheSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum age of items in the cache
+        /// </summary>
+        public long MaxCacheAge { get; set; }
+
     }
 }

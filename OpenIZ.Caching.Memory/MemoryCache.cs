@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Caching.Memory.Configuration;
+using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
@@ -30,10 +31,12 @@ using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,7 +50,10 @@ namespace OpenIZ.Caching.Memory
     {
 
         // Entry table for the cache
-        private Dictionary<Type, Dictionary<Guid, CacheEntry>> m_entryTable = new Dictionary<Type, Dictionary<Guid, CacheEntry>>();
+        private Dictionary<Guid, CacheEntry> m_entryTable = new Dictionary<Guid, CacheEntry>();
+
+        // Subscribed types
+        private HashSet<Type> m_subscribedTypes = new HashSet<Type>();
 
         // True if the object is disposed
         private bool m_disposed = false;
@@ -133,11 +139,7 @@ namespace OpenIZ.Caching.Memory
         {
             this.ThrowIfDisposed();
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(t, out cache))
-                return cache.Count;
-            else
-                return 0;
+            return this.m_entryTable.Count;
 
         }
 
@@ -150,59 +152,17 @@ namespace OpenIZ.Caching.Memory
             // Throw if disposed
             this.ThrowIfDisposed();
 
-            var idData = data as IdentifiedData;
-            if (idData == null || idData.IsEmpty() == true || !idData.Key.HasValue)
-                return;
-            var vidData = data as IBaseEntityData;
-
             Type objData = data?.GetType();
-            if (idData == null || !idData.Key.HasValue ||
-                vidData?.ObsoletionTime.HasValue == true || vidData?.CreationTime == default(DateTimeOffset))
+            var idData = data as IIdentifiedEntity;
+            if (idData == null || !idData.Key.HasValue)
                 return;
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objData, out cache))
-            {
-
-                // Parent cache lookup
-                Func<Type, bool> cacheLookup = (o) =>
-                {
-                    if (!this.m_entryTable.TryGetValue(o, out cache))
-                    {
-                        if (this.m_configuration.AutoSubscribeTypes && (typeof(Entity).IsAssignableFrom(o) || typeof(Act).IsAssignableFrom(o)))
-                            cache = this.RegisterCacheType(o);
-                        else
-                            return false;
-                    }
-                    return true;
-                };
-
-                // We want to cascade up the type heirarchy this is a do/while with IF instead of while
-                // because the ELSE-IF clause
-                do
-                {
-                    Guid key = idData?.Key ?? Guid.Empty;
-                    if (cache.ContainsKey(key))
-                        lock (this.m_lock)
-                        {
-                            cache[key].Update(data);
-                        }
-                    else
-                        lock (this.m_lock)
-                            if (!cache.ContainsKey(key))
-                            {
-                                cache.Add(key, new CacheEntry(DateTime.Now, data));
-                                this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache for {0} contains {1} entries...", objData, cache.Count);
-                            }
-
-                    objData = objData.BaseType;
-                } while (cacheLookup(objData));
-
-            }
-            else if (this.m_configuration.AutoSubscribeTypes) {
-                    this.RegisterCacheType(data.GetType());
-            }
-
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(idData.Key.Value, out candidate))
+                candidate.Update(data as IdentifiedData);
+            else
+                lock (this.m_lock)
+                    this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
         }
 
         /// <summary>
@@ -216,18 +176,13 @@ namespace OpenIZ.Caching.Memory
             else if (objectType == null)
                 throw new ArgumentNullException(nameof(objectType));
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objectType, out cache))
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(key.Value, out candidate))
             {
-                CacheEntry candidate = default(CacheEntry);
-                if (cache.TryGetValue(key.Value, out candidate))
-                {
-                    candidate.Touch();
-                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache hit {0} = {1}", key.Value, candidate.Data);
-                    return candidate.Data;
-                }
+                candidate.Touch();
+                return candidate.Data;
             }
-            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache miss {0}", key.Value);
+
             return null;
         }
 
@@ -249,35 +204,38 @@ namespace OpenIZ.Caching.Memory
         {
             this.ThrowIfDisposed();
 
-            if (!Monitor.TryEnter(this.m_cacheCleanLock))
-                return; // Something else is locking the process
-
             // Entry table clean
-            lock (this.m_cacheCleanLock)
-            {
-                this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Starting memory cache pressure reduction...");
-                var nowTicks = DateTime.Now.Ticks;
-
-                foreach (var itm in this.m_entryTable)
+            if (Monitor.TryEnter(this.m_lock))
+                try
                 {
-                    var config = this.m_configuration.Types.FirstOrDefault(o => o.Type == itm.Key);
-                    int maxSize = (config?.MaxCacheSize ?? 50);
-                    var garbageBin = itm.Value.AsParallel().OrderByDescending(o => o.Value.LastUpdateTime).Take(itm.Value.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
+
+                    this.m_tracer.TraceInfo("Starting memory cache pressure reduction...");
+                    var nowTicks = DateTime.Now.Ticks;
+
+                    int maxSize = this.m_configuration.MaxCacheSize;
+                    var garbageBin = this.m_entryTable.OrderByDescending(o => o.Value.LastUpdateTime).Take(this.m_entryTable.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
 
                     if (garbageBin.Count() > 0)
                     {
-                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Cache {0} overcommitted by {1} will remove entries older than min age..", garbageBin.Count(), itm.Key.FullName);
+                        this.m_tracer.TraceInfo("Cache overcommitted by {0} will remove entries older than min age..", garbageBin.Count());
 
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
-                            IEnumerable<Guid> gc = o as IEnumerable<Guid>;
-                            foreach (var g in gc.ToArray())
-                                lock (this.m_lock)
-                                    itm.Value.Remove(g);
+                            try
+                            {
+                                IEnumerable<Guid> gc = o as IEnumerable<Guid>;
+                                foreach (var g in gc)
+                                    lock (this.m_lock)
+                                        this.m_entryTable.Remove(g);
+                            }
+                            catch { }
                         }, garbageBin);
                     }
                 }
-            }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
+                }
         }
 
         /// <summary>
@@ -291,23 +249,10 @@ namespace OpenIZ.Caching.Memory
             else if (objectType == null)
                 throw new ArgumentNullException(nameof(objectType));
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objectType, out cache))
-            {
-                do
-                {
-                    CacheEntry candidate = default(CacheEntry);
-                    if (cache.TryGetValue(key.Value, out candidate))
-                    {
-                        lock (this.m_lock)
-                        {
-                            cache.Remove(key.Value);
-                        }
-                    }
-                    objectType = objectType.BaseType;
-                } while (this.m_entryTable.TryGetValue(objectType, out cache));
-            }
-            return;
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(key.Value, out candidate))
+                lock (this.m_lock)
+                    this.m_entryTable.Remove(key.Value);
         }
 
         /// <summary>
@@ -317,9 +262,7 @@ namespace OpenIZ.Caching.Memory
         {
             this.ThrowIfDisposed();
 
-            foreach (var itm in this.m_entryTable)
-                lock (this.m_lock)
-                    itm.Value.Clear();
+            this.m_entryTable.Clear();
         }
 
 
@@ -330,62 +273,55 @@ namespace OpenIZ.Caching.Memory
         {
             this.ThrowIfDisposed();
 
-            long nowTicks = DateTime.Now.Ticks;
-            lock (this.m_cacheCleanLock) // This time wait for a lock
-            {
-                this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Starting memory cache deep clean...");
 
-                // Entry table clean
-                foreach (var itm in this.m_entryTable)
+            long nowTicks = DateTime.Now.Ticks;
+            if (Monitor.TryEnter(this.m_lock))
+                try// This time wait for a lock
                 {
-                    var config = this.m_configuration.Types.FirstOrDefault(o => o.Type == itm.Key);
-                    if (config == null) continue;
+
+                    this.m_tracer.TraceInfo("Starting memory cache deep clean...");
+
+                    // Entry table clean
 
                     // Clean old data
-                    var garbageBin = itm.Value.AsParallel().Where(o => nowTicks - o.Value.LastUpdateTime > config.MaxCacheAge).Select(o => o.Key);
+                    var garbageBin = this.m_entryTable.Where(o => nowTicks - o.Value.LastUpdateTime > this.m_configuration.MaxCacheAge).Select(o => o.Key);
                     if (garbageBin.Count() > 0)
                     {
-                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Will clean {0} stale entries from cache {1}..", garbageBin.Count(), itm.Key.FullName);
+                        this.m_tracer.TraceInfo("Will clean {0} stale entries from cache..", garbageBin.Count());
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
-                            foreach (var g in gc)
+                            foreach (var g in gc.ToArray())
                                 lock (this.m_lock)
-                                    itm.Value.Remove(g);
+                                    this.m_entryTable.Remove(g);
                         }, garbageBin);
                     }
 
                 }
-            }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
+                }
         }
 
         /// <summary>
         /// Register caching type
         /// </summary>
-        public Dictionary<Guid, CacheEntry> RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
+        public void RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
         {
 
             this.ThrowIfDisposed();
 
-            // Lock the master cache 
-            Dictionary<Guid, CacheEntry> cache = null;
-            lock (this.m_lock)
-            {
-                if (!this.m_entryTable.TryGetValue(t, out cache))
-                {
-                    cache = new Dictionary<Guid, CacheEntry>(10);
-                    if (!this.m_configuration.Types.Exists(o => o.Type == t))
-                        this.m_configuration.Types.Add(new TypeCacheConfigurationInfo() { Type = t, MaxCacheSize = maxSize, MaxCacheAge = maxAge });
-                    this.m_entryTable.Add(t, cache);
-                }
-                else
-                    return cache;
-            }
+            if (this.m_subscribedTypes.Contains(t))
+                return;
+            this.m_subscribedTypes.Add(t);
 
             // We want to subscribe when this object is changed so we can keep the cache fresh
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(t);
             var ppeArgType = typeof(PostPersistenceEventArgs<>).MakeGenericType(t);
+            var pqeArgType = typeof(PostQueryEventArgs<>).MakeGenericType(t);
             var evtHdlrType = typeof(EventHandler<>).MakeGenericType(ppeArgType);
+            var qevtHdlrType = typeof(EventHandler<>).MakeGenericType(pqeArgType);
             var svcInstance = ApplicationContext.Current.GetService(idpType);
 
             if (svcInstance != null)
@@ -393,17 +329,22 @@ namespace OpenIZ.Caching.Memory
                 // Construct the delegate
                 var senderParm = Expression.Parameter(typeof(Object), "o");
                 var eventParm = Expression.Parameter(ppeArgType, "e");
-                var eventTxMode = Expression.MakeMemberAccess(eventParm, ppeArgType.GetProperty("Mode"));
-                var eventData = Expression.MakeMemberAccess(eventParm, ppeArgType.GetProperty("Data"));
-                var handlerLambda = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetMethod("HandlePostPersistenceEvent"),
-                    eventTxMode, eventData), senderParm, eventParm);
-                var delInstance = handlerLambda.Compile();
+                var eventData = Expression.MakeMemberAccess(eventParm, ppeArgType.GetRuntimeProperty("Data"));
+                var insertInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
+                var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
+                var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
+
+                eventParm = Expression.Parameter(pqeArgType, "e");
+                var queryEventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, pqeArgType.GetRuntimeProperty("Results")), typeof(IEnumerable));
+                var queryInstanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostQueryEvent", new Type[] { typeof(IEnumerable) }), queryEventData), senderParm, eventParm).Compile();
 
                 // Bind to events
-                idpType.GetEvent("Inserted").AddEventHandler(svcInstance, delInstance);
-                idpType.GetEvent("Updated").AddEventHandler(svcInstance, delInstance);
-                idpType.GetEvent("Obsoleted").AddEventHandler(svcInstance, delInstance);
+                idpType.GetRuntimeEvent("Inserted").AddEventHandler(svcInstance, insertInstanceDelegate);
+                idpType.GetRuntimeEvent("Updated").AddEventHandler(svcInstance, updateInstanceDelegate);
+                idpType.GetRuntimeEvent("Obsoleted").AddEventHandler(svcInstance, obsoleteInstanceDelegate);
+                idpType.GetRuntimeEvent("Queried").AddEventHandler(svcInstance, queryInstanceDelegate);
             }
+
 
 
             // Load initial data
@@ -420,8 +361,6 @@ namespace OpenIZ.Caching.Memory
                     }
                 }
             });
-
-            return cache;
 
         }
 
@@ -449,22 +388,34 @@ namespace OpenIZ.Caching.Memory
                 }
                 else
                 {
-                    //this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value);
-                    var idData = data as IIdentifiedEntity;
-                    var objData = data.GetType();
+                    this.AddUpdateEntry(data);
+                    ////this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value);
+                    //var idData = data as IIdentifiedEntity;
+                    //var objData = data.GetType();
 
-                    Dictionary<Guid, CacheEntry> cache = null;
-                    if (this.m_entryTable.TryGetValue(objData, out cache))
-                    {
-                        Guid key = idData?.Key ?? Guid.Empty;
-                        if (cache.ContainsKey(key))
-                            lock (this.m_lock)
-                            {
-                                cache[key].Update(data);
-                            }
-                        //cache.Remove(key);
-                    }
+                    //Dictionary<Guid, CacheEntry> cache = null;
+                    //if (this.m_entryTable.TryGetValue(objData, out cache))
+                    //{
+                    //    Guid key = idData?.Key ?? Guid.Empty;
+                    //    if (cache.ContainsKey(key))
+                    //        lock (this.m_lock)
+                    //        {
+                    //            cache[key].Update(data);
+                    //        }
+                    //    //cache.Remove(key);
+                    //}
                 }
+            }
+        }
+
+        /// <summary>
+        /// Handle post query event
+        /// </summary>
+        public void HandlePostQueryEvent(IEnumerable results)
+        {
+            foreach (var data in results)
+            {
+                this.AddUpdateEntry(data);
             }
         }
 

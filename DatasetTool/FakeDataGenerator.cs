@@ -207,8 +207,8 @@ namespace OizDevTool
             ApplicationContext.Current.Start();
 
             int tr = 0;
-            var places = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, 20 ,out tr);
-            places = places.Union(ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, 20, out tr));
+            var places = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation);
+            places = places.Union(ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation));
             WaitThreadPool wtp = new WaitThreadPool(16);
             Random r = new Random();
 

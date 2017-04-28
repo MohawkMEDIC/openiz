@@ -299,15 +299,15 @@ namespace OpenIZ.OrmLite.Providers
                 case SchemaPropertyType.TimeStamp:
                     return "TIMESTAMPTZ";
                 case SchemaPropertyType.Decimal:
-                    return "decimal";
+                    return "DECIMAL";
                 case SchemaPropertyType.Float:
-                    return "float";
+                    return "FLOAT";
                 case SchemaPropertyType.Integer:
-                    return "integer";
+                    return "INTEGER";
                 case SchemaPropertyType.String:
-                    return "varchar(128)";
+                    return "VARCHAR(128)";
                 case SchemaPropertyType.Uuid:
-                    return "blob(16)";
+                    return "UUID";
                 default:
                     return null;
             }

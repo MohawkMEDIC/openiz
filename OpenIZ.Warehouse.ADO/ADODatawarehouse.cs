@@ -300,7 +300,7 @@ namespace OpenIZ.Warehouse.ADO
                 createSql = createSql.Append("entity_uuid UUID NOT NULL, ");
 
             // Create the specified dm_<<name>>_table
-            foreach (var itm in container.Properties)
+            foreach (var itm in (container ?? schema).Properties)
             {
                 itm.Id = itm.Id == default(Guid) ? Guid.NewGuid() : itm.Id;
 
@@ -329,13 +329,16 @@ namespace OpenIZ.Warehouse.ADO
                         attributeString += "NOT NULL ";
                     if (itm.Attributes.HasFlag(SchemaPropertyAttributes.Unique))
                         attributeString += "UNIQUE ";
-                    createSql = createSql.Append($"{itm.Name} {typeString} {attributeString},");
+                    createSql = createSql.Append($"{itm.Name} {typeString} {attributeString}");
 
+                    // HACK:
+                    createSql.Append(",");
                     if (itm.Attributes.HasFlag(SchemaPropertyAttributes.Indexed))
                         indexes.Add(context.CreateSqlStatement($"CREATE INDEX {pathName}_{itm.Name}_idx ON {pathName}({itm.Name})"));
                 }
             }
 
+            createSql.RemoveLast();
             createSql = createSql.Append(")");
 
             // Now execute SQL create statement

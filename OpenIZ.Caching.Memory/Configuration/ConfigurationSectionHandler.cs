@@ -41,16 +41,18 @@ namespace OpenIZ.Caching.Memory.Configuration
             var typeConfigs = section.SelectNodes("./*[local-name() = 'cacheTarget']/*[local-name() = 'add']");
             var autoCreateNode = section.SelectSingleNode("./@autoRegister");
 
+
             // Iterate over registration types
             MemoryCacheConfiguration retVal = new MemoryCacheConfiguration();
             retVal.AutoSubscribeTypes = XmlConvert.ToBoolean(autoCreateNode?.Value);
+            retVal.MaxCacheAge = TimeSpan.Parse(section.Attributes["maxAge"]?.Value ?? "1:0:0:0", CultureInfo.InvariantCulture).Ticks;
+            retVal.MaxCacheSize = Int32.Parse(section.Attributes["maxSize"]?.Value ?? "5000");
+
             foreach (XmlElement itm in typeConfigs)
             {
                 retVal.Types.Add(new TypeCacheConfigurationInfo()
                 {
                     TypeXml = itm.Attributes["type"]?.Value,
-                    MaxCacheAge = TimeSpan.Parse(itm.Attributes["maxAge"]?.Value ?? "1:0:0:0", CultureInfo.InvariantCulture).Ticks,
-                    MaxCacheSize = Int32.Parse(itm.Attributes["maxSize"]?.Value ?? "50"),
                     SeedQueries = itm.SelectNodes("./*[local-name() = 'seed']/*[local-name() = 'add']").OfType<XmlElement>().Select(o => o.InnerText).ToList()
                 });
             }

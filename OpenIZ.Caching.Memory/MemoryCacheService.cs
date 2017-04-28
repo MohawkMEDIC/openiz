@@ -128,13 +128,13 @@ namespace OpenIZ.Caching.Memory
             {
                 if (timerService.IsRunning)
                 {
-                    timerService.AddJob(new CacheCleanupTimerJob(), new TimeSpan(this.m_configuration.Types.Select(o => o.MaxCacheAge).Min()));
+                    timerService.AddJob(new CacheCleanupTimerJob(), new TimeSpan(this.m_configuration.MaxCacheAge));
                     timerService.AddJob(new CacheRegulatorTimerJob(), new TimeSpan(0, 1, 0));
                 }
                 else
                     timerService.Started += (s, e) =>
                     {
-                        timerService.AddJob(new CacheCleanupTimerJob(), new TimeSpan(this.m_configuration.Types.Select(o => o.MaxCacheAge).Min()));
+                        timerService.AddJob(new CacheCleanupTimerJob(), new TimeSpan(this.m_configuration.MaxCacheAge));
                         timerService.AddJob(new CacheRegulatorTimerJob(), new TimeSpan(0, 1, 0));
                     };
             }

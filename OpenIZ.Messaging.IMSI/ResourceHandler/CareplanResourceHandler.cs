@@ -51,7 +51,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         {
 
             (data as Bundle)?.Reconstitute();
-            data = (data as Bundle)?.Entry as Patient ?? data as Patient;
+            data = (data as CarePlan)?.Target ?? data as Patient;
             if (data == null)
                 throw new InvalidOperationException("Careplan requires a patient or bundle containing a patient entry");
 
@@ -61,7 +61,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_asEncounters"] == "true",
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery().ToDictionary(o=>o.Key, o=>(Object)o.Value));
             
-            return plan;
+            return Bundle.CreateBundle(plan);
 
         }
 

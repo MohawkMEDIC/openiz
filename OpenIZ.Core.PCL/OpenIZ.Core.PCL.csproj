@@ -37,7 +37,6 @@
   <ItemGroup>
     <Compile Include="ApplicationServiceContext.cs" />
     <Compile Include="Data\Warehouse\DatamartDefinition.cs" />
-    <Compile Include="Data\Warehouse\DatamartLoadProcess.cs" />
     <Compile Include="Data\Warehouse\DatamartSchema.cs" />
     <Compile Include="Data\Warehouse\DatamartSchemaProperty.cs" />
     <Compile Include="Data\Warehouse\DatamartStoredQuery.cs" />
