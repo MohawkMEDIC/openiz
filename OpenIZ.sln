@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -129,6 +129,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Performance1.psess = Performance1.psess
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Caching.Redis", "OpenIZ.Caching.Redis\OpenIZ.Caching.Redis.csproj", "{86672094-25CC-4CD5-B085-240E50EC4A5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -308,6 +310,10 @@ Global
 		{BFC58F38-9023-4700-B35C-AA933A608E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFC58F38-9023-4700-B35C-AA933A608E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFC58F38-9023-4700-B35C-AA933A608E43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86672094-25CC-4CD5-B085-240E50EC4A5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86672094-25CC-4CD5-B085-240E50EC4A5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86672094-25CC-4CD5-B085-240E50EC4A5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86672094-25CC-4CD5-B085-240E50EC4A5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -366,5 +372,6 @@ Global
 		{11407ADB-E336-4C0C-AF8E-EA6B601BA69E} = {219B42C9-D256-44A4-AB99-C0B31E0DDACA}
 		{407C87E6-A1F3-45E6-B883-A8176B350817} = {219B42C9-D256-44A4-AB99-C0B31E0DDACA}
 		{BFC58F38-9023-4700-B35C-AA933A608E43} = {219B42C9-D256-44A4-AB99-C0B31E0DDACA}
+		{86672094-25CC-4CD5-B085-240E50EC4A5E} = {8884281D-262F-4EFF-B379-DE674E03A802}
 	EndGlobalSection
 EndGlobal
