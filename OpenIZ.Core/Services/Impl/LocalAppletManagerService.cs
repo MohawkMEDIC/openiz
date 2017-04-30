@@ -17,6 +17,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security;
 using OpenIZ.Core.Configuration;
 using System.Data.Linq;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -150,7 +152,30 @@ namespace OpenIZ.Core.Services.Impl
             lock (this.m_fileDictionary)
                 if(!this.m_fileDictionary.ContainsKey(package.Meta.Id))
                     this.m_fileDictionary.Add(package.Meta.Id, pakFile);
-            this.m_appletCollection.Add(package.Unpack());
+
+            var pkg = package.Unpack();
+            this.m_appletCollection.Add(pkg);
+
+            // We want to install the templates & protocols into the DB
+            this.m_tracer.TraceInformation("Installing templates...");
+
+            // Install templates
+            var idp = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+            foreach(var itm in pkg.Templates)
+            {
+                if (idp.GetTemplateDefinition(itm.Mnemonic) == null)
+                {
+                    this.m_tracer.TraceInfo("Installing {0}...", itm.Mnemonic);
+                    idp.CreateTemplateDefinition(new TemplateDefinition()
+                    {
+                        Oid = itm.Oid,
+                        Mnemonic = itm.Mnemonic,
+                        Description = itm.Description,
+                        Name = itm.Mnemonic
+                    });
+                }
+            }
+
             AppletCollection.ClearCaches();
 
             return true;
@@ -263,10 +288,10 @@ namespace OpenIZ.Core.Services.Impl
                             this.m_tracer.TraceEvent(TraceEventType.Critical, 1096, "Duplicate package {0} is not permitted", pkg.Meta.Id);
                             throw new DuplicateKeyException(pkg.Meta.Id);
                         }
-                        else if (this.VerifyPackage(pkg))
+                        else if (this.Install(pkg, true))
                         {
-                            this.m_appletCollection.Add(pkg.Unpack());
-                            this.m_fileDictionary.Add(pkg.Meta.Id, f);
+                            //this.m_appletCollection.Add(pkg.Unpack());
+                            //this.m_fileDictionary.Add(pkg.Meta.Id, f);
                         }
                         else
                         {

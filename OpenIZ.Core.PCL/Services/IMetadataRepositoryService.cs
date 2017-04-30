@@ -163,5 +163,15 @@ namespace OpenIZ.Core.Services
 		/// <param name="codeSystem">The code system.</param>
 		/// <returns>Returns the updated code system.</returns>
 		CodeSystem UpdateCodeSystem(CodeSystem codeSystem);
-	}
+
+        /// <summary>
+        /// Get tempate definition
+        /// </summary>
+        TemplateDefinition GetTemplateDefinition(string mnemonic);
+
+        /// <summary>
+        /// Create a template definition
+        /// </summary>
+        TemplateDefinition CreateTemplateDefinition(TemplateDefinition templateDefinition);
+    }
 }

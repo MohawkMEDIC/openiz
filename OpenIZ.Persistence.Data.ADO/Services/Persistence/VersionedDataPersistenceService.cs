@@ -401,9 +401,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // Update those that need it
             var updateRecords = storage.Select(o => new { store = o, existing = existing.FirstOrDefault(ecn => ecn.Key == o.Key && o.Key != Guid.Empty && o != ecn) }).Where(o=>o.existing != null);
             foreach (var upd in updateRecords)
-            {
-                upd.store.EffectiveVersionSequenceId = upd.existing.EffectiveVersionSequenceId;
-                upd.store.ObsoleteVersionSequenceId = upd.existing.EffectiveVersionSequenceId;
+            { 
+                // Update by key, these lines make no sense we just update the existing versioned association
+                //upd.store.EffectiveVersionSequenceId = upd.existing.EffectiveVersionSequenceId;
+                //upd.store.ObsoleteVersionSequenceId = upd.existing.EffectiveVersionSequenceId;
                 persistenceService.UpdateInternal(context, upd.store as TAssociation, principal);
             }
 

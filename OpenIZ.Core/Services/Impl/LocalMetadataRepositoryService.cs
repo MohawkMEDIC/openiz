@@ -370,5 +370,28 @@ namespace OpenIZ.Core.Services.Impl
 
 			return codeSystem;
 		}
-	}
+
+        /// <summary>
+        /// Get a template definition by mnemonic
+        /// </summary>
+        public TemplateDefinition GetTemplateDefinition(string mnemonic)
+        {
+            var idpService = ApplicationContext.Current.GetService<IDataPersistenceService<TemplateDefinition>>();
+            if (idpService == null)
+                throw new InvalidOperationException("Cannot find template definition persister");
+            int t = 0;
+            return idpService.Query(o => o.Mnemonic == mnemonic, 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Create a template definition
+        /// </summary>
+        public TemplateDefinition CreateTemplateDefinition(TemplateDefinition templateDefinition)
+        {
+            var idpService = ApplicationContext.Current.GetService<IDataPersistenceService<TemplateDefinition>>();
+            if (idpService == null)
+                throw new InvalidOperationException("Cannot find template definition persister");
+            return idpService.Insert(templateDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
+    }
 }

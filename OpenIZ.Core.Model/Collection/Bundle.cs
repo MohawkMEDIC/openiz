@@ -61,6 +61,8 @@ namespace OpenIZ.Core.Model.Collection
     [XmlInclude(typeof(Patient))]
     [XmlInclude(typeof(Provider))]
     [XmlInclude(typeof(Organization))]
+    [XmlInclude(typeof(TemplateDefinition))]
+    [XmlInclude(typeof(Protocol))]
     [XmlInclude(typeof(Place))]
     [XmlInclude(typeof(Material))]
     [XmlInclude(typeof(ManufacturedMaterial))]

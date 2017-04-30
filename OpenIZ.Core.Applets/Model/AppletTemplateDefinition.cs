@@ -51,6 +51,19 @@ namespace OpenIZ.Core.Applets.Model
         public String Definition { get; set; }
 
         /// <summary>
+        /// Gets or sets the definition
+        /// </summary>
+        [XmlElement("description")]
+        public String Description { get; set; }
+
+        /// <summary>
+        /// Gets or sets the definition
+        /// </summary>
+        [XmlElement("oid")]
+        public String Oid { get; set; }
+
+
+        /// <summary>
         /// The content loaded
         /// </summary>
         [XmlIgnore]

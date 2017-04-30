@@ -330,13 +330,14 @@ namespace OpenIZ.Caching.Memory
                 var senderParm = Expression.Parameter(typeof(Object), "o");
                 var eventParm = Expression.Parameter(ppeArgType, "e");
                 var eventData = Expression.MakeMemberAccess(eventParm, ppeArgType.GetRuntimeProperty("Data"));
-                var insertInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
-                var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
-                var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
+                var eventMode = Expression.MakeMemberAccess(eventParm, ppeArgType.GetRuntimeProperty("Mode"));
+                var insertInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod(nameof(HandlePostPersistenceEvent), new Type[] { typeof(TransactionMode), typeof(Object) }), eventMode, eventData), senderParm, eventParm).Compile();
+                var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod(nameof(HandlePostPersistenceEvent), new Type[] { typeof(TransactionMode), typeof(Object) }), eventMode, eventData),  senderParm, eventParm).Compile();
+                var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod(nameof(HandlePostPersistenceEvent), new Type[] { typeof(TransactionMode), typeof(Object) }), eventMode, eventData), senderParm, eventParm).Compile();
 
                 eventParm = Expression.Parameter(pqeArgType, "e");
                 var queryEventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, pqeArgType.GetRuntimeProperty("Results")), typeof(IEnumerable));
-                var queryInstanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostQueryEvent", new Type[] { typeof(IEnumerable) }), queryEventData), senderParm, eventParm).Compile();
+                var queryInstanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod(nameof(HandlePostQueryEvent), new Type[] { typeof(IEnumerable) }), queryEventData), senderParm, eventParm).Compile();
 
                 // Bind to events
                 idpType.GetRuntimeEvent("Inserted").AddEventHandler(svcInstance, insertInstanceDelegate);
