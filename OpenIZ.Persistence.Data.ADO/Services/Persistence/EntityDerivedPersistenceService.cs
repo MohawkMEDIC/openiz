@@ -99,7 +99,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if (typeof(TModel).BaseType == typeof(Core.Model.Entities.Entity))
                 this.m_entityPersister.UpdateCoreProperties(context, data, principal);
-            return base.UpdateInternal(context, data, principal);
+            return base.InsertInternal(context, data, principal);
             //return base.Update(context, data, principal);
         }
 
