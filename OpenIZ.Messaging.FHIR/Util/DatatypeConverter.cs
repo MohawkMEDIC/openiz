@@ -409,7 +409,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 			};
 
 			// Process components
-			foreach (var com in address.Component)
+			foreach (var com in address.LoadCollection<EntityAddressComponent>(nameof(EntityAddress.Component)))
 			{
 				if (com.ComponentTypeKey == AddressComponentKeys.City)
 					retVal.City = com.Value;
@@ -452,8 +452,8 @@ namespace OpenIZ.Messaging.FHIR.Util
 
 			return new FhirCodeableConcept
 			{
-				Coding = concept.ReferenceTerms.Select(o => DataTypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
-				Text = concept.ConceptNames.FirstOrDefault()?.Name
+				Coding = concept.LoadCollection<ConceptReferenceTerm>(nameof(Concept.ReferenceTerms)).Select(o => DataTypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
+				Text = concept.LoadCollection<ConceptName>(nameof(Concept.ConceptNames)).FirstOrDefault()?.Name
 			};
 		}
 
@@ -478,7 +478,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 			};
 
 			// Process components
-			foreach (var com in entityName.Component)
+			foreach (var com in entityName.LoadCollection<EntityNameComponent>(nameof(EntityName.Component)))
 			{
 				if (com.ComponentTypeKey == NameComponentKeys.Given)
 					retVal.Given.Add(com.Value);
@@ -508,11 +508,12 @@ namespace OpenIZ.Messaging.FHIR.Util
 				return null;
 			}
 
+            var authority = identifier.LoadProperty<AssigningAuthority>(nameof(EntityIdentifier.Authority));
 			return new FhirIdentifier
 			{
-				Label = identifier.Authority?.Name,
-				System = new FhirUri(new Uri(identifier.Authority?.Url ?? $"urn:oid:{identifier.Authority?.Oid}")),
-				Use = identifier.IdentifierType?.TypeConcept?.Mnemonic,
+				Label = authority?.Name,
+				System = new FhirUri(new Uri(authority?.Url ?? $"urn:oid:{authority?.Oid}")),
+				Use = identifier.LoadProperty<IdentifierType>(nameof(EntityIdentifier.IdentifierType))?.TypeConcept?.Mnemonic,
 				Value = identifier.Value
 			};
 		}

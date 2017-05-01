@@ -27,6 +27,7 @@ using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.FHIR.Util;
@@ -84,7 +85,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="model">The model.</param>
 		/// <returns>Returns the mapped FHIR resource.</returns>
-		protected override Immunization MapToFhir(SubstanceAdministration model)
+		protected override Immunization MapToFhir(SubstanceAdministration model, WebOperationContext webOperationContext)
 		{
 			var retVal = DataTypeConverter.CreateResource<Immunization>(model);
 			retVal.DoseQuantity = new FhirQuantity()
@@ -93,17 +94,17 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				Value = new FhirDecimal(model.DoseQuantity)
 			};
 			retVal.Date = (FhirDate)model.ActTime.DateTime;
-			retVal.Route = DataTypeConverter.ToFhirCodeableConcept(model.Route);
-			retVal.Site = DataTypeConverter.ToFhirCodeableConcept(model.Site);
+			retVal.Route = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>(nameof(SubstanceAdministration.Route)));
+			retVal.Site = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>(nameof(SubstanceAdministration.Site)));
 			retVal.Status = "completed";
 			//retVal.SelfReported = model.Tags.Any(o => o.TagKey == "selfReported" && Convert.ToBoolean(o.Value));
 			retVal.WasNotGiven = model.IsNegated;
 
 			// Material
-			var matl = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable)?.PlayerEntity as Material;
+			var matl = model.LoadCollection<ActParticipation>(nameof(Act.Participations)).FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable)?.PlayerEntity as Material;
 			if (matl != null)
 			{
-				retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.TypeConcept);
+				retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.LoadProperty<Concept>(nameof(Act.TypeConcept)));
 				retVal.ExpirationDate = (FhirDate)matl.ExpiryDate;
 				retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
 			}
@@ -112,20 +113,22 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			var rct = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
 			if (rct != null)
 			{
-				retVal.Patient = Reference.CreateLocalResourceReference(new Patient() { Id = rct.PlayerEntityKey.ToString() });
+				retVal.Patient = Reference.CreateResourceReference(new Patient() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
 			}
 
 			// Performer
 			var prf = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Performer);
 			if (prf != null)
-				retVal.Performer = Reference.CreateResourceReference(new Practictioner() { Id = rct.PlayerEntityKey.ToString() }, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
+				retVal.Performer = Reference.CreateResourceReference(new Practictioner() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
 
 			// Protocol
 			foreach (var itm in model.Protocols)
 			{
+
 				ImmunizationProtocol protocol = new ImmunizationProtocol();
+                var dbProtocol = itm.LoadProperty<Protocol>(nameof(ActProtocol.Protocol));
 				protocol.DoseSequence = new FhirInt((int)model.SequenceId);
-				protocol.Series = itm.Protocol.Name;
+				protocol.Series = itm.Protocol?.Name ?? itm.Protocol?.Oid;
 				retVal.VaccinationProtocol.Add(protocol);
 			}
 			if (retVal.VaccinationProtocol.Count == 0)
@@ -139,7 +142,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="resource">The resource.</param>
 		/// <returns>Returns the mapped model.</returns>
-		protected override SubstanceAdministration MapToModel(Immunization resource)
+		protected override SubstanceAdministration MapToModel(Immunization resource, WebOperationContext webOperationContext)
 		{
 			var substanceAdministration = new SubstanceAdministration
 			{

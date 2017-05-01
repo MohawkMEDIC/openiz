@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.ServiceModel.Web;
 using DatePrecision = OpenIZ.Core.Model.DataTypes.DatePrecision;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
@@ -82,7 +83,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="model">The model.</param>
 		/// <returns>Returns the mapped FHIR resource.</returns>
-		protected override Patient MapToFhir(Core.Model.Roles.Patient model)
+		protected override Patient MapToFhir(Core.Model.Roles.Patient model, WebOperationContext webOperationContext)
 		{
 			var retVal = DataTypeConverter.CreateResource<Patient>(model);
 			retVal.Active = model.StatusConceptKey == StatusKeys.Active;
@@ -130,7 +131,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="resource">The resource.</param>
 		/// <returns>Returns the mapped model.</returns>
-		protected override Core.Model.Roles.Patient MapToModel(Patient resource)
+		protected override Core.Model.Roles.Patient MapToModel(Patient resource, WebOperationContext webOperationContext)
 		{
 			var patient = new Core.Model.Roles.Patient
 			{

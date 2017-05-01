@@ -86,7 +86,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="model">The model.</param>
 		/// <returns>Returns the mapped FHIR resource.</returns>
-		protected override ImmunizationRecommendation MapToFhir(SubstanceAdministration model)
+		protected override ImmunizationRecommendation MapToFhir(SubstanceAdministration model, WebOperationContext webOperationContext)
 		{
 			ImmunizationRecommendation retVal = new ImmunizationRecommendation();
 
@@ -140,7 +140,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <param name="resource">The resource.</param>
 		/// <returns>Returns the mapped model.</returns>
 		/// <exception cref="System.NotImplementedException"></exception>
-		protected override SubstanceAdministration MapToModel(ImmunizationRecommendation resource)
+		protected override SubstanceAdministration MapToModel(ImmunizationRecommendation resource, WebOperationContext webOperationContext)
 		{
 			throw new NotImplementedException();
 		}

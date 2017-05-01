@@ -134,6 +134,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if (typeof(TModel).BaseType == typeof(Core.Model.Entities.Entity))
                 this.m_entityPersister.ObsoleteInternal(context, data, principal);
+            base.InsertInternal(context, data, principal);
             return data;
         }
 

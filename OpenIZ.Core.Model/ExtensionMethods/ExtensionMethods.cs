@@ -20,6 +20,7 @@
 
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Model.Map;
 using System;
 using System.Collections;
@@ -42,10 +43,69 @@ namespace OpenIZ.Core.Model
 
 		private static Dictionary<Type, PropertyInfo[]> s_typePropertyCache = new Dictionary<Type, PropertyInfo[]>();
 
-		/// <summary>
-		/// Create aggregation functions
-		/// </summary>
-		public static Expression Aggregate(this Expression me, AggregationFunctionType aggregation)
+        /// <summary>
+        /// Delay load property
+        /// </summary>
+        public static TReturn LoadProperty<TReturn>(this IdentifiedData me, string propertyName)
+        {
+            return (TReturn)me.LoadProperty(propertyName);
+        }
+
+        /// <summary>
+        /// Delay load property
+        /// </summary>
+        public static IEnumerable<TReturn> LoadCollection<TReturn>(this IdentifiedData me, string propertyName)
+        {
+            return me.LoadProperty(propertyName) as IEnumerable<TReturn>;
+        }
+
+        /// <summary>
+        /// Delay load property
+        /// </summary>
+        public static object LoadProperty(this IdentifiedData me, string propertyName)
+        {
+            if (me == null) return null;
+
+            var propertyToLoad = me.GetType().GetRuntimeProperty(propertyName);
+            if (propertyToLoad == null) return null;
+
+            var currentValue = propertyToLoad.GetValue(me);
+
+            if (typeof(IEnumerable).GetTypeInfo().IsAssignableFrom(propertyToLoad.PropertyType.GetTypeInfo())) // Collection we load by key
+            {
+                if ((currentValue as IList)?.Count == 0)
+                {
+                    var mi = typeof(IEntitySourceProvider).GetGenericMethod(nameof(IEntitySourceProvider.GetRelations), new Type[] { propertyToLoad.PropertyType.StripGeneric() }, new Type[] { typeof(Guid?) });
+                    var loaded = Activator.CreateInstance(propertyToLoad.PropertyType, mi.Invoke(EntitySource.Current.Provider, new object[] { me.Key.Value }));
+                    propertyToLoad.SetValue(me, loaded);
+                    return loaded;
+                }
+                return currentValue;
+            }
+            else if (currentValue == null)
+            {
+                var xsr = propertyToLoad.GetCustomAttribute<SerializationReferenceAttribute>();
+                if (xsr == null) return me;
+                var keyValue = me.GetType().GetRuntimeProperty(xsr.RedirectProperty).GetValue(me) as Guid?;
+                if (keyValue.GetValueOrDefault() == default(Guid))
+                    return currentValue;
+                else
+                {
+                    var mi = typeof(IEntitySourceProvider).GetGenericMethod(nameof(IEntitySourceProvider.Get), new Type[] { propertyToLoad.PropertyType }, new Type[] { typeof(Guid?) });
+                    var loaded = mi.Invoke(EntitySource.Current.Provider, new object[] { keyValue });
+                    propertyToLoad.SetValue(me, loaded);
+                    return loaded;
+                }
+            }
+            else return currentValue;
+            // Now we want to 
+
+        }
+        
+        /// <summary>
+        /// Create aggregation functions
+        /// </summary>
+        public static Expression Aggregate(this Expression me, AggregationFunctionType aggregation)
 		{
 			var aggregateMethod = typeof(Enumerable).GetGenericMethod(aggregation.ToString(),
 			   new Type[] { me.Type.GetTypeInfo().GenericTypeArguments[0] },
