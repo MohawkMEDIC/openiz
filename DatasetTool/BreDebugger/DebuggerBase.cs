@@ -811,6 +811,20 @@ namespace OizDevTool.BreDebugger
             return ids.Get(gd);
         }
 
+        /// <summary>
+        /// Inserts the current scope item to the database
+        /// </summary>
+        [DebuggerCommand("dbi", "Inserts the current scoped object in the store")]
+        public Object InsertScopeDb()
+        {
+            var idp = typeof(IDataPersistenceService<>).MakeGenericType(this.m_scopeObject.GetType());
+            var ids = ApplicationContext.Current.GetService(idp) as IDataPersistenceService;
+
+            if (ids == null)
+                throw new InvalidOperationException($"Cannot find persister {idp}");
+
+            return ids?.Insert(this.m_scopeObject);
+        }
 
         /// <summary>
         /// Load specified data as scope

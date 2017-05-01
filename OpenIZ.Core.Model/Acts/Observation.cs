@@ -71,6 +71,13 @@ namespace OpenIZ.Core.Model.Acts
             }
         }
 
+
+        /// <summary>
+        /// Value type
+        /// </summary>
+        [XmlElement("valueType"), JsonProperty("valueType")]
+        public virtual String ValueType { get { return "NA"; } set { } }
+
         /// <summary>
         /// Gets or sets the concept which indicates the interpretation of the observtion
         /// </summary>
@@ -107,6 +114,11 @@ namespace OpenIZ.Core.Model.Acts
             if (other == null) return false;
             return base.SemanticEquals(obj) && this.InterpretationConceptKey == other.InterpretationConceptKey;
         }
+
+        /// <summary>
+        /// Should serialize value type?
+        /// </summary>
+        public bool ShouldSerializeValueType() => false;
     }
 
     /// <summary>
@@ -127,6 +139,19 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlElement("value"), JsonProperty("value")]
         public Decimal Value { get; set; }
+
+        /// <summary>
+        /// Value type
+        /// </summary>
+        [XmlElement("valueType"), JsonProperty("valueType")]
+        public override string ValueType
+        {
+            get
+            {
+                return "PQ";
+            }
+            set { }
+        }
 
         /// <summary>
         /// Gets or sets the key of the uom concept
@@ -193,6 +218,20 @@ namespace OpenIZ.Core.Model.Acts
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "TextObservation")]
     public class TextObservation : Observation
     {
+
+        /// <summary>
+        /// Value type
+        /// </summary>
+        [XmlElement("valueType"), JsonProperty("valueType")]
+        public override string ValueType
+        {
+            get
+            {
+                return "ED";
+            }
+            set { }
+        }
+
         /// <summary>
         /// Gets or sets the textual value
         /// </summary>
@@ -222,6 +261,19 @@ namespace OpenIZ.Core.Model.Acts
         private Guid? m_valueKey;
         // Value
         private Concept m_value;
+
+        /// <summary>
+        /// Value type
+        /// </summary>
+        [XmlElement("valueType"), JsonProperty("valueType")]
+        public override string ValueType
+        {
+            get
+            {
+                return "CD";
+            }
+            set { }
+        }
 
         /// <summary>
         /// Gets or sets the key of the uom concept

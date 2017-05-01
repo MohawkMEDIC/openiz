@@ -380,7 +380,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         currentVersion = context.FirstOrDefault<DbEntityVersion>(versionQuery);
                     }
 
-                    sourceVersionMaps.Add(itm.SourceEntityKey.Value, currentVersion.VersionSequenceId.Value);
+                    if(currentVersion != null)
+                        sourceVersionMaps.Add(itm.SourceEntityKey.Value, currentVersion.VersionSequenceId.Value);
                 }
 
             // Get existing

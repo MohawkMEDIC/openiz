@@ -509,12 +509,6 @@ namespace OizDevTool
                 Extensions = new List<EntityExtension>()
                 {
                     new EntityExtension() {
-                        ExtensionType = new ExtensionType("http://openiz.org/extensions/contrib/GIIS/isleaf", typeof(BooleanExtensionHandler)) {
-                            Key = Guid.Parse("19449384-ba34-4b31-abc2-65e83032b794"),
-                        },
-                        ExtensionValue = hf.Leaf
-                    },
-                    new EntityExtension() {
                         ExtensionType = new ExtensionType("http://openiz.org/extensions/contrib/GIIS/isVaccinationPoint", typeof(BooleanExtensionHandler)) {
                             Key = Guid.Parse("19449384-ba34-4b31-abc2-65e83032b743"),
                         },

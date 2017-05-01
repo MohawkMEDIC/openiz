@@ -164,15 +164,38 @@ namespace OpenIZ.Messaging.FHIR.Util
 
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping reference term");
 
-			return new FhirCoding(new Uri(referenceTerm.CodeSystem.Url ?? String.Format("urn:oid:{0}", referenceTerm.CodeSystem.Oid)), referenceTerm.Mnemonic);
+            var cs = referenceTerm.LoadProperty<CodeSystem>(nameof(ReferenceTerm.CodeSystem));
+			return new FhirCoding(new Uri(cs.Url ?? String.Format("urn:oid:{0}", cs.Oid)), referenceTerm.Mnemonic);
 		}
 
-		/// <summary>
-		/// Gets the concept via the codeable concept
-		/// </summary>
-		/// <param name="codeableConcept">The codeable concept.</param>
-		/// <returns>Returns a concept.</returns>
-		public static Concept ToConcept(FhirCodeableConcept codeableConcept)
+        /// <summary>
+        /// Act Extension to Fhir Extension
+        /// </summary>
+        public static Extension ToExtension(ActExtension ext)
+        {
+            var retVal = new Extension()
+            {
+                Url = ext.LoadProperty<ExtensionType>(nameof(ActExtension.ExtensionType)).Name,
+                IsModifier = false
+            };
+
+            if (ext.ExtensionValue is Decimal)
+                retVal.Value = new FhirDecimal((Decimal)ext.ExtensionValue);
+            else if (ext.ExtensionValue is String)
+                retVal.Value = new FhirString((String)ext.ExtensionValue);
+            else if (ext.ExtensionValue is Boolean)
+                retVal.Value = new FhirBoolean((bool)ext.ExtensionValue);
+            else
+                retVal.Value = new FhirBase64Binary(ext.ExtensionValueXml);
+            return retVal;
+        }
+
+        /// <summary>
+        /// Gets the concept via the codeable concept
+        /// </summary>
+        /// <param name="codeableConcept">The codeable concept.</param>
+        /// <returns>Returns a concept.</returns>
+        public static Concept ToConcept(FhirCodeableConcept codeableConcept)
 		{
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping codeable concept");
 			return codeableConcept?.Coding.Select(o => DataTypeConverter.ToConcept(o)).FirstOrDefault(o => o != null);
@@ -452,7 +475,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 
 			return new FhirCodeableConcept
 			{
-				Coding = concept.LoadCollection<ConceptReferenceTerm>(nameof(Concept.ReferenceTerms)).Select(o => DataTypeConverter.ToCoding(o.ReferenceTerm)).ToList(),
+				Coding = concept.LoadCollection<ConceptReferenceTerm>(nameof(Concept.ReferenceTerms)).Select(o => DataTypeConverter.ToCoding(o.LoadProperty<ReferenceTerm>(nameof(ConceptReferenceTerm.ReferenceTerm)))).ToList(),
 				Text = concept.LoadCollection<ConceptName>(nameof(Concept.ConceptNames)).FirstOrDefault()?.Name
 			};
 		}

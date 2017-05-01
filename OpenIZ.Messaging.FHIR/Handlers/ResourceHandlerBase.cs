@@ -147,11 +147,13 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			Core.Model.Query.NameValueCollection imsiQuery = null;
 			FhirQuery query = QueryRewriter.RewriteFhirQuery<TFhirResource, TModel>(parameters, out imsiQuery);
 
+          
+
 			// Do the query
 			int totalResults = 0;
 			List<IResultDetail> issues = new List<IResultDetail>();
 			var predicate = QueryExpressionParser.BuildLinqExpression<TModel>(imsiQuery);
-			var imsiResults = this.Query(predicate, issues, query.Start, query.Quantity, out totalResults);
+			var imsiResults = this.Query(predicate, issues, query.QueryId, query.Start, query.Quantity, out totalResults);
             var webOperationContext = WebOperationContext.Current;
 
 			// Return FHIR query result
@@ -292,7 +294,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <param name="count">The count.</param>
 		/// <param name="totalResults">The total results.</param>
 		/// <returns>Returns the list of models which match the given parameters.</returns>
-		protected abstract IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults);
+		protected abstract IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults);
 
 		/// <summary>
 		/// Reads the specified identifier.

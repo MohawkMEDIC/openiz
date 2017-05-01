@@ -26,6 +26,7 @@ using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.FHIR.Util;
 using System;
@@ -192,11 +193,16 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <param name="count">The count.</param>
 		/// <param name="totalResults">The total results.</param>
 		/// <returns>Returns the list of models which match the given parameters.</returns>
-		protected override IEnumerable<Core.Model.Roles.Patient> Query(Expression<Func<Core.Model.Roles.Patient, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults)
+		protected override IEnumerable<Core.Model.Roles.Patient> Query(Expression<Func<Core.Model.Roles.Patient, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
 		{
-   //         var obsoletionReference = Expression.MakeBinary(ExpressionType.NotEqual, Expression.MakeMemberAccess(query.Parameters[0], typeof(Patient).GetProperty(nameof(BaseEntityData.ObsoletionTime))), Expression.Constant(null));
-			//query = Expression.Lambda<Func<Core.Model.Roles.Patient, bool>>(Expression.AndAlso(obsoletionReference, query), query.Parameters);
-			return this.repository.Find(query, offset, count, out totalResults);
+            var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(Patient).GetProperty(nameof(Entity.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
+            query = Expression.Lambda<Func<Core.Model.Roles.Patient, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
+
+            if (queryId == Guid.Empty)
+                return this.repository.Find(query, offset, count, out totalResults);
+            else
+                return (this.repository as IPersistableQueryRepositoryService).Find<Core.Model.Roles.Patient>(query, offset, count, out totalResults, queryId);
+
 		}
 
 		/// <summary>

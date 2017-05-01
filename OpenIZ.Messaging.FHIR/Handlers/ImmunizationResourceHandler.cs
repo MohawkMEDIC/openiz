@@ -101,11 +101,13 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			retVal.WasNotGiven = model.IsNegated;
 
 			// Material
-			var matl = model.LoadCollection<ActParticipation>(nameof(Act.Participations)).FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable)?.PlayerEntity as Material;
-			if (matl != null)
+			var matPtcpt = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable) ??
+                model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Product);
+			if (matPtcpt != null)
 			{
+                var matl = matPtcpt.LoadProperty<Material>(nameof(ActParticipation.PlayerEntity));
 				retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.LoadProperty<Concept>(nameof(Act.TypeConcept)));
-				retVal.ExpirationDate = (FhirDate)matl.ExpiryDate;
+				retVal.ExpirationDate = matl.ExpiryDate.HasValue ? (FhirDate)matl.ExpiryDate : null;
 				retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
 			}
 
@@ -134,7 +136,17 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			if (retVal.VaccinationProtocol.Count == 0)
 				retVal.VaccinationProtocol.Add(new ImmunizationProtocol() { DoseSequence = (int)model.SequenceId });
 
-			return retVal;
+            retVal.Extension = model.Extensions.Select(o => DataTypeConverter.ToExtension(o)).ToList();
+
+            var loc = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
+            if (loc != null)
+                retVal.Extension.Add(new Extension()
+                {
+                    Url = "http://openiz.org/extensions/act/fhir/location",
+                    Value = new FhirString(loc.PlayerEntityKey.ToString())
+                });
+
+            return retVal;
 		}
 
 		/// <summary>
@@ -181,11 +193,15 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <param name="count">The count.</param>
 		/// <param name="totalResults">The total results.</param>
 		/// <returns>Returns the list of models which match the given parameters.</returns>
-		protected override IEnumerable<SubstanceAdministration> Query(Expression<Func<SubstanceAdministration, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults)
+		protected override IEnumerable<SubstanceAdministration> Query(Expression<Func<SubstanceAdministration, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
 		{
-            //var obsoletionReference = Expression.MakeBinary(ExpressionType.NotEqual, Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(BaseEntityData.ObsoletionTime))), Expression.Constant(null));
-            //query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(obsoletionReference, query), query.Parameters);
-			return this.repository.Find(query, offset, count, out totalResults);
+            var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
+            query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
+
+            if (queryId == Guid.Empty)
+                return this.repository.Find(query, offset, count, out totalResults);
+            else
+                return (this.repository as IPersistableQueryRepositoryService).Find<SubstanceAdministration>(query, offset, count, out totalResults, queryId);
 		}
 
 		/// <summary>
