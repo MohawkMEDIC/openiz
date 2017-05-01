@@ -59,6 +59,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(Entity))]
     [ServiceKnownType(typeof(Patient))]
 	[ServiceKnownType(typeof(Person))]
+    [ServiceKnownType(typeof(EntityRelationship))]
 	[ServiceKnownType(typeof(Provider))]
     [ServiceKnownType(typeof(Organization))]
     [ServiceKnownType(typeof(Place))]
