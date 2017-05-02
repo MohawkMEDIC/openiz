@@ -31,8 +31,7 @@ namespace OpenIZ.Core.Services.Impl
 
 			bundle = breService?.BeforeInsert(bundle) ?? bundle;
 			bundle = persistence.Insert(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			bundle = breService?.AfterInsert(bundle) ?? bundle;
-
+			breService?.AfterInsert(bundle);
 			return bundle;
 		}
 
@@ -83,7 +82,8 @@ namespace OpenIZ.Core.Services.Impl
 
 				bundle = persistence.Update(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-				bundle = breService?.AfterUpdate(bundle) ?? bundle;
+                breService?.AfterUpdate(bundle);
+                return bundle;
 			}
 			catch (DataPersistenceException)
 			{
@@ -91,7 +91,8 @@ namespace OpenIZ.Core.Services.Impl
 
 				bundle = persistence.Insert(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-				bundle = breService?.AfterInsert(bundle) ?? bundle;
+                breService?.AfterInsert(bundle);
+                return bundle;
 			}
 
 			return bundle;

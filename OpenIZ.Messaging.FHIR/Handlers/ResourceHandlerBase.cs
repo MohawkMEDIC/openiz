@@ -38,6 +38,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.ServiceModel.Web;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
@@ -82,7 +83,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				throw new InvalidDataException();
 
 			// We want to map from TFhirResource to TModel
-			var modelInstance = this.MapToModel(target as TFhirResource);
+			var modelInstance = this.MapToModel(target as TFhirResource, WebOperationContext.Current);
 			if (modelInstance == null)
 				throw new SyntaxErrorException(ApplicationContext.Current.GetLocaleString("MSGE001"));
 
@@ -92,7 +93,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Return fhir operation result
 			return new FhirOperationResult()
 			{
-				Results = new List<DomainResourceBase>() { this.MapToFhir(result) },
+				Results = new List<DomainResourceBase>() { this.MapToFhir(result, WebOperationContext.Current) },
 				Details = issues,
 				Outcome = issues.Exists(o => o.Type == MARC.Everest.Connectors.ResultDetailType.Error) ? ResultCode.Error : ResultCode.Accepted
 			};
@@ -126,7 +127,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Return fhir operation result
 			return new FhirOperationResult()
 			{
-				Results = new List<DomainResourceBase>() { this.MapToFhir(result) },
+				Results = new List<DomainResourceBase>() { this.MapToFhir(result, WebOperationContext.Current) },
 				Details = details,
 				Outcome = details.Exists(o => o.Type == MARC.Everest.Connectors.ResultDetailType.Error) ? ResultCode.Error : ResultCode.Accepted
 			};
@@ -146,18 +147,21 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			Core.Model.Query.NameValueCollection imsiQuery = null;
 			FhirQuery query = QueryRewriter.RewriteFhirQuery<TFhirResource, TModel>(parameters, out imsiQuery);
 
+          
+
 			// Do the query
 			int totalResults = 0;
 			List<IResultDetail> issues = new List<IResultDetail>();
 			var predicate = QueryExpressionParser.BuildLinqExpression<TModel>(imsiQuery);
-			var imsiResults = this.Query(predicate, issues, query.Start, query.Quantity, out totalResults);
+			var imsiResults = this.Query(predicate, issues, query.QueryId, query.Start, query.Quantity, out totalResults);
+            var webOperationContext = WebOperationContext.Current;
 
 			// Return FHIR query result
 			return new FhirQueryResult()
 			{
 				Details = issues,
 				Outcome = ResultCode.Accepted,
-				Results = imsiResults.Select(o => this.MapToFhir(o)).OfType<DomainResourceBase>().ToList(),
+				Results = imsiResults.AsParallel().Select(o => this.MapToFhir(o, webOperationContext) ).OfType<DomainResourceBase>().ToList(),
 				Query = query,
 				TotalResults = totalResults
 			};
@@ -193,7 +197,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			return new FhirOperationResult()
 			{
 				Outcome = ResultCode.Accepted,
-				Results = new List<DomainResourceBase>() { this.MapToFhir(result) },
+				Results = new List<DomainResourceBase>() { this.MapToFhir(result, WebOperationContext.Current) },
 				Details = details
 			};
 		}
@@ -221,7 +225,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				throw new InvalidDataException();
 
 			// We want to map from TFhirResource to TModel
-			var modelInstance = this.MapToModel(target as TFhirResource);
+			var modelInstance = this.MapToModel(target as TFhirResource, WebOperationContext.Current);
 			if (modelInstance == null)
 				throw new SyntaxErrorException(ApplicationContext.Current.GetLocaleString("MSGE001"));
 
@@ -244,7 +248,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Return fhir operation result
 			return new FhirOperationResult
 			{
-				Results = new List<DomainResourceBase> { this.MapToFhir(result) },
+				Results = new List<DomainResourceBase> { this.MapToFhir(result, WebOperationContext.Current) },
 				Details = issues,
 				Outcome = issues.Exists(o => o.Type == MARC.Everest.Connectors.ResultDetailType.Error) ? ResultCode.Error : ResultCode.Accepted
 			};
@@ -272,14 +276,14 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="model">The model.</param>
 		/// <returns>Returns the mapped FHIR resource.</returns>
-		protected abstract TFhirResource MapToFhir(TModel model);
+		protected abstract TFhirResource MapToFhir(TModel model, WebOperationContext webOperationContext);
 
 		/// <summary>
 		/// Maps a FHIR resource to a model instance.
 		/// </summary>
 		/// <param name="resource">The resource.</param>
 		/// <returns>Returns the mapped model.</returns>
-		protected abstract TModel MapToModel(TFhirResource resource);
+		protected abstract TModel MapToModel(TFhirResource resource, WebOperationContext webOperationContext);
 
 		/// <summary>
 		/// Queries the specified query.
@@ -290,7 +294,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <param name="count">The count.</param>
 		/// <param name="totalResults">The total results.</param>
 		/// <returns>Returns the list of models which match the given parameters.</returns>
-		protected abstract IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults);
+		protected abstract IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults);
 
 		/// <summary>
 		/// Reads the specified identifier.

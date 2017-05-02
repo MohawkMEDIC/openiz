@@ -96,11 +96,22 @@ namespace OpenIZ.Messaging.FHIR.Util
             if (fhirQuery == null) throw new ArgumentNullException(nameof(fhirQuery));
 
             // Count and offset parameters
-            int count = 0, offset = 0;
+            int count = 0, offset = 0, page = 0;
             if (!Int32.TryParse(fhirQuery["_count"] ?? "100", out count))
                 throw new ArgumentException("_count");
             if (!Int32.TryParse(fhirQuery["_offset"] ?? "0", out offset))
                 throw new ArgumentException("_offset");
+            if (fhirQuery["_page"] != null && Int32.TryParse(fhirQuery["_page"], out page))
+            {
+                offset = page * 100;
+                count = 100;
+            }
+
+            Guid queryId = Guid.Empty;
+            if (fhirQuery["_stateid"] != null)
+                queryId = Guid.Parse(fhirQuery["_stateid"]);
+            else
+                queryId = Guid.NewGuid();
 
             // Return new query
             FhirQuery retVal = new FhirQuery()
@@ -109,7 +120,7 @@ namespace OpenIZ.Messaging.FHIR.Util
                 Quantity = count,
                 Start = offset,
                 MinimumDegreeMatch = 100,
-                QueryId = Guid.NewGuid(),
+                QueryId = queryId,
                 IncludeHistory = false,
                 IncludeContained = false
             };

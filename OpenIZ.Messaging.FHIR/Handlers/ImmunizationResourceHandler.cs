@@ -27,6 +27,7 @@ using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.FHIR.Util;
@@ -84,7 +85,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="model">The model.</param>
 		/// <returns>Returns the mapped FHIR resource.</returns>
-		protected override Immunization MapToFhir(SubstanceAdministration model)
+		protected override Immunization MapToFhir(SubstanceAdministration model, WebOperationContext webOperationContext)
 		{
 			var retVal = DataTypeConverter.CreateResource<Immunization>(model);
 			retVal.DoseQuantity = new FhirQuantity()
@@ -93,18 +94,20 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				Value = new FhirDecimal(model.DoseQuantity)
 			};
 			retVal.Date = (FhirDate)model.ActTime.DateTime;
-			retVal.Route = DataTypeConverter.ToFhirCodeableConcept(model.Route);
-			retVal.Site = DataTypeConverter.ToFhirCodeableConcept(model.Site);
+			retVal.Route = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>(nameof(SubstanceAdministration.Route)));
+			retVal.Site = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>(nameof(SubstanceAdministration.Site)));
 			retVal.Status = "completed";
 			//retVal.SelfReported = model.Tags.Any(o => o.TagKey == "selfReported" && Convert.ToBoolean(o.Value));
 			retVal.WasNotGiven = model.IsNegated;
 
 			// Material
-			var matl = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable)?.PlayerEntity as Material;
-			if (matl != null)
+			var matPtcpt = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable) ??
+                model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Product);
+			if (matPtcpt != null)
 			{
-				retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.TypeConcept);
-				retVal.ExpirationDate = (FhirDate)matl.ExpiryDate;
+                var matl = matPtcpt.LoadProperty<Material>(nameof(ActParticipation.PlayerEntity));
+				retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.LoadProperty<Concept>(nameof(Act.TypeConcept)));
+				retVal.ExpirationDate = matl.ExpiryDate.HasValue ? (FhirDate)matl.ExpiryDate : null;
 				retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
 			}
 
@@ -112,26 +115,38 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			var rct = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
 			if (rct != null)
 			{
-				retVal.Patient = Reference.CreateLocalResourceReference(new Patient() { Id = rct.PlayerEntityKey.ToString() });
+				retVal.Patient = Reference.CreateResourceReference(new Patient() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
 			}
 
 			// Performer
 			var prf = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Performer);
 			if (prf != null)
-				retVal.Performer = Reference.CreateResourceReference(new Practictioner() { Id = rct.PlayerEntityKey.ToString() }, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
+				retVal.Performer = Reference.CreateResourceReference(new Practictioner() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
 
 			// Protocol
 			foreach (var itm in model.Protocols)
 			{
+
 				ImmunizationProtocol protocol = new ImmunizationProtocol();
+                var dbProtocol = itm.LoadProperty<Protocol>(nameof(ActProtocol.Protocol));
 				protocol.DoseSequence = new FhirInt((int)model.SequenceId);
-				protocol.Series = itm.Protocol.Name;
+				protocol.Series = itm.Protocol?.Name ?? itm.Protocol?.Oid;
 				retVal.VaccinationProtocol.Add(protocol);
 			}
 			if (retVal.VaccinationProtocol.Count == 0)
 				retVal.VaccinationProtocol.Add(new ImmunizationProtocol() { DoseSequence = (int)model.SequenceId });
 
-			return retVal;
+            retVal.Extension = model.Extensions.Select(o => DataTypeConverter.ToExtension(o)).ToList();
+
+            var loc = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
+            if (loc != null)
+                retVal.Extension.Add(new Extension()
+                {
+                    Url = "http://openiz.org/extensions/act/fhir/location",
+                    Value = new FhirString(loc.PlayerEntityKey.ToString())
+                });
+
+            return retVal;
 		}
 
 		/// <summary>
@@ -139,7 +154,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		/// <param name="resource">The resource.</param>
 		/// <returns>Returns the mapped model.</returns>
-		protected override SubstanceAdministration MapToModel(Immunization resource)
+		protected override SubstanceAdministration MapToModel(Immunization resource, WebOperationContext webOperationContext)
 		{
 			var substanceAdministration = new SubstanceAdministration
 			{
@@ -178,11 +193,15 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <param name="count">The count.</param>
 		/// <param name="totalResults">The total results.</param>
 		/// <returns>Returns the list of models which match the given parameters.</returns>
-		protected override IEnumerable<SubstanceAdministration> Query(Expression<Func<SubstanceAdministration, bool>> query, List<IResultDetail> issues, int offset, int count, out int totalResults)
+		protected override IEnumerable<SubstanceAdministration> Query(Expression<Func<SubstanceAdministration, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
 		{
-            //var obsoletionReference = Expression.MakeBinary(ExpressionType.NotEqual, Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(BaseEntityData.ObsoletionTime))), Expression.Constant(null));
-            //query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(obsoletionReference, query), query.Parameters);
-			return this.repository.Find(query, offset, count, out totalResults);
+            var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
+            query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
+
+            if (queryId == Guid.Empty)
+                return this.repository.Find(query, offset, count, out totalResults);
+            else
+                return (this.repository as IPersistableQueryRepositoryService).Find<SubstanceAdministration>(query, offset, count, out totalResults, queryId);
 		}
 
 		/// <summary>

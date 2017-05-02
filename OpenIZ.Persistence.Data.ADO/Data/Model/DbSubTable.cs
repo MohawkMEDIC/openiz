@@ -43,7 +43,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model
         /// <summary>
         /// Gets or sets the parent key
         /// </summary>
-        [Column("act_vrsn_id"), ForeignKey(typeof(DbObservation), nameof(DbObservation.ParentKey)), PrimaryKey, AlwaysJoin]
+        [Column("act_vrsn_id"), ForeignKey(typeof(DbObservation), nameof(DbObservation.ParentKey)), PrimaryKey]
         public override Guid ParentKey { get; set; }
     }
 

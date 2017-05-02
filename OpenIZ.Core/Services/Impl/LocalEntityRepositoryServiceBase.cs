@@ -69,7 +69,10 @@ namespace OpenIZ.Core.Services.Impl
 
             entity = persistenceService.Insert(entity, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-            return businessRulesService?.AfterInsert(entity) ?? entity;
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(entity));
+            businessRulesService?.AfterInsert(entity);
+
+            return entity;
         }
 
         /// <summary>
@@ -157,13 +160,17 @@ namespace OpenIZ.Core.Services.Impl
 
                 data = businessRulesService?.BeforeUpdate(data) ?? data;
                 data = persistenceService.Update(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-                data = businessRulesService?.AfterUpdate(data) ?? data;
+                this.DataUpdated?.Invoke(this, new AuditDataEventArgs(data));
+                businessRulesService?.AfterUpdate(data);
+                return data;
             }
             catch (DataPersistenceException)
             {
                 data = businessRulesService?.BeforeInsert(data) ?? data;
                 data = persistenceService.Insert(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-                data = businessRulesService?.AfterInsert(data) ?? data;
+                this.DataCreated?.Invoke(this, new AuditDataEventArgs(data));
+                businessRulesService?.AfterInsert(data);
+                return data;
             }
 
             return data;

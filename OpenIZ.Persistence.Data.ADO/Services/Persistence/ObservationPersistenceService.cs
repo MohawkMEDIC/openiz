@@ -27,6 +27,8 @@ using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.OrmLite;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -106,6 +108,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         private ObservationPersistenceService m_observationPersistence = new ObservationPersistenceService();
 
         /// <summary>
+        /// Query internal
+        /// </summary>
+        public override IEnumerable<TextObservation> QueryInternal(DataContext context, Expression<Func<TextObservation, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        {
+            var parm = query.Parameters[0];
+            query = Expression.Lambda<Func<TextObservation, bool>>(Expression.MakeBinary(ExpressionType.AndAlso, query.Body, Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(parm, typeof(Observation).GetProperty(nameof(Observation.ValueType))), Expression.Constant("ED"))), parm);
+            return base.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
+        }
+
+        /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
         public Core.Model.Acts.TextObservation ToModelInstance(DbTextObservation dataInstance, DbObservation obsInstance, DbActVersion actVersionInstance, DbAct actInstance, DataContext context, IPrincipal principal)
@@ -161,6 +173,15 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     {
 
         private ObservationPersistenceService m_observationPersistence = new ObservationPersistenceService();
+        /// <summary>
+        /// Query internal
+        /// </summary>
+        public override IEnumerable<CodedObservation> QueryInternal(DataContext context, Expression<Func<CodedObservation, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        {
+            var parm = query.Parameters[0];
+            query = Expression.Lambda<Func<CodedObservation, bool>>(Expression.MakeBinary(ExpressionType.AndAlso, query.Body, Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(parm, typeof(Observation).GetProperty(nameof(Observation.ValueType))), Expression.Constant("CD"))), parm);
+            return base.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
+        }
 
         /// <summary>
         /// Convert the specified object to a model instance
@@ -215,6 +236,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     {
 
         private ObservationPersistenceService m_observationPersistence = new ObservationPersistenceService();
+
+        /// <summary>
+        /// Query internal
+        /// </summary>
+        public override IEnumerable<QuantityObservation> QueryInternal(DataContext context, Expression<Func<QuantityObservation, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
+        {
+            var parm = query.Parameters[0];
+            query = Expression.Lambda<Func<QuantityObservation, bool>>(Expression.MakeBinary(ExpressionType.AndAlso, query.Body, Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(parm, typeof(Observation).GetProperty(nameof(Observation.ValueType))), Expression.Constant("PQ"))), parm);
+            return base.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
+        }
+
 
         /// <summary>
         /// Convert the specified object to a model instance

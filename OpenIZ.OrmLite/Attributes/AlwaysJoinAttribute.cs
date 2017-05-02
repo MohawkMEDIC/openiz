@@ -12,5 +12,7 @@ namespace OpenIZ.OrmLite.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class AlwaysJoinAttribute : Attribute
     {
+        
+
     }
 }
