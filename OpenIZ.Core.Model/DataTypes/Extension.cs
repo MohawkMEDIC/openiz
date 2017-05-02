@@ -32,6 +32,7 @@ using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
+
     /// <summary>
     /// Represents a base entity extension
     /// </summary>
@@ -101,7 +102,7 @@ namespace OpenIZ.Core.Model.DataTypes
             }
             set
             {
-                if(this.ExtensionType?.ExtensionHandlerInstance != null)
+                if (this.ExtensionType?.ExtensionHandlerInstance != null)
                     this.ExtensionValueXml = this.ExtensionType?.ExtensionHandlerInstance?.Serialize(value);
             }
         }
@@ -110,7 +111,15 @@ namespace OpenIZ.Core.Model.DataTypes
         /// Gets or sets an extension displayable value
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public String ExtensionDisplay { get; set; }
+        public String ExtensionDisplay
+        {
+            get
+            {
+                this.ExtensionType = this.LoadProperty<ExtensionType>(nameof(ExtensionType));
+                return this.ExtensionType?.ExtensionHandlerInstance?.GetDisplay(this.ExtensionValue);
+            }
+            set { }
+        }
 
         /// <summary>
         /// Gets or sets the extension type key

@@ -52,12 +52,18 @@ namespace OpenIZ.Core.Extensions
 		        return default(decimal);
 	        }
 
+            byte[] edata = new byte[16];
+            if (extensionData.Length == 16)
+                edata = extensionData;
+            else
+                for (int i = 0; i < extensionData.Length; i++)
+                    edata[i] = extensionData[i];
             Int32[] ints = new int[]
             {
-                BitConverter.ToInt32(extensionData, 0),
-                BitConverter.ToInt32(extensionData, 4),
-                BitConverter.ToInt32(extensionData, 8),
-                BitConverter.ToInt32(extensionData, 12)
+                BitConverter.ToInt32(edata, 0),
+                BitConverter.ToInt32(edata, 4),
+                BitConverter.ToInt32(edata, 8),
+                BitConverter.ToInt32(edata, 12)
             };
 
             return new Decimal(ints);

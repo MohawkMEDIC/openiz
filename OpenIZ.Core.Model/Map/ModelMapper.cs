@@ -421,9 +421,9 @@ namespace OpenIZ.Core.Model.Map
             foreach (var propInfo in properties)
             {
 
-               
+                var propValue = propInfo.GetValue(modelInstance);
                 // Property info
-                if (propInfo.GetValue(modelInstance) == null)
+                if (propValue == null)
                     continue;
 
                 if (!propInfo.PropertyType.GetTypeInfo().IsPrimitive && propInfo.PropertyType != typeof(Guid) &&
@@ -455,18 +455,18 @@ namespace OpenIZ.Core.Model.Map
                     continue;
                 //Debug.WriteLine ("Unmapped property ({0}).{1}", typeof(TModel).Name, propInfo.Name);
                 else if (domainProperty.PropertyType == typeof(byte[]) && propInfo.PropertyType.StripNullable() == typeof(Guid))
-                    domainProperty.SetValue(targetObject, ((Guid)propInfo.GetValue(modelInstance)).ToByteArray());
+                    domainProperty.SetValue(targetObject, ((Guid)propValue).ToByteArray());
                 else if (
                     (domainProperty.PropertyType == typeof(DateTime) || domainProperty.PropertyType == typeof(DateTime?))
                     && (propInfo.PropertyType == typeof(DateTimeOffset) || propInfo.PropertyType == typeof(DateTimeOffset?)))
                 {
-                    domainProperty.SetValue(targetObject, ((DateTimeOffset)propInfo.GetValue(modelInstance)).DateTime);
+                    domainProperty.SetValue(targetObject, ((DateTimeOffset)propValue).DateTime);
                 }
                 else if (domainProperty.PropertyType.GetTypeInfo().IsAssignableFrom(propInfo.PropertyType.GetTypeInfo()))
-                    domainProperty.SetValue(targetObject, propInfo.GetValue(modelInstance));
+                    domainProperty.SetValue(targetObject, propValue);
                 else if (propInfo.PropertyType == typeof(Type) && domainProperty.PropertyType == typeof(String))
-                    domainProperty.SetValue(targetObject, (propInfo.GetValue(modelInstance) as Type).AssemblyQualifiedName);
-                else if (MapUtil.TryConvert(propInfo.GetValue(modelInstance), domainProperty.PropertyType, out domainValue))
+                    domainProperty.SetValue(targetObject, (propValue as Type).AssemblyQualifiedName);
+                else if (MapUtil.TryConvert(propValue, domainProperty.PropertyType, out domainValue))
                     domainProperty.SetValue(targetObject, domainValue);
 
             }

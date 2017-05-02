@@ -103,7 +103,7 @@ namespace OpenIZ.Messaging.FHIR.Util
                 throw new ArgumentException("_offset");
             if (fhirQuery["_page"] != null && Int32.TryParse(fhirQuery["_page"], out page))
             {
-                offset = page * 100;
+                offset = page * count;
                 count = 100;
             }
 
