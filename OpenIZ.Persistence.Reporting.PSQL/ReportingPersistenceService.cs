@@ -126,7 +126,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL
 						throw new InvalidOperationException($"Invalid schema version. OpenIZ version {openizVersion} is older than the database schema version: {databaseVersion}");
 					}
 
-					traceSource.TraceEvent(TraceEventType.Information, 0, $"OpenIZ schema version: {databaseVersion}");
+					traceSource.TraceEvent(TraceEventType.Information, 0, $"OpenIZ Reporting schema version: {databaseVersion}");
 				}
 
 				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Loading reporting persistence services");

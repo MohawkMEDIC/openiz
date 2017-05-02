@@ -322,125 +322,224 @@ CREATE TABLE AEFI_TBL (
 
 -- NAME CROSSTAB VIEW
 DROP MATERIALIZED VIEW IF EXISTS ENT_NAME_PIVOT_VW;
-CREATE MATERIALIZED VIEW ENT_NAME_PIVOT_VW as 
-select * from 
-	crosstab(
-	$$ 
-		select name_id::text || ent_id::text, ent_id, use_cs, typ, value from name_cmp_tbl order by 1, 2; 
-	$$,
-	$$ 
-		select 'Other' as cd_mnemonic 
-		union 
-		select cd_mnemonic from cd_tbl where set_mnemonic = 'NameComponentType' order by cd_mnemonic; 
-	$$)
-	AS ct (
-	"agg_fn" text,
-	"ent_id" uuid,
-	"use" text,
-	Delimiter text,
-	Family text,
-	Given text, 
-	Other text,
-	Prefix text, 
-	Suffix text,
-	Title text
-);
+CREATE MATERIALIZED VIEW ENT_NAME_PIVOT_VW AS   
+  SELECT 
+   *
+   FROM crosstab(' 
+    select ent_id, typ, value from name_cmp_tbl order by 1, 2; 
+    '::text, ' 
+    select ''Other'' as cd_mnemonic 
+    union 
+    select cd_mnemonic from cd_tbl where set_mnemonic = ''NameComponentType'' order by cd_mnemonic; 
+    '::text) as ct(ent_id uuid, delimiter text, family text, given text, other text, prefix text, suffix text, title text)
+  ORDER BY
+    ent_id, 
+    family, 
+    given, 
+    title, 
+    delimiter,
+    prefix, 
+    suffix, 
+    other;
 
 -- ADDRESS VIEW PIVOT
 DROP MATERIALIZED VIEW IF EXISTS ENT_ADDR_PIVOT_VW;
-CREATE MATERIALIZED VIEW ENT_ADDR_PIVOT_VW as 
-select * from 
-	crosstab(
-	$$ 
-		select addr_id::text || ent_id::text, ent_id, use_cs, typ, value from addr_cmp_tbl order by 1, 2; 
-	$$,
-	$$ 
-		select 'Other' as cd_mnemonic 
-		union 
-		select cd_mnemonic from cd_tbl where set_mnemonic = 'AddressComponentType' order by cd_mnemonic; 
-	$$)
-	AS ct (
-	"agg_fn" text,
-	"ent_id" uuid,
-	"use" text,
-	AdditionalLocator text,
-	AddressLine text,
-	BuildingNumber text,
-	BuildingNumberNumeric text,
-	BuildingNumberSuffix text,
-	CareOf text,
-	CensusTract text,
-	City text,
-	Country text,
-	County text,
-	Delimiter text,
-	DeliveryAddressLine text,
-	DeliveryInstallationArea text,
-	DeliveryInstallationQualifier text,
-	DeliveryInstallationType text,
-	DeliveryMode text,
-	DeliveryModeIdentifier text,
-	Direction text,
-	Other text,
-	PostalCode text,
-	PostBox text,
-	Precinct text,
-	State text,
-	StreetAddressLine text,
-	StreetName text,
-	StreetNameBase text,
-	StreetType text,
-	UnitDesignator text,
-	UnitIdentifier text
+CREATE MATERIALIZED VIEW ent_addr_pivot_vw as
+  SELECT *  
+  FROM crosstab('
+                SELECT 
+                 act.ent_id, act.typ, act.value 
+                FROM 
+                  addr_cmp_tbl as act 
+                ORDER BY
+                  1,2;
+              '::text, 
+              '
+                select ''Other'' as cd_mnemonic 
+                union 
+                select cd_mnemonic from cd_tbl where set_mnemonic = ''AddressComponentType'' order by cd_mnemonic; 
+        '::text) as 
+  ct(ent_id uuid, additionallocator text, addressline text, buildingnumber text, buildingnumbernumeric text, buildingnumbersuffix text, careof text, censustract text, city text, country text, county text, delimiter text, deliveryaddressline text, deliveryinstallationarea text, deliveryinstallationqualifier text, deliveryinstallationtype text, deliverymode text, deliverymodeidentifier text, direction text, other text, postalcode text, postbox text, precinct text, state text, streetaddressline text, streetname text, streetnamebase text, streettype text, unitdesignator text, unitidentifier text)  
+  ORDER BY   
+    ent_id,  
+    country, 
+    state, 
+    county, 
+    city, 
+    additionallocator, 
+    postalcode, 
+    precinct, 
+    streetaddressline, 
+    streetname, 
+    streetnamebase, 
+    streettype, 
+    addressline, 
+    postbox, 
+    buildingnumber, 
+    buildingnumbernumeric, 
+    buildingnumbersuffix, 
+    careof, 
+    delimiter, 
+    deliveryaddressline, 
+    deliveryinstallationarea, 
+    deliveryinstallationqualifier, 
+    deliveryinstallationtype, 
+    deliverymode, 
+    deliverymodeidentifier, 
+    unitdesignator, 
+    unitidentifier,
+    direction,
+    censustract, 
+    other;
 
-);
+DROP MATERIALIZED VIEW IF EXISTS addr_typ_pivot_vw; 
+CREATE MATERIALIZED VIEW addr_typ_pivot_vw as
+  SELECT *  
+  FROM crosstab('
+                SELECT 
+                 act.addr_id, act.typ, act.value 
+                FROM 
+                  addr_cmp_tbl as act 
+                ORDER BY
+                  1,2;
+              '::text, 
+              '
+                select ''Other'' as cd_mnemonic 
+                union 
+                select cd_mnemonic from cd_tbl where set_mnemonic = ''AddressComponentType'' order by cd_mnemonic; 
+        '::text) as 
+  ct(plc_id uuid, additionallocator text, addressline text, buildingnumber text, buildingnumbernumeric text, buildingnumbersuffix text, careof text, censustract text, city text, country text, county text, delimiter text, deliveryaddressline text, deliveryinstallationarea text, deliveryinstallationqualifier text, deliveryinstallationtype text, deliverymode text, deliverymodeidentifier text, direction text, other text, postalcode text, postbox text, precinct text, state text, streetaddressline text, streetname text, streetnamebase text, streettype text, unitdesignator text, unitidentifier text)  
+  ORDER BY   
+    plc_id,  
+    country, 
+    state, 
+    county, 
+    city, 
+    additionallocator, 
+    postalcode, 
+    precinct, 
+    streetaddressline, 
+    streetname, 
+    streetnamebase, 
+    streettype, 
+    addressline, 
+    postbox, 
+    buildingnumber, 
+    buildingnumbernumeric, 
+    buildingnumbersuffix, 
+    careof, 
+    delimiter, 
+    deliveryaddressline, 
+    deliveryinstallationarea, 
+    deliveryinstallationqualifier, 
+    deliveryinstallationtype, 
+    deliverymode, 
+    deliverymodeidentifier, 
+    unitdesignator, 
+    unitidentifier,
+    direction,
+    censustract, 
+    other; 
 
 
 -- VIEW FOR COMPLETE FACILITY INFORMATION
-CREATE VIEW FAC_VW AS
-	SELECT FAC_TBL.*, name.other AS loc_name, addr.StreetAddressLine, addr.City, addr.County, addr.State, addr.Censustract, addr.Country, addr.PostalCode, addr.AdditionalLocator
-	FROM FAC_TBL
-	LEFT JOIN ent_name_pivot_vw AS name ON (name.ent_id = fac_tbl.fac_id)
-	LEFT JOIN ent_addr_pivot_vw AS addr ON (addr.ent_id = fac_tbl.fac_id);
+DROP MATERIALIZED VIEW IF EXISTS fac_vw;
+CREATE MATERIALIZED VIEW fac_vw AS 
+ SELECT fac_tbl.fac_id,
+    fac_tbl.crt_etl_id,
+    fac_tbl.upd_etl_id,
+    fac_tbl.crt_utc,
+    fac_tbl.upd_utc,
+    fac_tbl.obslt_utc,
+    fac_tbl.sts_cs,
+    fac_tbl.type_mnemonic,
+    fac_tbl.parent_id,
+    fac_tbl.tel,
+    name.other AS loc_name,
+    addr.streetaddressline,
+    addr.city,
+    addr.county,
+    addr.state,
+    addr.censustract,
+    addr.country,
+    addr.postalcode,
+    addr.additionallocator
+   FROM fac_tbl
+     LEFT JOIN ent_name_pivot_vw name ON name.ent_id = fac_tbl.fac_id
+     LEFT JOIN ent_addr_pivot_vw addr ON addr.ent_id = fac_tbl.fac_id;
 
 -- PERSON VIEW
-CREATE OR REPLACE VIEW psn_vw AS 
-	SELECT psn_tbl.*,
-		name.family,
-		name.given,
-		addr.StreetAddressLine, 
-		addr.City, 
-		addr.County, 
-		addr.State, 
-		addr.Censustract, 
-		addr.Country, 
-		addr.PostalCode, 
-		addr.AdditionalLocator
-	FROM psn_tbl
-		LEFT JOIN ent_name_pivot_vw AS name ON (psn_tbl.psn_id = name.ent_id)
-		LEFT JOIN ent_addr_pivot_vw AS addr ON (psn_tbl.psn_id = addr.ent_id);
+DROP MATERIALIZED VIEW IF EXISTS psn_vw;
+CREATE MATERIALIZED VIEW psn_vw AS 
+ SELECT psn_tbl.psn_id,
+    psn_tbl.crt_etl_id,
+    psn_tbl.upd_etl_id,
+    psn_tbl.crt_utc,
+    psn_tbl.upd_utc,
+    psn_tbl.obslt_utc,
+    psn_tbl.sts_cs,
+    psn_tbl.dob,
+    psn_tbl.alt_id,
+    psn_tbl.alt_id_type,
+    psn_tbl.tel,
+    name.family,
+    name.given,
+    addr.streetaddressline,
+    addr.city,
+    addr.county,
+    addr.state,
+    addr.censustract,
+    addr.country,
+    addr.postalcode,
+    addr.additionallocator
+   FROM psn_tbl
+     LEFT JOIN ent_name_pivot_vw name ON psn_tbl.psn_id = name.ent_id
+     LEFT JOIN ent_addr_pivot_vw addr ON psn_tbl.psn_id = addr.ent_id;
+
 -- PATIENT VIEW
-CREATE OR REPLACE VIEW pat_vw AS 
-	SELECT 
-		pat_tbl.pat_id,
-		pat_tbl.gender_mnemonic,
-		psn_vw.*, 
-		mother.family as mth_family,
-		mother.given as mth_given,
-		mother.alt_id as mth_alt_id,
-		mother.alt_id_type as mth_alt_id_type,
-		nok.family as nok_family,
-		nok.given as nok_given,
-		nok.alt_id as nok_alt_id,
-		nok.alt_id_type as nok_alt_id_type,
-		pat_tbl.deceased,
-		asgn.loc_name as fac_name,
-		parent.loc_name as parent_fac_name,
-		parent.fac_id as parent_fac_id
-	FROM
-		pat_tbl
-		INNER JOIN psn_vw USING(psn_id)
-		LEFT JOIN psn_vw AS mother ON (mother.psn_id = pat_tbl.mth_id)
-		LEFT JOIN psn_vw AS nok ON (nok.psn_id = pat_tbl.nok_id)
-		LEFT JOIN FAC_VW AS asgn ON (asgn.fac_id = pat_tbl.asgn_fac_id)
-		LEFT JOIN FAC_VW AS parent ON (asgn.parent_id = parent.fac_id);
+DROP MATERIALIZED VIEW IF EXISTS pat_vw;
+CREATE MATERIALIZED VIEW pat_vw AS 
+ SELECT pat_tbl.pat_id,
+    pat_tbl.gender_mnemonic,
+    psn_vw.psn_id,
+    psn_vw.crt_etl_id,
+    psn_vw.upd_etl_id,
+    psn_vw.crt_utc,
+    psn_vw.upd_utc,
+    psn_vw.obslt_utc,
+    psn_vw.sts_cs,
+    psn_vw.dob,
+    pat_tbl.deceased,
+    psn_vw.alt_id,
+    psn_vw.alt_id_type,
+    psn_vw.tel,
+    psn_vw.family,
+    psn_vw.given,
+    psn_vw.streetaddressline,
+    psn_vw.city,
+    psn_vw.county,
+    psn_vw.state,
+    psn_vw.censustract,
+    psn_vw.country,
+    psn_vw.postalcode,
+    psn_vw.additionallocator,
+    mother.family AS mth_family,
+    mother.given AS mth_given,
+    mother.tel AS mth_tel,
+    mother.alt_id AS mth_alt_id,
+    mother.alt_id_type AS mth_alt_id_type,
+    nok.family AS nok_family,
+    nok.given AS nok_given,
+    nok.tel AS nok_tel,
+    nok.alt_id AS nok_alt_id,
+    nok.alt_id_type AS nok_alt_id_type,
+    pat_tbl.asgn_fac_id AS fac_id,
+    asgn.loc_name AS fac_name,
+    parent.loc_name AS parent_fac_name,
+    parent.fac_id AS parent_fac_id
+   FROM pat_tbl
+     JOIN psn_vw USING (psn_id)
+     LEFT JOIN psn_vw mother ON mother.psn_id = pat_tbl.mth_id
+     LEFT JOIN psn_vw nok ON nok.psn_id = pat_tbl.nok_id
+     LEFT JOIN fac_vw asgn ON asgn.fac_id = pat_tbl.asgn_fac_id
+     LEFT JOIN fac_vw parent ON asgn.parent_id = parent.fac_id;
