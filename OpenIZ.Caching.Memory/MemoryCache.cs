@@ -162,6 +162,7 @@ namespace OpenIZ.Caching.Memory
                 candidate.Update(data as IdentifiedData);
             else
                 lock (this.m_lock)
+                    if(!this.m_entryTable.ContainsKey(idData.Key.Value))
                     this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
         }
 
