@@ -60,7 +60,11 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
             var plan = carePlanner.CreateCarePlan(data as Patient, 
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_asEncounters"] == "true",
                 WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery().ToDictionary(o=>o.Key, o=>(Object)o.Value));
-            
+
+            // Expand the participation roles form the care planner
+            IConceptRepositoryService conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+            foreach (var p in plan.Action)
+                p.Participations.ForEach(o => o.ParticipationRoleKey = o.ParticipationRoleKey ?? conceptService.GetConcept(o.ParticipationRole?.Mnemonic).Key);
             return Bundle.CreateBundle(plan);
 
         }
@@ -76,7 +80,10 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
             var plan = carePlanner.CreateCarePlan(target,
                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters["_asEncounters"] == "true",
                WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery().ToDictionary(o => o.Key, o => (Object)o.Value));
+            IConceptRepositoryService conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
+            foreach (var p in plan.Action)
+                p.Participations.ForEach(o => o.ParticipationRoleKey = o.ParticipationRoleKey ?? conceptService.GetConcept(o.ParticipationRole?.Mnemonic).Key);
             return plan;
 
         }
@@ -119,7 +126,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
                 patients = repositoryService.Find(queryExpr, offset, count, out totalCount);
 
             // Create care plan for the patients
-            return patients.AsParallel().Select(o => carePlanner.CreateCarePlan(o));
+            IConceptRepositoryService conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+            return patients.AsParallel().Select(o => {
+                var plan = carePlanner.CreateCarePlan(o);
+                foreach (var p in plan.Action)
+                    p.Participations.ForEach(x => x.ParticipationRoleKey = x.ParticipationRoleKey ?? conceptService.GetConcept(x.ParticipationRole?.Mnemonic).Key);
+                return plan;
+            });
 
         }
 
