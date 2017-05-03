@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
@@ -57,6 +61,7 @@
     <Compile Include="Configuration\AmiConfigurationSectionHandler.cs" />
     <Compile Include="Configuration\CertificationAuthorityConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wcf\AmiBehavior.Audit.cs" />
     <Compile Include="Wcf\AmiBehavior.ExtensionType.cs" />
     <Compile Include="Wcf\AmiBehavior.CodeSystem.cs" />
     <Compile Include="Wcf\AmiBehavior.AssigningAuthority.cs" />

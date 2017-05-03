@@ -36,6 +36,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
     </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core, Version=2.0.0.39574, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
@@ -84,6 +88,8 @@
     <Compile Include="ResultsDetails\UnrecognizedSenderResultDetail.cs" />
     <Compile Include="ResultsDetails\UnrecognizedTargetDomainResultDetail.cs" />
     <Compile Include="Security\ApplicationPrincipal.cs" />
+    <Compile Include="Security\Audit\AuditDaemonService.cs" />
+    <Compile Include="Security\Audit\AuditUtil.cs" />
     <Compile Include="Security\Claims\PurposeOfUseClaimHandler.cs" />
     <Compile Include="Security\Claims\IClaimTypeHandler.cs" />
     <Compile Include="Security\DefaultTfaRelayService.cs" />

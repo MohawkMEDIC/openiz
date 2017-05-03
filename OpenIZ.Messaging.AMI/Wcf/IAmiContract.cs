@@ -96,6 +96,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	public interface IAmiContract
 	{
+
 		/// <summary>
 		/// Accepts a certificate signing request.
 		/// </summary>
@@ -618,5 +619,15 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the security user.</returns>
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
-	}
+
+        #region Auditing
+
+        /// <summary>
+        /// Create audit in the IMS' audit repository
+        /// </summary>
+        [WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        void CreateAudit(AuditInfo audit);
+        
+        #endregion
+    }
 }

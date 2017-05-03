@@ -641,13 +641,23 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Post<DiagnosticReport, DiagnosticReport>("sherlock", this.Client.Accept, report);
 		}
 
-		/// <summary>
-		/// Updates an alert.
+        /// <summary>
+		/// Submits a diagnostic report.
 		/// </summary>
-		/// <param name="alertId">The id of the alert to be updated.</param>
-		/// <param name="alertMessageInfo">The alert message info containing the updated information.</param>
-		/// <returns>Returns the updated alert.</returns>
-		public AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alertMessageInfo)
+		/// <param name="report">The diagnostic report.</param>
+		/// <returns>Returns the submitted diagnostic report.</returns>
+		public void SubmitAudit(AuditInfo report)
+        {
+            this.Client.Post<AuditInfo, object>("audit", this.Client.Accept, report);
+        }
+
+        /// <summary>
+        /// Updates an alert.
+        /// </summary>
+        /// <param name="alertId">The id of the alert to be updated.</param>
+        /// <param name="alertMessageInfo">The alert message info containing the updated information.</param>
+        /// <returns>Returns the updated alert.</returns>
+        public AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alertMessageInfo)
 		{
 			return this.Client.Put<AlertMessageInfo, AlertMessageInfo>($"alert/{alertId}", this.Client.Accept, alertMessageInfo);
 		}
