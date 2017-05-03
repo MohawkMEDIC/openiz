@@ -58,6 +58,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(SecurityRole))]
 	[ServiceKnownType(typeof(SecurityRoleInfo))]
 	[ServiceKnownType(typeof(SecurityUser))]
+	[ServiceKnownType(typeof(AuditInfo))]
 	[ServiceKnownType(typeof(SecurityUserInfo))]
 	[ServiceKnownType(typeof(AppletManifest))]
 	[ServiceKnownType(typeof(AppletManifestInfo))]
