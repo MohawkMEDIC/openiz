@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
@@ -74,7 +75,7 @@ namespace OpenIZ.BusinessRules.JavaScript.Test
             QuantityObservation qobs = new QuantityObservation()
             {
                 Value = (Decimal)2.3,
-                Participations = new Core.Model.Collection.VersionedAssociationCollection<ActParticipation>()
+                Participations = new List<ActParticipation>()
                 {
                     new ActParticipation()
                     {

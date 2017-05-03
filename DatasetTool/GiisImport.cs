@@ -316,7 +316,7 @@ namespace OizDevTool
                         ActTime = o.VaccinationDate,
                         StatusConceptKey = StatusKeys.Completed,
                         DoseQuantity = 1,
-                        Identifiers = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<ActIdentifier>()
+                        Identifiers = new List<ActIdentifier>()
                 {
                     new ActIdentifier(new AssigningAuthority("GIIS_VACC", "GIIS Vaccination Events", "1.3.6.1.4.1.<<YOUR.PEN>>.5"), o.Id.ToString())
                 },
@@ -327,7 +327,7 @@ namespace OizDevTool
                         TypeConceptKey = Guid.Parse("6e7a3521-2967-4c0a-80ec-6c5c197b2178"),
                         RouteKey = NullReasonKeys.NoInformation,
                         DoseUnitKey = Guid.Parse("A77B8D83-1CC9-4806-A268-5D1738154AFA"),
-                        Participations = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<ActParticipation>()
+                        Participations = new List<ActParticipation>()
                 {
                     new ActParticipation(ActParticipationKey.Location, facilityMap[o.HealthFacilityId]),
                     new ActParticipation(ActParticipationKey.RecordTarget, patient.Key.Value),
@@ -361,7 +361,7 @@ namespace OizDevTool
                 TypeConceptKey = Guid.Parse("a261f8cd-69b0-49aa-91f4-e6d3e5c612ed"),
                 Value = (decimal)o.Weight,
                 UnitOfMeasureKey = Guid.Parse("a0a8d4db-db72-4bc7-9b8c-c07cef7bc796"),
-                Participations = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<ActParticipation>()
+                Participations = new List<ActParticipation>()
                 {
                     new ActParticipation(ActParticipationKey.RecordTarget, patient.Key.Value),
                     userEntityMap[o.ModifiedBy] != Guid.Empty ? new ActParticipation(ActParticipationKey.Authororiginator, userEntityMap[o.ModifiedBy]) : null

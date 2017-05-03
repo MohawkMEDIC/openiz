@@ -131,42 +131,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             if (data.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, Data.ActExtension>(
-                    data.Extensions.GetLocked(),
+                    data.Extensions,
                     retVal,
                     context, 
                     principal);
 
             if (data.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, Data.ActIdentifier>(
-                    data.Identifiers.GetLocked(),
+                    data.Identifiers,
                     retVal,
                     context, 
                     principal);
 
             if (data.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, Data.ActNote>(
-                    data.Notes.GetLocked(),
+                    data.Notes,
                     retVal,
                     context, 
                     principal);
 
             if (data.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, Data.ActParticipation>(
-                    data.Participations.GetLocked(),
+                    data.Participations,
                     retVal,
                     context, 
                     principal);
 
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, Data.ActRelationship>(
-                    data.Relationships.GetLocked(),
+                    data.Relationships,
                     retVal,
                     context, 
                     principal);
 
             if (data.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, Data.ActTag>(
-                    data.Tags.GetLocked(),
+                    data.Tags,
                     retVal,
                     context, 
                     principal);
@@ -195,42 +195,42 @@ namespace OpenIZ.Persistence.Data.MSSQL.Services.Persistence
 
             if (data.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, Data.ActExtension>(
-                    data.Extensions.GetLocked(),
+                    data.Extensions,
                     retVal,
                     context,
                     principal);
 
             if (data.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, Data.ActIdentifier>(
-                    data.Identifiers.GetLocked(),
+                    data.Identifiers,
                     retVal,
                     context,
                     principal);
 
             if (data.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, Data.ActNote>(
-                    data.Notes.GetLocked(),
+                    data.Notes,
                     retVal,
                     context,
                     principal);
 
             if (data.Participations != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, Data.ActParticipation>(
-                    data.Participations.GetLocked(),
+                    data.Participations,
                     retVal,
                     context,
                     principal);
 
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, Data.ActRelationship>(
-                    data.Relationships.GetLocked(),
+                    data.Relationships,
                     retVal,
                     context,
                     principal);
 
             if (data.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, Data.ActTag>(
-                    data.Tags.GetLocked(),
+                    data.Tags,
                     retVal,
                     context,
                     principal);

@@ -35,7 +35,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
             if (auditRepositoryService != null)
                 audit.Audit = auditRepositoryService.Insert(audit.Audit);
 
-            WebOperationContext.Current.OutgoingResponse.SetStatusAsCreated(new Uri(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri, $"/audit/{audit.Audit.CorrelationToken}"));
+            WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
 
         }
     }

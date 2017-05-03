@@ -22043,8 +22043,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22063,8 +22063,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22083,8 +22083,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22103,8 +22103,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22123,8 +22123,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22143,8 +22143,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22163,8 +22163,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22183,8 +22183,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -22385,7 +22385,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -22393,7 +22393,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -22401,7 +22401,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -22409,7 +22409,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -22417,7 +22417,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -22425,7 +22425,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -22433,7 +22433,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -22441,7 +22441,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }
@@ -23837,8 +23837,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -23857,8 +23857,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -23877,8 +23877,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -23897,8 +23897,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -23917,8 +23917,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -23937,8 +23937,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -23957,8 +23957,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -23977,8 +23977,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24179,7 +24179,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -24187,7 +24187,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -24195,7 +24195,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -24203,7 +24203,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -24211,7 +24211,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -24219,7 +24219,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -24227,7 +24227,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -24235,7 +24235,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }
@@ -24679,8 +24679,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24699,8 +24699,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24719,8 +24719,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24739,8 +24739,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24759,8 +24759,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24779,8 +24779,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24799,8 +24799,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -24819,8 +24819,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25021,7 +25021,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -25029,7 +25029,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -25037,7 +25037,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -25045,7 +25045,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -25053,7 +25053,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -25061,7 +25061,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -25069,7 +25069,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -25077,7 +25077,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }
@@ -25572,8 +25572,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25592,8 +25592,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25612,8 +25612,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25632,8 +25632,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25652,8 +25652,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25672,8 +25672,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25692,8 +25692,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25712,8 +25712,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -25914,7 +25914,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -25922,7 +25922,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -25930,7 +25930,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -25938,7 +25938,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -25946,7 +25946,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -25954,7 +25954,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -25962,7 +25962,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -25970,7 +25970,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }
@@ -26466,8 +26466,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26486,8 +26486,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26506,8 +26506,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26526,8 +26526,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26546,8 +26546,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26566,8 +26566,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26586,8 +26586,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26606,8 +26606,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -26808,7 +26808,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -26816,7 +26816,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -26824,7 +26824,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -26832,7 +26832,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -26840,7 +26840,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -26848,7 +26848,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -26856,7 +26856,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -26864,7 +26864,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }
@@ -27361,8 +27361,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27381,8 +27381,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27401,8 +27401,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27421,8 +27421,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27441,8 +27441,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27461,8 +27461,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27481,8 +27481,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27501,8 +27501,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -27703,7 +27703,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -27711,7 +27711,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -27719,7 +27719,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -27727,7 +27727,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -27735,7 +27735,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -27743,7 +27743,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -27751,7 +27751,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -27759,7 +27759,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }
@@ -28239,8 +28239,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28259,8 +28259,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28279,8 +28279,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28299,8 +28299,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28319,8 +28319,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28339,8 +28339,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28359,8 +28359,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28379,8 +28379,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -28581,7 +28581,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -28589,7 +28589,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -28597,7 +28597,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -28605,7 +28605,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -28613,7 +28613,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -28621,7 +28621,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -28629,7 +28629,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -28637,7 +28637,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }
@@ -29420,8 +29420,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Identifiers == null) 
                             || (_strong.Identifiers.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("identifier", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>(_strong.Key.Value));
                         _strong.Identifiers = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29440,8 +29440,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Relationships == null) 
                             || (_strong.Relationships.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("relationship", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActRelationship>(_strong.Key.Value));
                         _strong.Relationships = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29460,8 +29460,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Policies == null) 
                             || (_strong.Policies.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("policy", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>(_strong.Key.Value));
                         _strong.Policies = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29480,8 +29480,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Extensions == null) 
                             || (_strong.Extensions.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("extension", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActExtension>(_strong.Key.Value));
                         _strong.Extensions = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29500,8 +29500,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Notes == null) 
                             || (_strong.Notes.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("note", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActNote>(_strong.Key.Value));
                         _strong.Notes = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29520,8 +29520,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Tags == null) 
                             || (_strong.Tags.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("tag", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.DataTypes.ActTag>(_strong.Key.Value));
                         _strong.Tags = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29540,8 +29540,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Protocols == null) 
                             || (_strong.Protocols.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("protocol", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActProtocol>(_strong.Key.Value));
                         _strong.Protocols = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29560,8 +29560,8 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                 if (((_strong.Participations == null) 
                             || (_strong.Participations.Count == 0))) {
                     if ((_strong.Key.HasValue && context.ShouldForceLoad("participation", _strong.Key.Value))) {
-                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
-                        _delay = new OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
+                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _delay = null;
+                        _delay = new System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>(context.JsonContext.LoadCollection<OpenIZ.Core.Model.Acts.ActParticipation>(_strong.Key.Value));
                         _strong.Participations = _delay;
                         if ((_delay.Count > 0)) {
                             _loaded = true;
@@ -29762,7 +29762,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                 else {
                                                                     if ("participation".Equals(r.Value)) {
                                                                         r.Read();
-                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
+                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActParticipation>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("participation", context.JsonContext, _retVal, context))));
                                                                         if ((_instance != null)) {
                                                                             _retVal.Participations = _instance;
                                                                         }
@@ -29770,7 +29770,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                     else {
                                                                         if ("protocol".Equals(r.Value)) {
                                                                             r.Read();
-                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
+                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActProtocol>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("protocol", context.JsonContext, _retVal, context))));
                                                                             if ((_instance != null)) {
                                                                                 _retVal.Protocols = _instance;
                                                                             }
@@ -29778,7 +29778,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                         else {
                                                                             if ("tag".Equals(r.Value)) {
                                                                                 r.Read();
-                                                                                OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
+                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActTag>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("tag", context.JsonContext, _retVal, context))));
                                                                                 if ((_instance != null)) {
                                                                                     _retVal.Tags = _instance;
                                                                                 }
@@ -29786,7 +29786,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                             else {
                                                                                 if ("note".Equals(r.Value)) {
                                                                                     r.Read();
-                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
+                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActNote>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("note", context.JsonContext, _retVal, context))));
                                                                                     if ((_instance != null)) {
                                                                                         _retVal.Notes = _instance;
                                                                                     }
@@ -29794,7 +29794,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                 else {
                                                                                     if ("extension".Equals(r.Value)) {
                                                                                         r.Read();
-                                                                                        OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
+                                                                                        System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActExtension>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("extension", context.JsonContext, _retVal, context))));
                                                                                         if ((_instance != null)) {
                                                                                             _retVal.Extensions = _instance;
                                                                                         }
@@ -29802,7 +29802,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                     else {
                                                                                         if ("policy".Equals(r.Value)) {
                                                                                             r.Read();
-                                                                                            OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.SimpleAssociationCollection<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
+                                                                                            System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Security.SecurityPolicyInstance>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("policy", context.JsonContext, _retVal, context))));
                                                                                             if ((_instance != null)) {
                                                                                                 _retVal.Policies = _instance;
                                                                                             }
@@ -29810,7 +29810,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                         else {
                                                                                             if ("relationship".Equals(r.Value)) {
                                                                                                 r.Read();
-                                                                                                OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
+                                                                                                System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.Acts.ActRelationship>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("relationship", context.JsonContext, _retVal, context))));
                                                                                                 if ((_instance != null)) {
                                                                                                     _retVal.Relationships = _instance;
                                                                                                 }
@@ -29818,7 +29818,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                                                                                             else {
                                                                                                 if ("identifier".Equals(r.Value)) {
                                                                                                     r.Read();
-                                                                                                    OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(OpenIZ.Core.Model.Collection.VersionedAssociationCollection<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
+                                                                                                    System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier> _instance = ((System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>)(context.JsonContext.ReadElementUtil(r, typeof(System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.ActIdentifier>), new OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext("identifier", context.JsonContext, _retVal, context))));
                                                                                                     if ((_instance != null)) {
                                                                                                         _retVal.Identifiers = _instance;
                                                                                                     }

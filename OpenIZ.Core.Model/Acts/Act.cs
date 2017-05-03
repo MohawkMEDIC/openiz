@@ -65,14 +65,14 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         public Act()
         {
-            this.Relationships = new VersionedAssociationCollection<ActRelationship>(this);
-            this.Identifiers = new VersionedAssociationCollection<ActIdentifier>(this);
-            this.Extensions = new VersionedAssociationCollection<ActExtension>(this);
-            this.Notes = new VersionedAssociationCollection<ActNote>(this);
-            this.Participations = new VersionedAssociationCollection<ActParticipation>(this);
-            this.Tags = new SimpleAssociationCollection<ActTag>(this);
-            this.Protocols = new SimpleAssociationCollection<ActProtocol>();
-            this.Policies = new SimpleAssociationCollection<SecurityPolicyInstance>();
+            this.Relationships = new List<ActRelationship>();
+            this.Identifiers = new List<ActIdentifier>();
+            this.Extensions = new List<ActExtension>();
+            this.Notes = new List<ActNote>();
+            this.Participations = new List<ActParticipation>();
+            this.Tags = new List<ActTag>();
+            this.Protocols = new List<ActProtocol>();
+            this.Policies = new List<SecurityPolicyInstance>();
 
         }
         /// <summary>
@@ -383,46 +383,46 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets the identifiers associated with this act
         /// </summary>
         [AutoLoad, XmlElement("identifier"), JsonProperty("identifier")]
-        public VersionedAssociationCollection<ActIdentifier> Identifiers { get; set; }
+        public List<ActIdentifier> Identifiers { get; set; }
 
         /// <summary>
         /// Gets a list of all associated acts for this act
         /// </summary>
         [AutoLoad, XmlElement("relationship"), JsonProperty("relationship")]
-        public VersionedAssociationCollection<ActRelationship> Relationships { get; set; }
+        public List<ActRelationship> Relationships { get; set; }
 
         /// <summary>
         /// Gets or sets the policy instances
         /// </summary>
         [XmlElement("policy"), JsonProperty("policy")]
-        public SimpleAssociationCollection<SecurityPolicyInstance> Policies { get; set; }
+        public List<SecurityPolicyInstance> Policies { get; set; }
 
         /// <summary>
         /// Gets a list of all extensions associated with the act
         /// </summary>
 
         [AutoLoad, XmlElement("extension"), JsonProperty("extension")]
-        public VersionedAssociationCollection<ActExtension> Extensions { get; set; }
+        public List<ActExtension> Extensions { get; set; }
 
         /// <summary>
         /// Gets a list of all notes associated with the act
         /// </summary>
 
         [AutoLoad, XmlElement("note"), JsonProperty("note")]
-        public VersionedAssociationCollection<ActNote> Notes { get; set; }
+        public List<ActNote> Notes { get; set; }
 
         /// <summary>
         /// Gets a list of all tags associated with the act
         /// </summary>
 
         [AutoLoad, XmlElement("tag"), JsonProperty("tag")]
-        public SimpleAssociationCollection<ActTag> Tags { get; set; }
+        public List<ActTag> Tags { get; set; }
 
         /// <summary>
         /// Identifies protocols attached to the act
         /// </summary>
         [AutoLoad, XmlElement("protocol"), JsonProperty("protocol")]
-        public SimpleAssociationCollection<ActProtocol> Protocols
+        public List<ActProtocol> Protocols
         {
             get;
             set;
@@ -433,7 +433,7 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlElement("participation"), JsonProperty("participation")]
         [AutoLoad]
-        public VersionedAssociationCollection<ActParticipation> Participations { get; set; }
+        public List<ActParticipation> Participations { get; set; }
 
         /// <summary>
         /// Forces the delay load properties in this type to reload
