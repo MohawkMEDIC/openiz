@@ -105,12 +105,14 @@ namespace OpenIZ.Core.Security.Tfa.Twilio
 			try
 			{
 				var client = new TW.TwilioRestClient(this.m_configuration.Sid, this.m_configuration.Auth);
-				client.SendMessage(this.m_configuration.From, toNumber, String.Format(Strings.default_body, tfaSecret));
+				var response = client.SendMessage(this.m_configuration.From, toNumber, String.Format(Strings.default_body, tfaSecret));
+
+				if (response.RestException != null)
+					throw new Exception(response.RestException.Message ?? "" + " " + (response.RestException.Code ?? "") + " " + (response.RestException.MoreInfo ?? "") + " " + (response.RestException.Status ?? ""));
 			}
 			catch (Exception ex)
 			{
 				this.m_tracer.TraceEvent(TraceEventType.Error, ex.HResult, "Error sending SMS: {0}", ex);
-				throw;
 			}
 		}
 	}
