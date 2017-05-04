@@ -21,5 +21,10 @@ namespace OpenIZ.Core.Wcf
         /// Service URL
         /// </summary>
         String[] Url { get; }
+
+        /// <summary>
+        /// Capabilities
+        /// </summary>
+        ServiceEndpointCapabilities Capabilities { get; }
     }
 }

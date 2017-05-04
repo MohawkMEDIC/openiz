@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Interop
@@ -20,7 +21,34 @@ namespace OpenIZ.Core.Interop
         [XmlEnum("fhir")]
         Hl7FhirInterface,
         [XmlEnum("gs1")]
-        Gs1StockInterface
+        Gs1StockInterface,
+        [XmlEnum("acs")]
+        AuthenticationService
+    }
+
+    /// <summary>
+    /// Represents service capabilities
+    /// </summary>
+    [XmlType(nameof(ServiceEndpointCapabilities), Namespace = "http://openiz.org/model"), Flags]
+    public enum ServiceEndpointCapabilities
+    {
+        [XmlEnum("none")]
+        None,
+        /// <summary>
+        /// Basic auth
+        /// </summary>
+        [XmlEnum("basic")]
+        BasicAuth,
+        /// <summary>
+        /// Bearer auth
+        /// </summary>
+        [XmlEnum("bearer")]
+        BearerAuth,
+        /// <summary>
+        /// Endpoint supports compression
+        /// </summary>
+        [XmlEnum("compress")]
+        Compression
     }
 
     /// <summary>
@@ -34,6 +62,12 @@ namespace OpenIZ.Core.Interop
         /// </summary>
         [XmlAttribute("type"), JsonProperty("type")]
         public ServiceEndpointType ServiceType { get; set; }
+
+        /// <summary>
+        /// Capabilities
+        /// </summary>
+        [XmlAttribute("cap"), JsonProperty("cap")]
+        public ServiceEndpointCapabilities Capabilities { get; set; }
 
         /// <summary>
         /// Base URL type

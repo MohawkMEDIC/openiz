@@ -33,6 +33,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using OpenIZ.Core.Interop;
 using System.Linq;
+using OpenIZ.Core.Wcf.Security;
 
 namespace OpenIZ.Messaging.AMI
 {
@@ -104,6 +105,23 @@ namespace OpenIZ.Messaging.AMI
             get
             {
                 return this.m_webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Capabilities
+        /// </summary>
+        public ServiceEndpointCapabilities Capabilities
+        {
+            get
+            {
+                var caps = ServiceEndpointCapabilities.None;
+                if (this.m_webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication != null))
+                    caps |= ServiceEndpointCapabilities.BasicAuth;
+                if (this.m_webHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
+                    caps |= ServiceEndpointCapabilities.BearerAuth;
+
+                return caps;
             }
         }
 

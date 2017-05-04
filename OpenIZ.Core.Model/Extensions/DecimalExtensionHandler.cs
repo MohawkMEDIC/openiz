@@ -52,7 +52,7 @@ namespace OpenIZ.Core.Extensions
 		        return default(decimal);
 	        }
 
-            byte[] edata = new byte[extensionData.Length];
+            byte[] edata = new byte[16];
             if (extensionData.Length == 16)
                 edata = extensionData;
             else

@@ -19,6 +19,8 @@
  */
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Authentication.OAuth2.Wcf;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Wcf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -32,7 +34,7 @@ namespace OpenIZ.Authentication.OAuth2
     /// <summary>
     /// OAuth2 message handler
     /// </summary>
-    public class OAuthMessageHandler : IMessageHandlerService
+    public class OAuthMessageHandler : IMessageHandlerService, IApiEndpointProvider
     {
 
         // Trace source
@@ -50,6 +52,29 @@ namespace OpenIZ.Authentication.OAuth2
             {
                 return this.m_serviceHost != null &&
                     this.m_serviceHost.State == System.ServiceModel.CommunicationState.Opened;
+            }
+        }
+
+        /// <summary>
+        /// API type
+        /// </summary>
+        public ServiceEndpointType ApiType
+        {
+            get
+            {
+                return ServiceEndpointType.AuthenticationService;
+            }
+        }
+        
+
+        /// <summary>
+        /// Access control
+        /// </summary>
+        public string[] Url
+        {
+            get
+            {
+                return this.m_serviceHost.Description.Endpoints.Select(o => o.Address.Uri.ToString()).ToArray();
             }
         }
 
