@@ -141,6 +141,7 @@
     <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\GzipCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\ICompressionScheme.cs" />
+    <Compile Include="Wcf\IApiEndpointProvider.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />
     <Compile Include="Wcf\Security\JwtTokenAuthorizationPolicy.cs" />

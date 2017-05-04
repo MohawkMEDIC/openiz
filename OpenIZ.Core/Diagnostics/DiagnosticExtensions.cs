@@ -27,6 +27,11 @@ namespace OpenIZ.Core.Diagnostics
         /// Trace error
         /// </summary>
         public static void TraceInfo(this TraceSource me, String format, params object[] args) => me.TraceEvent(TraceEventType.Information, 0, format, args);
+        
+        /// <summary>
+        /// Trace error
+        /// </summary>
+        public static void TraceVerbose(this TraceSource me, String format, params object[] args) => me.TraceEvent(TraceEventType.Verbose, 0, format, args);
 
     }
 }

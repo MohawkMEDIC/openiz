@@ -299,8 +299,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 var cacheItem = cacheService?.GetCacheItem<TModel>(idData?.Key ?? Guid.Empty);
                 if (cacheItem != null)
                 {
-                    if (cacheItem.LoadState < LoadState.FullLoad)
+                    if (cacheItem.LoadState < context.LoadSate)
+                    {
                         cacheItem.LoadAssociations(context, principal);
+                        cacheService?.Add(cacheItem);
+                    }
                     return cacheItem;
                 }
                 else

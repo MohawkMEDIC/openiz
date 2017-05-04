@@ -52,6 +52,11 @@ namespace OpenIZ.OrmLite
         public IDbConnection Connection { get { return this.m_connection; } }
 
         /// <summary>
+        /// Load state
+        /// </summary>
+        public LoadState LoadSate { get; set; }
+
+        /// <summary>
         /// Data dictionary
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
@@ -169,7 +174,7 @@ namespace OpenIZ.OrmLite
             retVal.Open();
             retVal.m_dataDictionary = this.m_dataDictionary; // share data
             retVal.m_cachedQuery = this.m_cachedQuery;
-            
+            retVal.LoadSate = this.LoadSate;
             //retVal.PrepareStatements = this.PrepareStatements;
             return retVal;
         }

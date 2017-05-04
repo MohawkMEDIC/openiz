@@ -130,9 +130,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             var cacheItem = cacheService?.GetCacheItem<TData>(key);
             if (cacheItem != null)
             {
-                if (cacheItem.LoadState < LoadState.FullLoad)
+                if (cacheItem.LoadState < context.LoadSate)
+                {
                     cacheItem.LoadAssociations(context, principal);
-                return cacheItem;
+                    cacheService?.Add(cacheItem);
+                }
+                    return cacheItem;
             }
             else
             {
@@ -319,7 +322,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         {
                             tx.Commit();
                             foreach (var itm in connection.CacheOnCommit)
-                                ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(itm.GetType(), itm.Key.Value);
+                                ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(itm.Key.Value);
                         }
                         else
                             tx.Rollback();
@@ -382,7 +385,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
 
                         if (loadFast)
+                        {
                             connection.AddData("loadFast", true);
+                            connection.LoadSate = LoadState.PartialLoad;
+                        }
+                        else
+                            connection.LoadSate = LoadState.FullLoad;
 
                         var result = this.Get(connection, guidIdentifier.Id, principal);
                         var postData = new PostRetrievalEventArgs<TData>(result, principal);
@@ -475,7 +483,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     if ((count ?? 1000) > 25)
                         connection.PrepareStatements = true;
                     if (fastQuery)
+                    {
                         connection.AddData("loadFast", true);
+                        connection.LoadSate = LoadState.PartialLoad;
+                    }
+                    else
+                        connection.LoadSate = LoadState.FullLoad;
 
                     var results = this.Query(connection, query, queryId, offset, count ?? 1000, out totalCount, true, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
@@ -486,8 +499,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     // Add to cache
                     foreach (var i in retVal.Where(i => i != null))
                         connection.AddCacheCommit(i);
-                    foreach (var itm in connection.CacheOnCommit)
-                        ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o =>
+                    {
+                        foreach (var itm in (o as IEnumerable<IdentifiedData>))
+                            ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+                    }, connection.CacheOnCommit.ToList());
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Returning {0}..{1} or {2} results", offset, offset + (count ?? 1000), totalCount);
 

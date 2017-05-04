@@ -22,8 +22,8 @@ namespace OpenIZ.Caching.Redis.Configuration
             return new RedisConfiguration()
             {
                 Servers = section.SelectNodes("./server/add").OfType<XmlElement>().Select(o=>String.Format("{0}:{1}", o.Attributes["host"]?.Value ?? "localhost", o.Attributes["port"]?.Value ?? "6379")).ToList(),
-                UserName = section.SelectSingleNode("./authentication@userName")?.Value,
-                Password = section.SelectSingleNode("./authentication@password")?.Value
+                UserName = section.SelectSingleNode("./authentication/@userName")?.Value,
+                Password = section.SelectSingleNode("./authentication/@password")?.Value
             };
         }
     }

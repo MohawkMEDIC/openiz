@@ -20,6 +20,7 @@
 
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Wcf;
 using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Messaging.AMI.Configuration;
 using OpenIZ.Messaging.AMI.Wcf;
@@ -30,13 +31,15 @@ using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
+using OpenIZ.Core.Interop;
+using System.Linq;
 
 namespace OpenIZ.Messaging.AMI
 {
 	/// <summary>
 	/// AMI Message handler
 	/// </summary>
-	public class AmiMessageHandler : IDaemonService
+	public class AmiMessageHandler : IDaemonService, IApiEndpointProvider
 	{
 		/// <summary>
 		/// The internal reference to the trace source.
@@ -82,10 +85,32 @@ namespace OpenIZ.Messaging.AMI
 			}
 		}
 
-		/// <summary>
-		/// Start the service
-		/// </summary>
-		public bool Start()
+        /// <summary>
+        /// Gets the API type
+        /// </summary>
+        public ServiceEndpointType ApiType
+        {
+            get
+            {
+                return ServiceEndpointType.AdministrationIntegrationService;
+            }
+        }
+
+        /// <summary>
+        /// URL of the service
+        /// </summary>
+        public string[] Url
+        {
+            get
+            {
+                return this.m_webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Start the service
+        /// </summary>
+        public bool Start()
 		{
 			try
 			{

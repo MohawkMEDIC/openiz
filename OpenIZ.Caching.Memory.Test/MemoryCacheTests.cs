@@ -48,7 +48,7 @@ namespace OpenIZ.Caching.Memory.Test
             MemoryCache.Current.AddUpdateEntry(new AssigningAuthority("SOMENEW", "SOMENEW", "SOMENEW") { Key = knownKey });
             // Ensure added
             Assert.AreEqual(101, MemoryCache.Current.GetSize(typeof(AssigningAuthority)));
-            Assert.IsNotNull(MemoryCache.Current.TryGetEntry(typeof(AssigningAuthority), knownKey));
+            Assert.IsNotNull(MemoryCache.Current.TryGetEntry(knownKey));
 
             // Now reduce pressure, should *not* reduce the size of the cache as not enough time has passed
             MemoryCache.Current.ReducePressure();
@@ -81,7 +81,7 @@ namespace OpenIZ.Caching.Memory.Test
             MemoryCache.Current.AddUpdateEntry(new CodeSystem("SOMENEW", "SOMENEW", "SOMENEW") { Key = knownKey });
             // Ensure added
             Assert.AreEqual(51, MemoryCache.Current.GetSize(typeof(CodeSystem)));
-            Assert.IsNotNull(MemoryCache.Current.TryGetEntry(typeof(CodeSystem), knownKey));
+            Assert.IsNotNull(MemoryCache.Current.TryGetEntry(knownKey));
 
             // Try to clean, shouldn't do anything everything still valid
             MemoryCache.Current.Clean();

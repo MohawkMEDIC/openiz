@@ -19,6 +19,8 @@
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Wcf;
 using OpenIZ.Messaging.IMSI.Configuration;
 using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Messaging.IMSI.Wcf;
@@ -61,7 +63,7 @@ namespace OpenIZ.Messaging.IMSI
     /// <summary>
     /// The IMSI Message Handler Daemon class
     /// </summary>
-    public class ImsiMessageHandler : IMessageHandlerService
+    public class ImsiMessageHandler : IMessageHandlerService, IApiEndpointProvider
     {
 
         // IMSI Trace host
@@ -100,6 +102,29 @@ namespace OpenIZ.Messaging.IMSI
         /// Fired when the service is stopping
         /// </summary>
         public event EventHandler Stopping;
+
+
+        /// <summary>
+        /// Gets the API type
+        /// </summary>
+        public ServiceEndpointType ApiType
+        {
+            get
+            {
+                return ServiceEndpointType.ImmunizationIntegrationService;
+            }
+        }
+
+        /// <summary>
+        /// URL of the service
+        /// </summary>
+        public string[] Url
+        {
+            get
+            {
+                return this.m_webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
+            }
+        }
 
         /// <summary>
         /// Start the service

@@ -20,11 +20,15 @@
 
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Wcf;
 using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Messaging.RISI.Wcf;
 using OpenIZ.Messaging.RISI.Wcf.Behavior;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 
 namespace OpenIZ.Messaging.RISI
@@ -32,7 +36,7 @@ namespace OpenIZ.Messaging.RISI
 	/// <summary>
 	/// Represents a message handler for reporting services.
 	/// </summary>
-	public class RisiMessageHandler : IDaemonService
+	public class RisiMessageHandler : IDaemonService, IApiEndpointProvider
 	{
 		/// <summary>
 		/// The internal reference to the trace source.
@@ -69,11 +73,34 @@ namespace OpenIZ.Messaging.RISI
 		/// </summary>
 		public bool IsRunning => this.webHost?.State == System.ServiceModel.CommunicationState.Opened;
 
-		/// <summary>
-		/// Starts the service. Returns true if the service started successfully.
-		/// </summary>
-		/// <returns>Returns true if the service started successfully.</returns>
-		public bool Start()
+
+        /// <summary>
+        /// Gets the API type
+        /// </summary>
+        public ServiceEndpointType ApiType
+        {
+            get
+            {
+                return ServiceEndpointType.ReportIntegrationService;
+            }
+        }
+
+        /// <summary>
+        /// URL of the service
+        /// </summary>
+        public string[] Url
+        {
+            get
+            {
+                return this.webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Starts the service. Returns true if the service started successfully.
+        /// </summary>
+        /// <returns>Returns true if the service started successfully.</returns>
+        public bool Start()
 		{
 			try
 			{

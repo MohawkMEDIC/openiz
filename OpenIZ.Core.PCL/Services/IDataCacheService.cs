@@ -70,7 +70,7 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Gets the specified cache item
 		/// </summary>
-		object GetCacheItem(Type tdata, Guid key);
+		object GetCacheItem(Guid key);
 
 		/// <summary>
 		/// Adds the specified item to the cache
@@ -80,6 +80,6 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Removes an object from the cache
 		/// </summary>
-		void Remove(Type tdata, Guid key);
+		void Remove(Guid key);
 	}
 }

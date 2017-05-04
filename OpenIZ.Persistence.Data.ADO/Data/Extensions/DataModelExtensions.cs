@@ -265,7 +265,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         public static void LoadAssociations<TModel>(this TModel me, DataContext context, IPrincipal principal, params String[] loadProperties) where TModel : IIdentifiedEntity
         {
             // I duz not haz a chzbrgr?
-            if (me == null || me.LoadState == LoadState.FullLoad)
+            if (me == null || me.LoadState >= context.LoadSate)
                 return;
             else if (context.Transaction != null) // kk.. I haz a transaction
                 return;

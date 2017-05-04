@@ -71,6 +71,7 @@
     <Compile Include="Http\XmlBodySerializer.cs" />
     <Compile Include="Interfaces\ISecurityAuditEventSource.cs" />
     <Compile Include="Interop\ServiceClientBase.cs" />
+    <Compile Include="Interop\ServiceEndpointOptions.cs" />
     <Compile Include="Interop\ServiceOptions.cs" />
     <Compile Include="Interop\ServiceResourceOptions.cs" />
     <Compile Include="Patch\SimplePatchService.cs" />

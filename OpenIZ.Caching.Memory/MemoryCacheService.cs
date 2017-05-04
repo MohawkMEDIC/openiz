@@ -108,7 +108,7 @@ namespace OpenIZ.Caching.Memory
             // handles when a item is being mapped
             this.m_mappingHandler = (o, e) =>
             {
-                var cacheItem = MemoryCache.Current.TryGetEntry(e.ObjectType, e.Key);
+                var cacheItem = MemoryCache.Current.TryGetEntry(e.Key);
                 if (cacheItem != null)
                 {
                     e.ModelObject = cacheItem as IdentifiedData;
@@ -150,31 +150,83 @@ namespace OpenIZ.Caching.Memory
         private void EnsureCacheConsistency(DataCacheEventArgs e)
         {
 
-            // Relationships should always be clean of source/target so the source/target will load the new relationship
+            //// Relationships should always be clean of source/target so the source/target will load the new relationship
             if (e.Object is ActParticipation)
             {
                 var ptcpt = (e.Object as ActParticipation);
-                MemoryCache.Current.RemoveObject(ptcpt.SourceEntity?.GetType() ?? typeof(Act), ptcpt.SourceEntityKey);
-                MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
+                var sourceEntity = MemoryCache.Current.TryGetEntry(ptcpt.SourceEntityKey) as Act;
+                var targetEntity = MemoryCache.Current.TryGetEntry(ptcpt.PlayerEntityKey) as Entity;
+
+                if (sourceEntity != null) // search and replace
+                {
+                    var idx = sourceEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
+                        o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
+                    if (idx != null)
+                        sourceEntity.Participations.Remove(idx);
+                    sourceEntity.Participations.Add(ptcpt);
+                }
+                if (targetEntity != null)
+                {
+                    var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
+                        o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
+                    if (idx != null)
+                        targetEntity.Participations.Remove(idx);
+                    targetEntity.Participations.Add(ptcpt);
+                }
+                //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
             }
             else if (e.Object is ActRelationship)
             {
                 var rel = (e.Object as ActRelationship);
-                MemoryCache.Current.RemoveObject(rel.SourceEntity?.GetType() ?? typeof(Act), rel.SourceEntityKey);
-                MemoryCache.Current.RemoveObject(rel.TargetAct?.GetType() ?? typeof(Act), rel.TargetActKey);
+                var sourceEntity = MemoryCache.Current.TryGetEntry(rel.SourceEntityKey) as Act;
+                var targetEntity = MemoryCache.Current.TryGetEntry(rel.TargetActKey) as Act;
+
+                if (sourceEntity != null) // search and replace
+                {
+                    var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                        o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
+                    if (idx != null)
+                        sourceEntity.Relationships.Remove(idx);
+                    sourceEntity.Relationships.Add(rel);
+                }
+                if (targetEntity != null)
+                {
+                    var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                        o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
+                    if (idx != null)
+                        targetEntity.Relationships.Remove(idx);
+                    targetEntity.Relationships.Add(rel);
+                }
             }
             else if (e.Object is EntityRelationship)
             {
                 var rel = (e.Object as EntityRelationship);
-                MemoryCache.Current.RemoveObject(rel.SourceEntity?.GetType() ?? typeof(Entity), rel.SourceEntityKey);
-                MemoryCache.Current.RemoveObject(rel.TargetEntity?.GetType() ?? typeof(Entity), rel.TargetEntityKey);
+                var sourceEntity = MemoryCache.Current.TryGetEntry(rel.SourceEntityKey) as Entity;
+                var targetEntity = MemoryCache.Current.TryGetEntry(rel.TargetEntityKey) as Entity;
+
+                if (sourceEntity != null) // search and replace
+                {
+                    var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                        o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
+                    if (idx != null)
+                        sourceEntity.Relationships.Remove(idx);
+                    sourceEntity.Relationships.Add(rel);
+                }
+                if (targetEntity != null)
+                {
+                    var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                        o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
+                    if (idx != null)
+                        targetEntity.Relationships.Remove(idx);
+                    targetEntity.Relationships.Add(rel);
+                }
             }
             else if (e.Object is Act) // We need to remove RCT 
             {
                 var act = e.Object as Act;
                 var rct = act.Participations.FirstOrDefault(x => x.ParticipationRoleKey == ActParticipationKey.RecordTarget || x.ParticipationRole?.Mnemonic == "RecordTarget");
                 if (rct != null)
-                    MemoryCache.Current.RemoveObject(typeof(Patient), rct.PlayerEntityKey);
+                    MemoryCache.Current.RemoveObject(rct.PlayerEntityKey);
             }
 
         }
@@ -185,7 +237,7 @@ namespace OpenIZ.Caching.Memory
         /// <param name="e"></param>
         private void GetOrUpdateCacheItem(ModelMapEventArgs e)
         {
-            var cacheItem = MemoryCache.Current.TryGetEntry(e.ObjectType, e.Key);
+            var cacheItem = MemoryCache.Current.TryGetEntry(e.Key);
             if (cacheItem == null)
                 this.Add(e.ModelObject);
             else
@@ -224,15 +276,15 @@ namespace OpenIZ.Caching.Memory
         /// <returns></returns>
         public TData GetCacheItem<TData>(Guid key) where TData : IdentifiedData
         {
-            return MemoryCache.Current.TryGetEntry(typeof(TData), key) as TData;
+            return MemoryCache.Current.TryGetEntry(key) as TData;
         }
 
         /// <summary>
         /// Get the specified cache item
         /// </summary>
-        public object GetCacheItem(Type tdata, Guid key)
+        public object GetCacheItem(Guid key)
         {
-            return MemoryCache.Current.TryGetEntry(tdata, key);
+            return MemoryCache.Current.TryGetEntry(key);
         }
 
         /// <summary>
@@ -246,7 +298,7 @@ namespace OpenIZ.Caching.Memory
 		        return;
 	        }
 
-            var exist = MemoryCache.Current.TryGetEntry(data.GetType(), data.Key);
+            var exist = MemoryCache.Current.TryGetEntry(data.Key);
             MemoryCache.Current.AddUpdateEntry(data);
             if (exist != null)
                 this.Updated?.Invoke(this, new DataCacheEventArgs(data));
@@ -257,12 +309,12 @@ namespace OpenIZ.Caching.Memory
         /// <summary>
         /// Remove the object from the cache
         /// </summary>
-        public void Remove(Type tdata, Guid key)
+        public void Remove(Guid key)
         {
-            var exist = MemoryCache.Current.TryGetEntry(tdata, key);
+            var exist = MemoryCache.Current.TryGetEntry(key);
             if (exist != null)
             {
-                MemoryCache.Current.RemoveObject(tdata, key);
+                MemoryCache.Current.RemoveObject(key);
                 this.Removed?.Invoke(this, new DataCacheEventArgs(exist));
             }
         }

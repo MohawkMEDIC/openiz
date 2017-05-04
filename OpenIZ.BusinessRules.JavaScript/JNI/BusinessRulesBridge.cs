@@ -147,7 +147,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             var idpInstance = ApplicationServiceContext.Current.GetService(typeof(IDataCachingService)) as IDataCachingService;
             if (idpInstance == null)
                 throw new KeyNotFoundException($"The data caching service for {type} was not found");
-            idpInstance.Remove(dataType, Guid.Parse(key));
+            idpInstance.Remove(Guid.Parse(key));
         }
 
         /// <summary>

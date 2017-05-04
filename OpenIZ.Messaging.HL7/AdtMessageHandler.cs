@@ -28,11 +28,13 @@ using NHapi.Base.Util;
 using NHapi.Model.V25.Message;
 using OpenIZ.Core;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Wcf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using OpenIZ.Core.Interop;
 
 namespace OpenIZ.Messaging.HL7
 {
@@ -46,11 +48,12 @@ namespace OpenIZ.Messaging.HL7
 		/// </summary>
 		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.HL7");
 
-		/// <summary>
-		/// Handle a received message on the LLP interface.
-		/// </summary>
-		/// <param name="e">The HL7 message received event arguments.</param>
-		public IMessage HandleMessage(Hl7MessageReceivedEventArgs e)
+    
+        /// <summary>
+        /// Handle a received message on the LLP interface.
+        /// </summary>
+        /// <param name="e">The HL7 message received event arguments.</param>
+        public IMessage HandleMessage(Hl7MessageReceivedEventArgs e)
 		{
 			IMessage response = null;
 

@@ -60,6 +60,10 @@
       <Project>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</Project>
       <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
+      <Project>{DB9BC05E-45F1-4F96-A161-F36BDECAF566}</Project>
+      <Name>OpenIZ.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Sample\SampleInventoryReportRequest.xml" />

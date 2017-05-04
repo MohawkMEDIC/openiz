@@ -18,9 +18,12 @@
  * Date: 2017-3-24
  */
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Interop;
+using OpenIZ.Core.Wcf;
 using OpenIZ.Messaging.GS1.Wcf;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
@@ -30,7 +33,7 @@ namespace OpenIZ.Messaging.GS1
 	/// <summary>
 	/// Stock service message handler
 	/// </summary>
-	public class StockServiceMessageHandler : IMessageHandlerService
+	public class StockServiceMessageHandler : IMessageHandlerService, IApiEndpointProvider
 	{
 		// IMSI Trace host
 		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.GS1");
@@ -63,10 +66,33 @@ namespace OpenIZ.Messaging.GS1
 		/// </summary>
 		public bool IsRunning => this.webHost?.State == CommunicationState.Opened;
 
-		/// <summary>
-		/// Start the service
-		/// </summary>
-		public bool Start()
+
+        /// <summary>
+        /// Gets the API type
+        /// </summary>
+        public ServiceEndpointType ApiType
+        {
+            get
+            {
+                return ServiceEndpointType.Gs1StockInterface;
+            }
+        }
+
+        /// <summary>
+        /// URL of the service
+        /// </summary>
+        public string[] Url
+        {
+            get
+            {
+                return this.webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Start the service
+        /// </summary>
+        public bool Start()
 		{
 			try
 			{

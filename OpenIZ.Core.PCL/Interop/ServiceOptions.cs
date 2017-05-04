@@ -21,6 +21,7 @@ namespace OpenIZ.Core.Interop
         public ServiceOptions()
         {
             this.Services = new List<ServiceResourceOptions>();
+            this.Endpoints = new List<ServiceEndpointOptions>();
         }
 
         /// <summary>
@@ -34,6 +35,12 @@ namespace OpenIZ.Core.Interop
         /// </summary>
         [XmlElement("resource"), JsonProperty("resource")]
         public List<ServiceResourceOptions> Services { get; set; }
+
+        /// <summary>
+        /// Gets or sets the endpoint options
+        /// </summary>
+        [XmlElement("endpoint"), JsonProperty("endpoint")]
+        public List<ServiceEndpointOptions> Endpoints { get; set; }
 
         /// <summary>
 		/// Gets or sets the modified on date time of the service options.
