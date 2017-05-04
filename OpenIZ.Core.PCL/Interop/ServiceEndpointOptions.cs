@@ -32,23 +32,26 @@ namespace OpenIZ.Core.Interop
     [XmlType(nameof(ServiceEndpointCapabilities), Namespace = "http://openiz.org/model"), Flags]
     public enum ServiceEndpointCapabilities
     {
+        /// <summary>
+        /// No options
+        /// </summary>
         [XmlEnum("none")]
         None,
         /// <summary>
         /// Basic auth
         /// </summary>
         [XmlEnum("basic")]
-        BasicAuth,
+        BasicAuth = 0x2,
         /// <summary>
         /// Bearer auth
         /// </summary>
         [XmlEnum("bearer")]
-        BearerAuth,
+        BearerAuth = 0x4,
         /// <summary>
         /// Endpoint supports compression
         /// </summary>
         [XmlEnum("compress")]
-        Compression
+        Compression = 0x1
     }
 
     /// <summary>

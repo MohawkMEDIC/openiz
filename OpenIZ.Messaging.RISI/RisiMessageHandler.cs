@@ -23,6 +23,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Wcf;
 using OpenIZ.Core.Wcf.Behavior;
+using OpenIZ.Core.Wcf.Security;
 using OpenIZ.Messaging.RISI.Wcf;
 using OpenIZ.Messaging.RISI.Wcf.Behavior;
 using System;
@@ -95,6 +96,24 @@ namespace OpenIZ.Messaging.RISI
                 return this.webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
             }
         }
+
+        /// <summary>
+        /// Capabilities
+        /// </summary>
+        public ServiceEndpointCapabilities Capabilities
+        {
+            get
+            {
+                var caps = ServiceEndpointCapabilities.None;
+                if (this.webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication?.CustomUserNamePasswordValidator != null))
+                    caps |= ServiceEndpointCapabilities.BasicAuth;
+                if (this.webHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
+                    caps |= ServiceEndpointCapabilities.BearerAuth;
+
+                return caps;
+            }
+        }
+
 
         /// <summary>
         /// Starts the service. Returns true if the service started successfully.

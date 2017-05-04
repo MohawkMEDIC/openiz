@@ -21,6 +21,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Wcf;
+using OpenIZ.Core.Wcf.Security;
 using OpenIZ.Messaging.IMSI.Configuration;
 using OpenIZ.Messaging.IMSI.ResourceHandler;
 using OpenIZ.Messaging.IMSI.Wcf;
@@ -123,6 +124,23 @@ namespace OpenIZ.Messaging.IMSI
             get
             {
                 return this.m_webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Capabilities
+        /// </summary>
+        public ServiceEndpointCapabilities Capabilities
+        {
+            get
+            {
+                var caps = ServiceEndpointCapabilities.Compression;
+                if (this.m_webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication?.CustomUserNamePasswordValidator != null))
+                    caps |= ServiceEndpointCapabilities.BasicAuth;
+                if (this.m_webHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
+                    caps |= ServiceEndpointCapabilities.BearerAuth;
+
+                return caps;
             }
         }
 

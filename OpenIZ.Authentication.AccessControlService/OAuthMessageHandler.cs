@@ -21,10 +21,12 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Authentication.OAuth2.Wcf;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Wcf;
+using OpenIZ.Core.Wcf.Security;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
@@ -75,6 +77,23 @@ namespace OpenIZ.Authentication.OAuth2
             get
             {
                 return this.m_serviceHost.Description.Endpoints.Select(o => o.Address.Uri.ToString()).ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Capabilities
+        /// </summary>
+        public ServiceEndpointCapabilities Capabilities
+        {
+            get
+            {
+                var caps = ServiceEndpointCapabilities.None;
+                if (this.m_serviceHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication?.CustomUserNamePasswordValidator != null))
+                    caps |= ServiceEndpointCapabilities.BasicAuth;
+                if (this.m_serviceHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
+                    caps |= ServiceEndpointCapabilities.BearerAuth;
+
+                return caps;
             }
         }
 

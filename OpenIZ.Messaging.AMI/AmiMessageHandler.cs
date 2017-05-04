@@ -116,10 +116,11 @@ namespace OpenIZ.Messaging.AMI
             get
             {
                 var caps = ServiceEndpointCapabilities.None;
-                if (this.m_webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication != null))
+                if (this.m_webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication?.CustomUserNamePasswordValidator != null))
                     caps |= ServiceEndpointCapabilities.BasicAuth;
                 if (this.m_webHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
                     caps |= ServiceEndpointCapabilities.BearerAuth;
+
 
                 return caps;
             }

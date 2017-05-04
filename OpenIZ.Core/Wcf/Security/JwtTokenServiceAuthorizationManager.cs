@@ -31,6 +31,7 @@ using System.IdentityModel.Policy;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Security.Authentication;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
@@ -77,7 +78,14 @@ namespace OpenIZ.Core.Wcf.Security
                 String authorization = httpMessage.Headers[System.Net.HttpRequestHeader.Authorization];
                 if (authorization == null)
                 {
-                    if (httpMessage.Method == "OPTIONS") return true; // OPTIONS is non PHI infrastructural
+                    if (httpMessage.Method == "OPTIONS")
+                    {
+                        //operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Identities"] = identities;
+                        operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Principal"] = Core.Security.AuthenticationContext.AnonymousPrincipal;
+                        Core.Security.AuthenticationContext.Current = new Core.Security.AuthenticationContext(Core.Security.AuthenticationContext.AnonymousPrincipal);
+
+                        return true; // OPTIONS is non PHI infrastructural
+                    }
                     else
                         throw new UnauthorizedRequestException("Missing Authorization header", "Bearer", this.m_configuration.Security.ClaimsAuth.Realm, this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
                 }

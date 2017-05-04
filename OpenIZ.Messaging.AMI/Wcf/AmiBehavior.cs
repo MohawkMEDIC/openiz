@@ -162,7 +162,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
                 new ServiceEndpointOptions()
                 {
                     BaseUrl = o.Url,
-                    ServiceType = o.ApiType
+                    ServiceType = o.ApiType,
+                    Capabilities = o.Capabilities
                 }
             ).ToList();
 			//foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))

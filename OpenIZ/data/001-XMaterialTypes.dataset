@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>92c982e8-a81a-4790-885d-8003e93c50a3</id>
+
+      <isReadonly>false</isReadonly>
+      <mnemonic>MaterialType-Syringe</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Syringe</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>27e7fa8a-4903-448e-b3c1-7f4f86eaac1b</id>
+
+      <mnemonic>MaterialType-Diluent</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Diluents</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>8a282c73-f2b4-411b-aa7d-8935d5f18f85</id>
+
+      <mnemonic>MaterialType-SafetyBox</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Safety Box Container</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>17331147-6e27-4adb-84b4-da105bf41094</id>
+
+      <name>Material Type Codes</name>
+      <mnemonic>MaterialTypes</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.49</oid>
+      <url>http://openiz.org/conceptsets/contrib/MaterialTypes</url>
+      <concept>8a282c73-f2b4-411b-aa7d-8935d5f18f85</concept>
+      <concept>27e7fa8a-4903-448e-b3c1-7f4f86eaac1b</concept>
+      <concept>92c982e8-a81a-4790-885d-8003e93c50a3</concept>
+      <concept>c5a7fd4e-9660-4c49-95ad-fd39e6f2cb26</concept>
+      <concept>05e8161b-afd7-4549-aca9-ba1d342ea3c0</concept>
+      <concept>19afe679-ef94-48b4-9d6a-3c9827c4c8e2</concept>
+      <concept>0cd4c170-77b4-41f4-998c-200c856f9e5e</concept>
+      <concept>77e348db-8820-431c-b43e-91087ab276d8</concept>
+      <concept>4c3f9b25-7c76-4b99-b6da-b1649cd62918</concept>
+      <concept>6057368e-40c7-49cd-bcb8-c35e23f1dc5e</concept>
+      <concept>76cad378-7e93-487e-af03-a776a7b6dc29</concept>
+      <concept>744f09e1-f80d-4222-a27d-484dd38022b3</concept>
+      <concept>cb66e1c4-0447-42d2-be7d-f9f8c71a3fb0</concept>
+      <concept>f63225c8-974b-4926-90e2-2b1fbc1a06d3</concept>
+      <concept>74570b30-1463-4775-9544-565a6f6d9a1d</concept>
+      <concept>53002bc6-a619-46cc-9e77-d4509ece1a01</concept>
+      <concept>ff05f594-faa4-429b-85c0-6d0f3ab5f332</concept>
+      <concept>2091c485-8e15-4c23-8b7f-1ad5aaa2b7b2</concept>
+      <concept>b534c19a-5c98-426d-a7b9-6d70b2db25c7</concept>
+      <concept>c20ce9a2-57fd-4ffb-9c12-04a3957d732a</concept>
+      <concept>008162a9-a423-4314-942a-abaf5c6b4549</concept>
+      <concept>5c8d91d5-ab96-45cd-bf68-bd0a667a5eb8</concept>
+      <concept>b9419641-3761-4eb3-8f02-9140e01015ae</concept>
+      <concept>641921b9-fad4-45c6-ad9c-6dbf4337c026</concept>
+      <concept>327ca66f-9615-48fe-8a21-ccf766d3a0f7</concept>
+      <concept>0100dea3-b567-4f52-87c6-d57ec9ae3df0</concept>
+      <concept>27e49ca4-acd2-4c0d-884b-45f37181ec4f</concept>
+      <concept>c6872f01-bca1-47c9-a355-52aa5feb2e38</concept>
+      <concept>e5311062-13a3-4111-94cf-23c29235a985</concept>
+      <concept>afcf6446-572e-413c-a04f-f7a27baf5281</concept>
+      <concept>62cbf2db-5935-4b1d-82b7-71a46068f82a</concept>
+      <concept>a92ffa26-e4e8-4330-bc8c-7b07d32d3045</concept>
+      <concept>17d23b48-840c-4b6a-8de8-1602247f40a9</concept>
+      <concept>832ebf95-c075-49f3-b10e-4f0ec693752d</concept>
+      <concept>6e40a33c-46ec-4fae-8f53-ea53e7447d11</concept>
+      <concept>c7f4980b-e338-4363-83f7-2b3d38933e7e</concept>
+      <concept>58c61270-958f-437f-abab-ee5ce1720300</concept>
+      <concept>6317d3a9-9c35-405b-a783-2d9f9e4c11f9</concept>
+      <concept>0efb045b-db63-46a8-89db-c90145772457</concept>
+      <concept>67174d67-cfa5-43d0-a868-023b6dee8b5f</concept>
+      <concept>7699d9be-1dea-4d18-87ff-13b73964c8f9</concept>
+      <concept>b6d52c10-453f-4c70-aa24-0c9117f376f1</concept>
+      <concept>6549730d-ebbe-4700-8052-3dd3f390213f</concept>
+      <concept>500aa724-a430-4bdf-a16e-98956076abf8</concept>
+      <concept>0384c9cb-c334-4332-b8ef-21a1e68c3999</concept>
+      <concept>519ad6cd-2e07-4734-91c0-175242b387b8</concept>
+      <concept>93642f7b-80fb-4901-a5aa-887498e83810</concept>
+      <concept>29b0a6c2-ecbc-4413-b030-589368c79704</concept>
+      <concept>8570975b-5e6e-4b45-a126-3078ac380ac6</concept>
+      <concept>c708c120-4acd-4fa9-a064-3a3286c6ae54</concept>
+      <concept>0e0338bc-2657-43fd-81e8-8fb9a1b54f65</concept>
+      <concept>60520756-e35d-4938-a792-9c8c6747216b</concept>
+      <concept>b0eade9d-91b9-498a-9d5d-580ecb9bec51</concept>
+      <concept>a7f92cf1-5a0d-4ae1-8ef0-c9bf2aecf686</concept>
+      <concept>f68be503-729b-44d2-8254-bb19c27f7a59</concept>
+      <concept>949d229a-5932-4cf6-bb77-501f57bcc57e</concept>
+      <concept>3004a98d-4d66-4e6b-ad4f-e5667e184fcb</concept>
+      <concept>6894bbba-9c18-4afb-ab82-82104fd8d15f</concept>
+      <concept>9606acf1-8a70-4664-944b-87b3750ca7cc</concept>
+      <concept>f35f2c3b-b567-4748-b22f-3836fd5c06fc</concept>
+      <concept>b9aaa046-78fd-4ff2-af82-fcf38194a5ba</concept>
+      <concept>1e280da8-bfbc-4faf-ba44-03deeb0a8766</concept>
+      <concept>73c33f93-1b00-4dae-85a4-7b2f4bd7e177</concept>
+      <concept>7d37f1d6-c2d2-4305-a3a8-444dfb52c6d4</concept>
+      <concept>99f34379-fa0f-4b50-9fa0-fae9364266ad</concept>
+      <concept>7b73529c-4c3d-4720-bb14-fdf8688f7d3b</concept>
+      <concept>0140fa1d-2169-408c-99ad-f9b1854fd859</concept>
+      <concept>85562bc6-b817-4106-9910-35235a0a23d5</concept>
+      <concept>23771511-9cc3-41b9-9723-c7d766241318</concept>
+      <concept>be013f8e-488a-46e3-a219-e60dc03fe98d</concept>
+      <concept>960c8cca-1fc5-4632-9d0c-2f781e822999</concept>
+      <concept>83e5cc1c-2611-4c7f-afd9-9e37460e1d06</concept>
+      <concept>b20b9719-e360-4517-b11b-88fabd1fbf3b</concept>
+      <concept>7df6f80a-f58d-426c-88ff-77b9b883fc89</concept>
+      <concept>512df65f-5719-4bc6-bdc2-c3f267583278</concept>
+      <concept>2565a5d7-a72b-49dc-94e0-8aa74bc5ca1e</concept>
+      <concept>be0fd90e-29ba-4e26-aee5-b7bbe31fd5f8</concept>
+      <concept>7c637b67-5173-4e8c-b988-7ff6a94168c2</concept>
+      <concept>7f5dd69b-9e21-49a7-8152-1af79588b3b9</concept>
+      <concept>1185def1-6ad4-4995-b67a-406db08945b5</concept>
+      <concept>2967fbc0-0ae7-4057-aafb-1f47d201913b</concept>
+      <concept>98540668-c4da-44ef-9ffc-1f85526d672b</concept>
+      <concept>f34b8e20-f835-4685-9ecf-1acb3c3e5011</concept>
+      <concept>b52eff77-9d99-4593-a211-aae6d18296d0</concept>
+      <concept>cbf5afc5-40d0-47a1-adea-8159555ae8c8</concept>
+      <concept>f6380c7c-71a8-4fb2-a613-61825da4cd42</concept>
+      <concept>f398d11e-8a5a-4c5c-8941-e117e8f5367f</concept>
+      <concept>56a1ab61-0e1c-4c98-9a79-d6ca5cedf2a6</concept>
+      <concept>67bd0fdd-aad6-4318-9eb8-f75dd9258d6c</concept>
+      <concept>9f79972f-ca59-4b2e-8c77-5a4494cea182</concept>
+      <concept>4f3e5c04-3468-4931-abc3-e3beb0638ab6</concept>
+      <concept>1067e654-bdbd-41e4-b6c4-fb67c0f67a7f</concept>
+      <concept>c861b11b-04d9-4ba9-ac2e-bf17320a954c</concept>
+      <concept>3023bad7-8c16-49ea-81fc-eee6232b80e7</concept>
+      <concept>1ee21592-da84-4253-a65f-84681aeae1b6</concept>
+    </ConceptSet>
+  </update>
+</dataset>
