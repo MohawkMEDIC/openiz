@@ -99,7 +99,7 @@ Source: ..\Solution Items\ExpressionEvaluator.dll; DestDir: {app}; Components: c
 Source: ..\bin\Release\OpenIZ.Protocol.Xml.dll; DestDir: {app}; Components: core\protocol
 
 ; JINT BRE
-Source: ..\Solution Items\jint.dll; DestDir: {app}; Components: core\bre
+Source: ..\Solution Items\jint.dll; DestDir: {app}; Components: core\bre tools
 Source: ..\bin\Release\OpenIZ.BusinessRules.JavaScript.dll; DestDir: {app}; Components: core\bre
 
 ; Core DLLS
