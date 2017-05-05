@@ -125,10 +125,85 @@ namespace OizDevTool
 
         private static SimpleCarePlanService scp = new SimpleCarePlanService();
 
-        /// <summary>
-        /// Generate stock
-        /// </summary>
-        [Description("Generates fake stock levels by assigning random Materials to random Places")]
+	    [Description("Generates fake orders by creating random acts which represent orders")]
+		public static void GenerateOrders(String[] args)
+	    {
+		    ApplicationServiceContext.Current = ApplicationContext.Current;
+		    //cp.Repository = new SeederProtocolRepositoryService();
+		    ApplicationContext.Current.Start();
+		    var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
+		    WaitThreadPool wtp = new WaitThreadPool();
+		    var mat = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>().Query(o => o.ClassConceptKey == EntityClassKeys.Material, AuthenticationContext.SystemPrincipal);
+		    Console.WriteLine("Database has {0} materials", mat.Count());
+
+		    int tr = 0, ofs = 0;
+		    Console.WriteLine("Querying for places");
+		    var results = idp.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 25, AuthenticationContext.SystemPrincipal, out tr);
+		    Console.WriteLine("Will create fake orders for {0} places", tr);
+		    var r = new Random();
+
+		    while (ofs < tr)
+		    {
+			    foreach (var p in results)
+			    {
+				    wtp.QueueUserWorkItem((parm) =>
+				    {
+					    try
+					    {
+						    Place target = parm as Place;
+						    Console.WriteLine("Starting seeding for {0} currently {1} relationships", target.Names.FirstOrDefault().Component.FirstOrDefault().Value, target.Relationships.Count);
+
+						    var act = new Act
+						    {
+							    ActTime = DateTimeOffset.Now.AddDays(-7),
+							    ClassConceptKey = ActClassKeys.Supply,
+							    MoodConceptKey = ActMoodKeys.Request,
+							    CreationTime = DateTimeOffset.Now,
+							    Key = Guid.NewGuid(),
+							    TypeConceptKey = Guid.Parse("14d69b32-f6c4-4a49-a527-a74893dbcf4a")
+						    };
+
+						    act.Participations.Add(new ActParticipation(ActParticipationKey.Location, target.Key));
+
+						    var parentKey = target.Relationships.FirstOrDefault(x => x.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent)?.TargetEntityKey;
+
+						    if (parentKey == null)
+						    {
+							    throw new InvalidOperationException($"Cannot create order for facility {target.Key} without parent");
+						    }
+
+						    act.Participations.Add(new ActParticipation(ActParticipationKey.Destination, parentKey));
+
+						    act.Tags.Add(new ActTag("orderNumber", Guid.NewGuid().ToString().Substring(0, 8)));
+						    act.Tags.Add(new ActTag("orderStatus", "requested"));
+
+							act.Participations.Add(new ActParticipation(ActParticipationKey.Product, mat.ToArray()[r.Next(mat.Count())])
+							{
+								Quantity = r.Next(1, 100)
+							});
+
+						    var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+						    Console.WriteLine($"Inserting order for {target.Names.FirstOrDefault()?.Component.FirstOrDefault()?.Value}");
+						    actPersistenceService.Insert(act, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+					    }
+					    catch (Exception e)
+					    {
+						    Console.WriteLine(e);
+					    }
+
+				    }, p);
+			    }
+			    wtp.WaitOne();
+			    ofs += 25;
+			    results = idp.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 25, AuthenticationContext.SystemPrincipal, out tr);
+
+		    }
+	    }
+
+		/// <summary>
+		/// Generate stock
+		/// </summary>
+		[Description("Generates fake stock levels by assigning random Materials to random Places")]
         public static void GenerateStock(String[] args)
         {
             ApplicationServiceContext.Current = ApplicationContext.Current;
