@@ -80,7 +80,7 @@ namespace OizDevTool.SeedData
                     lock (s_lockObject)
                     {
                         XmlSerializer xsz = new XmlSerializer(typeof(SeedData));
-                        String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "SeedData\\SeedData.xml");
+                        String fileName = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "SeedData.xml");
                         using (FileStream fs = File.OpenRead(fileName))
                             s_context = xsz.Deserialize(fs) as SeedData;
                     }
