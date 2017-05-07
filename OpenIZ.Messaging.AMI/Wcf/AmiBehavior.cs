@@ -32,6 +32,7 @@ using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Security.Claims;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Wcf;
+using OpenIZ.Messaging.AMI.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -166,6 +167,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
                     Capabilities = o.Capabilities
                 }
             ).ToList();
+
+            var config = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
+            serviceOptions.Endpoints.AddRange(config.Endpoints);
 			//foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))
 			//{
 			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();

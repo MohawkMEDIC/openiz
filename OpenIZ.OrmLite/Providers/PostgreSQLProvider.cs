@@ -11,6 +11,7 @@ using System.Diagnostics;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Data.Warehouse;
+using System.Net;
 
 namespace OpenIZ.OrmLite.Providers
 {
@@ -19,6 +20,12 @@ namespace OpenIZ.OrmLite.Providers
     /// </summary>
     public class PostgreSQLProvider : IDbProvider
     {
+
+        // Last rr host used
+        private int m_lastRrHost = 0;
+
+        // Readonly IP Addresses
+        private IPAddress[] m_readonlyIpAddresses;
 
         // Trace source
         private Tracer m_tracer = Tracer.GetTracer(typeof(PostgreSQLProvider));
@@ -82,8 +89,34 @@ namespace OpenIZ.OrmLite.Providers
         /// </summary>
         public DataContext GetReadonlyConnection()
         {
+
             var conn = this.GetProviderFactory().CreateConnection();
-            conn.ConnectionString = this.ReadonlyConnectionString;
+
+            DbConnectionStringBuilder dbst = new DbConnectionStringBuilder();
+            dbst.ConnectionString = this.ReadonlyConnectionString;
+            Object host = String.Empty;
+            if(this.m_readonlyIpAddresses == null && dbst.TryGetValue("host", out host) || dbst.TryGetValue("server", out host))
+            {
+                IPAddress ip = null;
+                if (IPAddress.TryParse(host.ToString(), out ip)) // server is an IP, no need to dns
+                    this.m_readonlyIpAddresses = new IPAddress[] { ip };
+                else
+                    this.m_readonlyIpAddresses = Dns.GetHostAddresses(host.ToString());
+                dbst.Remove("host");
+                dbst.Remove("server");
+                this.ReadonlyConnectionString = dbst.ConnectionString;
+            }
+
+            // Readonly IP address
+            if(this.m_readonlyIpAddresses?.Length > 0)
+            {
+                dbst["server"] = this.m_readonlyIpAddresses[this.m_lastRrHost++ % this.m_readonlyIpAddresses.Length].ToString();
+                if (this.m_lastRrHost > this.m_readonlyIpAddresses.Length) this.m_lastRrHost = 0;
+                conn.ConnectionString = dbst.ConnectionString;
+            }
+            else
+                conn.ConnectionString = this.ReadonlyConnectionString;
+
             return new DataContext(this, conn, true);
         }
 

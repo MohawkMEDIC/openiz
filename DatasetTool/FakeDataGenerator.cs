@@ -92,8 +92,11 @@ namespace OizDevTool
             /// </summary>
             public SeederProtocolRepositoryService()
             {
+                Console.WriteLine("Loading protocols...");
                 foreach (var f in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Protocols")))
                 {
+                    Console.WriteLine("\t{0}",f);
+
                     using (FileStream fs = File.OpenRead(f))
                     {
                         ProtocolDefinition pdf = ProtocolDefinition.Load(fs);
@@ -272,7 +275,7 @@ namespace OizDevTool
             int populationSize = Int32.Parse(parameters.PopulationSize ?? "10");
             int maxAge = Int32.Parse(parameters.MaxAge ?? "500");
 
-
+            Console.WriteLine("Adding minimal service providers...");
             ApplicationContext.Current.AddServiceProvider(typeof(SimpleCarePlanService));
             ApplicationContext.Current.AddServiceProvider(typeof(SeederProtocolRepositoryService));
             ApplicationContext.Current.AddServiceProvider(typeof(LocalPlaceRepositoryService));
@@ -282,12 +285,15 @@ namespace OizDevTool
             ApplicationContext.Current.Start();
 
             int tr = 0;
-            var places = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation);
-            places = places.Union(ApplicationContext.Current.GetService<IPlaceRepositoryService>().Find(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation));
-            WaitThreadPool wtp = new WaitThreadPool(16);
+            Console.WriteLine("Adding minimal loading places...");
+            
+            var places = (ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, 1000, out tr, Guid.Empty);
+            places = places.Union((ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, 1000, out tr, Guid.Empty));
+            WaitThreadPool wtp = new WaitThreadPool();
             Random r = new Random();
 
             int npatients = 0;
+            Console.WriteLine("Generating Patients...");
 
             WaitCallback genFunc = (s) =>
             {
@@ -302,6 +308,8 @@ namespace OizDevTool
 
                 // Schedule
                 var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now);
+                Console.WriteLine("\t {0} acts", acts.Count());
+
                 foreach (var act in acts)
                 {
                     act.MoodConceptKey = ActMoodKeys.Eventoccurrence;

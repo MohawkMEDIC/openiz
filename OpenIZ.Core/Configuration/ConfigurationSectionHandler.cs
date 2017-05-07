@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -95,12 +96,15 @@ namespace OpenIZ.Core.Configuration
                             storeLocation = iss.Attributes["storeLocation"]?.Value,
                             storeName = iss.Attributes["storeName"]?.Value,
                             findType = iss.Attributes["x509FindType"]?.Value,
-                            symmetricKey = iss.Attributes["symmetricKey"]?.Value;
+                            symmetricKey = iss.Attributes["symmetricKey"]?.Value,
+                            secret = iss.Attributes["symmetricSecret"]?.Value;
 
                         if (String.IsNullOrEmpty(name))
                             throw new ConfigurationException("Issuer must have name");
 
-                        if (!String.IsNullOrEmpty(symmetricKey))
+                        if(!String.IsNullOrEmpty(secret))
+                            retVal.Security.ClaimsAuth.IssuerKeys.Add(name, new InMemorySymmetricSecurityKey(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(secret))));
+                        else if (!String.IsNullOrEmpty(symmetricKey))
                             retVal.Security.ClaimsAuth.IssuerKeys.Add(name, new InMemorySymmetricSecurityKey(Convert.FromBase64String(symmetricKey)));
                         else 
                             retVal.Security.ClaimsAuth.IssuerKeys.Add(name, new X509SecurityKey(

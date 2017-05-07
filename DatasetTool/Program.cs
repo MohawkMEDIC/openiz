@@ -113,7 +113,12 @@ namespace OizDevTool
 #if DEBUG
                 Console.Error.WriteLine(e);
 #else
-                Console.Error.WriteLine(e.Message);
+                var ex = e;
+                while (ex != null)
+                {
+                    Console.Error.WriteLine("{0} @ STACK: {1}", ex.Message, ex.StackTrace);
+                    ex = ex.InnerException;
+                }
 #endif
             }
         }

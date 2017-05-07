@@ -67,7 +67,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         public IPrincipal Authenticate(string applicationId, string applicationSecret)
         {
             // Data context
-            using (DataContext dataContext = this.m_configuration.Provider.GetReadonlyConnection())
+            using (DataContext dataContext = this.m_configuration.Provider.GetWriteConnection())
             {
                 try
                 {

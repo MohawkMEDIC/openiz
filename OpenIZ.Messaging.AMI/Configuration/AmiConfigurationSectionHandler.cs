@@ -18,6 +18,9 @@
  * Date: 2016-8-2
  */
 
+using OpenIZ.Core.Interop;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Xml;
 
@@ -43,10 +46,27 @@ namespace OpenIZ.Messaging.AMI.Configuration
 				caConfiguration.ServerName = caConfigurationElement?.Attributes["serverName"]?.Value;
 			}
 
+            var endpoints = section.SelectNodes("./*[local-name() = 'endpoint']/*[local-name() = 'add']");
+            List<ServiceEndpointOptions> epOptions = new List<ServiceEndpointOptions>();
+
+            foreach(XmlElement xel in endpoints)
+            {
+                ServiceEndpointCapabilities caps = ServiceEndpointCapabilities.None;
+                foreach (var si in xel.Attributes["capabilities"]?.Value?.Split(' ') ?? new String[0])
+                    caps |= (ServiceEndpointCapabilities)Enum.Parse(typeof(ServiceEndpointCapabilities), si);
+                epOptions.Add(new ServiceEndpointOptions()
+                {
+                    BaseUrl = xel.InnerText.Split(' '),
+                    ServiceType = (ServiceEndpointType)Enum.Parse(typeof(ServiceEndpointType), xel.Attributes["type"]?.Value),
+                    Capabilities = caps,
+                });
+            }
+
 			// Configuration
 			return new AmiConfiguration()
 			{
-				CaConfiguration = caConfiguration
+				CaConfiguration = caConfiguration,
+                Endpoints = epOptions
 			};
 		}
 	}

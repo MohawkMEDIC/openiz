@@ -265,7 +265,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
         {
             try
             {
-                using (var dataContext = s_configuration.Provider.GetReadonlyConnection())
+                using (var dataContext = s_configuration.Provider.GetWriteConnection())
                 {
                     dataContext.Open();
                     var user = dataContext.SingleOrDefault<DbSecurityUser>(u => u.ObsoletionTime == null && u.UserName.ToLower() == userName.ToLower());

@@ -94,13 +94,13 @@ Source: .\installsupp\dotNetFx45_Full_setup.exe; DestDir: {tmp} ; Flags: dontcop
 Source: ..\Solution Items\Npgsql.dll; DestDir: {app}; Components: tools\migration db\ado
 
 ; XClinical Protocol 
-Source: ..\Solution Items\Antlr3.Runtime.dll; DestDir: {app}; Components: core\protocol
-Source: ..\Solution Items\ExpressionEvaluator.dll; DestDir: {app}; Components: core\protocol
-Source: ..\bin\Release\OpenIZ.Protocol.Xml.dll; DestDir: {app}; Components: core\protocol
+Source: ..\Solution Items\Antlr3.Runtime.dll; DestDir: {app}; Components: core\protocol tools
+Source: ..\Solution Items\ExpressionEvaluator.dll; DestDir: {app}; Components: core\protocol tools
+Source: ..\bin\Release\OpenIZ.Protocol.Xml.dll; DestDir: {app}; Components: core\protocol tools
 
 ; JINT BRE
 Source: ..\Solution Items\jint.dll; DestDir: {app}; Components: core\bre tools
-Source: ..\bin\Release\OpenIZ.BusinessRules.JavaScript.dll; DestDir: {app}; Components: core\bre
+Source: ..\bin\Release\OpenIZ.BusinessRules.JavaScript.dll; DestDir: {app}; Components: core\bre tools
 
 ; Core DLLS
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll; DestDir: {app}; Components: core
@@ -199,7 +199,8 @@ Source: ..\bin\Release\*.pdb; DestDir: {app}\dev\pdb; Components: tools\dev
 Source: ..\bin\Release\SeedData.xml; DestDir: {app}; Components: tools\dev
 
 ; Data Stuff
-Source: ..\bin\release\data\*.dataset; DestDir: {app}\data; Components: db
+Source: ..\bin\release\data\*.dataset; DestDir: {app}\data; Components: msg\imsi
+Source: ..\bin\release\applets\*.pak; DestDir: {app}\applets; Components: msg\ami
 
 ; ADO Stuff
 Source: ..\bin\release\OpenIZ.Warehouse.ADO.dll; DestDir: {app}; Components: db\ado
@@ -316,3 +317,89 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Messaging.
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Persistence.Diagnostics.Jira.dll"" /nologo /silent"; Components: interop\jira; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Diagnostics.Jira.dll"; flags: runhidden
 
 [UninstallRun]
+; ADO.NET 
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Npgsql.dll"" /nologo /silent"; Components: tools\migration db\ado; StatusMsg: "Optimizing Assembly:Npgsql.dll"; flags: runhidden
+; XClinical Protocol 
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Antlr3.Runtime.dll"" /nologo /silent"; Components: core\protocol; StatusMsg: "Optimizing Assembly:Antlr3.Runtime.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\ExpressionEvaluator.dll"" /nologo /silent"; Components: core\protocol; StatusMsg: "Optimizing Assembly:ExpressionEvaluator.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Protocol.Xml.dll"" /nologo /silent"; Components: core\protocol; StatusMsg: "Optimizing Assembly:OpenIZ.Protocol.Xml.dll"; flags: runhidden
+; JINT BRE
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\jint.dll"" /nologo /silent"; Components: core\bre; StatusMsg: "Optimizing Assembly:jint.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.BusinessRules.JavaScript.dll"" /nologo /silent"; Components: core\bre; StatusMsg: "Optimizing Assembly:OpenIZ.BusinessRules.JavaScript.dll"; flags: runhidden
+; Core DLLS
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Auditing.Core.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Auditing.Core.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Auditing.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Auditing.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MohawkCollege.Util.Console.Parameters.dll"" /nologo /silent"; Components: core tools; StatusMsg: "Optimizing Assembly:MohawkCollege.Util.Console.Parameters.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Newtonsoft.Json.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:Newtonsoft.Json.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.Everest.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.Everest.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.Everest.Connectors.WCF.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.Everest.Connectors.WCF.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.QM.Core.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.QM.Core.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.QM.Persistence.Data.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.QM.Persistence.Data.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Core.ComponentModel.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Core.ComponentModel.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Core.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Core.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Core.Timer.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Core.Timer.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Localization.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Localization.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Messaging.Persistence.Data.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Messaging.Persistence.Data.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.Model.ViewModelSerializers.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:OpenIZ.Core.Model.ViewModelSerializers.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.Applets.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:OpenIZ.Core.Applets.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.PCL.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:OpenIZ.Core.PCL.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.Alert.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:OpenIZ.Core.Alert.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.Model.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:OpenIZ.Core.Model.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.dll"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:OpenIZ.Core.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.exe"" /nologo /silent"; Components: core; StatusMsg: "Optimizing Assembly:OpenIZ.exe"; flags: runhidden
+; AMI
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.Util.CertificateTools.dll"" /nologo /silent"; Components: msg\ami; StatusMsg: "Optimizing Assembly:MARC.Util.CertificateTools.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\CERTADMINLib.dll"" /nologo /silent"; Components: msg\ami; StatusMsg: "Optimizing Assembly:CERTADMINLib.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.Model.AMI.dll"" /nologo /silent"; Components: msg\ami; StatusMsg: "Optimizing Assembly:OpenIZ.Core.Model.AMI.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.AMI.dll"" /nologo /silent"; Components: msg\ami; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.AMI.dll"; flags: runhidden
+; Atna
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\AtnaApi.dll"" /nologo /silent"; Components: interop\atna; StatusMsg: "Optimizing Assembly:AtnaApi.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Auditing.Atna.dll"" /nologo /silent"; Components: interop\atna; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Auditing.Atna.dll"; flags: runhidden
+; GIIS migration
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\GIIS.DataLayer.dll"" /nologo /silent"; Components: tools\migration; StatusMsg: "Optimizing Assembly:GIIS.DataLayer.dll"; flags: runhidden
+; HL7 FHIR
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Messaging.FHIR.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Messaging.FHIR.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.FHIR.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.FHIR.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Hl7.Fhir.DSTU21.Core.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:Hl7.Fhir.DSTU21.Core.dll"; flags: runhidden
+; HL7 IHE PIX
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Messaging.HAPI.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Messaging.HAPI.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\NHapi.Base.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:NHapi.Base.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\NHapi.Model.V25.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:NHapi.Model.V25.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\NHapi.Model.V231.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:NHapi.Model.V231.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.HL7.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.HL7.dll"; flags: runhidden
+; Tools
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\AjaxMin.dll"" /nologo /silent"; Components: tools; StatusMsg: "Optimizing Assembly:AjaxMin.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\oizdt.exe"" /nologo /silent"; Components: tools; StatusMsg: "Optimizing Assembly:oizdt.exe"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\AppletCompiler.exe"" /nologo /silent"; Components: tools; StatusMsg: "Optimizing Assembly:AppletCompiler.exe"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\LogViewer.exe"" /nologo /silent"; Components: tools; StatusMsg: "Optimizing Assembly:LogViewer.exe"; flags: runhidden
+; Twilio
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\RestSharp.dll"" /nologo /silent"; Components: tfa\twilio; StatusMsg: "Optimizing Assembly:RestSharp.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Twilio.Api.dll"" /nologo /silent"; Components: tfa\twilio; StatusMsg: "Optimizing Assembly:Twilio.Api.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.Security.Tfa.Twilio.dll"" /nologo /silent"; Components: tfa\twilio; StatusMsg: "Optimizing Assembly:OpenIZ.Core.Security.Tfa.Twilio.dll"; flags: runhidden
+; Email
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Core.Security.Tfa.Email.dll"" /nologo /silent"; Components: tfa\email; StatusMsg: "Optimizing Assembly:OpenIZ.Core.Security.Tfa.Email.dll"; flags: runhidden
+; Caching
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Caching.Memory.dll"" /nologo /silent"; Components: cache; StatusMsg: "Optimizing Assembly:OpenIZ.Caching.Memory.dll"; flags: runhidden
+; Redis
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\StackExchange.Redis.dll"" /nologo /silent"; Components: cache\redis; StatusMsg: "Optimizing Assembly:StackExchange.Redis.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Caching.Redis.dll"" /nologo /silent"; Components: cache\redis; StatusMsg: "Optimizing Assembly:OpenIZ.Caching.Redis.dll"; flags: runhidden
+; OATUH
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\System.IdentityModel.Tokens.Jwt.dll"" /nologo /silent"; Components: msg\auth; StatusMsg: "Optimizing Assembly:System.IdentityModel.Tokens.Jwt.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Authentication.OAUTH2.dll"" /nologo /silent"; Components: msg\auth; StatusMsg: "Optimizing Assembly:OpenIZ.Authentication.OAUTH2.dll"; flags: runhidden
+; APIs
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Warehouse.ADO.dll"" /nologo /silent"; Components: db\ado; StatusMsg: "Optimizing Assembly:OpenIZ.Warehouse.ADO.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Persistence.Data.ADO.dll"" /nologo /silent"; Components: db\ado; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Data.ADO.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.OrmLite.dll"" /nologo /silent"; Components: db\ado; StatusMsg: "Optimizing Assembly:OpenIZ.OrmLite.dll"; flags: runhidden
+; MSSQL Stuff
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Persistence.Data.MSSQL.dll"" /nologo /silent"; Components: db\mssql; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Data.MSSQL.dll"; flags: runhidden
+; Jasper Reporting Stuff
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Reporting.Jasper.dll"" /nologo /silent"; Components: reporting\jasper; StatusMsg: "Optimizing Assembly:OpenIZ.Reporting.Jasper.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Persistence.Reporting.PSQL.dll"" /nologo /silent"; Components: reporting; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Reporting.PSQL.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.RISI.dll"" /nologo /silent"; Components: reporting\risi; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.RISI.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Reporting.Core.dll"" /nologo /silent"; Components: reporting; StatusMsg: "Optimizing Assembly:OpenIZ.Reporting.Core.dll"; flags: runhidden
+; GS1 Interop
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.GS1.dll"" /nologo /silent"; Components: interop\gs1; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.GS1.dll"; flags: runhidden
+; IMSI Stuff
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.IMSI.dll"" /nologo /silent"; Components: msg\imsi; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.IMSI.dll"; flags: runhidden
+; JIRA Stuff
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Persistence.Diagnostics.Jira.dll"" /nologo /silent"; Components: interop\jira; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Diagnostics.Jira.dll"; flags: runhidden

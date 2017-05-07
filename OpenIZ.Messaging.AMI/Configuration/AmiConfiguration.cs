@@ -18,6 +18,9 @@
  * Date: 2016-8-2
  */
 
+using OpenIZ.Core.Interop;
+using System.Collections.Generic;
+
 namespace OpenIZ.Messaging.AMI.Configuration
 {
 	/// <summary>
@@ -29,5 +32,10 @@ namespace OpenIZ.Messaging.AMI.Configuration
 		/// Certification authority configuration
 		/// </summary>
 		public CertificationAuthorityConfiguration CaConfiguration { get; set; }
-	}
+
+        /// <summary>
+        /// Extra endpoints
+        /// </summary>
+        public List<ServiceEndpointOptions> Endpoints { get; set; }
+    }
 }

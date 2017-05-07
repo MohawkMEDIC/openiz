@@ -68,7 +68,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 		/// <returns>Returns the authenticated device principal.</returns>
 		public IPrincipal Authenticate(string deviceId, string deviceSecret)
 		{
-			using (var dataContext = this.configuration.Provider.GetReadonlyConnection())
+			using (var dataContext = this.configuration.Provider.GetWriteConnection())
 			{
 				try
 				{
