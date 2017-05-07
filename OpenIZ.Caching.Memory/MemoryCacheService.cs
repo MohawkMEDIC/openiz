@@ -54,6 +54,7 @@ namespace OpenIZ.Caching.Memory
         // Memory cache configuration
         private MemoryCacheConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.caching.memory") as MemoryCacheConfiguration;
         private TraceSource m_tracer = new TraceSource("OpenIZ.Caching.Memory");
+	    private static object s_lock = new object();
 
         /// <summary>
         /// True when the memory cache is running
@@ -206,11 +207,14 @@ namespace OpenIZ.Caching.Memory
 
                 if (sourceEntity != null) // search and replace
                 {
-                    var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
-                        o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
-                    if (idx != null)
-                        sourceEntity.Relationships.Remove(idx);
-                    sourceEntity.Relationships.Add(rel);
+	                lock (s_lock)
+	                {
+						var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+																				o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
+		                if (idx != null)
+			                sourceEntity.Relationships.Remove(idx);
+		                sourceEntity.Relationships.Add(rel);
+					}
                 }
                 if (targetEntity != null)
                 {
