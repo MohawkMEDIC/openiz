@@ -80,6 +80,13 @@ namespace OizDevTool
             [Parameter("auth")]
             [Description("The assigning authority from which a random ID should be generated")]
             public String BarcodeAuth { get; set; }
+
+            /// <summary>
+            /// Generate patients only
+            /// </summary>
+            [Parameter("patonly")]
+            [Description("Only generate patients, not acts")]
+            public bool PatientOnly { get; internal set; }
         }
 
         /// <summary>
@@ -291,7 +298,7 @@ namespace OizDevTool
             
             var places = (ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, 1000, out tr, Guid.Empty);
             places = places.Union((ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, 1000, out tr, Guid.Empty));
-            WaitThreadPool wtp = new WaitThreadPool();
+            WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4);
             Random r = new Random();
 
             int npatients = 0;
@@ -309,23 +316,28 @@ namespace OizDevTool
                 Console.WriteLine("Generated Patient #{2:#,###,###}: {0} ({1} mo)", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient);
 
                 // Schedule
-                var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now);
-                Console.WriteLine("\t {0} acts", acts.Count());
-
-                Bundle bundle = new Bundle();
-
-                foreach (var act in acts)
+                if (!parameters.PatientOnly)
                 {
-                    act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
-                    act.StatusConceptKey = StatusKeys.Completed;
-                    act.ActTime = act.ActTime.AddDays(r.Next(0, 5));
+                    var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now);
 
-                    if (act is QuantityObservation)
-                        (act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
-                    // Persist the act
-                    bundle.Item.Add(act);
+                    Bundle bundle = new Bundle();
+
+                    foreach (var act in acts)
+                    {
+                        if (act.Key.Value.ToByteArray()[0] > 200) continue;
+                        act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
+                        act.StatusConceptKey = StatusKeys.Completed;
+                        act.ActTime = act.ActTime.AddDays(r.Next(0, 5));
+
+                        if (act is QuantityObservation)
+                            (act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
+                        // Persist the act
+                        bundle.Item.Add(act);
+                    }
+                    Console.WriteLine("\t {0} acts", bundle.Item.Count());
+
+                    ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(bundle);
                 }
-                ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(bundle);
 
             };
             genFunc(null);

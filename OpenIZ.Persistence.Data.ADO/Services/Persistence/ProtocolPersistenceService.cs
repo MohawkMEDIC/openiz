@@ -53,7 +53,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 existingHandler = new DbProtocolHandler()
                 {
                     Key = Guid.NewGuid(),
-                    CreatedByKey = modelInstance.CreatedByKey ?? princpal.GetUser(context).Key,
+                    CreatedByKey = modelInstance.CreatedByKey ?? princpal.GetUserKey(context).Value,
                     CreationTime = DateTime.Now,
                     IsActive = true,
                     Name = modelInstance.HandlerClass.Name,
@@ -66,7 +66,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             return new DbProtocol()
             {
                 Key = modelInstance.Key ?? Guid.NewGuid(),
-                CreatedByKey = modelInstance.CreatedByKey ?? princpal.GetUser(context).Key,
+                CreatedByKey = modelInstance.CreatedByKey ?? princpal.GetUserKey(context).Value,
                 CreationTime = modelInstance.CreationTime,
                 Name = modelInstance.Name,
                 ObsoletedByKey = modelInstance.ObsoletedByKey,

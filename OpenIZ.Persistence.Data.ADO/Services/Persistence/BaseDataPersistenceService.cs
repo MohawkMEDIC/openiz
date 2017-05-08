@@ -63,14 +63,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var nvd = data as NonVersionedEntityData;
             if (nvd != null)
             {
-                nvd.UpdatedByKey = nvd.UpdatedByKey ?? principal.GetUser(context).Key;
+                nvd.UpdatedByKey = nvd.UpdatedByKey ?? principal.GetUserKey(context);
                 nvd.UpdatedTime = DateTimeOffset.Now;
             }
 
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
 
             // Ensure created by exists
-            data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUser(context).Key : domainObject.CreatedByKey;
+            data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUserKey(context).Value : domainObject.CreatedByKey;
             domainObject = context.Insert<TDomain>(domainObject);
             data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
             data.Key = domainObject.Key;
@@ -107,7 +107,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var vobject = domainObject as IDbNonVersionedBaseData;
             if (vobject != null)
             {
-                nvd.UpdatedByKey = vobject.UpdatedByKey = nvd.UpdatedByKey ?? principal.GetUser(context).Key;
+                nvd.UpdatedByKey = vobject.UpdatedByKey = nvd.UpdatedByKey ?? principal.GetUserKey(context);
                 nvd.UpdatedTime = vobject.UpdatedTime = DateTimeOffset.Now;
             }
 
@@ -146,7 +146,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 throw new KeyNotFoundException(data.Key.ToString());
 
             //data.ObsoletedBy?.EnsureExists(context, principal);
-            data.ObsoletedByKey = currentObject.ObsoletedByKey = data.ObsoletedBy?.Key ?? principal.GetUser(context).Key;
+            data.ObsoletedByKey = currentObject.ObsoletedByKey = data.ObsoletedBy?.Key ?? principal.GetUserKey(context);
             data.ObsoletionTime = currentObject.ObsoletionTime = currentObject.ObsoletionTime ?? DateTimeOffset.Now;
 
             context.Update(currentObject);

@@ -54,7 +54,7 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Load state
         /// </summary>
-        public LoadState LoadSate { get; set; }
+        public LoadState LoadState { get; set; }
 
         /// <summary>
         /// Data dictionary
@@ -174,7 +174,7 @@ namespace OpenIZ.OrmLite
             retVal.Open();
             retVal.m_dataDictionary = this.m_dataDictionary; // share data
             retVal.m_cachedQuery = this.m_cachedQuery;
-            retVal.LoadSate = this.LoadSate;
+            retVal.LoadState = this.LoadState;
             //retVal.PrepareStatements = this.PrepareStatements;
             return retVal;
         }

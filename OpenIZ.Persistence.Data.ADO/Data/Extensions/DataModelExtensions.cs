@@ -51,8 +51,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
     /// </summary>
     public static class DataModelExtensions
     {
-
-
+        
         // Trace source
         private static TraceSource s_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
 
@@ -67,6 +66,11 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
         // Runtime properties
         private static Dictionary<String, IEnumerable<PropertyInfo>> s_runtimeProperties = new Dictionary<string, IEnumerable<PropertyInfo>>();
+
+        // Cache ids
+        private static Dictionary<String, Guid> m_classIdCache = new Dictionary<string, Guid>();
+
+        private static Dictionary<String, Guid> m_userIdCache = new Dictionary<string, Guid>();
 
         /// <summary>
         /// Get fields
@@ -127,13 +131,34 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 SqlStatement stmt = context.CreateSqlStatement().SelectFrom(dataType)
                     .Where($"{column.Name} = ?", classifierValue);
 
-                var dataObject = context.FirstOrDefault(dataType, stmt);
-                if (dataObject != null)
-                    existing = idpInstance.ToModelInstance(dataObject, context, principal) as IIdentifiedEntity;
+                Guid objIdCache = Guid.Empty;
+                IDbIdentified dataObject = null;
+
+                // We've seen this before
+                String classKey = $"{dataType}.{classifierValue}";
+                if (m_classIdCache.TryGetValue(classKey, out objIdCache))
+                    existing = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(objIdCache) as IdentifiedData;
+                if (existing == null)
+                {
+                    dataObject = context.FirstOrDefault(dataType, stmt) as IDbIdentified;
+                    if (dataObject != null)
+                    {
+                        lock (m_classIdCache)
+                            if (!m_classIdCache.ContainsKey(classKey))
+                                m_classIdCache.Add(classKey, dataObject.Key);
+                        var existCache = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem((dataObject as IDbIdentified).Key);
+                        if (existCache != null)
+                            existing = existCache as IdentifiedData;
+                        else
+                            existing = idpInstance.ToModelInstance(dataObject, context, principal) as IIdentifiedEntity;
+                    }
+                }
             }
+
             return existing;
 
         }
+
 
         /// <summary>
         /// Updates a keyed delay load field if needed
@@ -232,18 +257,31 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// <param name="principal">The current authorization context</param>
         /// <param name="dataContext">The context under which the get operation should be completed</param>
         /// <returns>The UUID of the user which the authorization context subject represents</returns>
-        public static DbSecurityUser GetUser(this IPrincipal principal, DataContext dataContext)
+        public static Guid? GetUserKey(this IPrincipal principal, DataContext dataContext)
         {
 
             if (principal == null)
                 return null;
 
-            var user = dataContext.SingleOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == principal.Identity.Name.ToLower() && !o.ObsoletionTime.HasValue);
-            // TODO: Enable auto-creation of users via configuration
-            if (user == null)
-                throw new SecurityException("User in authorization context does not exist or is obsolete");
+            Guid userId = Guid.Empty;
+            DbSecurityUser user = null;
+            if (!m_userIdCache.TryGetValue(principal.Identity.Name.ToLower(), out userId))
+            {
+                user = dataContext.SingleOrDefault<DbSecurityUser>(o => o.UserName.ToLower() == principal.Identity.Name.ToLower() && !o.ObsoletionTime.HasValue);
+                userId = user.Key;
+                // TODO: Enable auto-creation of users via configuration
+                if (user == null)
+                    throw new SecurityException("User in authorization context does not exist or is obsolete");
+                else
+                {
+                    lock (m_userIdCache)
+                        if (!m_userIdCache.ContainsKey(principal.Identity.Name.ToLower()))
+                            m_userIdCache.Add(principal.Identity.Name.ToLower(), user.Key);
+                }
+            }
 
-            return user;
+
+            return userId;
 
         }
 
@@ -265,7 +303,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         public static void LoadAssociations<TModel>(this TModel me, DataContext context, IPrincipal principal, params String[] loadProperties) where TModel : IIdentifiedEntity
         {
             // I duz not haz a chzbrgr?
-            if (me == null || me.LoadState >= context.LoadSate)
+            if (me == null || me.LoadState >= context.LoadState)
                 return;
             else if (context.Transaction != null) // kk.. I haz a transaction
                 return;
@@ -307,22 +345,21 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 {
                     properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).IsAssignableFrom(o.PropertyType.StripGeneric())).ToList();
 
-	                if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
-	                {
-						s_runtimeProperties.Add(propertyCacheKey, properties);
-					}
+                    if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
+                    {
+                        s_runtimeProperties.Add(propertyCacheKey, properties);
+                    }
                 }
 
             // Load fast or lean mode only root associations which will appear on the wire
-            object loadFast = null;
-            if (context.Data.TryGetValue("loadFast", out loadFast) && true.Equals(loadFast))
+            if (context.LoadState == LoadState.PartialLoad)
             {
                 if (me.LoadState == LoadState.PartialLoad) // already partially loaded :/ 
                     return;
                 else
                 {
                     me.LoadState = LoadState.PartialLoad;
-                    properties = properties.Where(o => o.GetCustomAttribute<XmlAttributeAttribute>() != null || o.GetCustomAttribute<XmlElementAttribute>() != null);
+                    properties = properties.Where(o => o.GetCustomAttribute<XmlAttributeAttribute>() != null || o.GetCustomAttribute<XmlElementAttribute>() != null).ToList();
                 }
             }
 

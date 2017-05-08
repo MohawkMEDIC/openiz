@@ -69,7 +69,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             var oid = dataContext.FirstOrDefault<DbAssigningAuthority>(o => o.DomainName == oidName);
                             if (oid == null) throw new KeyNotFoundException(oidName);
 
-                            oid.ObsoletedByKey = AuthenticationContext.Current.Principal.GetUser(dataContext).Key;
+                            oid.ObsoletedByKey = AuthenticationContext.Current.Principal.GetUserKey(dataContext);
                             oid.ObsoletionTime = DateTimeOffset.Now;
                             dataContext.Update(oid);
 

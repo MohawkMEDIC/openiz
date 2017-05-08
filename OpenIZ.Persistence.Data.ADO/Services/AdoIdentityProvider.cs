@@ -233,7 +233,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                             user.PasswordHash = passwordHashingService.EncodePassword(newPassword);
                             user.SecurityHash = Guid.NewGuid().ToString();
-                            user.UpdatedByKey = principal.GetUser(dataContext).Key;
+                            user.UpdatedByKey = principal.GetUserKey(dataContext);
 
                             dataContext.Update(user);
                             tx.Commit();
@@ -307,7 +307,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                                 UserClass = UserClassKeys.HumanUser
                             };
                             if (authContext != null)
-                                newIdentityUser.CreatedByKey = authContext.GetUser(dataContext).Key;
+                                newIdentityUser.CreatedByKey = authContext.GetUserKey(dataContext).Value;
 
                             dataContext.Insert(newIdentityUser);
                             var retVal = AdoClaimsIdentity.Create(newIdentityUser);
@@ -353,7 +353,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     // Obsolete
                     user.ObsoletionTime = DateTimeOffset.Now;
-                    user.ObsoletedByKey = authContext.GetUser(dataContext).Key;
+                    user.ObsoletedByKey = authContext.GetUserKey(dataContext);
                     user.SecurityHash = Guid.NewGuid().ToString();
 
                     dataContext.Update(user);
@@ -393,7 +393,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         user.Lockout = DateTime.Now;
                     user.ObsoletionTime = null;
                     user.ObsoletedByKey = null;
-                    user.UpdatedByKey = authContext.GetUser(dataContext).Key;
+                    user.UpdatedByKey = authContext.GetUserKey(dataContext);
                     user.UpdatedTime = DateTimeOffset.Now;
                     user.SecurityHash = Guid.NewGuid().ToString();
 
