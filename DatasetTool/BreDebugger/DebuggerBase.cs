@@ -33,6 +33,9 @@ namespace OizDevTool.BreDebugger
         // Current scope
         protected object m_scopeObject = null;
 
+        private bool m_fullStack = false;
+
+
         /// <summary>
         /// Breakpoints
         /// </summary>
@@ -92,6 +95,25 @@ namespace OizDevTool.BreDebugger
         {
             Console.ForegroundColor = this.m_promptColor;
             Console.Write(this.m_prompt);
+        }
+
+        /// <summary>
+        /// Print stack
+        /// </summary>
+        protected void PrintStack(Exception e)
+        {
+            if (!this.m_fullStack)
+            {
+                Console.Error.WriteLine("ERR: {0}", e.Message);
+                var i = e.InnerException; int l = 1;
+                while (i != null)
+                {
+                    Console.WriteLine("\t{0}:{1}", l++, i.Message);
+                    i = i.InnerException;
+                }
+            }
+            else
+                Console.WriteLine(e.ToString());
         }
 
         /// <summary>
@@ -156,13 +178,7 @@ namespace OizDevTool.BreDebugger
                     }
                     catch (Exception e)
                     {
-                        Console.Error.WriteLine("ERR: {0}", e.Message);
-                        var i = e.InnerException; int l = 1;
-                        while (i != null)
-                        {
-                            Console.WriteLine("\t{0}:{1}", l++, i.Message);
-                            i = i.InnerException;
-                        }
+                        this.PrintStack(e);
                     }
                 }
 
@@ -170,6 +186,16 @@ namespace OizDevTool.BreDebugger
             }
         }
 
+
+        /// <summary>
+        /// Output full stack
+        /// </summary>
+        [DebuggerCommand("ofs", "Enables printing of full stack traces")]
+        public void OutputFullStack()
+        {
+            this.m_fullStack = !this.m_fullStack;
+            Console.WriteLine("Full Stack: {0}", this.m_fullStack);
+        }
 
         /// <summary>
         /// Print working directory

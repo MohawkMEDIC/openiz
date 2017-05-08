@@ -689,14 +689,7 @@ namespace OizDevTool.BreDebugger
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("\r\nERR: {0}", e.Message);
-                        var i = e.InnerException;
-                        var l = 0;
-                        while (i != null)
-                        {
-                            Console.WriteLine("\t{0} {1}", l++, i.Message);
-                            i = i.InnerException;
-                        }
+                        this.PrintStack(e);
                         this.Prompt();
 
                     }
@@ -790,14 +783,7 @@ namespace OizDevTool.BreDebugger
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("\r\nERR: {0}", e.Message);
-                        var i = e.InnerException;
-                        var l = 0;
-                        while (i != null)
-                        {
-                            Console.WriteLine("\t{0} {1}", l++, i.Message);
-                            i = i.InnerException;
-                        }
+                        this.PrintStack(e);
                         this.Prompt();
 
                     }

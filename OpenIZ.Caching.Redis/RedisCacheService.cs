@@ -145,16 +145,24 @@ namespace OpenIZ.Caching.Redis
                     var idx = sourceEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
-                        sourceEntity.Participations.Remove(idx);
-                    sourceEntity.Participations.Add(ptcpt);
+                    {
+                        idx.CopyObjectData(ptcpt);
+                        this.Add(sourceEntity);
+                    }
+                    else
+                        sourceEntity.Participations.Add(ptcpt);
                 }
                 if (targetEntity != null)
                 {
                     var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
-                        targetEntity.Participations.Remove(idx);
-                    targetEntity.Participations.Add(ptcpt);
+                    {
+                        idx.CopyObjectData(ptcpt);
+                        this.Add(targetEntity);
+                    }
+                    else
+                        targetEntity.Participations.Add(ptcpt);
                 }
                 //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
             }
@@ -168,17 +176,26 @@ namespace OpenIZ.Caching.Redis
                 {
                     var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
-                    if (idx != null)
-                        sourceEntity.Relationships.Remove(idx);
-                    sourceEntity.Relationships.Add(rel);
+                    if (idx != null) { 
+                        idx.CopyObjectData(rel);
+                        this.Add(sourceEntity);
+                    }
+                    else
+
+                        sourceEntity.Relationships.Add(rel);
                 }
                 if (targetEntity != null)
                 {
                     var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
-                        targetEntity.Relationships.Remove(idx);
-                    targetEntity.Relationships.Add(rel);
+                    {
+                        idx.CopyObjectData(rel);
+                        this.Add(targetEntity);
+                    }
+                    else
+
+                        targetEntity.Relationships.Add(rel);
                 }
             }
             else if (e.Object is EntityRelationship)
@@ -191,17 +208,26 @@ namespace OpenIZ.Caching.Redis
                 {
                     var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
-                    if (idx != null)
-                        sourceEntity.Relationships.Remove(idx);
-                    sourceEntity.Relationships.Add(rel);
+                    if (idx != null) { 
+                        idx.CopyObjectData(rel);
+                        this.Add(sourceEntity);
+                    }
+                    else
+
+                        sourceEntity.Relationships.Add(rel);
                 }
                 if (targetEntity != null)
                 {
                     var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
-                        targetEntity.Relationships.Remove(idx);
-                    targetEntity.Relationships.Add(rel);
+                    {
+                        idx.CopyObjectData(rel);
+                        this.Add(targetEntity);
+                    }
+                    else
+                        targetEntity.Relationships.Add(rel);
+
                 }
             }
             else if (e.Object is Act) // We need to remove RCT 
