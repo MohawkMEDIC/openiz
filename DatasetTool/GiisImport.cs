@@ -471,11 +471,11 @@ namespace OizDevTool
             if (child.Birthplace != null)
                 retVal.Extensions.Add(new EntityExtension()
                 {
-                    ExtensionType = new ExtensionType("http://openiz.org/extensions/patient/contrib/timr/birthPlaceType", typeof(DictionaryExtensionHandler))
+                    ExtensionType = new ExtensionType("http://openiz.org/extensions/patient/contrib/timr/birthPlaceType", typeof(DecimalExtensionHandler))
                     {
                         Key = Guid.Parse("25dfb527-d3ab-4a97-8171-316086ad3f74")
                     },
-                    ExtensionValue = child.Birthplace.Name
+                    ExtensionValue = child.Birthplace.Id
                 });
 
             return retVal;

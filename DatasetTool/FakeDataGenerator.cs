@@ -44,6 +44,8 @@ using OpenIZ.Core;
 using OpenIZ.Core.Services.Impl;
 using System.Threading;
 using System.ComponentModel;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model;
 
 namespace OizDevTool
 {
@@ -310,6 +312,8 @@ namespace OizDevTool
                 var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now);
                 Console.WriteLine("\t {0} acts", acts.Count());
 
+                Bundle bundle = new Bundle();
+
                 foreach (var act in acts)
                 {
                     act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
@@ -319,8 +323,10 @@ namespace OizDevTool
                     if (act is QuantityObservation)
                         (act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
                     // Persist the act
-                    ApplicationContext.Current.GetService<IActRepositoryService>().Insert(act);
+                    bundle.Item.Add(act);
                 }
+                ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(bundle);
+
             };
             genFunc(null);
 

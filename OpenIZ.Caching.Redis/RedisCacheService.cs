@@ -6,6 +6,7 @@ using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Serialization;
 using OpenIZ.Core.Services;
@@ -218,21 +219,24 @@ namespace OpenIZ.Caching.Redis
         /// </summary>
         public void Add(IdentifiedData data)
         {
-            // We want to add
+            // We want to add only those when the connection is present
             if (this.m_connection == null || data == null || !data.Key.HasValue)
                 return;
 
-            // Add
-            var redisDb = this.m_connection.GetDatabase();
-            var existing = redisDb.KeyExists(data.Key.Value.ToString());
-            redisDb.HashSet(data.Key.Value.ToString(), this.SerializeObject(data));
+            // Only add data which is an entity, act, or relationship
+            //if (data is Act || data is Entity || data is ActRelationship || data is ActParticipation || data is EntityRelationship || data is Concept)
+            //{
+                // Add
+                var redisDb = this.m_connection.GetDatabase();
+                var existing = redisDb.KeyExists(data.Key.Value.ToString());
+                redisDb.HashSet(data.Key.Value.ToString(), this.SerializeObject(data));
 
-            this.EnsureCacheConsistency(new DataCacheEventArgs(data));
-            if (existing)
-                this.m_connection.GetSubscriber().Publish("oiz.events", $"PUT http://{Environment.MachineName}/cache/{data.Key.Value}");
-            else
-                this.m_connection.GetSubscriber().Publish("oiz.events", $"POST http://{Environment.MachineName}/cache/{data.Key.Value}");
-
+                this.EnsureCacheConsistency(new DataCacheEventArgs(data));
+                if (existing)
+                    this.m_connection.GetSubscriber().Publish("oiz.events", $"PUT http://{Environment.MachineName}/cache/{data.Key.Value}");
+                else
+                    this.m_connection.GetSubscriber().Publish("oiz.events", $"POST http://{Environment.MachineName}/cache/{data.Key.Value}");
+            //}
         }
 
         /// <summary>

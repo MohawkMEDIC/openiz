@@ -160,7 +160,7 @@ namespace OpenIZ.Caching.Memory
 
                 if (sourceEntity != null) // search and replace
                 {
-                    var idx = sourceEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
+                    var idx = sourceEntity.Participations.ToList().FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
                         sourceEntity.Participations.Remove(idx);
@@ -168,7 +168,7 @@ namespace OpenIZ.Caching.Memory
                 }
                 if (targetEntity != null)
                 {
-                    var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
+                    var idx = targetEntity.Participations.ToList().FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
                         targetEntity.Participations.Remove(idx);
@@ -184,7 +184,7 @@ namespace OpenIZ.Caching.Memory
 
                 if (sourceEntity != null) // search and replace
                 {
-                    var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                    var idx = sourceEntity.Relationships.ToList().FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
                         sourceEntity.Relationships.Remove(idx);
@@ -192,7 +192,7 @@ namespace OpenIZ.Caching.Memory
                 }
                 if (targetEntity != null)
                 {
-                    var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                    var idx = targetEntity.Relationships.ToList().FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
                         targetEntity.Relationships.Remove(idx);
@@ -209,7 +209,7 @@ namespace OpenIZ.Caching.Memory
                 {
 	                lock (s_lock)
 	                {
-						var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+						var idx = sourceEntity.Relationships.ToList().FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
 																				o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
 		                if (idx != null)
 			                sourceEntity.Relationships.Remove(idx);
@@ -218,7 +218,7 @@ namespace OpenIZ.Caching.Memory
                 }
                 if (targetEntity != null)
                 {
-                    var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
+                    var idx = targetEntity.Relationships.ToList().FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
                         targetEntity.Relationships.Remove(idx);
