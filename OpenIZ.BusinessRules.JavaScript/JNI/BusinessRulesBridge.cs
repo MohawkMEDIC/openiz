@@ -180,19 +180,19 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         public Object ExecuteBundleRules(String trigger, Object bundle)
         {
             var bdl = this.ToModel(bundle) as Bundle;
-            foreach (var itm in bdl.Item)
+            for(int i = 0; i < bdl.Item.Count; i++)
                 try
                 {
-                    JavascriptBusinessRulesEngine.Current.Invoke(trigger, itm);
+                    bdl.Item[i] = JavascriptBusinessRulesEngine.Current.Invoke(trigger, bdl.Item[i]);
                 }
                 catch(Exception e)
                 {
                     if (System.Diagnostics.Debugger.IsAttached)
                         throw;
                     else
-                        Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itm, e);
+                        Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", bdl.Item[i], e);
                 }
-            return bundle;
+            return this.ToViewModel(bdl);
 
         }
 
