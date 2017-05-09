@@ -216,7 +216,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                         if (scope is IdentifiedData)
                             ExpandProperties(scope as IdentifiedData, qp, keyStack);
                         else if (scope is IList)
-                            foreach (var itm in scope as IList)
+                            foreach (var itm in (scope as IList).OfType<Object>().ToList())
                                 if (itm is IdentifiedData)
                                     ExpandProperties(itm as IdentifiedData, qp, keyStack);
                     }

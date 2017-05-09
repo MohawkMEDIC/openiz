@@ -98,6 +98,8 @@ namespace OpenIZ.Core.Model.Map
 
         private static Dictionary<Type, Dictionary<String, PropertyInfo[]>> s_modelPropertyCache = new Dictionary<Type, Dictionary<String, PropertyInfo[]>>();
 
+        private static Dictionary<Type, String> m_domainClassPropertyName = new Dictionary<Type, string>();
+
         /// <summary>
         /// Maps a model property at a root level only
         /// </summary>
@@ -536,7 +538,15 @@ namespace OpenIZ.Core.Model.Map
 
             // Classifier value 
             String classifierValue = null;
-            var classPropertyName = tModel.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
+            String classPropertyName = String.Empty;
+            if(!m_domainClassPropertyName.TryGetValue(tModel, out classPropertyName))
+            {
+                classPropertyName = tModel.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
+                lock (m_domainClassPropertyName)
+                    if(!m_domainClassPropertyName.ContainsKey(tModel))
+                        m_domainClassPropertyName.Add(tModel, classPropertyName);
+            }
+
             if (classPropertyName != null) {
                 // Key value
                 classPropertyName = tModel.GetRuntimeProperty(classPropertyName)?.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classPropertyName;

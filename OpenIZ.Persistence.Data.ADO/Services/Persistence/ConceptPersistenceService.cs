@@ -52,7 +52,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (retVal == null) return null;
 
-            if (dbConceptVersion != null)
+            if (dbConceptVersion != null && context.LoadState == Core.Model.LoadState.FullLoad)
             {
                 var dbConcept = (dataInstance as CompositeResult)?.Values.OfType<DbConcept>().FirstOrDefault() ?? context.FirstOrDefault<DbConcept>(o => o.Key == dbConceptVersion.Key);
                 retVal.IsSystemConcept = dbConcept.IsReadonly;

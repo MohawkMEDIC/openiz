@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{2914F4AD-4661-4C73-ADB6-B1D91C11C569}"
 EndProject
@@ -128,6 +128,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F129E9B1-F715-44A8-90DC-5D59AA00E310}"
 	ProjectSection(SolutionItems) = preProject
 		Performance1.psess = Performance1.psess
+		Performance2.psess = Performance2.psess
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Caching.Redis", "OpenIZ.Caching.Redis\OpenIZ.Caching.Redis.csproj", "{86672094-25CC-4CD5-B085-240E50EC4A5E}"

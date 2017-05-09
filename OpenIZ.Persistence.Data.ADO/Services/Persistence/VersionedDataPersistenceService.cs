@@ -94,7 +94,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             nonVersionedPortion = context.Insert(nonVersionedPortion);
 
             // Ensure created by exists
-            data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUser(context).Key : domainObject.CreatedByKey;
+            data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUserKey(context).Value : domainObject.CreatedByKey;
 
             domainObject = context.Insert(domainObject);
             data.VersionSequence = domainObject.VersionSequenceId;
@@ -134,7 +134,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var storageInstance = this.FromModelInstance(data, context, principal);
 
             // Create a new version
-            var user = principal.GetUser(context);
+            var user = principal.GetUserKey(context);
             var newEntityVersion = new TDomain();
             newEntityVersion.CopyObjectData(storageInstance);
 
@@ -146,9 +146,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.VersionSequence = newEntityVersion.VersionSequenceId = null;
             newEntityVersion.Key = data.Key.Value;
             data.PreviousVersionKey = newEntityVersion.ReplacesVersionKey = existingObject.VersionKey;
-            data.CreatedByKey = newEntityVersion.CreatedByKey = data.CreatedByKey ?? user.Key;
+            data.CreatedByKey = newEntityVersion.CreatedByKey = data.CreatedByKey ?? user.Value;
             // Obsolete the old version 
-            existingObject.ObsoletedByKey = data.CreatedByKey ?? user.Key;
+            existingObject.ObsoletedByKey = data.CreatedByKey ?? user;
             existingObject.ObsoletionTime = DateTime.Now;
             newEntityVersion = context.Insert<TDomain>(newEntityVersion);
             nonVersionedObect = context.Update<TDomainKey>(nonVersionedObect);

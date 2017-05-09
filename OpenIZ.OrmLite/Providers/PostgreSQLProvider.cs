@@ -12,6 +12,7 @@ using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Data.Warehouse;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.OrmLite.Providers
 {
@@ -140,6 +141,10 @@ namespace OpenIZ.OrmLite.Providers
             return this.CreateCommandInternal(context, CommandType.Text, finStmt.SQL, finStmt.Arguments.ToArray());
         }
 
+
+        // Parameter regex
+        private readonly Regex m_parmRegex = new Regex(@"\?");
+
         /// <summary>
         /// Create command internally
         /// </summary>
@@ -147,11 +152,8 @@ namespace OpenIZ.OrmLite.Providers
         {
 
             var pno = 0;
-            while (sql.Contains("?"))
-            {
-                var idx = sql.IndexOf("?");
-                sql = sql.Remove(idx, 1).Insert(idx, $"@parm{pno++}");
-            }
+            
+            sql = this.m_parmRegex.Replace(sql, o => $"@parm{pno++}");
 
             if (pno !=  parms.Length && type == CommandType.Text)
                 throw new ArgumentOutOfRangeException(nameof(sql), $"Parameter mismatch query expected {pno} but {parms.Length} supplied");
@@ -207,7 +209,8 @@ namespace OpenIZ.OrmLite.Providers
                 // Prepare command
                 if (context.PrepareStatements)
                 {
-                    if (!cmd.Parameters.OfType<IDataParameter>().Any(o => o.DbType == DbType.Object))
+                    if (!cmd.Parameters.OfType<IDataParameter>().Any(o => o.DbType == DbType.Object) &&
+                        context.Transaction == null)
                         cmd.Prepare();
 
                     context.AddPreparedCommand(cmd);

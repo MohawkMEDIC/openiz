@@ -57,7 +57,7 @@ namespace OpenIZ.OrmLite
     public class QueryBuilder
     {
         // Regex to extract property, guards and cast
-        private const string m_extractionRegex = @"^(\w*?)(\[(\w*)\])?(\@(\w*))?(\.(.*))?$";
+        private readonly Regex m_extractionRegex = new Regex(@"^(\w*?)(\[(\w*)\])?(\@(\w*))?(\.(.*))?$");
 
         // Join cache
         private Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>> s_joinCache = new Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>>();
@@ -166,7 +166,6 @@ namespace OpenIZ.OrmLite
 
             // We want to process each query and build WHERE clauses - these where clauses are based off of the JSON / XML names
             // on the model, so we have to use those for the time being before translating to SQL
-            Regex re = new Regex(m_extractionRegex);
             List<KeyValuePair<String, Object>> workingParameters = new List<KeyValuePair<string, object>>(query);
 
             // Where clause
@@ -180,7 +179,7 @@ namespace OpenIZ.OrmLite
                 workingParameters.RemoveAt(0);
 
                 // Match the regex and process
-                var matches = re.Match(parm.Key);
+                var matches = this.m_extractionRegex.Match(parm.Key);
                 if (!matches.Success) throw new ArgumentOutOfRangeException(parm.Key);
 
                 // First we want to collect all the working parameters 
@@ -190,7 +189,7 @@ namespace OpenIZ.OrmLite
                     subProperty = matches.Groups[SubPropertyRegexGroup].Value;
 
                 // Next, we want to construct the 
-                var otherParms = workingParameters.Where(o => re.Match(o.Key).Groups[PropertyRegexGroup].Value == propertyPath).ToArray();
+                var otherParms = workingParameters.Where(o => this.m_extractionRegex.Match(o.Key).Groups[PropertyRegexGroup].Value == propertyPath).ToArray();
 
                 // Remove the working parameters if the column is FK then all parameters
                 if (otherParms.Any() || !String.IsNullOrEmpty(guard) || !String.IsNullOrEmpty(subProperty))
@@ -234,10 +233,10 @@ namespace OpenIZ.OrmLite
                             //throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
                         }
                             
-                        var guardConditions = queryParms.GroupBy(o => re.Match(o.Key).Groups[GuardRegexGroup].Value);
+                        var guardConditions = queryParms.GroupBy(o => this.m_extractionRegex.Match(o.Key).Groups[GuardRegexGroup].Value);
                         foreach (var guardClause in guardConditions)
                         {
-                            var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value)).ToList();
+                            var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(this.m_extractionRegex.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value)).ToList();
 
                             // TODO: GUARD CONDITION HERE!!!!
                             if(!String.IsNullOrEmpty(guardClause.Key))
@@ -280,7 +279,7 @@ namespace OpenIZ.OrmLite
                     }
                     else // this table points at other
                     {
-                        var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(re.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
+                        var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(this.m_extractionRegex.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
                         TableMapping tableMapping = null;
                         var subPropKey = typeof(TModel).GetXmlProperty(propertyPath);
 

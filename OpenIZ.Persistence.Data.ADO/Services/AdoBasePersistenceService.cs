@@ -130,7 +130,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             var cacheItem = cacheService?.GetCacheItem<TData>(key);
             if (cacheItem != null)
             {
-                if (cacheItem.LoadState < context.LoadSate)
+                if (cacheItem.LoadState < context.LoadState)
                 {
                     cacheItem.LoadAssociations(context, principal);
                     cacheService?.Add(cacheItem);
@@ -387,10 +387,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         if (loadFast)
                         {
                             connection.AddData("loadFast", true);
-                            connection.LoadSate = LoadState.PartialLoad;
+                            connection.LoadState = LoadState.PartialLoad;
                         }
                         else
-                            connection.LoadSate = LoadState.FullLoad;
+                            connection.LoadState = LoadState.FullLoad;
 
                         var result = this.Get(connection, guidIdentifier.Id, principal);
                         var postData = new PostRetrievalEventArgs<TData>(result, principal);
@@ -485,10 +485,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     if (fastQuery)
                     {
                         connection.AddData("loadFast", true);
-                        connection.LoadSate = LoadState.PartialLoad;
+                        connection.LoadState = LoadState.PartialLoad;
                     }
                     else
-                        connection.LoadSate = LoadState.FullLoad;
+                        connection.LoadState = LoadState.FullLoad;
 
                     var results = this.Query(connection, query, queryId, offset, count ?? 1000, out totalCount, true, authContext);
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
