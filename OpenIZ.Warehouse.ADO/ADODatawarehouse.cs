@@ -142,14 +142,15 @@ namespace OpenIZ.Warehouse.ADO
                     tuple.Add(pi.Name, pi.GetValue(obj, null));
 
             tuple.Add("uuid", Guid.NewGuid());
-            tuple.Add("cont_id", scope);
-            tuple.Add("ext_time", DateTime.Now);
+            //tuple.Add("cont_id", scope);
+            //tuple.Add("ext_time", DateTime.Now);
 
             // Now time to store
             SqlStatement sbQuery = context.CreateSqlStatement("INSERT INTO "),
                 sbValues = context.CreateSqlStatement();
             sbQuery.Append(path);
-            foreach (var p in tuple.Where(o => pcontainer.Properties.FirstOrDefault(p => p.Name == o.Key).Type != SchemaPropertyType.Object))
+            sbQuery.Append("(");
+            foreach (var p in tuple.Where(o => pcontainer.Properties.FirstOrDefault(p => p.Name == o.Key)?.Type != SchemaPropertyType.Object))
             {
                 sbQuery.Append(p.Key);
                 sbValues.Append("?", p.Value);
@@ -160,7 +161,7 @@ namespace OpenIZ.Warehouse.ADO
                 }
             }
 
-            sbQuery = sbQuery.Append("VALUES (").Append(sbValues).Append(")");
+            sbQuery = sbQuery.Append(") VALUES (").Append(sbValues).Append(")");
             context.ExecuteNonQuery(sbQuery);
 
             // Sub-properties
