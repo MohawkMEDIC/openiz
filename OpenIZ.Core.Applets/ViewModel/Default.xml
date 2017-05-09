@@ -21,7 +21,13 @@
 
   <!-- Base types -->
   <type type="EntityRelationship" all="false">
-    <property name="id"/>
+    <property name="source" all="true"/>
+    <property name="target" all="true"/>
+    <property name="key" all="true"/>
+    <property name="quantity" all="true"/>
+    <property name="relationshipType" all="true"/>
+  </type>
+  <type type="ActRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
     <property name="key" all="true"/>
