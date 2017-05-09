@@ -109,7 +109,7 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The identifier.</param>
 		public void DeleteDatamart(Guid id)
 		{
-			this.Client.Delete<DatamartDefinition>("datamart/{id}");
+			this.Client.Delete<DatamartDefinition>($"datamart/{id}");
 		}
 
 		/// <summary>

@@ -435,6 +435,7 @@ namespace OpenIZ.Warehouse.ADO
             {
                 try
                 {
+                    context.Open();
                     using (var tx = context.BeginTransaction())
                     {
                         var schema = this.GetDatamart(datamartId);
