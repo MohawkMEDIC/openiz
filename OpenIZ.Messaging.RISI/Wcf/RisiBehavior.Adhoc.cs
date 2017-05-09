@@ -52,7 +52,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
             if (adhocService == null)
                 throw new InvalidOperationException("Cannot find the adhoc data warehouse service");
 
-            adhocService.Add(Guid.Parse(datamartId), obj);
+            adhocService.Add(Guid.Parse(datamartId), obj.ToExpando());
 
             return obj;
         }

@@ -133,8 +133,13 @@ namespace OpenIZ.Warehouse.ADO
         {
             // Conver to expando
             IDictionary<String, Object> tuple = new ExpandoObject();
-            foreach (var pi in obj.GetType().GetProperties())
-                tuple.Add(pi.Name, pi.GetValue(obj, null));
+
+            if (obj is IDictionary<String, object>)
+                foreach (var kv in obj as IDictionary<String, object>)
+                    tuple.Add(kv.Key, kv.Value);
+            else
+                foreach (var pi in obj.GetType().GetProperties())
+                    tuple.Add(pi.Name, pi.GetValue(obj, null));
 
             tuple.Add("uuid", Guid.NewGuid());
             tuple.Add("cont_id", scope);

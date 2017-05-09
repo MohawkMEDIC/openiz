@@ -95,16 +95,13 @@ namespace OpenIZ.Core.Data.Warehouse
     [XmlRoot(nameof(DataWarehouseObject), Namespace = "http://openiz.org/warehousing")]
     public class DataWarehouseObject 
     {
-
-        // Internal dictionary
-        private IDictionary<String, Object> m_internalDictionary;
-
+        
         /// <summary>
         /// Data warehouse object wrapper
         /// </summary>
         public DataWarehouseObject()
         {
-            this.m_internalDictionary = new Dictionary<String, Object>();
+            this.Properties = new List<DataWarehouseObjectPropertyValue>();
         }
 
         /// <summary>
@@ -112,7 +109,7 @@ namespace OpenIZ.Core.Data.Warehouse
         /// </summary>
         public DataWarehouseObject(IDictionary<String, Object> wrap) : this()
         {
-            this.m_internalDictionary = wrap;
+            this.Properties = wrap.Select(o => new DataWarehouseObjectPropertyValue(o)).ToList();
 
         }
 
@@ -121,17 +118,14 @@ namespace OpenIZ.Core.Data.Warehouse
         /// Gets or sets the properties
         /// </summary>
         [XmlElement("property"), JsonProperty("p")]
-        public List<DataWarehouseObjectPropertyValue> Properties {
-            get
-            {
-                return this.m_internalDictionary.Select(o => new DataWarehouseObjectPropertyValue(o)).ToList();
-            }
-            set
-            {
-                this.m_internalDictionary = value.ToDictionary(o => o.Name, o => o.Expand());
-            }
-        }
+        public List<DataWarehouseObjectPropertyValue> Properties { get; set; }
 
-       
+        /// <summary>
+        /// Create an expando object
+        /// </summary>
+        public dynamic ToExpando()
+        {
+            return this.Properties.ToDictionary(o => o.Name, o => o.Expand());
+        }
     }
 }
