@@ -436,6 +436,12 @@ namespace OpenIZ.Warehouse.ADO
                 try
                 {
 
+                    var schema = this.GetDatamart(datamartId);
+                    context.Delete<AdhocQuery>(o => o.SchemaId == schema.Id);
+                    context.Delete<AdhocProperty>(o => o.SchemaId == schema.Id);
+                    context.Delete<AdhocSchema>(o => o.SchemaId == schema.Id);
+                    context.Delete<AdhocDatamart>(o => o.DatamartId == datamartId);
+                    context.ExecuteNonQuery(context.CreateSqlStatement($"DROP TABLE {schema.Name};"));
                 }
                 catch (Exception e)
                 {
