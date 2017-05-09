@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Principal;
+using MARC.HI.EHRS.SVC.Core.Data;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -37,6 +38,22 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 	/// </summary>
 	public class SecurityApplicationPersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityApplication, DbSecurityApplication>
 	{
+		internal override SecurityApplication Get(DataContext context, Guid key, IPrincipal principal)
+		{
+			var application = base.Get(context, key, principal);
+
+			if (context.LoadState == LoadState.FullLoad)
+			{
+				var policyQuery = context.CreateSqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
+										.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
+										.Where<DbSecurityApplicationPolicy>(o => o.SourceKey == application.Key);
+
+				application.Policies = context.Query<CompositeResult<DbSecurityApplicationPolicy, DbSecurityPolicy>>(policyQuery).Select(o => new SecurityPolicyInstance(m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicy>(o.Object2), (PolicyGrantType)o.Object1.GrantType)).ToList();
+			}
+
+			return application;
+		}
+
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
@@ -122,6 +139,22 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 	/// </summary>
 	public class SecurityDevicePersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityDevice, DbSecurityDevice>
 	{
+		internal override SecurityDevice Get(DataContext context, Guid key, IPrincipal principal)
+		{
+			var device = base.Get(context, key, principal);
+
+			if (context.LoadState == LoadState.FullLoad)
+			{
+				var policyQuery = context.CreateSqlStatement<DbSecurityDevicePolicy>().SelectFrom()
+										.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
+										.Where<DbSecurityDevicePolicy>(o => o.SourceKey == device.Key);
+
+				device.Policies = context.Query<CompositeResult<DbSecurityDevicePolicy, DbSecurityPolicy>>(policyQuery).Select(o => new SecurityPolicyInstance(m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicy>(o.Object2), (PolicyGrantType)o.Object1.GrantType)).ToList();
+			}
+
+			return device;
+		}
+
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
@@ -217,6 +250,29 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 	/// </summary>
 	public class SecurityRolePersistenceService : BaseDataPersistenceService<Core.Model.Security.SecurityRole, DbSecurityRole>
 	{
+		/// <summary>
+		/// Gets the specified context.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="key">The key.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Returns a security role instance.</returns>
+		internal override SecurityRole Get(DataContext context, Guid key, IPrincipal principal)
+		{
+			var role = base.Get(context, key, principal);
+
+			if (context.LoadState == LoadState.FullLoad)
+			{
+				var policyQuery = context.CreateSqlStatement<DbSecurityRolePolicy>().SelectFrom()
+										.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
+										.Where<DbSecurityRolePolicy>(o => o.SourceKey == role.Key);
+
+				role.Policies = context.Query<CompositeResult<DbSecurityRolePolicy, DbSecurityPolicy>>(policyQuery).Select(o => new SecurityPolicyInstance(m_mapper.MapDomainInstance<DbSecurityPolicy, SecurityPolicy>(o.Object2), (PolicyGrantType)o.Object1.GrantType)).ToList();
+			}
+
+			return role;
+		}
+
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
