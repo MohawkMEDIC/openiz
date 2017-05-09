@@ -192,7 +192,7 @@ namespace OpenIZ.Core.Model.Acts
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Format("({0}) {1} = {2}", this.RelationshipType?.ToString() ?? this.RelationshipTypeKey?.ToString(), this.TargetActKey);
+            return string.Format("({0}) {1} ", this.RelationshipType?.ToString() ?? this.RelationshipTypeKey?.ToString(), this.TargetActKey);
         }
     }
 }
