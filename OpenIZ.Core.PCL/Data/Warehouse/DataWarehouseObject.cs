@@ -67,6 +67,7 @@ namespace OpenIZ.Core.Data.Warehouse
         /// Value of the object
         /// </summary>
         [XmlElement("string", typeof(String))]
+        [XmlElement("bool", typeof(bool))]
         [XmlElement("decimal", typeof(Decimal))]
         [XmlElement("int", typeof(Int32))]
         [XmlElement("uuid", typeof(Guid))]
