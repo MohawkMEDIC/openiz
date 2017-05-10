@@ -22,15 +22,16 @@
   <!-- Base types -->
   <type type="EntityRelationship" all="false">
     <property name="source" all="true"/>
+    <property name="effectiveVersionSequence" behavior="always" all="true" />
     <property name="target" all="true"/>
-    <property name="key" all="true"/>
-    <property name="quantity" all="true"/>
-    <property name="relationshipType" all="true"/>
+    <property name="id" all="true"/>
+    <property name="quantity" behavior="always" all="true"/>
+    <property name="relationshipType" behavior="always" all="true"/>
   </type>
   <type type="ActRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
-    <property name="key" all="true"/>
+    <property name="id" all="true"/>
     <property name="quantity" all="true"/>
     <property name="relationshipType" all="true"/>
   </type>
@@ -83,6 +84,7 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always" ref="Concept"/>
     <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="sequence" all="true" behavior="always" />
     <property name="relationship" all="true" behavior="always">
       <property name="*" all="true">
         <property name="id"/>
@@ -301,9 +303,10 @@
         <property name="relationshipTypeModel" behavior="never"/>
         <!-- Act.relationship[*].targetModel.{RecordTarget,Location,AuthorOriginator} are not included -->
         <property name="targetModel" all="true" behavior="always">
-          <property name="participation" all="true">
+          <property name="participation" all="true" behavior="always">
+            <property name="Consumable" all="true" behavior="always" />
             <property name="RecordTarget" all="false"/>
-            <property name="Location" all="false"/>
+            <property name="Location" all="false" />
             <property name="Verifier" all="false"/>
             <property name="Performer" all="false"/>
             <property name="Authororiginator" all="false"/>
