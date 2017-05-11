@@ -48,6 +48,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// Clause evelators
         /// </summary>
         [XmlElement("imsiExpression", typeof(WhenClauseImsiExpression))]
+        [XmlElement("expressionGrouping", typeof(ProtocolWhenClauseCollection))]
         [XmlElement("linqXmlExpression", typeof(XmlLambdaExpression))]
         [XmlElement("linqExpression", typeof(String))]
         public List<object> Clause { get; set; }
@@ -58,7 +59,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// <summary>
         /// Compile the expression
         /// </summary>
-        public void Compile<TData>(Dictionary<String, Delegate> variableFunc)
+        public Expression Compile<TData>(Dictionary<String, Delegate> variableFunc)
         {
             ParameterExpression expressionParm = Expression.Parameter(typeof(TData), "_scope");
             Expression body = null;
@@ -67,7 +68,11 @@ namespace OpenIZ.Protocol.Xml.Model
             {
 
                 Expression clauseExpr = null;
-                if (itm is WhenClauseImsiExpression)
+                if(itm is ProtocolWhenClauseCollection)
+                {
+                    clauseExpr = Expression.Invoke((itm as ProtocolWhenClauseCollection).Compile<TData>(variableFunc), expressionParm);
+                }
+                else if (itm is WhenClauseImsiExpression)
                 {
                     var imsiExpr = itm as WhenClauseImsiExpression;
                     clauseExpr = Expression.Invoke(QueryExpressionParser.BuildLinqExpression<TData>(NameValueCollection.ParseQueryString(imsiExpr.Expression), variableFunc), expressionParm);
@@ -115,7 +120,9 @@ namespace OpenIZ.Protocol.Xml.Model
                 bodyCondition,
                 Expression.Convert(objParm, typeof(TData))
             );
-            this.m_compiledExpression = Expression.Lambda<Func<Object, bool>>(invoke, objParm).Compile();
+            var uncompiledExpression = Expression.Lambda<Func<Object, bool>>(invoke, objParm);
+            this.m_compiledExpression = uncompiledExpression.Compile();
+            return uncompiledExpression;
         }
 
         // Compiled
