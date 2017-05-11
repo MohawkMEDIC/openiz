@@ -165,7 +165,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 if (classPropertyName != null)
                 {
                     var rtp = type.GetRuntimeProperty(classPropertyName);
-                    if (rtp != null || typeof(String) == rtp.GetType())
+                    if (rtp != null && typeof(String) == rtp.PropertyType)
                     {
                         var parm = Expression.Parameter(type);
                         var exprBody = Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(parm, rtp), Expression.Constant(classifierValue));

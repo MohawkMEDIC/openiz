@@ -632,7 +632,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
 
                 if (existing == null)
                     throw new FileNotFoundException($"/{resourceType}/{id}/history/{versionId}");
-                else if ((existing as IVersionedEntity).VersionKey != versionId && !force)
+                else if (existing.Tag != match && !force)
                 {
                     this.m_traceSource.TraceEvent(TraceEventType.Error, -3049, "Object {0} ETAG is {1} but If-Match specified {2}", existing.Key, existing.Tag, match);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.Conflict;
