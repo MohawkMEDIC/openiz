@@ -186,6 +186,19 @@ namespace OizDevTool.BreDebugger
             }
         }
 
+        [DebuggerCommand("say", "")]
+        public void BeaverSay(String phrase)
+        {
+            String[] beaver = { "       .-\"\"\"-.__   ", "      /      ' o'\\", "   ,-;  '.  :   _c", "  :_.\"\\._ ) ::-", "         \"\"m \"m" };
+            String[] bubble = { $"\t/{new String('-', phrase.Length + 4)}\\", $"\t|  {phrase}  |", $"\t\\{new String('-', phrase.Length + 4)}/" };
+
+
+            foreach (var itm in bubble)
+                Console.WriteLine(itm);
+            foreach (var itm in beaver)
+                Console.WriteLine(itm);
+
+        }
 
         /// <summary>
         /// Output full stack
@@ -760,7 +773,7 @@ namespace OizDevTool.BreDebugger
             foreach (var mi in this.GetType().GetMethods().OrderBy(o => o.Name))
             {
                 var itm = mi.GetCustomAttribute<DebuggerCommandAttribute>();
-                if (itm == null) continue;
+                if (itm == null || String.IsNullOrEmpty(itm.Description)) continue;
                 Console.Write("{0:2} {1}", itm.Command, String.Join(" ", mi.GetParameters().Select(o => $"[{o.Name}]")));
                 Console.WriteLine("{0}{1}", new String(' ', 40 - Console.CursorLeft), itm.Description);
 

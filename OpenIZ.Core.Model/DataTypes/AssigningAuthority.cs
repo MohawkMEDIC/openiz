@@ -120,6 +120,12 @@ namespace OpenIZ.Core.Model.DataTypes
         public String ValidationRegex { get; set; }
 
         /// <summary>
+        /// True if the assigning authority values should be unique
+        /// </summary>
+        [XmlElement("isUnique"), JsonProperty("isUnique")]
+        public bool IsUnique { get; set; }
+
+        /// <summary>
         /// Gets or sets the assigning device
         /// </summary>
         [XmlIgnore, JsonIgnore]

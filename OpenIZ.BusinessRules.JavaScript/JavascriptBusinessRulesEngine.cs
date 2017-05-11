@@ -296,12 +296,12 @@ namespace OpenIZ.BusinessRules.JavaScript
                 if(callList.Count == 0)
                     callList = this.GetCallList(data.GetType(), action);
                 var retVal = data;
+                dynamic viewModel = this.m_bridge.ToViewModel(retVal);
                 foreach (var c in callList)
                 {
-                    dynamic viewModel = this.m_bridge.ToViewModel(retVal);
                     viewModel = c(viewModel);
-                    retVal = (TBinding)this.m_bridge.ToModel(viewModel);
                 }
+                retVal = (TBinding)this.m_bridge.ToModel(viewModel);
 
                 return retVal;
             }

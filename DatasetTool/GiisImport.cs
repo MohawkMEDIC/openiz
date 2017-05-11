@@ -530,11 +530,11 @@ namespace OizDevTool
                     },
                     new EntityExtension()
                     {
-                        ExtensionType = new ExtensionType("http://openiz.org/extensions/contrib/bid/targetPopulation", typeof(DecimalExtensionHandler))
+                        ExtensionType = new ExtensionType("http://openiz.org/extensions/contrib/bid/targetPopulation", typeof(DictionaryExtensionHandler))
                         {
                             Key = Guid.Parse("f9552ed8-66aa-4644-b6a8-108ad54f2476")
                         },
-                        ExtensionValue = (Decimal)(hfcd?.Cohort ?? 0)
+                        ExtensionValue = new Dictionary<String, Object>() { { "2015" , (Decimal)(hfcd?.Cohort ?? 0) } }
                     }
                 },
                 Tags = new List<EntityTag>()

@@ -93,6 +93,8 @@
     <Compile Include="Services\IDataPersistenceService.cs" />
     <Compile Include="Services\IEntityExtensionRepositoryService.cs" />
     <Compile Include="Services\IFastQueryRepositoryService.cs" />
+    <Compile Include="Services\Impl\RegexPasswordValidator.cs" />
+    <Compile Include="Services\IPasswordValidatorService.cs" />
     <Compile Include="Services\IPatchService.cs" />
     <Compile Include="Services\IPersonRepositoryService.cs" />
     <Compile Include="Services\IReportProgressChanged.cs" />

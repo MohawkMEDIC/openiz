@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Extensions
         {
             // Anything that is smart enough to read JSON data is smart enough to use the raw stream data
             // (We also want to prevent the raw literatl from going in the db)
-            return null; //return JsonConvert.SerializeObject(data);
+            return JsonConvert.SerializeObject(data);
         }
 
         /// <summary>

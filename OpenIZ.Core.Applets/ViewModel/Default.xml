@@ -34,6 +34,7 @@
     <property name="id" all="true"/>
     <property name="quantity" all="true"/>
     <property name="relationshipType" all="true"/>
+    <property name="targetModel" behavior="always" all="true" ref="Act"/>
   </type>
   <type type="IdentifiedData" all="true">
     <property name="id"/>
@@ -278,46 +279,7 @@
     <property name="routeModel" behavior="never"/>
     <property name="siteModel" behavior="never"/>
     <property name="relationship" all="true" behavior="always">
-      <property name="HasComponent" all="true">
-        <property name="sourceModel" behavior="never"/>
-        <property name="relationshipTypeModel" behavior="never"/>
-        <!-- Act.relationship[*].targetModel.{RecordTarget,Location,AuthorOriginator} are not included -->
-        <property name="targetModel" all="true" behavior="always">
-          <property name="participation" all="true">
-            <property name="RecordTarget" all="false"/>
-            <property name="Location" all="false"/>
-            <property name="Verifier" all="false"/>
-            <property name="Performer" all="false"/>
-            <property name="Authororiginator" all="false"/>
-            <property name="*" all="true">
-              <property name="actModel" behavior="never"/>
-              <property name="sourceModel" behavior="never"/>
-              <property name="participationRoleModel" behavior="never"/>
-              <property name="playerModel" all="true"/>
-            </property>
-          </property>
-        </property>
-      </property>
-      <property name="*" all="true">
-        <property name="sourceModel" behavior="never"/>
-        <property name="relationshipTypeModel" behavior="never"/>
-        <!-- Act.relationship[*].targetModel.{RecordTarget,Location,AuthorOriginator} are not included -->
-        <property name="targetModel" all="true" behavior="always">
-          <property name="participation" all="true" behavior="always">
-            <property name="Consumable" all="true" behavior="always" />
-            <property name="RecordTarget" all="false"/>
-            <property name="Location" all="false" />
-            <property name="Verifier" all="false"/>
-            <property name="Performer" all="false"/>
-            <property name="Authororiginator" all="false"/>
-            <property name="*" all="true">
-              <property name="actModel" behavior="never"/>
-              <property name="sourceModel" behavior="never"/>
-              <property name="participationRoleModel" behavior="never"/>
-              <property name="playerModel" all="true" behavior="always"/>
-            </property>
-          </property>
-        </property>
+      <property name="*" all="true" ref="ActRelationship">
       </property>
     </property>
     <property name="participation" all="true" behavior="always">

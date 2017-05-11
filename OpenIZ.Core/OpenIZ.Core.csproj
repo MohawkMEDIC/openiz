@@ -95,6 +95,7 @@
     <Compile Include="Security\DefaultTfaRelayService.cs" />
     <Compile Include="Security\DeviceIdentity.cs" />
     <Compile Include="Security\DevicePrincipal.cs" />
+    <Compile Include="Security\LocalPasswordValidationService.cs" />
     <Compile Include="Security\Permission\PolicyPermissionAttribute.cs" />
     <Compile Include="Security\AuthenticationContext.cs" />
     <Compile Include="Security\ILocalPolicy.cs" />
