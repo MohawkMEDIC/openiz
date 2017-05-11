@@ -24,6 +24,12 @@ namespace OpenIZ.Core.Configuration
     /// </summary>
     public class OpenIzSecurityConfiguration
     {
+
+        /// <summary>
+        /// Password regex
+        /// </summary>
+        public string PasswordRegex { get; set; }
+
         /// <summary>
         /// Allow unsigned applets to be installed
         /// </summary>
