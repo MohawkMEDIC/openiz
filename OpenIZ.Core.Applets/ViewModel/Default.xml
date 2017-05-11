@@ -25,7 +25,7 @@
     <property name="effectiveVersionSequence" behavior="always" all="true" />
     <property name="target" all="true"/>
     <property name="id" all="true"/>
-    <property name="quantity" behavior="always" all="true"/>
+    <property name="quantity" all="true"/>
     <property name="relationshipType" behavior="always" all="true"/>
   </type>
   <type type="ActRelationship" all="false">

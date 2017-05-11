@@ -190,15 +190,18 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                         else
                         {
                             var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
-                            var keyProperty = o.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
-                            var key = keyProperty.GetValue(o);
-                            if (key != null)
-                            {
-                                value = context.JsonContext.LoadRelated(propertyInfo.PropertyType, (Guid)key);
-                                propertyInfo.SetValue(o, value);
-                                loadedProperties = value != null;
-                            }
+	                        if (keyPropertyRef != null)
+	                        {
+		                        var keyProperty = o.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
+		                        var key = keyProperty.GetValue(o);
+		                        if (key != null)
+		                        {
+			                        value = context.JsonContext.LoadRelated(propertyInfo.PropertyType, (Guid)key);
+			                        propertyInfo.SetValue(o, value);
+			                        loadedProperties = value != null;
+		                        }
 
+	                        }
                         }
 
                     }
