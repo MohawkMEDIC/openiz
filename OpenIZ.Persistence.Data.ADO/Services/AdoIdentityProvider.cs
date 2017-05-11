@@ -207,6 +207,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             this.m_traceSource.TraceInformation("Change userpassword for {0} to {1} ({2})", userName, newPassword, principal);
 
+            // Password failed validation
+            if (ApplicationContext.Current.GetService<IPasswordValidatorService>()?.Validate(newPassword) == false)
+                throw new SecurityException("Password failed validation");
+
             try
             {
                 // Create the hasher and load the user
