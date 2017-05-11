@@ -84,7 +84,7 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always" ref="Concept"/>
     <property name="name" all="true" ref="EntityName" behavior="always"/>
-    <property name="sequence" all="true" behavior="always" />
+    <property name="sequence" behavior="always" />
     <property name="relationship" all="true" behavior="always">
       <property name="*" all="true">
         <property name="id"/>
@@ -305,6 +305,7 @@
         <property name="targetModel" all="true" behavior="always">
           <property name="participation" all="true" behavior="always">
             <property name="Consumable" all="true" behavior="always" />
+            <property name="Destination" all="true" behavior="always" />
             <property name="RecordTarget" all="false"/>
             <property name="Location" all="false" />
             <property name="Verifier" all="false"/>
