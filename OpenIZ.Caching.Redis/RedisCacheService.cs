@@ -130,9 +130,8 @@ namespace OpenIZ.Caching.Redis
         /// <summary>
         /// Ensure cache consistency
         /// </summary>
-        private void EnsureCacheConsistency(DataCacheEventArgs e)
+        private void EnsureCacheConsistency(DataCacheEventArgs e, bool remove = false)
         {
-
             //// Relationships should always be clean of source/target so the source/target will load the new relationship
             if (e.Object is ActParticipation)
             {
@@ -145,24 +144,21 @@ namespace OpenIZ.Caching.Redis
                     var idx = sourceEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
-                    {
-                        idx.CopyObjectData(ptcpt);
-                        this.Add(sourceEntity);
-                    }
-                    else
+                        sourceEntity.Participations.Remove(idx);
+
+                    if (!remove)
                         sourceEntity.Participations.Add(ptcpt);
+                    this.Add(sourceEntity);
                 }
                 if (targetEntity != null)
                 {
                     var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
-                    {
-                        idx.CopyObjectData(ptcpt);
-                        this.Add(targetEntity);
-                    }
-                    else
+                        targetEntity.Participations.Remove(idx);
+                    if (!remove)
                         targetEntity.Participations.Add(ptcpt);
+                    this.Add(targetEntity);
                 }
                 //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
             }
@@ -176,26 +172,23 @@ namespace OpenIZ.Caching.Redis
                 {
                     var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
-                    if (idx != null) { 
-                        idx.CopyObjectData(rel);
-                        this.Add(sourceEntity);
-                    }
-                    else
-
+                    if (idx != null)
+                        sourceEntity.Relationships.Remove(idx);
+                    if (!remove)
                         sourceEntity.Relationships.Add(rel);
+                    this.Add(sourceEntity);
+
                 }
                 if (targetEntity != null)
                 {
                     var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
-                    {
-                        idx.CopyObjectData(rel);
-                        this.Add(targetEntity);
-                    }
-                    else
-
+                        targetEntity.Relationships.Remove(idx);
+                    if (!remove)
                         targetEntity.Relationships.Add(rel);
+                    this.Add(targetEntity);
+
                 }
             }
             else if (e.Object is EntityRelationship)
@@ -208,25 +201,22 @@ namespace OpenIZ.Caching.Redis
                 {
                     var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
-                    if (idx != null) { 
-                        idx.CopyObjectData(rel);
-                        this.Add(sourceEntity);
-                    }
-                    else
-
+                    if (idx != null)
+                        sourceEntity.Relationships.Remove(idx);
+                    if (!remove)
                         sourceEntity.Relationships.Add(rel);
+                    this.Add(sourceEntity);
+
                 }
                 if (targetEntity != null)
                 {
                     var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
-                    {
-                        idx.CopyObjectData(rel);
-                        this.Add(targetEntity);
-                    }
-                    else
+                        targetEntity.Relationships.Remove(idx);
+                    if (!remove)
                         targetEntity.Relationships.Add(rel);
+                    this.Add(targetEntity);
 
                 }
             }
@@ -297,8 +287,11 @@ namespace OpenIZ.Caching.Redis
             if (this.m_connection == null)
                 return;
             // Add
+            var existing = this.GetCacheItem(key);
             var redisDb = this.m_connection.GetDatabase();
             redisDb.KeyDelete(key.ToString());
+            this.EnsureCacheConsistency(new DataCacheEventArgs(existing), true);
+
             this.m_connection.GetSubscriber().Publish("oiz.events", $"DELETE http://{Environment.MachineName}/cache/{key}");
         }
 

@@ -2,9 +2,11 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Configuration;
+using OpenIZ.Core.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -20,7 +22,9 @@ namespace OpenIZ.Core.Services.Impl
 
         // Constructs a thread pool
         private WaitThreadPool m_threadPool = new WaitThreadPool();
-        
+
+        private TraceSource m_traceSource = new TraceSource(OpenIzConstants.ServiceTraceSourceName);
+
         /// <summary>
         /// True if the service is running
         /// </summary>
@@ -63,7 +67,17 @@ namespace OpenIZ.Core.Services.Impl
         /// <param name="action"></param>
         public void QueueUserWorkItem(Action<object> action)
         {
-            this.m_threadPool.QueueUserWorkItem((o) => action(o));
+            this.m_threadPool.QueueUserWorkItem((o) =>
+            {
+                try
+                {
+                    action(o);
+                }
+                catch (Exception e)
+                {
+                    this.m_traceSource.TraceError("THREAD DEATH: {0}", e);
+                }
+            });
         }
 
         /// <summary>
@@ -71,7 +85,17 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public void QueueUserWorkItem(Action<object> action, object parm)
         {
-            this.m_threadPool.QueueUserWorkItem((o) => action(o), parm);
+            this.m_threadPool.QueueUserWorkItem((o) => {
+                try
+                {
+                    action(o);
+                }
+                catch (Exception e)
+                {
+                    this.m_traceSource.TraceError("THREAD DEATH: {0}", e);
+
+                }
+            }, parm);
         }
 
         /// <summary>
@@ -80,7 +104,17 @@ namespace OpenIZ.Core.Services.Impl
         public void QueueUserWorkItem(TimeSpan timeout, Action<object> action, object parm)
         {
             // Use timer service if it is available
-            new Timer((o) => action(o), parm, (int)timeout.TotalMilliseconds, Timeout.Infinite);
+            new Timer((o) => {
+                try
+                {
+                    action(o);
+                }
+                catch (Exception e)
+                {
+                    this.m_traceSource.TraceError("THREAD DEATH: {0}", e);
+
+                }
+            }, parm, (int)timeout.TotalMilliseconds, Timeout.Infinite);
         }
 
         /// <summary>

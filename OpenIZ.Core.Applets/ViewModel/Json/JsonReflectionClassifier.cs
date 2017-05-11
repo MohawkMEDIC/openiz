@@ -24,6 +24,8 @@ using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model;
 using System.Reflection;
 using OpenIZ.Core.Model.EntityLoader;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace OpenIZ.Core.Applets.ViewModel.Json
 {
@@ -37,6 +39,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
 
         // Classifier hash map
         private static Dictionary<Type, ClassifierAttribute> m_classifierCache = new Dictionary<Type, ClassifierAttribute>();
+
+        private static Dictionary<Type, Dictionary<String, Object>> m_classifierObjectCache = new Dictionary<Type, Dictionary<string, object>>();
 
         // Type
         private Type m_type;
@@ -106,7 +110,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     while (propertyName != null)
                     {
                         var classifierValue = typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(setProperty.PropertyType.GetTypeInfo()) ?
-                            Activator.CreateInstance(setProperty.PropertyType) :
+                            this.LoadClassifier(setProperty.PropertyType, itm.Key) :
                             itm.Key;
 
                         if (target != null)
@@ -133,6 +137,47 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     retVal.Add(inst);
                 }
 
+            }
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Load classifier
+        /// </summary>
+        private Object LoadClassifier(Type type, string classifierValue)
+        {
+            Dictionary<String, Object> classValue = new Dictionary<string, object>();
+            if (!m_classifierObjectCache.TryGetValue(type, out classValue))
+            {
+                classValue = new Dictionary<string, object>();
+                lock (m_classifierObjectCache)
+                    if (!m_classifierObjectCache.ContainsKey(type))
+                        m_classifierObjectCache.Add(type, classValue);
+            }
+
+            Object retVal = null;
+            if(!classValue.TryGetValue(classifierValue, out retVal)) { 
+                var funcType = typeof(Func<,>).MakeGenericType(type, typeof(bool));
+                var exprType = typeof(Expression<>).MakeGenericType(funcType);
+                var mi = typeof(IEntitySourceProvider).GetGenericMethod(nameof(IEntitySourceProvider.Query), new Type[] { type }, new Type[] { exprType });
+                var classPropertyName = type.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty;
+                if (classPropertyName != null)
+                {
+                    var rtp = type.GetRuntimeProperty(classPropertyName);
+                    if (rtp != null || typeof(String) == rtp.GetType())
+                    {
+                        var parm = Expression.Parameter(type);
+                        var exprBody = Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(parm, rtp), Expression.Constant(classifierValue));
+                        var builderMethod = typeof(Expression).GetGenericMethod(nameof(Expression.Lambda), new Type[] { funcType }, new Type[] { typeof(Expression), typeof(ParameterExpression[]) });
+                        var funcExpr = builderMethod.Invoke(null, new object[] { exprBody, new ParameterExpression[] { parm } });
+                        retVal = (mi.Invoke(EntitySource.Current.Provider, new object[] { funcExpr }) as IEnumerable).OfType<Object>().FirstOrDefault();
+                    }
+                }
+                retVal = retVal ?? Activator.CreateInstance(type);
+                lock (classValue)
+                    if (!classValue.ContainsKey(classifierValue))
+                        classValue.Add(classifierValue, retVal);
             }
 
             return retVal;
