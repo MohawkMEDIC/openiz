@@ -156,83 +156,22 @@ namespace OpenIZ.Caching.Memory
                 if (e.Object is ActParticipation)
                 {
                     var ptcpt = (e.Object as ActParticipation);
-                    var sourceEntity = MemoryCache.Current.TryGetEntry(ptcpt.SourceEntityKey) as Act;
-                    var targetEntity = MemoryCache.Current.TryGetEntry(ptcpt.PlayerEntityKey) as Entity;
 
-                    if (sourceEntity != null) // search and replace
-                    {
-                        var idx = sourceEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
-                            o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
-                        if (idx != null)
-                            idx.CopyObjectData(ptcpt);
-                        else
-                            sourceEntity.Participations.Add(ptcpt);
-                    }
-                    if (targetEntity != null)
-                    {
-                        var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
-                            o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
-                        if (idx != null)
-                            targetEntity.Participations.Remove(idx);
-                        if (idx != null)
-                            idx.CopyObjectData(ptcpt);
-                        else
-                            targetEntity.Participations.Add(ptcpt);
-                    }
+                    this.Remove(ptcpt.SourceEntityKey.GetValueOrDefault());
+                    this.Remove(ptcpt.PlayerEntityKey.GetValueOrDefault());
                     //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
                 }
                 else if (e.Object is ActRelationship)
                 {
                     var rel = (e.Object as ActRelationship);
-                    var sourceEntity = MemoryCache.Current.TryGetEntry(rel.SourceEntityKey) as Act;
-                    var targetEntity = MemoryCache.Current.TryGetEntry(rel.TargetActKey) as Act;
-
-                    if (sourceEntity != null) // search and replace
-                    {
-                        var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
-                            o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
-                        if (idx != null)
-                            idx.CopyObjectData(rel);
-                        else
-                            sourceEntity.Relationships.Add(rel);
-                    }
-                    if (targetEntity != null)
-                    {
-                        var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
-                            o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
-                        if (idx != null)
-                            idx.CopyObjectData(rel);
-                        else
-                            targetEntity.Relationships.Add(rel);
-                    }
+                    this.Remove(rel.SourceEntityKey.GetValueOrDefault());
+                    this.Remove(rel.TargetActKey.GetValueOrDefault());
                 }
                 else if (e.Object is EntityRelationship)
                 {
                     var rel = (e.Object as EntityRelationship);
-                    var sourceEntity = MemoryCache.Current.TryGetEntry(rel.SourceEntityKey) as Entity;
-                    var targetEntity = MemoryCache.Current.TryGetEntry(rel.TargetEntityKey) as Entity;
-
-                    if (sourceEntity != null) // search and replace
-                    {
-                        lock (s_lock)
-                        {
-                            var idx = sourceEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
-                                                                                    o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
-                            if (idx != null)
-                                idx.CopyObjectData(rel);
-                            else
-                                sourceEntity.Relationships.Add(rel);
-                        }
-                    }
-                    if (targetEntity != null)
-                    {
-                        var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
-                            o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
-                        if (idx != null)
-                            idx.CopyObjectData(rel);
-                        else
-                            targetEntity.Relationships.Add(rel);
-                    }
+                    this.Remove(rel.SourceEntityKey.GetValueOrDefault());
+                    this.Remove(rel.TargetEntityKey.GetValueOrDefault());
                 }
                 else if (e.Object is Act) // We need to remove RCT 
                 {

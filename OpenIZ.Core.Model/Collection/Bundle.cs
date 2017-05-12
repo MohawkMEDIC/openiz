@@ -201,7 +201,7 @@ namespace OpenIZ.Core.Model.Collection
         /// <summary>
         /// Create a bundle
         /// </summary>
-        public static Bundle CreateBundle(IdentifiedData resourceRoot)
+        public static Bundle CreateBundle(IdentifiedData resourceRoot, bool followList = true)
         {
             if (resourceRoot is Bundle) return resourceRoot as Bundle;
             Bundle retVal = new Bundle();
@@ -211,7 +211,7 @@ namespace OpenIZ.Core.Model.Collection
                 return retVal;
             retVal.EntryKey = resourceRoot.Key;
             retVal.Add(resourceRoot);
-            ProcessModel(resourceRoot, retVal);
+            ProcessModel(resourceRoot, retVal, followList);
             return retVal;
         }
 

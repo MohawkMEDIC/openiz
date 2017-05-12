@@ -534,7 +534,7 @@ namespace OizDevTool
                         {
                             Key = Guid.Parse("f9552ed8-66aa-4644-b6a8-108ad54f2476")
                         },
-                        ExtensionValue = new Dictionary<String, Object>() { { "2015" , (Decimal)(hfcd?.Cohort ?? 0) } }
+                        ExtensionValue = new Dictionary<String, Object>() { { DateTime.Now.Year.ToString() , (Decimal)(hfcd?.Cohort ?? 0) } }
                     }
                 },
                 Tags = new List<EntityTag>()
@@ -559,14 +559,14 @@ namespace OizDevTool
 
                 // first add stock relationship
                 var itml = ItemLot.GetItemLotByGtinAndLotNo(itm.Gtin, itm.LotNumber);
-                var mmat = manufacturedMaterialMap[itml.Id];
+                var mmat = materialMap[itml.ItemObject.Code];
                 if (itml.ExpireDate < DateTime.Now)
                     continue;
 
                 retVal.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.OwnedEntity, mmat) { Quantity = (int)0 });
                 stockPolicyObject.Add(new
                 {
-                    ManufacturedMaterialEntityId = mmat,
+                    MaterialEntityId = mmat,
                     ReorderQuantity = stockPolicy?.ReorderQty,
                     SafetyQuantity = stockPolicy?.SafetyStock
                 });

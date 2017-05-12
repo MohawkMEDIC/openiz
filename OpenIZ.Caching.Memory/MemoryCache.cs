@@ -159,13 +159,16 @@ namespace OpenIZ.Caching.Memory
 
             CacheEntry candidate = null;
             if (this.m_entryTable.TryGetValue(idData.Key.Value, out candidate))
-                candidate.Update(data as IdentifiedData);
+            {
+                if ((candidate.Data as IIdentifiedEntity).LoadState < idData.LoadState)
+                    candidate.Update(data as IdentifiedData);
+            }
             else
-				lock (this.m_lock)
-				{
-					if (!m_entryTable.ContainsKey(idData.Key.Value))
-						this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
-				}
+                lock (this.m_lock)
+                {
+                    if (!m_entryTable.ContainsKey(idData.Key.Value))
+                        this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
+                }
 		}
 
         /// <summary>

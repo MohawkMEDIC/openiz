@@ -221,7 +221,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                                     ExpandProperties(itm as IdentifiedData, qp, keyStack);
                     }
 
-                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
+                    //ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
                 }
                 else if (qp.ContainsKey("_expand"))
                 {
@@ -231,7 +231,7 @@ namespace OpenIZ.Messaging.IMSI.Util
                         DoExpand(returnValue, nvs);
                     }
 
-                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
+                    //ApplicationContext.Current.GetService<IDataCachingService>()?.Add(returnValue);
                 }
             }
             finally
