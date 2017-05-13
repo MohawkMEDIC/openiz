@@ -42,7 +42,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		{
 			var application = base.Get(context, key, principal);
 
-			if (context.LoadState == LoadState.FullLoad)
+			if (application != null && context.LoadState == LoadState.FullLoad)
 			{
 				var policyQuery = context.CreateSqlStatement<DbSecurityApplicationPolicy>().SelectFrom()
 										.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
@@ -143,7 +143,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		{
 			var device = base.Get(context, key, principal);
 
-			if (context.LoadState == LoadState.FullLoad)
+			if (device != null && context.LoadState == LoadState.FullLoad)
 			{
 				var policyQuery = context.CreateSqlStatement<DbSecurityDevicePolicy>().SelectFrom()
 										.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)
@@ -261,7 +261,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		{
 			var role = base.Get(context, key, principal);
 
-			if (context.LoadState == LoadState.FullLoad)
+			if (role != null && context.LoadState == LoadState.FullLoad)
 			{
 				var policyQuery = context.CreateSqlStatement<DbSecurityRolePolicy>().SelectFrom()
 										.InnerJoin<DbSecurityPolicy>(o => o.PolicyKey, o => o.Key)

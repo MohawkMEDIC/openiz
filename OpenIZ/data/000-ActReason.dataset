@@ -644,8 +644,8 @@
       <id>3BD46185-E3C3-4A6D-A1FE-0F2C9C49360D</id>
       <name>Protocol Violation - Don't Reschedule</name>
       <mnemonic>ProtocolViolationReasonSevere</mnemonic>
-      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.49</oid>
-      <url>http://openiz.org/conceptsets/ProtocolViolationReason</url>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.50</oid>
+      <url>http://openiz.org/conceptsets/ProtocolViolationReasonSevere</url>
       <concept>42351a36-f60f-4687-b334-7a41b091bae1</concept>
       <concept>4ff3617b-bb91-4f3f-b4d2-2425f477037f</concept>
       <concept>9d947e6d-8406-42f3-bb8a-634fb3c81a08</concept>

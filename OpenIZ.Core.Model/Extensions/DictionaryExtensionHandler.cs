@@ -30,11 +30,23 @@ namespace OpenIZ.Core.Extensions
         /// </summary>
         public object DeSerialize(byte[] extensionData)
         {
-            JsonSerializer jsz = new JsonSerializer();
-            using (var ms = new MemoryStream(extensionData))
-            using (var tr = new StreamReader(ms))
-            using (var jr = new JsonTextReader(tr))
-                return jsz.Deserialize(jr);
+			// HACK: will fix ASAP, deadlines are deadlines
+	        try
+	        {
+		        JsonSerializer jsz = new JsonSerializer();
+		        using (var ms = new MemoryStream(extensionData))
+		        using (var tr = new StreamReader(ms))
+		        using (var jr = new JsonTextReader(tr))
+		        {
+			        return jsz.Deserialize(jr);
+		        }
+			}
+	        catch
+	        {
+		        // ignored
+	        }
+
+	        return null;
         }
 
         /// <summary>
@@ -42,9 +54,11 @@ namespace OpenIZ.Core.Extensions
         /// </summary>
         public string GetDisplay(object data)
         {
-            // Anything that is smart enough to read JSON data is smart enough to use the raw stream data
-            // (We also want to prevent the raw literatl from going in the db)
-            return JsonConvert.SerializeObject(data);
+			// Anything that is smart enough to read JSON data is smart enough to use the raw stream data
+			// (We also want to prevent the raw literatl from going in the db)
+            //return JsonConvert.SerializeObject(data);
+	        //return this.DeSerialize(data);
+	        return null;
         }
 
         /// <summary>

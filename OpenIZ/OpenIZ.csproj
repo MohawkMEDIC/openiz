@@ -130,7 +130,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\000-CauseOfDeath.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\000-ControlActClass.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -142,10 +142,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\000-ProblemObservationTypes.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\000-ReactionObservation.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\000-Supplements.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -167,7 +167,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\001-Materials.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\001-XMaterialTypes.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -211,10 +211,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Data\000-SecurityAuditCodes.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\001-XMaterialTypes.dataset">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Data\OpenIZ.mdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
