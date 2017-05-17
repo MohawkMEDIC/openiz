@@ -88,9 +88,10 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		protected override Immunization MapToFhir(SubstanceAdministration model, WebOperationContext webOperationContext)
 		{
 			var retVal = DataTypeConverter.CreateResource<Immunization>(model);
+
 			retVal.DoseQuantity = new FhirQuantity()
 			{
-				Units = model.DoseUnit.Mnemonic,
+				Units = model.DoseUnit?.Mnemonic,
 				Value = new FhirDecimal(model.DoseQuantity)
 			};
 			retVal.Date = (FhirDate)model.ActTime.DateTime;
