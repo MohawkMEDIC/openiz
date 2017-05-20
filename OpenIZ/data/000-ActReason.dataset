@@ -271,7 +271,7 @@
       <name>
         
         <language>en</language>
-        <value>Alergy / Intolerance</value>
+        <value>Allergy / Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -299,7 +299,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Alergy / Intolerance</value>
+        <value>Allergy / Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -355,7 +355,7 @@
       <name>
         
         <language>en</language>
-        <value>Professional Judegement</value>
+        <value>Professional Judgement</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
