@@ -87,7 +87,6 @@ namespace OizDevTool
 				var codeSystem = new CodeSystem
 				{
 					Key = Guid.NewGuid(),
-					CreationTime = DateTimeOffset.Now,
 					Name = svs.ValueSet.displayName,
 					Oid = svs.ValueSet.id,
 					VersionText = svs.ValueSet.version
@@ -103,7 +102,6 @@ namespace OizDevTool
 					var referenceTerm = new ReferenceTerm
 					{
 						CodeSystemKey = codeSystem.Key,
-						CreationTime = DateTimeOffset.Now,
 						DisplayNames = new List<ReferenceTermName>
 						{
 							new ReferenceTermName(conceptListType.lang?.Length > 2 ? conceptListType.lang?.Substring(0, 2) : "en", cpt.displayName)

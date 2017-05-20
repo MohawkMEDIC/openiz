@@ -98,23 +98,10 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>8809DE9D-02B5-4F71-8A41-E043E1E003A6</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>mobile</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Mobile</value>
-      </name>
-      <conceptSet>1DABE3E2-44B8-4C45-9102-25EA147E5710</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>e161f90e-5939-430e-861a-f8e885cc353d</source>
+      <term>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
 </dataset>
