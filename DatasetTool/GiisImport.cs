@@ -122,6 +122,7 @@ namespace OizDevTool
             { "DTP-HepB-Hib", Guid.Parse("41B008A6-FCF8-40BC-AB96-7567E94BCF8F") },
             { "Rota", Guid.Parse("DD53B8FF-2F4D-4359-A031-9405AD384893") },
             { "Measles Rubella", Guid.Parse("6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B") },
+            { "MR", Guid.Parse("6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B") },
             { "measles virus vaccine", Guid.Parse("7C5A4FF6-4E81-4C6C-88E9-FC75CE61A4FB") },
             { "PCV-13", Guid.Parse("E829C3D1-5243-474E-A2D6-BA35D99610C4") },
             { "PCV13", Guid.Parse("E829C3D1-5243-474E-A2D6-BA35D99610C4") },
@@ -475,7 +476,7 @@ namespace OizDevTool
                     {
                         Key = Guid.Parse("25dfb527-d3ab-4a97-8171-316086ad3f74")
                     },
-                    ExtensionValue = child.Birthplace.Id
+                    ExtensionValue = new Decimal(child.Birthplace.Id)
                 });
 
             return retVal;
@@ -719,7 +720,8 @@ namespace OizDevTool
             ApplicationContext.Current.Start();
             var placePersister = ApplicationContext.Current.GetService<IDataPersistenceService<OpenIZ.Core.Model.Entities.Place>>();
             var bundlePersister = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
-            var materialPersister = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
+            var mmaterialPersister = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
+            var materialPersister = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
             var conceptPersister = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
             var patientPersister = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
             var uePersister = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
@@ -738,7 +740,8 @@ namespace OizDevTool
             Console.WriteLine("Load OpenIZ Facilities...");
             var facilities = (placePersister as IFastQueryDataPersistenceService<OpenIZ.Core.Model.Entities.Place>).QueryFast(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID"), Guid.Empty, 0, null, AuthenticationContext.SystemPrincipal, out tr);
             Console.WriteLine("Load OpenIZ Materials...");
-            var materials = (materialPersister as IFastQueryDataPersistenceService<OpenIZ.Core.Model.Entities.ManufacturedMaterial>).QueryFast(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM_LOT"), Guid.Empty, 0, null, AuthenticationContext.AnonymousPrincipal, out tr);
+            var manufmaterials = (mmaterialPersister as IFastQueryDataPersistenceService<OpenIZ.Core.Model.Entities.ManufacturedMaterial>).QueryFast(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM_LOT"), Guid.Empty, 0, null, AuthenticationContext.AnonymousPrincipal, out tr);
+            var materials = (materialPersister as IFastQueryDataPersistenceService<OpenIZ.Core.Model.Entities.Material>).QueryFast(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM"), Guid.Empty, 0, null, AuthenticationContext.AnonymousPrincipal, out tr);
 
             Console.WriteLine("Map OpenIZ Users...");
             userEntityMap = User.GetUserList().ToDictionary(o => o.Id, o => uePersister.Query(u => u.SecurityUser.UserName == o.Username, AuthenticationContext.AnonymousPrincipal).FirstOrDefault()?.Key.Value ?? Guid.Empty);
@@ -755,7 +758,14 @@ namespace OizDevTool
             facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", ""))).Id, o => o.Key.Value);
 
             Console.WriteLine("Map OpenIZ Materials...");
-            manufacturedMaterialMap = materials.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
+            manufacturedMaterialMap = manufmaterials.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
+            // Map materials
+            foreach (var itm in materials)
+            {
+                var giisCode = Item.GetItemById(Int32.Parse(itm.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GIIS_ITEM")?.Value));
+                if (giisCode != null && !materialMap.ContainsKey(giisCode.Code))
+                    materialMap.Add(giisCode.Code, itm.Key.Value);
+            }
 
             DatasetInstall resultSet = new DatasetInstall() { Id = $"Ad-hoc GIIS import {String.Join(":", parms.FacilityId)}" };
             
