@@ -54,11 +54,14 @@ namespace OpenIZ.Core.Extensions
         /// </summary>
         public string GetDisplay(object data)
         {
-			// Anything that is smart enough to read JSON data is smart enough to use the raw stream data
-			// (We also want to prevent the raw literatl from going in the db)
-            //return JsonConvert.SerializeObject(data);
+            // Anything that is smart enough to read JSON data is smart enough to use the raw stream data
+            // (We also want to prevent the raw literatl from going in the db)
+            var strData = JsonConvert.SerializeObject(data);
+            if(strData.Length > 64)
+                strData = strData.Substring(0, 64);
+            return strData;
 	        //return this.DeSerialize(data);
-	        return null;
+	        //return null;
         }
 
         /// <summary>

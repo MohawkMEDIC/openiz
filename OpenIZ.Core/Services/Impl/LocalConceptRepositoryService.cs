@@ -827,5 +827,22 @@ namespace OpenIZ.Core.Services.Impl
             else
                 return persistence.Query(query, offset, count, AuthenticationContext.Current.Principal, out totalResults);
         }
+
+        /// <summary>
+        /// Get concept reference term for the specified code system
+        /// </summary>
+        public ReferenceTerm GetConceptReferenceTerm(Guid conceptId, String codeSystem)
+        {
+            // Concept is loaded
+            var refTermService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
+            if (refTermService == null)
+                throw new InvalidOperationException("Cannot find concept service");
+            int tr = 0;
+            var refTermEnt = refTermService.Query(o => (o.ReferenceTerm.CodeSystem.Url == codeSystem || o.ReferenceTerm.CodeSystem.Oid == codeSystem) && o.SourceEntityKey == conceptId, 0, 1, AuthenticationContext.Current.Principal, out tr).FirstOrDefault();
+            if (refTermEnt != null)
+                return refTermEnt.ReferenceTerm ?? this.GetReferenceTerm(refTermEnt.ReferenceTermKey.Value);
+            else
+                return null;
+        }
     }
 }

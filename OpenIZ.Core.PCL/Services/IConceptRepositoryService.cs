@@ -316,5 +316,11 @@ namespace OpenIZ.Core.Services
 		/// <param name="referenceTerm">The reference term to be saved.</param>
 		/// <returns>Returns a reference term.</returns>
 		ReferenceTerm SaveReferenceTerm(ReferenceTerm referenceTerm);
-	}
+
+        /// <summary>
+        /// Gets the concept reference term for the specified code system 
+        /// </summary>
+        /// <returns></returns>
+        ReferenceTerm GetConceptReferenceTerm(Guid conceptId, String codeSystem);
+    }
 }

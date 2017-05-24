@@ -109,9 +109,20 @@ namespace OizDevTool
 						act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
 						act.StatusConceptKey = StatusKeys.Completed;
 						act.ActTime = act.ActTime.AddDays(r.Next(0, 5));
-
+                        act.StartTime = null;
+                        act.StopTime = null;
 						if (act is QuantityObservation)
 							(act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
+                        else
+                        {
+                            act.Tags.AddRange(new ActTag[]
+                            {
+                                new ActTag("catchmentIndicator", "True"),
+                                new ActTag("hasRunAdjustment", "True")
+                            });
+                            act.Participations.Add(new ActParticipation(ActParticipationKey.Location, patient.Relationships.First(l => l.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey));
+                        }
+                        
 						// Persist the act
 						bundle.Item.Add(act);
 					}
@@ -190,7 +201,7 @@ namespace OizDevTool
 		/// <summary>
 		/// Generate the patient with schedule
 		/// </summary>
-		private static Patient GeneratePatient(int maxAge, string barcodeAuth, IEnumerable<Place> places, Random r)
+		internal static Patient GeneratePatient(int maxAge, string barcodeAuth, IEnumerable<Place> places, Random r)
 		{
 			Person mother = new Person()
 			{

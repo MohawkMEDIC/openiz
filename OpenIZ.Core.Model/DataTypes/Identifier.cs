@@ -115,7 +115,7 @@ namespace OpenIZ.Core.Model.DataTypes
     /// Represents an external assigned identifier
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model"), JsonObject("IdentifierBase")]
-    [Classifier(nameof(Authority))]
+    [Classifier(nameof(AuthorityXml))]
     public abstract class IdentifierBase<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 
@@ -197,7 +197,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Gets or sets a minimal assigning authority from XML data
         /// </summary>
-        [SerializationReference(nameof(AuthorityKey))]
+        //[SerializationReference(nameof(AuthorityKey))]
         [AutoLoad, XmlElement("authority"), JsonProperty("authority")]
         public AssigningAuthority AuthorityXml
         {
@@ -217,7 +217,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Represents the authority information 
         /// </summary>
-        [XmlIgnore, JsonIgnore] 
+        [AutoLoad, XmlIgnore, JsonIgnore] 
         public AssigningAuthority Authority
         {
             get

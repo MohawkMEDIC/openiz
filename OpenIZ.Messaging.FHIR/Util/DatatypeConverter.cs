@@ -119,11 +119,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 			}
 			else
 			{
-				var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-
-				var assigningAuthority = metaService.FindAssigningAuthority(o => o.DomainName == fhirIdentifier.Label).FirstOrDefault();
-
-				retVal = new ActIdentifier(assigningAuthority.Key.Value, fhirIdentifier.Value);
+                throw new InvalidOperationException("Identifier must carry a coding system");
 			}
 
 			// TODO: Fill in use
@@ -175,8 +171,7 @@ namespace OpenIZ.Messaging.FHIR.Util
         {
             var retVal = new Extension()
             {
-                Url = ext.LoadProperty<ExtensionType>(nameof(ActExtension.ExtensionType)).Name,
-                IsModifier = false
+                Url = ext.LoadProperty<ExtensionType>(nameof(ActExtension.ExtensionType)).Name
             };
 
             if (ext.ExtensionValue is Decimal)
@@ -353,11 +348,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 			}
 			else
 			{
-				var metaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-
-				var assigningAuthority = metaService.FindAssigningAuthority(o => o.DomainName == fhirId.Label).FirstOrDefault();
-
-				retVal = new EntityIdentifier(assigningAuthority.Key.Value, fhirId.Value);
+                throw new InvalidOperationException("Identifier must carry a coding system");
 			}
 
 			// TODO: Fill in use
@@ -427,7 +418,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 			// Return value
 			var retVal = new FhirAddress()
 			{
-				Use = DataTypeConverter.ToFhirCodeableConcept(address.AddressUse)?.GetPrimaryCode()?.Code,
+				Use = DataTypeConverter.ToFhirCodeableConcept(address.AddressUse, "http://hl7.org/fhir/address-use")?.GetPrimaryCode()?.Code,
 				Line = new List<FhirString>()
 			};
 
@@ -449,8 +440,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 				{
 					retVal.Extension.Add(new Extension()
 					{
-						IsModifier = false,
-						Url = FhirConstants.OpenIZProfile + "#address-" + com.ComponentType.Mnemonic,
+						Url = FhirConstants.OpenIZProfile + "#address-" + com.LoadProperty<Concept>(nameof(EntityAddressComponent.ComponentType)).Mnemonic,
 						Value = new FhirString(com.Value)
 					});
 				}
@@ -464,7 +454,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// </summary>
 		/// <param name="concept">The concept.</param>
 		/// <returns>Returns a FHIR codeable concept.</returns>
-		public static FhirCodeableConcept ToFhirCodeableConcept(Concept concept)
+		public static FhirCodeableConcept ToFhirCodeableConcept(Concept concept, String preferredCodeSystem = null)
 		{
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping concept");
 
@@ -473,12 +463,25 @@ namespace OpenIZ.Messaging.FHIR.Util
 				return null;
 			}
 
-			return new FhirCodeableConcept
-			{
-				Coding = concept.LoadCollection<ConceptReferenceTerm>(nameof(Concept.ReferenceTerms)).Select(o => DataTypeConverter.ToCoding(o.LoadProperty<ReferenceTerm>(nameof(ConceptReferenceTerm.ReferenceTerm)))).ToList(),
-				Text = concept.LoadCollection<ConceptName>(nameof(Concept.ConceptNames)).FirstOrDefault()?.Name
-			};
-		}
+            if (String.IsNullOrEmpty(preferredCodeSystem))
+                return new FhirCodeableConcept
+                {
+                    Coding = concept.LoadCollection<ConceptReferenceTerm>(nameof(Concept.ReferenceTerms)).Select(o => DataTypeConverter.ToCoding(o.LoadProperty<ReferenceTerm>(nameof(ConceptReferenceTerm.ReferenceTerm)))).ToList(),
+                    Text = concept.LoadCollection<ConceptName>(nameof(Concept.ConceptNames)).FirstOrDefault()?.Name
+                };
+            else {
+                var codeSystemService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+                var refTerm = codeSystemService.GetConceptReferenceTerm(concept.Key.Value, preferredCodeSystem);
+                if (refTerm == null)
+                    return null;
+                else
+                    return new FhirCodeableConcept
+                    {
+                        Coding = new List<FhirCoding>() { ToCoding(refTerm) },
+                        Text = concept.LoadCollection<ConceptName>(nameof(Concept.ConceptNames)).FirstOrDefault()?.Name
+                    };
+            }
+        }
 
 		/// <summary>
 		/// Converts an <see cref="EntityName"/> instance to a <see cref="FhirHumanName"/> instance.
@@ -497,12 +500,15 @@ namespace OpenIZ.Messaging.FHIR.Util
 			// Return value
 			var retVal = new FhirHumanName
 			{
-				Use = DataTypeConverter.ToFhirCodeableConcept(entityName.NameUse)?.GetPrimaryCode()?.Code
-			};
+				Use = DataTypeConverter.ToFhirCodeableConcept(entityName.NameUse, "http://hl7.org/fhir/name-use")?.GetPrimaryCode()?.Code
+
+            };
 
 			// Process components
 			foreach (var com in entityName.LoadCollection<EntityNameComponent>(nameof(EntityName.Component)))
 			{
+                if (string.IsNullOrEmpty(com.Value)) continue; 
+
 				if (com.ComponentTypeKey == NameComponentKeys.Given)
 					retVal.Given.Add(com.Value);
 				else if (com.ComponentTypeKey == NameComponentKeys.Family)
@@ -531,12 +537,12 @@ namespace OpenIZ.Messaging.FHIR.Util
 				return null;
 			}
 
-            var authority = identifier.LoadProperty<AssigningAuthority>(nameof(EntityIdentifier.Authority));
+            var imetaService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+            var authority = imetaService.GetAssigningAuthority(identifier.AuthorityKey.Value);
 			return new FhirIdentifier
 			{
-				Label = authority?.Name,
 				System = new FhirUri(new Uri(authority?.Url ?? $"urn:oid:{authority?.Oid}")),
-				Use = identifier.LoadProperty<IdentifierType>(nameof(EntityIdentifier.IdentifierType))?.TypeConcept?.Mnemonic,
+				Type = ToFhirCodeableConcept(identifier.LoadProperty<IdentifierType>(nameof(EntityIdentifier.IdentifierType))?.TypeConcept),
 				Value = identifier.Value
 			};
 		}

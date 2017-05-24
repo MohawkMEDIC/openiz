@@ -59,6 +59,10 @@ namespace OizDevTool
             [Parameter("aut")]
             [Description("The assigning authority of barcode IDs")]
             public String BarcodeAuthority { get; set; }
+
+            [Parameter("anon")]
+            [Description("Anonymizes the demographic data for testing")]
+            public bool Anonymize { get; set; }
         }
 
         /// <summary>
@@ -311,7 +315,7 @@ namespace OizDevTool
 
                 try
                 {
-                    return new SubstanceAdministration()
+                    var retVal = new SubstanceAdministration()
                     {
                         Key = Guid.NewGuid(),
                         ActTime = o.VaccinationDate,
@@ -337,6 +341,8 @@ namespace OizDevTool
                     userEntityMap[o.ModifiedBy] != Guid.Empty ? new ActParticipation(ActParticipationKey.Authororiginator, userEntityMap[o.ModifiedBy]) : null
                 }
                     };
+                    retVal.Participations.RemoveAll(n => n == null);
+                    return retVal;
                 }
                 catch (Exception e)
                 {
@@ -373,7 +379,7 @@ namespace OizDevTool
         /// <summary>
         /// Map child
         /// </summary>
-        private static Patient MapChild(Child child, AssigningAuthority barcodeAut)
+        private static Patient MapChild(Child child, FacilityImportParameters parms)
         {
             Guid id = Guid.NewGuid();
 
@@ -382,22 +388,23 @@ namespace OizDevTool
             {
                 Key = id,
                 Addresses = child.Domicile == null ? null : new List<EntityAddress>() { MapAddress(child.Domicile, AddressUseKeys.HomeAddress) },
-                DateOfBirth = child.Birthdate,
+                DateOfBirth = parms.Anonymize ? child.Birthdate.AddDays((Guid.NewGuid().ToByteArray()[0] % 7) - 4 ) : child.Birthdate,
                 DateOfBirthPrecision = DatePrecision.Day,
                 DeceasedDate = child.Status.Name == "Dead" ? (DateTime?)DateTime.MinValue : null,
                 GenderConceptKey = child.Gender ? GT_MALE : GT_FEMALE,
                 Identifiers = new List<EntityIdentifier>()
                 {
-                    new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("GIIS_CHILD", "GIIS Child Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.6"), child.Id.ToString()),
+                    new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("GIIS_CHILD", "GIIS Child Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.6"), parms.Anonymize ? ((int)child.Id * 13 / 10).ToString() : child.Id.ToString()),
                 },
                 Names = new List<EntityName>()
                 {
-                    new EntityName(NameUseKeys.OfficialRecord, child.Lastname1, child.Firstname1, child.Firstname2)
+                    parms.Anonymize ? new EntityName(NameUseKeys.OfficialRecord, SeedData.SeedData.Current.PickRandomFamilyName(), SeedData.SeedData.Current.PickRandomGivenName(child.Gender ? "Male" : "Female").Name, SeedData.SeedData.Current.PickRandomGivenName(child.Gender ? "Male" : "Female").Name)
+                        : new EntityName(NameUseKeys.OfficialRecord, child.Lastname1, child.Firstname1, child.Firstname2)
                 },
                 StatusConceptKey = child.IsActive ? StatusKeys.Active : StatusKeys.Obsolete,
                 Telecoms = new List<EntityTelecomAddress>()
                 {
-                    new EntityTelecomAddress(TelecomAddressUseKeys.MobileContact, child.Mobile)
+                    new EntityTelecomAddress(TelecomAddressUseKeys.MobileContact, parms.Anonymize ? "+XXXXXXXXXXX" : child.Mobile)
                 },
                 Tags = new List<EntityTag>()
                 {
@@ -405,8 +412,8 @@ namespace OizDevTool
                 }
             };
 
-            if (!String.IsNullOrEmpty(child.BarcodeId))
-                retVal.Identifiers.Add(new OpenIZ.Core.Model.DataTypes.EntityIdentifier(barcodeAut, child.BarcodeId));
+            if (!String.IsNullOrEmpty(child.BarcodeId) && !parms.Anonymize)
+                retVal.Identifiers.Add(new OpenIZ.Core.Model.DataTypes.EntityIdentifier(parms.BarcodeAuthority, child.BarcodeId));
 
             // Child health centre
             var hfAssigned = facilityMap[child.HealthcenterId];
@@ -420,11 +427,12 @@ namespace OizDevTool
                     Key = Guid.NewGuid(),
                     Names = new List<EntityName>()
                     {
-                        new EntityName(NameUseKeys.OfficialRecord, child.MotherLastname, child.MotherFirstname)
+                        parms.Anonymize ? new EntityName(NameUseKeys.OfficialRecord, SeedData.SeedData.Current.PickRandomFamilyName(), SeedData.SeedData.Current.PickRandomGivenName("Female").Name, SeedData.SeedData.Current.PickRandomGivenName("Female").Name) 
+                            : new EntityName(NameUseKeys.OfficialRecord, child.MotherLastname, child.MotherFirstname)
                     },
                     Telecoms = new List<EntityTelecomAddress>()
                     {
-                    new EntityTelecomAddress(TelecomAddressUseKeys.MobileContact, child.Mobile)
+                    new EntityTelecomAddress(TelecomAddressUseKeys.MobileContact, parms.Anonymize ? "+XXXXXXXXXXXX" : child.Mobile)
                     }
                 }));
                 if (!String.IsNullOrEmpty(child.MotherId))
@@ -838,7 +846,7 @@ namespace OizDevTool
                         continue;
                     }
 
-                    var dbChild = MapChild(chld, barcodeAut);
+                    var dbChild = MapChild(chld, parms);
                     float pdone = (i + 1) / (float)children.Count;
 
                     int bdone = (int)(pdone * (Console.WindowWidth - 55) / 2);

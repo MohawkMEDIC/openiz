@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.FHIR.Util;
 using System;
@@ -104,13 +105,15 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Material
 			var matPtcpt = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable) ??
                 model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Product);
-			if (matPtcpt != null)
-			{
+            if (matPtcpt != null)
+            {
                 var matl = matPtcpt.LoadProperty<Material>(nameof(ActParticipation.PlayerEntity));
-				retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.LoadProperty<Concept>(nameof(Act.TypeConcept)));
-				retVal.ExpirationDate = matl.ExpiryDate.HasValue ? (FhirDate)matl.ExpiryDate : null;
-				retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
-			}
+                retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.LoadProperty<Concept>(nameof(Act.TypeConcept)));
+                retVal.ExpirationDate = matl.ExpiryDate.HasValue ? (FhirDate)matl.ExpiryDate : null;
+                retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
+            }
+            else
+                retVal.ExpirationDate = null;
 
 			// RCT
 			var rct = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
@@ -131,7 +134,9 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				ImmunizationProtocol protocol = new ImmunizationProtocol();
                 var dbProtocol = itm.LoadProperty<Protocol>(nameof(ActProtocol.Protocol));
 				protocol.DoseSequence = new FhirInt((int)model.SequenceId);
-				protocol.Series = itm.Protocol?.Name ?? itm.Protocol?.Oid;
+
+                // Protocol lookup 
+                protocol.Series = dbProtocol?.Name;
 				retVal.VaccinationProtocol.Add(protocol);
 			}
 			if (retVal.VaccinationProtocol.Count == 0)
@@ -146,6 +151,18 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                     Url = "http://openiz.org/extensions/act/fhir/location",
                     Value = new FhirString(loc.PlayerEntityKey.ToString())
                 });
+
+            // metadata
+            retVal.Meta = new ResourceMetadata()
+            {
+                LastUpdated = model.ModifiedOn.DateTime,
+                VersionId = model.VersionKey?.ToString(),
+                Profile = new Uri("http://openiz.org/fhir")
+            };
+            retVal.Meta.Tags = model.Tags.Select(o => new FhirCoding(new Uri("http://openiz.org/tags/fhir/" + o.TagKey), o.Value)).ToList();
+            // TODO: Configure this namespace / coding scheme
+            retVal.Meta.Security = model.Policies.Where(o => o.GrantType == Core.Model.Security.PolicyGrantType.Grant).Select(o => new FhirCoding(new Uri("http://openiz.org/security/policy"), o.Policy.Oid)).ToList();
+            retVal.Meta.Security.Add(new FhirCoding(new Uri("http://openiz.org/security/policy"), PermissionPolicyIdentifiers.ReadClinicalData));
 
             return retVal;
 		}
@@ -197,6 +214,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		protected override IEnumerable<SubstanceAdministration> Query(Expression<Func<SubstanceAdministration, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
 		{
             var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
+
             query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
 
             if (queryId == Guid.Empty)

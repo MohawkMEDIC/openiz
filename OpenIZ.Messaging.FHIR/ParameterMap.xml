@@ -43,12 +43,13 @@
     <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
     <map fhir="patient.birthDate" model="participation[Location].player@Person.dateOfBirth"/>
     <map fhir="in-catchment" model="tag[catchmentIndicator].value"/>
+    <map fhir="is-outreach" model="relationship[HasComponent].source.tag[outreach]"/>
     <map fhir="location" model="participation[Location].player.id"/>
     <map fhir="location.name" model="participation[Location].player.name.component.value"/>
     <map fhir="location.identifier" model="participation[Location].player.identifier" type="identifier"/>
   </type>
 
-  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resource.Patient, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
     <map fhir="name" model="name.component.value"/>
     <map fhir="family" model="name.component[Family].value"/>
     <map fhir="given" model="name.component[Given].value"/>

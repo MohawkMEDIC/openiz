@@ -93,6 +93,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
 
                     TModel retVal = null;
+                    connection.LoadState = LoadState.FullLoad;
                     // Get most recent version
                     if (uuid.VersionId == Guid.Empty)
                         retVal = this.Get(connection, uuid.Id, principal);

@@ -26,6 +26,7 @@ using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.FHIR.Util;
@@ -102,25 +103,25 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			foreach (var rel in model.Relationships.Where(o => !o.InversionIndicator))
 			{
 				// Family member
-				if (rel.RelationshipType.ConceptSets.Any(o => o.Key == ConceptSetKeys.FamilyMember))
+				if (rel.LoadProperty<Concept>(nameof(EntityRelationship.RelationshipType)).ConceptSetsXml.Contains(ConceptSetKeys.FamilyMember))
 				{
 					// Create the relative object
-					var relative = DataTypeConverter.CreateResource<RelatedPerson>(rel.TargetEntity);
-					relative.Relationship = DataTypeConverter.ToFhirCodeableConcept(rel.RelationshipType);
+					var relative = DataTypeConverter.CreateResource<RelatedPerson>(rel.LoadProperty<Person>(nameof(EntityRelationship.TargetEntity)));
+					relative.Relationship = DataTypeConverter.ToFhirCodeableConcept(rel.LoadProperty<Concept>(nameof(EntityRelationship.RelationshipType)));
 					relative.Address = DataTypeConverter.ToFhirAddress(rel.TargetEntity.Addresses.FirstOrDefault());
-					relative.Gender = DataTypeConverter.ToFhirCodeableConcept((rel.TargetEntity as Core.Model.Roles.Patient)?.GenderConcept);
-					relative.Identifier = rel.TargetEntity.Identifiers.Select(o => DataTypeConverter.ToFhirIdentifier(o)).ToList();
-					relative.Name = DataTypeConverter.ToFhirHumanName(rel.TargetEntity.Names.FirstOrDefault());
+					relative.Gender = DataTypeConverter.ToFhirCodeableConcept((rel.TargetEntity as Core.Model.Roles.Patient)?.LoadProperty<Concept>(nameof(Core.Model.Roles.Patient.GenderConcept)));
+					relative.Identifier = rel.TargetEntity.LoadCollection<EntityIdentifier>(nameof(Entity.Identifiers)).Select(o => DataTypeConverter.ToFhirIdentifier(o)).ToList();
+					relative.Name = DataTypeConverter.ToFhirHumanName(rel.TargetEntity.LoadCollection<EntityName>(nameof(Entity.Names)).FirstOrDefault());
 					if (rel.TargetEntity is Core.Model.Roles.Patient)
 						relative.Patient = DataTypeConverter.CreateReference<Patient>(rel.TargetEntity);
-					relative.Telecom = rel.TargetEntity.Telecoms.Select(o => DataTypeConverter.ToFhirTelecom(o)).ToList();
+					relative.Telecom = rel.TargetEntity.LoadCollection<EntityTelecomAddress>(nameof(Entity.Telecoms)).Select(o => DataTypeConverter.ToFhirTelecom(o)).ToList();
 					retVal.Contained.Add(new ContainedResource()
 					{
 						Item = relative
 					});
 				}
 				else if (rel.RelationshipTypeKey == EntityRelationshipTypeKeys.HealthcareProvider)
-					retVal.Provider = DataTypeConverter.CreateReference<Practictioner>(rel.TargetEntity);
+					retVal.Provider = DataTypeConverter.CreateReference<Practictioner>(rel.LoadProperty<Entity>(nameof(EntityRelationship.TargetEntity)));
 			}
 
 			// TODO: Links
@@ -195,7 +196,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <returns>Returns the list of models which match the given parameters.</returns>
 		protected override IEnumerable<Core.Model.Roles.Patient> Query(Expression<Func<Core.Model.Roles.Patient, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
 		{
-            var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(Patient).GetProperty(nameof(Entity.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
+            var obsoletionReference = Expression.MakeBinary(ExpressionType.NotEqual, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(Core.Model.Roles.Patient).GetProperty(nameof(Entity.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Obsolete));
             query = Expression.Lambda<Func<Core.Model.Roles.Patient, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
 
             if (queryId == Guid.Empty)
