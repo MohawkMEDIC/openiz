@@ -632,14 +632,14 @@ namespace OpenIZ.Core.Applets
                     {
 
                         // Get the databinding data
-                        XAttribute source = db.Attributes(xs_binding + "source").FirstOrDefault(),
-                            filter = db.Attributes(xs_binding + "filter").FirstOrDefault(),
-                            key = db.Attributes(xs_binding + "key").FirstOrDefault(),
-                            value = db.Attributes(xs_binding + "value").FirstOrDefault(),
-                            orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
-                            orderBy = db.Attributes(xs_binding + "orderBy").FirstOrDefault();
+	                    XAttribute source = db.Attributes(xs_binding + "source").FirstOrDefault(),
+									filter = db.Attributes(xs_binding + "filter").FirstOrDefault(),
+									key = db.Attributes(xs_binding + "key").FirstOrDefault(),
+									value = db.Attributes(xs_binding + "value").FirstOrDefault(),
+									orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
+									orderBy = db.Attributes(xs_binding + "orderBy").FirstOrDefault();
 
-                        var locale = preProcessLocalization;
+						var locale = preProcessLocalization;
                         int i = 0;
                         var valueSelector = value?.Value;
                         while (i++ < 2)
@@ -674,7 +674,7 @@ namespace OpenIZ.Core.Applets
                                 }
 
                                 // Render expression
-                                Delegate keyExpression = null, valueExpression = null;
+	                            Delegate keyExpression = null, valueExpression = null, dataExpression = null;
                                 ParameterExpression parameter = Expression.Parameter(imsiType);
                                 if (key == null)
                                     keyExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(nameof(IIdentifiedEntity.Key))), parameter).Compile();
@@ -699,6 +699,23 @@ namespace OpenIZ.Core.Applets
                                     var valueValue = valueExpression.DynamicInvoke(itm)?.ToString();
                                     if (String.IsNullOrEmpty(valueValue)) continue;
                                     optAtt.Add(new XAttribute("value", keyValue), new XText(valueValue));
+
+	                                foreach (var dataBinding in db.Attributes().Where(c => c.Name.ToString().StartsWith((xs_binding + "data-").ToString())))
+	                                {
+		                                if (dataBinding != null)
+		                                {
+			                                dataExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(dataBinding.Value)), parameter).Compile();
+			                                var dataValue = dataExpression?.DynamicInvoke(itm)?.ToString();
+
+			                                if (string.IsNullOrEmpty(dataValue))
+			                                {
+				                                continue;
+			                                }
+
+											optAtt.Add(new XAttribute(dataBinding.Name.LocalName, dataValue));
+										}
+									}
+
                                     db.Add(optAtt);
                                 }
                                 break;
