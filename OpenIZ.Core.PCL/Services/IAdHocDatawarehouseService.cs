@@ -41,6 +41,11 @@ namespace OpenIZ.Core.Services
         /// </summary>
         void DeleteDatamart(Guid datamartId);
 
+        /// <summary>
+        /// Truncates (drops all data) the specified data mart
+        /// </summary>
+        void Truncate(Guid datamartId);
+
 		/// <summary>
 		/// Gets data from an ad-hoc data mart
 		/// </summary>

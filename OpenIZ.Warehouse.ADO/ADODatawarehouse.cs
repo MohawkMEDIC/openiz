@@ -395,8 +395,8 @@ namespace OpenIZ.Warehouse.ADO
                     }
 
                     // First, we delete the record
-                    List<object> vals = new List<object>();
-                    var delSql = context.CreateSqlStatement($"DELETE FROM {mart.Schema.Name} {this.ParseFilterDictionary(context, mart.Schema.Name, parms, mart.Schema.Properties)} ", vals.ToArray());
+                    var sql = this.ParseFilterDictionary(context, mart.Schema.Name, parms, mart.Schema.Properties).Build();
+                    var delSql = context.CreateSqlStatement($"DELETE FROM {mart.Schema.Name} WHERE {sql.Build().SQL} ", sql.Arguments.ToArray());
                     context.ExecuteNonQuery(delSql);
                     this.DeleteProperties(context, mart.Schema.Name, mart.Schema);
 
@@ -813,8 +813,8 @@ namespace OpenIZ.Warehouse.ADO
                 context.ExecuteNonQuery(context.CreateSqlStatement($"DROP VIEW IF EXISTS sqp_{mart.Schema.Name}_{dmQuery.Name}"));
 
                 // Create the data in the DMART
-                SqlStatement queryBuilder = context.CreateSqlStatement("CREATE VIEW IF NOT EXISTS ")
-                    .Append($"sqp_{mart.Schema.Name}_{dmQuery.Name} AS SELECT * FROM ({mySql.Query})");
+                SqlStatement queryBuilder = context.CreateSqlStatement("CREATE VIEW ")
+                    .Append($"sqp_{mart.Schema.Name}_{dmQuery.Name} AS SELECT * FROM ({mySql.Query}) AS source");
 
                 context.ExecuteNonQuery(queryBuilder);
 
@@ -953,6 +953,39 @@ namespace OpenIZ.Warehouse.ADO
                 catch(Exception e)
                 {
                     this.m_tracer.TraceError("Error executing {0} : {1}", queryText, e);
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Truncate the specified datamart
+        /// </summary>
+        public void Truncate(Guid datamartId)
+        {
+            this.ThrowIfDisposed();
+
+            using (var context = this.m_configuration.Provider.GetWriteConnection())
+            {
+                try
+                {
+                    context.Open();
+                    context.BeginTransaction();
+                    var mart = this.GetDatamart(context, datamartId);
+                    if (mart == null)
+                        throw new KeyNotFoundException(datamartId.ToString());
+
+                    // First, we delete the record
+                    var delSql = context.CreateSqlStatement($"TRUNCATE {mart.Schema.Name}");
+                    context.ExecuteNonQuery(delSql);
+                    this.DeleteProperties(context, mart.Schema.Name, mart.Schema);
+
+                    context.Transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error deleting {0} : {1}", datamartId, e);
+                    context.Transaction.Rollback();
                     throw;
                 }
             }

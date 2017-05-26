@@ -67,7 +67,6 @@ namespace OizDevTool
 
 			Console.WriteLine("Adding minimal service providers...");
 			ApplicationContext.Current.AddServiceProvider(typeof(SimpleCarePlanService));
-			ApplicationContext.Current.AddServiceProvider(typeof(SeederProtocolRepositoryService));
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalPlaceRepositoryService));
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalActRepositoryService));
 			ApplicationServiceContext.Current = ApplicationContext.Current;
@@ -269,51 +268,6 @@ namespace OizDevTool
 			public String PopulationSize { get; set; }
 		}
 
-		/// <summary>
-		/// Seeder protocol repository service
-		/// </summary>
-		public class SeederProtocolRepositoryService : IClinicalProtocolRepositoryService
-		{
-			private List<Protocol> m_protocols = new List<Protocol>();
-
-			/// <summary>
-			/// Load the protocols into memory
-			/// </summary>
-			public SeederProtocolRepositoryService()
-			{
-				Console.WriteLine("Loading protocols...");
-				foreach (var f in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Protocols")))
-				{
-					Console.WriteLine("\t{0}", f);
-
-					using (FileStream fs = File.OpenRead(f))
-					{
-						ProtocolDefinition pdf = ProtocolDefinition.Load(fs);
-						XmlClinicalProtocol xcp = new XmlClinicalProtocol(pdf);
-						this.m_protocols.Add(xcp.GetProtocolData());
-					}
-				}
-			}
-
-			/// <summary>
-			/// Find the specified protocol
-			/// </summary>
-			/// <param name="predicate"></param>
-			/// <param name="offset"></param>
-			/// <param name="count"></param>
-			/// <param name="totalResults"></param>
-			/// <returns></returns>
-			public IEnumerable<Protocol> FindProtocol(Expression<Func<Protocol, bool>> predicate, int offset, int? count, out int totalResults)
-			{
-				var retVal = this.m_protocols.Where(predicate.Compile());
-				totalResults = retVal.Count();
-				return retVal;
-			}
-
-			public Protocol InsertProtocol(Protocol data)
-			{
-				throw new NotImplementedException();
-			}
-		}
+		
 	}
 }
