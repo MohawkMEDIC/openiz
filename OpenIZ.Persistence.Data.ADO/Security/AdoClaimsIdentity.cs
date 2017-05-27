@@ -112,9 +112,18 @@ namespace OpenIZ.Persistence.Data.ADO.Security
 
                     var passwordHash = hashingService.EncodePassword(password);
                     var fnResult = dataContext.FirstOrDefault<CompositeResult<DbSecurityUser, FunctionErrorCode>>("auth_usr", userName, passwordHash, 3);
-                    if (!String.IsNullOrEmpty(fnResult.Object2.ErrorCode))
-                        throw new AuthenticationException(fnResult.Object2.ErrorCode);
-                    var user = fnResult.Object1;
+
+	                var user = fnResult.Object1;
+
+					if (!String.IsNullOrEmpty(fnResult.Object2.ErrorCode))
+	                {
+		                if (fnResult.Object2.ErrorCode.Contains("AUTH_LCK:"))
+		                {
+							UpdateCache(user, dataContext);
+						}
+
+						throw new AuthenticationException(fnResult.Object2.ErrorCode);
+					}
 
                     var roles = dataContext.Query<DbSecurityRole>(dataContext.CreateSqlStatement< DbSecurityRole>().SelectFrom()
                         .InnerJoin<DbSecurityUserRole>(o => o.Key, o => o.RoleKey)
@@ -128,7 +137,10 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     else if (user.UserClass == UserClassKeys.ApplicationUser)
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService, new GenericPrincipal(userIdentity, null)).Demand();
 
-                    return userIdentity;
+					// add the security user to the cache before exiting
+					UpdateCache(user, dataContext);
+
+					return userIdentity;
                 }
             }
             catch (AuthenticationException e)
@@ -409,7 +421,17 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                 sw.Write("] }");
                 return sw.ToString();
             }
-
         }
+
+		/// <summary>
+		/// Updates the cache.
+		/// </summary>
+		/// <param name="user">The user.</param>
+		/// <param name="context">The context.</param>
+		private static void UpdateCache(DbSecurityUser user, DataContext context)
+	    {
+		    var securityUser = new OpenIZ.Persistence.Data.ADO.Services.Persistence.SecurityUserPersistenceService().ToModelInstance(user, context, AuthenticationContext.SystemPrincipal);
+		    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(securityUser);
+		}
     }
 }

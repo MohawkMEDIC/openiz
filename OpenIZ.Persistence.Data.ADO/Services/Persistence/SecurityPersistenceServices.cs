@@ -368,6 +368,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Insert the specified object
 		/// </summary>
+		/// <param name="context">Context.</param>
+		/// <param name="data">Data.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Core.Model.Security.SecurityUser.</returns>
 		public override Core.Model.Security.SecurityUser InsertInternal(DataContext context, Core.Model.Security.SecurityUser data, IPrincipal principal)
 		{
 			var retVal = base.InsertInternal(context, data, principal);
@@ -387,9 +391,18 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			return retVal;
 		}
 
-        /// <summary>
-        /// Query internal
-        /// </summary>
+		/// <summary>
+		/// Query internal
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="query">The query.</param>
+		/// <param name="queryId">The query identifier.</param>
+		/// <param name="offset">The offset.</param>
+		/// <param name="count">The count.</param>
+		/// <param name="totalResults">The total results.</param>
+		/// <param name="principal">The principal.</param>
+		/// <param name="countResults">if set to <c>true</c> [count results].</param>
+		/// <returns>IEnumerable&lt;SecurityUser&gt;.</returns>
 		public override IEnumerable<SecurityUser> QueryInternal(DataContext context, Expression<Func<SecurityUser, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
 		{
 			var results = base.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
@@ -410,11 +423,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			return users;
 		}
 
+		/// <summary>
+		/// Maps the data to a model instance
+		/// </summary>
+		/// <param name="dataInstance">Data instance.</param>
+		/// <param name="context">The context.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>The model instance.</returns>
 		public override Core.Model.Security.SecurityUser ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
 		{
 			var dbUser = dataInstance as DbSecurityUser;
 			var retVal = base.ToModelInstance(dataInstance, context, principal);
 			if (retVal == null) return null;
+
+			retVal.Lockout = dbUser?.Lockout;
 
 			var rolesQuery = context.CreateSqlStatement<DbSecurityUserRole>().SelectFrom()
 				.InnerJoin<DbSecurityRole>(o => o.RoleKey, o => o.Key)
@@ -427,6 +449,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 		/// <summary>
 		/// Update the roles to security user
 		/// </summary>
+		/// <param name="context">Context.</param>
+		/// <param name="data">Data.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Core.Model.Security.SecurityUser.</returns>
 		public override Core.Model.Security.SecurityUser UpdateInternal(DataContext context, Core.Model.Security.SecurityUser data, IPrincipal principal)
 		{
 			var retVal = base.UpdateInternal(context, data, principal);
