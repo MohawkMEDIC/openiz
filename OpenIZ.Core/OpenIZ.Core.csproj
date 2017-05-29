@@ -69,6 +69,7 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\ServiceTool.cs" />
     <Compile Include="Diagnostics\DiagnosticExtensions.cs" />
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="ExtensionMethods.cs" />

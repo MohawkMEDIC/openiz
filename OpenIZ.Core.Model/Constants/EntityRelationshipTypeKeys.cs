@@ -178,5 +178,6 @@ namespace OpenIZ.Core.Model.Constants
 		public static readonly Guid UsedEntity = Guid.Parse("08FFF7D9-BAC7-417B-B026-C9BEE52F4A37");
 		public static readonly Guid WarrantedProduct = Guid.Parse("639B4B8F-AFD3-4963-9E79-EF0D3928796A");
 		public static readonly Guid Wife = Guid.Parse("A3FF423E-81D5-4571-8EDF-03C295189A23");
+        public static readonly Guid Replaces = Guid.Parse("E998CA72-3B6A-4099-AB6E-7CF6861A5B61");
 	}
 }

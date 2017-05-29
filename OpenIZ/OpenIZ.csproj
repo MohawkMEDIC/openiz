@@ -103,6 +103,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="App.Config.Sample">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Applets\org.openiz.core.pak">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
