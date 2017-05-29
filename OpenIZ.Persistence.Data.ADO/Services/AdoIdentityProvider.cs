@@ -46,6 +46,7 @@ using OpenIZ.Persistence.Data.ADO.Security;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
+using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -393,15 +394,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         throw new KeyNotFoundException("Specified user does not exist!");
 
                     // Obsolete
-                    if (lockout)
-                        user.Lockout = DateTime.Now;
+	                if (lockout)
+		                user.Lockout = DateTime.Now;
+	                else
+		                user.Lockout = null;
+
                     user.ObsoletionTime = null;
                     user.ObsoletedByKey = null;
                     user.UpdatedByKey = authContext.GetUserKey(dataContext);
                     user.UpdatedTime = DateTimeOffset.Now;
                     user.SecurityHash = Guid.NewGuid().ToString();
 
-                    dataContext.Update(user);
+                    var updatedUser = dataContext.Update(user);
+
+	                var securityUser = new SecurityUserPersistenceService().ToModelInstance(updatedUser, dataContext, authContext);
+					ApplicationContext.Current.GetService<IDataCachingService>()?.Add(securityUser);
                 }
 
             }

@@ -98,7 +98,7 @@ namespace OpenIZ.Core.Wcf.Security
                 var identityModelConfig = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("system.identityModel") as SystemIdentityModelSection;
 
                 if (!handler.CanReadToken(authorizationToken))
-                    throw new SecurityTokenException("Token is not in a vlaid format");
+                    throw new SecurityTokenException("Token is not in a valid format");
 
                 SecurityToken token = null;
                 var identities = handler.ValidateToken(authorizationToken, this.m_configuration?.Security?.ClaimsAuth?.ToConfigurationObject(), out token);

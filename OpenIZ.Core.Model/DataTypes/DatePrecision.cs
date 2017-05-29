@@ -27,25 +27,51 @@ using Newtonsoft.Json;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
-    /// <summary>
-    /// Represents a date precision object
-    /// </summary>
-    [XmlType("DatePrecision",  Namespace = "http://openiz.org/model")]
-    public enum DatePrecision
+	/// <summary>
+	/// Represents a date precision object
+	/// </summary>
+	[XmlType("DatePrecision",  Namespace = "http://openiz.org/model")]
+    public enum DatePrecision : int
     {
-        [XmlEnum("F")]
-        Full, 
+		/// <summary>
+		/// Represents full date precision.
+		/// </summary>
+		[XmlEnum("F")]
+        Full = 0,
+		/// <summary>
+		/// Represents year date precision.
+		/// </summary>
         [XmlEnum("Y")]
-        Year,
-        [XmlEnum("m")]
-        Month,
-        [XmlEnum("D")]
-        Day,
-        [XmlEnum("H")]
-        Hour,
-        [XmlEnum("M")]
-        Minute,
-        [XmlEnum("S")]
-        Second
+        Year = 1,
+
+		/// <summary>
+		/// Represents month date precision.
+		/// </summary>
+		[XmlEnum("m")]
+        Month = 2,
+
+		/// <summary>
+		/// Represents day date precision.
+		/// </summary>
+		[XmlEnum("D")]
+        Day = 3,
+
+		/// <summary>
+		/// Represents hour date precision.
+		/// </summary>
+		[XmlEnum("H")]
+        Hour = 4,
+
+		/// <summary>
+		/// Represents minute date precision.
+		/// </summary>
+		[XmlEnum("M")]
+        Minute = 5,
+
+		/// <summary>
+		/// Represents second date precision.
+		/// </summary>
+		[XmlEnum("S")]
+        Second = 6
     }
 }

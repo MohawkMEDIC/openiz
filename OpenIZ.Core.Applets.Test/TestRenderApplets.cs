@@ -85,7 +85,7 @@ namespace OpenIZ.Core.Applets.Test
             /// </summary>
             public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
             {
-                if (typeof(TObject) == typeof(Concept))
+	            if (typeof(TObject) == typeof(Concept))
                 {
                     // Add list of concepts
                     return new List<Concept>()
@@ -112,11 +112,24 @@ namespace OpenIZ.Core.Applets.Test
                         },
                     }.OfType<TObject>();
                 }
-                else
-                {
-                    Assert.Fail();
-                    return null;
-                }
+
+	            if (typeof(TObject) == typeof(AssigningAuthority))
+	            {
+		            return new List<AssigningAuthority>
+		            {
+			            new AssigningAuthority
+			            {
+				            Key = Guid.NewGuid(),
+				            IsUnique = false,
+				            DomainName = "Testing Identifier",
+				            Name = "Testing Identifier",
+				            ValidationRegex = "^[0-9]{10}$"
+			            }
+		            }.OfType<TObject>();
+	            }
+
+	            Assert.Fail();
+	            return null;
             }
         }
 

@@ -50,7 +50,14 @@ namespace OpenIZ.Core.Model.AMI.Auth
 			this.UserId = u.Key;
 			this.UserName = u.UserName;
 			this.Email = u.Email;
-			this.Lockout = u.Lockout != null;
+
+			DateTime lockout;
+
+			if (DateTime.TryParse(u.LockoutXml, out lockout))
+			{
+				this.Lockout = lockout >= DateTime.Now;
+			}
+
 			this.Roles = u.Roles.Select(o => new SecurityRoleInfo(o)).ToList();
 			this.User = u;
 		}

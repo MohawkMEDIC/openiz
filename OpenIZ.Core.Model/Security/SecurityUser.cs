@@ -77,13 +77,13 @@ namespace OpenIZ.Core.Model.Security
         [XmlElement("lockout"), JsonProperty("lockout")]
         public String LockoutXml
         {
-            get { return this.LastLoginTime?.ToString("o", CultureInfo.InvariantCulture); }
+            get { return this.Lockout?.ToString("o", CultureInfo.InvariantCulture); }
             set
             {
                 if (value != null)
-                    this.LastLoginTime = DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture);
+                    this.Lockout = DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture);
                 else
-                    this.LastLoginTime = default(DateTimeOffset);
+                    this.Lockout = default(DateTime);
             }
         }
 
