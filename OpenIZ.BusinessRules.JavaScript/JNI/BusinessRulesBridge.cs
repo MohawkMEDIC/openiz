@@ -320,6 +320,15 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// Find object
+        /// </summary>
+        public object Find(String type, ExpandoObject query)
+        {
+            var queryStr = new NameValueCollection((query as IDictionary<String, object>).ToArray()).ToString();
+            return Find(type, queryStr);
+        }
+
+        /// <summary>
         /// Finds the specified data 
         /// </summary>
         public object Find(String type, String query)

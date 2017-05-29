@@ -204,10 +204,16 @@ namespace OpenIZ.Core.Model.Query
                         if (classAttr == null)
                             throw new InvalidOperationException("No classifier found for guard expression");
                         PropertyInfo classifierProperty = itemType.GetRuntimeProperty(classAttr.ClassifierProperty);
+                        // Handle XML props
+                        if (classifierProperty.Name.EndsWith("Xml"))
+                            classifierProperty = itemType.GetRuntimeProperty(classifierProperty.Name.Replace("Xml", ""));
+
                         Expression guardAccessor = guardParameter;
                         while (classifierProperty != null && classAttr != null)
                         {
                             guardAccessor = Expression.MakeMemberAccess(guardAccessor, classifierProperty);
+                            
+                            
                             classAttr = classifierProperty.PropertyType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                             if (classAttr != null && guard != null)
                                 classifierProperty = classifierProperty.PropertyType.GetRuntimeProperty(classAttr.ClassifierProperty);

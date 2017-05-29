@@ -57,7 +57,7 @@ namespace OpenIZ.OrmLite
     public class QueryBuilder
     {
         // Regex to extract property, guards and cast
-        private readonly Regex m_extractionRegex = new Regex(@"^(\w*?)(\[(\w*)\])?(\@(\w*))?(\.(.*))?$");
+        private readonly Regex m_extractionRegex = new Regex(@"^(\w*?)(\[(.*)\])?(\@(\w*))?(\.(.*))?$");
 
         // Join cache
         private Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>> s_joinCache = new Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>>();
