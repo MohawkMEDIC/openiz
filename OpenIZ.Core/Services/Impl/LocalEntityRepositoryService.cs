@@ -176,6 +176,10 @@ namespace OpenIZ.Core.Services.Impl
 		/// <exception cref="System.InvalidOperationException">Thrown if the persistence service is not found.</exception>
 		public EntityRelationship Save(EntityRelationship data)
 		{
+			// force set the version sequence
+			if (data.EffectiveVersionSequenceId == null)
+				data.EffectiveVersionSequenceId = this.Get<Entity>(data.SourceEntityKey.Value, Guid.Empty)?.VersionSequence;
+
             return base.Save(data);
 		}
 
