@@ -202,6 +202,10 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         private ExpandoObject ConvertToJint(JObject source)
         {
             var retVal = new ExpandoObject();
+
+	        if (source == null)
+		        return retVal;
+
             var expandoDic = (IDictionary<String, Object>)retVal;
             foreach(var kv in source)
             {
