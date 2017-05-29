@@ -103,7 +103,7 @@ Source: ..\Solution Items\jint.dll; DestDir: {app}; Components: core\bre tools
 Source: ..\bin\Release\OpenIZ.BusinessRules.JavaScript.dll; DestDir: {app}; Components: core\bre tools
 
 ; Core DLLS
-Source: ..\bin\Release\App.config.sample; DestDir: {app}\openiz.exe.config.sample; Components: core
+Source: ..\bin\Release\App.config.sample; DestDir: {app}; DestName:openiz.exe.config.sample; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Auditing.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MohawkCollege.Util.Console.Parameters.dll; DestDir: {app}; Components: core tools
