@@ -297,7 +297,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                         additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                         Value = o.ReferenceTerm.Mnemonic
                                     }).FirstOrDefault()?.Value,
-                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Expired).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
                                 },
                                 batchNumber = mmat.LotNumber,
                                 itemExpirationDate = mmat.ExpiryDate.Value,
