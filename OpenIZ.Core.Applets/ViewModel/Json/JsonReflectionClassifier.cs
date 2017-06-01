@@ -72,7 +72,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         public Dictionary<string, IList> Classify(IList data)
         {
             Dictionary<String, IList> retVal = new Dictionary<string, IList>();
-            foreach(var itm in data)
+
+			// copy for the enumeration check
+	        var copy = new object[data.Count];
+
+			data.CopyTo(copy, 0);
+
+            foreach(var itm in copy)
             {
                 var classifier = this.GetClassifierObj(itm, this.m_classifierAttribute);
                 String classKey = classifier?.ToString() ?? "$other";
