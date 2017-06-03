@@ -79,11 +79,11 @@ namespace OpenIZ.Caching.Redis
         private HashEntry[] SerializeObject(IdentifiedData data)
         {
             XmlSerializer xsz = null;
-            if(!this.m_serializerCache.TryGetValue(data.GetType(), out xsz))
+            if (!this.m_serializerCache.TryGetValue(data.GetType(), out xsz))
             {
                 xsz = new XmlSerializer(data.GetType());
                 lock (this.m_serializerCache)
-                    if(!this.m_serializerCache.ContainsKey(data.GetType()))
+                    if (!this.m_serializerCache.ContainsKey(data.GetType()))
                         this.m_serializerCache.Add(data.GetType(), xsz);
             }
 
@@ -115,7 +115,7 @@ namespace OpenIZ.Caching.Redis
             {
                 xsz = new XmlSerializer(type);
                 lock (this.m_serializerCache)
-                    if(!this.m_serializerCache.ContainsKey(type))
+                    if (!this.m_serializerCache.ContainsKey(type))
                         this.m_serializerCache.Add(type, xsz);
             }
             using (var sr = new StringReader(value))
@@ -146,7 +146,7 @@ namespace OpenIZ.Caching.Redis
                     if (idx != null)
                         sourceEntity.Participations.Remove(idx);
 
-                    if (!remove)
+                    if (!remove && !ptcpt.ObsoleteVersionSequenceId.HasValue)
                         sourceEntity.Participations.Add(ptcpt);
                     this.Add(sourceEntity);
                 }
@@ -156,7 +156,7 @@ namespace OpenIZ.Caching.Redis
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
                         targetEntity.Participations.Remove(idx);
-                    if (!remove)
+                    if (!remove && !ptcpt.ObsoleteVersionSequenceId.HasValue)
                         targetEntity.Participations.Add(ptcpt);
                     this.Add(targetEntity);
                 }
@@ -174,7 +174,7 @@ namespace OpenIZ.Caching.Redis
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
                         sourceEntity.Relationships.Remove(idx);
-                    if (!remove)
+                    if (!remove && !rel.ObsoleteVersionSequenceId.HasValue)
                         sourceEntity.Relationships.Add(rel);
                     this.Add(sourceEntity);
 
@@ -185,7 +185,7 @@ namespace OpenIZ.Caching.Redis
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
                         targetEntity.Relationships.Remove(idx);
-                    if (!remove)
+                    if (!remove && !rel.ObsoleteVersionSequenceId.HasValue)
                         targetEntity.Relationships.Add(rel);
                     this.Add(targetEntity);
 
@@ -203,7 +203,7 @@ namespace OpenIZ.Caching.Redis
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
                         sourceEntity.Relationships.Remove(idx);
-                    if (!remove)
+                    if (!remove && !rel.ObsoleteVersionSequenceId.HasValue)
                         sourceEntity.Relationships.Add(rel);
                     this.Add(sourceEntity);
 
@@ -214,7 +214,7 @@ namespace OpenIZ.Caching.Redis
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
                         targetEntity.Relationships.Remove(idx);
-                    if (!remove)
+                    if (!remove && !rel.ObsoleteVersionSequenceId.HasValue)
                         targetEntity.Relationships.Add(rel);
                     this.Add(targetEntity);
 
@@ -236,22 +236,23 @@ namespace OpenIZ.Caching.Redis
         public void Add(IdentifiedData data)
         {
             // We want to add only those when the connection is present
-            if (this.m_connection == null || data == null || !data.Key.HasValue)
+            if (this.m_connection == null || data == null || !data.Key.HasValue ||
+                (data as BaseEntityData)?.ObsoletionTime.HasValue == true)
                 return;
 
             // Only add data which is an entity, act, or relationship
             //if (data is Act || data is Entity || data is ActRelationship || data is ActParticipation || data is EntityRelationship || data is Concept)
             //{
-                // Add
-                var redisDb = this.m_connection.GetDatabase();
-                var existing = redisDb.KeyExists(data.Key.Value.ToString());
-                redisDb.HashSet(data.Key.Value.ToString(), this.SerializeObject(data));
+            // Add
+            var redisDb = this.m_connection.GetDatabase();
+            var existing = redisDb.KeyExists(data.Key.Value.ToString());
+            redisDb.HashSet(data.Key.Value.ToString(), this.SerializeObject(data));
 
-                this.EnsureCacheConsistency(new DataCacheEventArgs(data));
-                if (existing)
-                    this.m_connection.GetSubscriber().Publish("oiz.events", $"PUT http://{Environment.MachineName}/cache/{data.Key.Value}");
-                else
-                    this.m_connection.GetSubscriber().Publish("oiz.events", $"POST http://{Environment.MachineName}/cache/{data.Key.Value}");
+            this.EnsureCacheConsistency(new DataCacheEventArgs(data));
+            if (existing)
+                this.m_connection.GetSubscriber().Publish("oiz.events", $"PUT http://{Environment.MachineName}/cache/{data.Key.Value}");
+            else
+                this.m_connection.GetSubscriber().Publish("oiz.events", $"POST http://{Environment.MachineName}/cache/{data.Key.Value}");
             //}
         }
 
@@ -326,7 +327,7 @@ namespace OpenIZ.Caching.Redis
                 string resource = uri.AbsolutePath.Replace("imsi/", ""),
                     id = uri.AbsolutePath.Substring(uri.AbsolutePath.LastIndexOf("/") + 1);
 
-                switch(verb.ToLower())
+                switch (verb.ToLower())
                 {
                     case "post":
                         this.Added?.Invoke(this, new DataCacheEventArgs(this.GetCacheItem(Guid.Parse(id))));

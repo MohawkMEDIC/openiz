@@ -154,7 +154,8 @@ namespace OpenIZ.Caching.Memory
 
             Type objData = data?.GetType();
             var idData = data as IIdentifiedEntity;
-            if (idData == null || !idData.Key.HasValue)
+            if (idData == null || !idData.Key.HasValue ||
+                (data as BaseEntityData)?.ObsoletionTime.HasValue == true)
                 return;
 
             CacheEntry candidate = null;
