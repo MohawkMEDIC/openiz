@@ -93,7 +93,8 @@ namespace OpenIZ.BusinessRules.JavaScript
             this.m_engine = new Jint.Engine(cfg => cfg.AllowClr(
                     typeof(OpenIZ.Core.Model.BaseEntityData).GetTypeInfo().Assembly,
                     typeof(IBusinessRulesService<>).GetTypeInfo().Assembly
-                ).Strict(false)
+                )
+                .Strict(false)
 #if DEBUG
                 .DebugMode(true)
 #endif

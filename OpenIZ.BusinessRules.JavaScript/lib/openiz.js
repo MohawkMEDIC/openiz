@@ -280,8 +280,9 @@ var OpenIZ = OpenIZ || {
                 var retVal = null;
                 if (controlData.query._id != null)
                     retVal = OpenIZBre.Get(controlData.resource, controlData.query._id);
-                else
-                    retVal = OpenIZBre.Find(controlData.resource, controlData.query);
+                else {
+                    retVal = new OpenIZModel.Bundle(OpenIZBre.Find(controlData.resource, controlData.query));
+                }
                 controlData.continueWith(retVal);
             }
             catch (e) {

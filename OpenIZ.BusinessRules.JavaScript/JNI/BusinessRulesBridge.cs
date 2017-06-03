@@ -195,7 +195,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             return this.ToViewModel(bdl);
 
         }
-
+        
         /// <summary>
         /// Convert to Jint object
         /// </summary>
@@ -212,7 +212,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 if (kv.Value is JObject)
                     expandoDic.Add(kv.Key, ConvertToJint(kv.Value as JObject));
                 else if (kv.Value is JArray)
-                    expandoDic.Add(kv.Key, (kv.Value as JArray).Select(o => o is JValue ? (o as JValue).Value : ConvertToJint(o as JObject)).ToArray());
+                    expandoDic.Add(kv.Key == "item" ? "$item" : kv.Key, (kv.Value as JArray).Select(o => o is JValue ? (o as JValue).Value : ConvertToJint(o as JObject)).ToArray());
                 else
                     expandoDic.Add(kv.Key, (kv.Value as JValue).Value);
             }
@@ -266,6 +266,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public IdentifiedData ToModel(Object data)
         {
+            var dictData = data as IDictionary<String, object>;
+            if (dictData?.ContainsKey("$item") == true) // HACK: JInt does not like Item property on ExpandoObject
+            {
+                dictData.Add("item", dictData["$item"]);
+                dictData.Remove("$item");
+            }
 
             // Serialize to a view model serializer
             using (MemoryStream ms = new MemoryStream())
@@ -348,12 +354,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             var nvc = NameValueCollection.ParseQueryString(query);
             var filter = builderMethod.Invoke(null, new Object[] { nvc });
 
-            var results = mi.Invoke(idpInstance, new object[] { filter }) as IEnumerable;
+            var results = (mi.Invoke(idpInstance, new object[] { filter }) as IEnumerable).OfType<IdentifiedData>();
             return this.ToViewModel(new Bundle()
             {
-                Item = results.OfType<IdentifiedData>().ToList(),
+                Item = results.ToList(),
+                TotalResults = results.Count()
             });
-
         }
 
         /// <summary>

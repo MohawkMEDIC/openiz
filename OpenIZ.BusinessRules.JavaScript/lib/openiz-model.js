@@ -5900,7 +5900,7 @@ var OpenIZModel = OpenIZModel || {
             this.count = copyData.count;
             this.offset = copyData.offset;
             this.entry = copyData.entry;
-            this.item = copyData.item;
+            this.item = copyData.$item || copyData.item;
             this.modifiedOn = copyData.modifiedOn;
         }
     },  // Bundle 

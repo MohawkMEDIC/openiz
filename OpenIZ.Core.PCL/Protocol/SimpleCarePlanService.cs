@@ -169,8 +169,6 @@ namespace OpenIZ.Core.Protocol
         {
             if (p == null) return null;
 
-            bool isMyProcessing = false;
-
             try
             {
                 var parmDict = new ParameterDictionary<String, Object>();
@@ -182,14 +180,14 @@ namespace OpenIZ.Core.Protocol
                 var execProtocols = this.Protocols.Where(o => protocols.Contains(o.Id)).OrderBy(o => o.Name).Distinct().ToList();
 
                 Patient currentProcessing = null;
-                if (p.Key.HasValue && !this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing))
+                var isCurrentProcessing = this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing);
+                if (p.Key.HasValue && !isCurrentProcessing)
                 {
                     lock (this.m_patientPromise)
                         if (!this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing))
                         {
                             currentProcessing = p.Clone() as Patient;
 
-                            isMyProcessing = true;
                             // Are the participations of the patient null?
                             if (p.Participations.Count == 0 && p.VersionKey.HasValue)
                             {
@@ -224,6 +222,10 @@ namespace OpenIZ.Core.Protocol
                                     };
                                     if (r.TargetAct != null)
                                         retVal.Act = r.TargetAct;
+                                    else
+                                    {
+                                        retVal.Act = currentProcessing.Participations.FirstOrDefault(o=>o.ActKey == r.TargetActKey)?.Act ?? EntitySource.Current.Get<Act>(r.TargetActKey);
+                                    }
                                     return retVal;
                                 }
                                 );
@@ -242,8 +244,15 @@ namespace OpenIZ.Core.Protocol
                 foreach (var o in this.Protocols.Distinct()) o.Initialize(currentProcessing, parmDict);
                 parmDict.Remove("runProtocols");
 
-                List<Act> protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(currentProcessing, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
+                List<Act> protocolActs = new List<Act>();
+                lock (currentProcessing)
+                {
+                    var thdPatient = currentProcessing.Clone() as Patient;
+                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose));
+                    protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(thdPatient, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
+                }
 
+                // Current processing 
                 if (asEncounters)
                 {
                     List<PatientEncounter> encounters = new List<PatientEncounter>();
@@ -324,8 +333,8 @@ namespace OpenIZ.Core.Protocol
             }
             finally
             {
-                if (isMyProcessing)
-                    lock (m_patientPromise)
+                lock (m_patientPromise)
+                    if(p.Key.HasValue && this.m_patientPromise.ContainsKey(p.Key.Value))
                         m_patientPromise.Remove(p.Key.Value);
             }
         }
