@@ -275,8 +275,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     catch (Exception e)
                     {
-                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
-                        tx?.Rollback();
+	                    this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+	                    tx?.Rollback();
+
+						// if the exception is key not found, we want the caller to know
+						// so that a potential insert can take place
+						if (e is KeyNotFoundException)
+	                    {
+		                    throw new KeyNotFoundException(e.Message, e);
+	                    }
+
+						// if the exception is anything else, we want to throw a data persistence exception
                         throw new DataPersistenceException(e.Message, e);
 
                     }

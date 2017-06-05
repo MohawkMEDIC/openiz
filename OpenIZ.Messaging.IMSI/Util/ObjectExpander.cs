@@ -128,12 +128,12 @@ namespace OpenIZ.Messaging.IMSI.Util
 		/// <param name="objectKey">The object key.</param>
 		/// <returns>TRelated.</returns>
 		public static TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new()
-        {
-            if (objectKey.HasValue)
+		{
+			if (objectKey.HasValue && objectKey != Guid.Empty)
                 return EntitySource.Current.Provider.Get<TRelated>(objectKey);
-            else
-                return default(TRelated);
-        }
+
+			return default(TRelated);
+		}
 
 
 		/// <summary>
