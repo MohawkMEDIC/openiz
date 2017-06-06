@@ -67,10 +67,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BreDebugger\BreDebugger.cs" />
-    <Compile Include="BreDebugger\Debug.cs" />
-    <Compile Include="BreDebugger\DebuggerBase.cs" />
-    <Compile Include="BreDebugger\DebuggerCommandAttribute.cs" />
+    <Compile Include="Debugger\ProtoDebugger.cs" />
+    <Compile Include="Debugger\BreDebugger.cs" />
+    <Compile Include="Debugger\Debug.cs" />
+    <Compile Include="Debugger\DebuggerBase.cs" />
+    <Compile Include="Debugger\DebuggerCommandAttribute.cs" />
     <Compile Include="Warehouse.cs" />
     <Compile Include="ExampleAttribute.cs" />
     <Compile Include="InteractiveAttribute.cs" />

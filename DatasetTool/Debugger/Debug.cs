@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OizDevTool.BreDebugger
+namespace OizDevTool.Debugger
 {
     /// <summary>
     /// Represents a business rules debugger
@@ -21,7 +21,7 @@ namespace OizDevTool.BreDebugger
         /// <summary>
         /// BRE debugger tools
         /// </summary>
-        public class BreDebugParameters
+        public class DebugParameters
         {
 
             /// <summary>
@@ -45,17 +45,30 @@ namespace OizDevTool.BreDebugger
         /// Business rule
         /// </summary>
         [Description("Initiates the debugging of a business rule using the JINT engine")]
-        [ParameterClass(typeof(BreDebugParameters))]
+        [ParameterClass(typeof(DebugParameters))]
         [Interactive]
-        [Example("Debug file samplerule.js using specified openiz.js implementation", "--source=samplerule.js --source=openiz.js")]
+        [Example("Debug file samplerule.js", "--source=samplerule.js")]
         public static void BusinessRule(String[] args)
         {
-            BreDebugParameters parms = new ParameterParser<BreDebugParameters>().Parse(args);
+            DebugParameters parms = new ParameterParser<DebugParameters>().Parse(args);
 
             BreDebugger debugger = new BreDebugger(parms.Sources, parms.WorkingDirectory);
             debugger.Debug();
         }
 
+        /// <summary>
+        /// Business rule
+        /// </summary>
+        [Description("Initiates the debugging of a clinical protocol")]
+        [ParameterClass(typeof(DebugParameters))]
+        [Interactive]
+        [Example("Debug file sampleprotocol.xml", "--source=sampleprotocol.xml")]
+        public static void CarePlan(String[] args)
+        {
+            DebugParameters parms = new ParameterParser<DebugParameters>().Parse(args);
 
+            ProtoDebugger debugger = new ProtoDebugger(parms.Sources, parms.WorkingDirectory);
+            debugger.Debug();
+        }
     }
 }

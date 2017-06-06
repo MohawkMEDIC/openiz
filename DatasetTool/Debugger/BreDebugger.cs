@@ -26,7 +26,7 @@ using Newtonsoft.Json.Converters;
 using System.Dynamic;
 using OpenIZ.Core.Applets.ViewModel.Json;
 
-namespace OizDevTool.BreDebugger
+namespace OizDevTool.Debugger
 {
     /// <summary>
     /// Business Rules debugger
@@ -165,12 +165,10 @@ namespace OizDevTool.BreDebugger
                     var f = rf.Replace("~", rootPath);
                     if (!File.Exists(f))
                         Console.Error.WriteLine("Can't find file {0}", f);
-                    else using (var fs = File.OpenRead(f))
-                        using (var sr = new StreamReader(fs))
-                            JavascriptBusinessRulesEngine.Current.AddRules(Path.GetFileNameWithoutExtension(f), sr);
+                    else
+                        this.Execute(f);
                 }
             JavascriptBusinessRulesEngine.Current.Engine.Step += JreStep;
-
 
         }
 
