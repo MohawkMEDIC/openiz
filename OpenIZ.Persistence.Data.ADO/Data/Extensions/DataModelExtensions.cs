@@ -92,7 +92,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
         /// <summary>
         /// Try get by classifier
         /// </summary>
-        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, DataContext context, IPrincipal principal)
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, DataContext context, IPrincipal principal, bool forceDatabase = false)
         {
 
             // Is there a classifier?
@@ -100,11 +100,20 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
             IIdentifiedEntity existing = null;
 
-            // Is the key not null?
+            // Forcing from database load from
+            if (forceDatabase && me.Key.HasValue)
+                // HACK: This should really hit the database instead of just clearing the cache
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(me.Key.Value);
+                //var tableType = AdoPersistenceService.GetMapper().MapModelType(me.GetType());
+                //if (me.GetType() != tableType)
+                //{
+                //    var tableMap = TableMapping.Get(tableType);
+                //    var dbExisting = context.FirstOrDefault(tableType, context.CreateSqlStatement().SelectFrom(tableType).Where($"{tableMap.Columns.FirstOrDefault(o=>o.IsPrimaryKey).Name}=?", me.Key.Value));
+                //    if (dbExisting != null)
+                //        existing = idpInstance.ToModelInstance(dbExisting, context, principal) as IIdentifiedEntity;
+                //}
             if (me.Key != Guid.Empty && me.Key != null)
-            {
                 existing = idpInstance.Get(context, me.Key.Value, principal) as IIdentifiedEntity;
-            }
 
             var classAtt = me.GetType().GetCustomAttribute<KeyLookupAttribute>();
             if (classAtt != null)

@@ -171,7 +171,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     {
 
                         // Disable inserting duplicate classified objects
-                        var existing =data.TryGetExisting(connection, principal);
+                        var existing =data.TryGetExisting(connection, principal, true);
                         if (existing != null)
                         {
                             if (m_configuration.AutoUpdateExisting)

@@ -49,7 +49,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 var svc = ApplicationContext.Current.GetService(idp);
 				var method = "Insert";
 
-	            if (itm.TryGetExisting(context, principal) != null)
+	            if (itm.TryGetExisting(context, principal, true) != null)
 	            {
 					method = "Update";
 				}

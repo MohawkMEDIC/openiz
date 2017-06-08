@@ -105,6 +105,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             foreach(var itm in typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceNames().Where(o=>o.EndsWith(".js")))
             using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))
                 this.AddRules(itm.Replace(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.FullName, ""), sr);
+            
         }
 
         /// <summary>
@@ -284,6 +285,38 @@ namespace OpenIZ.BusinessRules.JavaScript
             if (this.m_validatorDefinitions.TryGetValue(className, out callList))
                 return callList;
             return new List<Func<object, object[]>>();
+        }
+
+        /// <summary>
+        /// Invoke raw
+        /// </summary>
+        public object InvokeRaw(String action, Object data)
+        {
+            try
+            {
+                var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
+
+                var sdata = data as IDictionary<String, Object>;
+                if (sdata == null || !sdata.ContainsKey("$type")) return data;
+
+                var callList = this.GetCallList(binder.BindToType("OpenIZ.Core.Model, Version=1.0.0.0", sdata["$type"].ToString()), action);
+                var retVal = data;
+
+                if (callList.Count > 0)
+                {
+                    foreach (var c in callList)
+                    {
+                        data = c(data);
+                    }
+                }
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
+                throw new BusinessRulesExecutionException($"Error running business rule {action} for {data}", e);
+            }
         }
 
         /// <summary>

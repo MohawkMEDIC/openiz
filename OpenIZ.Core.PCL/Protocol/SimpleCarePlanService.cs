@@ -209,27 +209,28 @@ namespace OpenIZ.Core.Protocol
                             currentProcessing.Participations = new List<ActParticipation>(p.Participations);
 
                             // The record target here is also a record target for any /relationships
-                            currentProcessing.Participations = currentProcessing.Participations.Union(currentProcessing.Participations.SelectMany(pt =>
-                            {
-                                if (pt.Act == null)
-                                    pt.Act = EntitySource.Current.Get<Act>(pt.ActKey);
-                                return pt.Act?.Relationships?.Select(r =>
-                                {
-                                    var retVal = new ActParticipation(ActParticipationKey.RecordTarget, currentProcessing)
-                                    {
-                                        ActKey = r.TargetActKey,
-                                        ParticipationRole = new Model.DataTypes.Concept() { Mnemonic = "RecordTarget", Key = ActParticipationKey.RecordTarget }
-                                    };
-                                    if (r.TargetAct != null)
-                                        retVal.Act = r.TargetAct;
-                                    else
-                                    {
-                                        retVal.Act = currentProcessing.Participations.FirstOrDefault(o=>o.ActKey == r.TargetActKey)?.Act ?? EntitySource.Current.Get<Act>(r.TargetActKey);
-                                    }
-                                    return retVal;
-                                }
-                                );
-                            })).ToList();
+                            // TODO: I think this can be removed no?
+                            //currentProcessing.Participations = currentProcessing.Participations.Union(currentProcessing.Participations.SelectMany(pt =>
+                            //{
+                            //    if (pt.Act == null)
+                            //        pt.Act = EntitySource.Current.Get<Act>(pt.ActKey);
+                            //    return pt.Act?.Relationships?.Select(r =>
+                            //    {
+                            //        var retVal = new ActParticipation(ActParticipationKey.RecordTarget, currentProcessing)
+                            //        {
+                            //            ActKey = r.TargetActKey,
+                            //            ParticipationRole = new Model.DataTypes.Concept() { Mnemonic = "RecordTarget", Key = ActParticipationKey.RecordTarget }
+                            //        };
+                            //        if (r.TargetAct != null)
+                            //            retVal.Act = r.TargetAct;
+                            //        else
+                            //        {
+                            //            retVal.Act = currentProcessing.Participations.FirstOrDefault(o=>o.ActKey == r.TargetActKey)?.Act ?? EntitySource.Current.Get<Act>(r.TargetActKey);
+                            //        }
+                            //        return retVal;
+                            //    }
+                            //    );
+                            //})).ToList();
 
                             // Add to the promised patient
                             this.m_patientPromise.Add(p.Key.Value, currentProcessing);
@@ -248,7 +249,7 @@ namespace OpenIZ.Core.Protocol
                 lock (currentProcessing)
                 {
                     var thdPatient = currentProcessing.Clone() as Patient;
-                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose));
+                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose && o.Act?.StatusConceptKey != StatusKeys.Nullfied));
                     protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(thdPatient, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
                 }
 
