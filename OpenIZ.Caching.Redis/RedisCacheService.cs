@@ -155,9 +155,11 @@ namespace OpenIZ.Caching.Redis
                     var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
+                    {
                         targetEntity.Participations.Remove(idx);
-                    if (!remove && !ptcpt.ObsoleteVersionSequenceId.HasValue)
-                        targetEntity.Participations.Add(ptcpt);
+                        if (!remove && !ptcpt.ObsoleteVersionSequenceId.HasValue)
+                            targetEntity.Participations.Add(ptcpt);
+                    }
                     this.Add(targetEntity);
                 }
                 //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);

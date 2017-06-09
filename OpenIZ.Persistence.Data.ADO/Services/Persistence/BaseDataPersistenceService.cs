@@ -111,6 +111,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 nvd.UpdatedTime = vobject.UpdatedTime = DateTimeOffset.Now;
             }
 
+            if (currentObject.CreationTime == domainObject.CreationTime) // HACK: Someone keeps passing up the same data so we have to correct here
+                domainObject.CreationTime = DateTimeOffset.Now;
+
             currentObject.CopyObjectData(domainObject);
             currentObject = context.Update<TDomain>(currentObject);
 
