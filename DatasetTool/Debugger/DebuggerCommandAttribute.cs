@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OizDevTool.BreDebugger
+namespace OizDevTool.Debugger
 {
     /// <summary>
     /// Represents a debugger command 

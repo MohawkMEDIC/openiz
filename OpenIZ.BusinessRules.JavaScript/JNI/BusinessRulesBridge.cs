@@ -40,6 +40,7 @@ using System.Collections;
 using Jint.Runtime.Debugger;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Diagnostics;
+using System.Threading;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI
 {
@@ -48,7 +49,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
     /// </summary>
     public class BusinessRulesBridge
     {
-        
+
         // View model serializer
         private JsonViewModelSerializer m_modelSerializer = new JsonViewModelSerializer();
 
@@ -61,7 +62,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         public BusinessRulesBridge()
         {
 
-            foreach(var t in typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes)
+            foreach (var t in typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes)
             {
                 var jatt = t.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>();
 
@@ -121,11 +122,11 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             if (modelObj != null)
             {
                 var tags = modelObj.Tags;
-                if(tags.Count() > 0)
+                if (tags.Count() > 0)
                 {
                     var tpi = ApplicationServiceContext.Current.GetService(typeof(ITagPersistenceService)) as ITagPersistenceService;
                     if (tpi == null)
-                        return obj ;
+                        return obj;
                     foreach (var t in tags)
                     {
                         t.SourceEntityKey = (modelObj as IIdentifiedEntity).Key;
@@ -139,7 +140,8 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// <summary>
         /// Delete cache item
         /// </summary>
-        public void DeleteCache(String type, String key) {
+        public void DeleteCache(String type, String key)
+        {
             Type dataType = null;
             if (!this.m_modelMap.TryGetValue(type, out dataType))
                 throw new InvalidOperationException($"Cannot find type information for {type}");
@@ -179,20 +181,34 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public Object ExecuteBundleRules(String trigger, Object bundle)
         {
-            var bdl = this.ToModel(bundle) as Bundle;
-            for(int i = 0; i < bdl.Item.Count; i++)
+            var thdPool = ApplicationServiceContext.Current.GetService(typeof(IThreadPoolService)) as IThreadPoolService;
+            IDictionary<String, Object> bdl = bundle as IDictionary<String, Object>;
+
+            Object[] itms = null;
+            if (bdl.ContainsKey("$item"))
+                itms = bdl["$item"] as Object[];
+            else
+                itms = bdl["item"] as Object[];
+
+            for (int i = 0; i < itms.Length; i++)
+            {
                 try
                 {
-                    bdl.Item[i] = JavascriptBusinessRulesEngine.Current.Invoke(trigger, bdl.Item[i]);
+                    itms[i] = JavascriptBusinessRulesEngine.Current.InvokeRaw(trigger, itms[i]);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     if (System.Diagnostics.Debugger.IsAttached)
                         throw;
                     else
-                        Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", bdl.Item[i], e);
+                        Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itms[i], e);
                 }
-            return this.ToViewModel(bdl);
+            }
+
+            bdl.Remove("item");
+            bdl.Remove("$item");
+            bdl.Add("$item", itms);
+            return bdl;
 
         }
 
@@ -203,16 +219,16 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         {
             var retVal = new ExpandoObject();
 
-	        if (source == null)
-		        return retVal;
+            if (source == null)
+                return retVal;
 
             var expandoDic = (IDictionary<String, Object>)retVal;
-            foreach(var kv in source)
+            foreach (var kv in source)
             {
                 if (kv.Value is JObject)
                     expandoDic.Add(kv.Key, ConvertToJint(kv.Value as JObject));
                 else if (kv.Value is JArray)
-                    expandoDic.Add(kv.Key, (kv.Value as JArray).Select(o => o is JValue ? (o as JValue).Value : ConvertToJint(o as JObject)).ToArray());
+                    expandoDic.Add(kv.Key == "item" ? "$item" : kv.Key, (kv.Value as JArray).Select(o => o is JValue ? (o as JValue).Value : ConvertToJint(o as JObject)).ToArray());
                 else
                     expandoDic.Add(kv.Key, (kv.Value as JValue).Value);
             }
@@ -266,6 +282,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public IdentifiedData ToModel(Object data)
         {
+            var dictData = data as IDictionary<String, object>;
+            if (dictData?.ContainsKey("$item") == true) // HACK: JInt does not like Item property on ExpandoObject
+            {
+                dictData.Add("item", dictData["$item"]);
+                dictData.Remove("$item");
+            }
 
             // Serialize to a view model serializer
             using (MemoryStream ms = new MemoryStream())
@@ -343,17 +365,17 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
 
             MethodInfo builderMethod = (MethodInfo)typeof(QueryExpressionParser).GetGenericMethod("BuildLinqExpression", new Type[] { dataType }, new Type[] { typeof(NameValueCollection) });
-            var mi = idp.GetRuntimeMethod("Find", new Type[] { builderMethod.ReturnType  });
+            var mi = idp.GetRuntimeMethod("Find", new Type[] { builderMethod.ReturnType });
 
             var nvc = NameValueCollection.ParseQueryString(query);
             var filter = builderMethod.Invoke(null, new Object[] { nvc });
 
-            var results = mi.Invoke(idpInstance, new object[] { filter }) as IEnumerable;
+            var results = (mi.Invoke(idpInstance, new object[] { filter }) as IEnumerable).OfType<IdentifiedData>();
             return this.ToViewModel(new Bundle()
             {
-                Item = results.OfType<IdentifiedData>().ToList(),
+                Item = results.ToList(),
+                TotalResults = results.Count()
             });
-
         }
 
         /// <summary>

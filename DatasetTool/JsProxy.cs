@@ -24,6 +24,7 @@ using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Constants;
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
@@ -153,6 +154,8 @@ namespace OizDevTool
                 // Generate type documentation for each of the binding enumerations
                 foreach (var typ in enumerationTypes.Distinct())
                     GenerateEnumerationDocumentation(output, typ, xmlDoc, parms);
+
+                GenerateEnumerationDocumentation(output, typeof(NullReasonKeys), xmlDoc, parms);
 
                 using (StreamReader templateReader = new StreamReader(typeof(JsProxy).Assembly.GetManifestResourceStream("OizDevTool.Resources.jsdoc-addlclasses.js")))
                     output.Write(templateReader.ReadToEnd());

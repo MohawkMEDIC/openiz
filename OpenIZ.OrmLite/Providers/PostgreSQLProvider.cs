@@ -138,7 +138,27 @@ namespace OpenIZ.OrmLite.Providers
         public IDbCommand CreateCommand(DataContext context, SqlStatement stmt)
         {
             var finStmt = stmt.Build();
+
+#if DEBUG
+            if(System.Diagnostics.Debugger.IsAttached)
+                this.Explain(context, CommandType.Text, finStmt.SQL, finStmt.Arguments.ToArray());
+#endif 
+
             return this.CreateCommandInternal(context, CommandType.Text, finStmt.SQL, finStmt.Arguments.ToArray());
+        }
+
+        /// <summary>
+        /// Perform an explain query
+        /// </summary>
+        private void Explain(DataContext context, CommandType text, string sQL, object[] v)
+        {
+            using (var cmd = this.CreateCommandInternal(context, CommandType.Text, "EXPLAIN " + sQL, v))
+            using (var plan = cmd.ExecuteReader())
+                while (plan.Read())
+                {
+                    if (plan.GetValue(0).ToString().Contains("Seq"))
+                        System.Diagnostics.Debugger.Break();
+                }
         }
 
 
@@ -207,7 +227,7 @@ namespace OpenIZ.OrmLite.Providers
                 }
 
                 // Prepare command
-                if (context.PrepareStatements)
+                if (context.PrepareStatements && !cmd.CommandText.StartsWith("EXPLAIN"))
                 {
                     if (!cmd.Parameters.OfType<IDataParameter>().Any(o => o.DbType == DbType.Object) &&
                         context.Transaction == null)

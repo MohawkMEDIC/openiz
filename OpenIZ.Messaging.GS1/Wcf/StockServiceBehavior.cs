@@ -105,7 +105,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
 				foreach (var filter in parameters.logisticsInventoryReportRequest.First().logisticsInventoryRequestLocation)
 				{
 					int tc = 0;
-					var place = placeService.Find(o => o.Identifiers.Any(i => i.Value == filter.inventoryLocation.gln), 0, 1, out tc).FirstOrDefault();
+					var id = filter.inventoryLocation.gln ?? filter.inventoryLocation.additionalPartyIdentification?.FirstOrDefault()?.Value;
+					var place = placeService.Find(o => o.Identifiers.Any(i => i.Value == id), 0, 1, out tc).FirstOrDefault();
 					if (place == null)
 						throw new FileNotFoundException($"Place {filter.inventoryLocation.gln} not found");
 					if (filterPlaces == null)
@@ -297,7 +298,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                         additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
                                         Value = o.ReferenceTerm.Mnemonic
                                     }).FirstOrDefault()?.Value,
-                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.ColdStorageFailure).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
+                                    Value = Math.Abs(adjustments.Where(a => a.ReasonConceptKey.Value == ActReasonKeys.Expired).Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable).Quantity.Value))
                                 },
                                 batchNumber = mmat.LotNumber,
                                 itemExpirationDate = mmat.ExpiryDate.Value,

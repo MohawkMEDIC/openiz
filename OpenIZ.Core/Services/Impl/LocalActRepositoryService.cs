@@ -274,7 +274,7 @@ namespace OpenIZ.Core.Services.Impl
                 this.DataUpdated?.Invoke(this, new AuditDataEventArgs(act));
                 return act;
 			}
-			catch (DataPersistenceException)
+			catch (KeyNotFoundException)
 			{
 				act = businessRulesService != null ? businessRulesService.BeforeInsert(act) : act;
 

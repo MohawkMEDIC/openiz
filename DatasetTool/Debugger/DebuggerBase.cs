@@ -20,7 +20,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace OizDevTool.BreDebugger
+namespace OizDevTool.Debugger
 {
     /// <summary>
     /// Debugger base

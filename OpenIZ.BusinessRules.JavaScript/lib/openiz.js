@@ -211,7 +211,8 @@ var OpenIZ = OpenIZ || {
                 console.info("OpenIZ BRE IMS > POST" + JSON.stringify(controlData.data));
 
                 var retVal = OpenIZBre.Insert(controlData.data);
-                controlData.continueWith(retVal);
+                if (controlData.continueWith)
+                    controlData.continueWith(retVal);
             }
             catch (e) {
                 console.error(e + "");
@@ -244,7 +245,8 @@ var OpenIZ = OpenIZ || {
                 console.info("OpenIZ BRE IMS > PUT " + JSON.stringify(controlData.data));
 
                 var retVal = OpenIZBre.Save(controlData.data);
-                controlData.continueWith(retVal);
+                if (controlData.continueWith)
+                    controlData.continueWith(retVal);
             }
             catch (e) {
                 console.error(e + "");
@@ -280,9 +282,12 @@ var OpenIZ = OpenIZ || {
                 var retVal = null;
                 if (controlData.query._id != null)
                     retVal = OpenIZBre.Get(controlData.resource, controlData.query._id);
-                else
-                    retVal = OpenIZBre.Find(controlData.resource, controlData.query);
-                controlData.continueWith(retVal);
+                else {
+                    retVal = new OpenIZModel.Bundle(OpenIZBre.Find(controlData.resource, controlData.query));
+                }
+
+                if(controlData.continueWith)
+                    controlData.continueWith(retVal);
             }
             catch (e) {
                 console.error(e + "");
@@ -313,7 +318,8 @@ var OpenIZ = OpenIZ || {
                 console.info("OpenIZ BRE IMS > DELETE" + controlData.id);
 
                 var retVal = OpenIZBre.Obsolete(controlData.resource, controlData.id);
-                controlData.continueWith(retVal);
+                if (controlData.continueWith)
+                    controlData.continueWith(retVal);
             }
             catch (e) {
                 console.error(e + "");

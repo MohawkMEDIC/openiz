@@ -128,12 +128,12 @@ namespace OpenIZ.Messaging.IMSI.Util
 		/// <param name="objectKey">The object key.</param>
 		/// <returns>TRelated.</returns>
 		public static TRelated LoadRelated<TRelated>(Guid? objectKey) where TRelated : IdentifiedData, new()
-        {
-            if (objectKey.HasValue)
+		{
+			if (objectKey.HasValue && objectKey != Guid.Empty)
                 return EntitySource.Current.Provider.Get<TRelated>(objectKey);
-            else
-                return default(TRelated);
-        }
+
+			return default(TRelated);
+		}
 
 
 		/// <summary>
@@ -254,12 +254,20 @@ namespace OpenIZ.Messaging.IMSI.Util
                 foreach (var itm in scope as IList)
                 {
                     var subScope = DoPopulateObject(itm, match.Groups[1].Value);
-                    if (!String.IsNullOrEmpty(match.Groups[2].Value))
+
+	                if (subScope == null)
+		                return;
+
+					if (!String.IsNullOrEmpty(match.Groups[2].Value))
                         DoExpand(subScope, match.Groups[2].Value);
                 }
             else
             {
                 var subScope = DoPopulateObject(scope, match.Groups[1].Value);
+
+	            if (subScope == null)
+		            return;
+						
                 if (!String.IsNullOrEmpty(match.Groups[2].Value))
                     DoExpand(subScope, match.Groups[2].Value);
             }
@@ -270,6 +278,9 @@ namespace OpenIZ.Messaging.IMSI.Util
         /// </summary>
         private static object DoPopulateObject(object scope, string property)
         {
+	        if (scope == null)
+		        return null;
+
             // Look for the property in the scope
             var propertyInfo = scope.GetType().GetRuntimeProperties().FirstOrDefault(o => o.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault()?.ElementName == property);
             if (propertyInfo == null || !propertyInfo.CanWrite) return null; // invalid property name

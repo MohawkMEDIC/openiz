@@ -164,7 +164,7 @@ namespace OpenIZ.Core.Services.Impl
                 businessRulesService?.AfterUpdate(data);
                 return data;
             }
-            catch (DataPersistenceException)
+            catch (KeyNotFoundException)
             {
                 data = businessRulesService?.BeforeInsert(data) ?? data;
                 data = persistenceService.Insert(data, AuthenticationContext.Current.Principal, TransactionMode.Commit);

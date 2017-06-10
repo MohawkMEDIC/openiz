@@ -5900,7 +5900,7 @@ var OpenIZModel = OpenIZModel || {
             this.count = copyData.count;
             this.offset = copyData.offset;
             this.entry = copyData.entry;
-            this.item = copyData.item;
+            this.item = copyData.$item ;
             this.modifiedOn = copyData.modifiedOn;
         }
     },  // Bundle 
@@ -8264,6 +8264,8 @@ var OpenIZModel = OpenIZModel || {
          * 
          */
         Wife: 'a3ff423e-81d5-4571-8edf-03c295189a23',
+        Replaces : "e998ca72-3b6a-4099-ab6e-7cf6861a5b61"
+
     },  // EntityRelationshipTypeKeys 
     // OpenIZ.Core.Model.Constants.TelecomAddressUseKeys, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
     /**

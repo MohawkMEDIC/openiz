@@ -297,6 +297,13 @@ namespace OpenIZ.OrmLite
                 t.m_rhs = null;
         }
 
+        /// <summary>
+        /// Represent as string
+        /// </summary>
+        public override string ToString()
+        {
+            return this.Build().SQL;
+        }
     }
 
     /// <summary>
