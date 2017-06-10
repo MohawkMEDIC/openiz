@@ -25,6 +25,7 @@ using OpenIZ.Caching.Memory.Configuration;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
@@ -54,6 +55,9 @@ namespace OpenIZ.Caching.Memory
 
         // Subscribed types
         private HashSet<Type> m_subscribedTypes = new HashSet<Type>();
+
+        // Non cached types
+        private HashSet<Type> m_nonCached = new HashSet<Type>();
 
         // True if the object is disposed
         private bool m_disposed = false;
@@ -88,6 +92,10 @@ namespace OpenIZ.Caching.Memory
         private MemoryCache()
         {
             m_tracer.TraceInformation("Binding initial collections...");
+
+            // Look for non-cached types
+            foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null))
+                this.m_nonCached.Add(itm);
 
             foreach (var t in this.m_configuration.Types)
             {
@@ -154,7 +162,8 @@ namespace OpenIZ.Caching.Memory
 
             Type objData = data?.GetType();
             var idData = data as IIdentifiedEntity;
-            if (idData == null || !idData.Key.HasValue)
+            if (idData == null || !idData.Key.HasValue ||
+                this.m_nonCached.Contains(data.GetType()))
                 return;
 
             CacheEntry candidate = null;

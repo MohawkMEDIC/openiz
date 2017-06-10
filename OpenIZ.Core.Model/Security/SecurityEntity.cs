@@ -34,6 +34,7 @@ namespace OpenIZ.Core.Model.Security
     /// </summary>
     [XmlType(Namespace = "http://openiz.org/model", TypeName = "SecurityEntity")]
     [JsonObject(nameof(SecurityEntity))]
+    [NonCached]
     public class SecurityEntity : NonVersionedEntityData
     {
 

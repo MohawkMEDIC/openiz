@@ -34,6 +34,7 @@ using System.Linq;
 using System.ServiceModel.Web;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 using OpenIZ.Core.Model.Acts;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
@@ -138,12 +139,14 @@ namespace OpenIZ.Messaging.FHIR.Util
 			{
 				return null;
 			}
+            IOidRegistrarService d;
 
-			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping assigning authority");
+            traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping assigning authority");
 
-			var metaDataService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+			var oidRegistrar = ApplicationContext.Current.GetService<IOidRegistrarService>();
+            var oid = oidRegistrar.FindData(fhirSystem.Value);
 
-			return metaDataService.GetAssigningAuthority(fhirSystem.Value);
+            return new AssigningAuthority(oid.Mnemonic, oid.Name, oid.Oid);
 		}
 
 		/// <summary>

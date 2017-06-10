@@ -5,6 +5,7 @@ using OpenIZ.Caching.Redis.Configuration;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -16,6 +17,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -46,6 +48,9 @@ namespace OpenIZ.Caching.Redis
         // Binder
         private ModelSerializationBinder m_binder = new ModelSerializationBinder();
 
+        // Non cached types
+        private HashSet<Type> m_nonCached = new HashSet<Type>();
+
         /// <summary>
         /// Is the service running 
         /// </summary>
@@ -56,7 +61,7 @@ namespace OpenIZ.Caching.Redis
                 return this.m_connection != null;
             }
         }
-
+        
         // Data was added to the cache
         public event EventHandler<DataCacheEventArgs> Added;
         // Data was removed from the cache
@@ -236,7 +241,8 @@ namespace OpenIZ.Caching.Redis
         public void Add(IdentifiedData data)
         {
             // We want to add only those when the connection is present
-            if (this.m_connection == null || data == null || !data.Key.HasValue)
+            if (this.m_connection == null || data == null || !data.Key.HasValue ||
+                this.m_nonCached.Contains(data.GetType()))
                 return;
 
             // Only add data which is an entity, act, or relationship
@@ -312,6 +318,10 @@ namespace OpenIZ.Caching.Redis
                 configuration.EndPoints.Add(itm);
             this.m_connection = ConnectionMultiplexer.Connect(configuration);
             this.m_subscriber = this.m_connection.GetSubscriber();
+
+            // Look for non-cached types
+            foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null))
+                this.m_nonCached.Add(itm);
 
             // Subscribe to OpenIZ events
             m_subscriber.Subscribe("oiz.events", (channel, message) =>

@@ -169,7 +169,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
             ).ToList();
 
             var config = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
-            serviceOptions.Endpoints.AddRange(config.Endpoints);
+            if(config != null  && config.Endpoints != null)
+                serviceOptions.Endpoints.AddRange(config.Endpoints);
 			//foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))
 			//{
 			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
