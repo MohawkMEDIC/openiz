@@ -103,7 +103,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
             // Forcing from database load from
             if (forceDatabase && me.Key.HasValue)
                 // HACK: This should really hit the database instead of just clearing the cache
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(me.Key.Value);
+                ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(me.Key.Value);
                 //var tableType = AdoPersistenceService.GetMapper().MapModelType(me.GetType());
                 //if (me.GetType() != tableType)
                 //{
