@@ -7,21 +7,49 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Security;
 using System;
 using System.Linq;
+using OpenIZ.Core.Interfaces;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Core.Services.Impl
 {
 	/// <summary>
 	/// Local batch repository service
 	/// </summary>
-	public class LocalBatchRepositoryService : IBatchRepositoryService
+	public class LocalBatchRepositoryService : IBatchRepositoryService, IRepositoryService<Bundle>
 	{
-		/// <summary>
-		/// Insert the bundle
-		/// </summary>
-		/// <param name="bundle">The bundle.</param>
-		/// <returns>Returns the created bundle.</returns>
-		/// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
-		public Bundle Insert(Bundle bundle)
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+
+        public IEnumerable<Bundle> Find(Expression<Func<Bundle, bool>> query)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IEnumerable<Bundle> Find(Expression<Func<Bundle, bool>> query, int offset, int? count, out int totalResults)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Bundle Get(Guid key)
+        {
+            throw new NotSupportedException();
+        }
+
+        public Bundle Get(Guid key, Guid versionKey)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Insert the bundle
+        /// </summary>
+        /// <param name="bundle">The bundle.</param>
+        /// <returns>Returns the created bundle.</returns>
+        /// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
+        public Bundle Insert(Bundle bundle)
 		{
 			bundle = this.Validate(bundle);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
@@ -35,13 +63,18 @@ namespace OpenIZ.Core.Services.Impl
 			return bundle;
 		}
 
-		/// <summary>
-		/// Obsolete all the contents in the bundle.
-		/// </summary>
-		/// <param name="bundle">The bundle.</param>
-		/// <returns>Returns the obsoleted bundle.</returns>
-		/// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
-		public Bundle Obsolete(Bundle bundle)
+        public Bundle Obsolete(Guid key)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Obsolete all the contents in the bundle.
+        /// </summary>
+        /// <param name="bundle">The bundle.</param>
+        /// <returns>Returns the obsoleted bundle.</returns>
+        /// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
+        public Bundle Obsolete(Bundle bundle)
 		{
 			bundle = this.Validate(bundle);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
@@ -56,13 +89,21 @@ namespace OpenIZ.Core.Services.Impl
 			return bundle;
 		}
 
-		/// <summary>
-		/// Update the specified data in the bundle.
-		/// </summary>
-		/// <param name="bundle">The bundle.</param>
-		/// <returns>Returns the updated bundle.</returns>
-		/// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
-		public Bundle Update(Bundle bundle)
+        /// <summary>
+        /// Save bundle data
+        /// </summary>
+        public Bundle Save(Bundle data)
+        {
+            return this.Update(data);
+        }
+
+        /// <summary>
+        /// Update the specified data in the bundle.
+        /// </summary>
+        /// <param name="bundle">The bundle.</param>
+        /// <returns>Returns the updated bundle.</returns>
+        /// <exception cref="System.InvalidOperationException">Missing persistence service</exception>
+        public Bundle Update(Bundle bundle)
 		{
 			bundle = this.Validate(bundle);
 
