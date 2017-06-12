@@ -56,6 +56,9 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         // Map of view model names to type names
         private Dictionary<String, Type> m_modelMap = new Dictionary<string, Type>();
 
+        // Cache objects for find and get
+        private Dictionary<Guid, ExpandoObject> m_cacheObject = new Dictionary<Guid, ExpandoObject>(10);
+
         /// <summary>
         /// Initializes the business rules bridge
         /// </summary>
@@ -183,6 +186,8 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         {
             var thdPool = ApplicationServiceContext.Current.GetService(typeof(IThreadPoolService)) as IThreadPoolService;
             IDictionary<String, Object> bdl = bundle as IDictionary<String, Object>;
+
+            this.m_cacheObject.Clear();
 
             Object[] itms = null;
             if (bdl.ContainsKey("$item"))
@@ -327,18 +332,29 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object Get(String type, String id)
         {
+            var guidId = Guid.Parse(id);
 
-            Type dataType = null;
-            if (!this.m_modelMap.TryGetValue(type, out dataType))
-                throw new InvalidOperationException($"Cannot find type information for {type}");
+            // First, does the object existing the cache
+            ExpandoObject retVal = null;
+            if (!this.m_cacheObject.TryGetValue(guidId, out retVal))
+            {
+                Type dataType = null;
+                if (!this.m_modelMap.TryGetValue(type, out dataType))
+                    throw new InvalidOperationException($"Cannot find type information for {type}");
 
-            var idp = typeof(IRepositoryService<>).MakeGenericType(dataType);
-            var idpInstance = ApplicationServiceContext.Current.GetService(idp);
-            if (idpInstance == null)
-                throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
+                var idp = typeof(IRepositoryService<>).MakeGenericType(dataType);
+                var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+                if (idpInstance == null)
+                    throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
 
-            var mi = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
-            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { Guid.Parse(id) }) as IdentifiedData);
+                var mi = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
+                retVal = this.ToViewModel(mi.Invoke(idpInstance, new object[] { guidId }) as IdentifiedData);
+                if (this.m_cacheObject.Count >= 10)
+                    this.m_cacheObject.Clear();
+                if (!this.m_cacheObject.ContainsKey(guidId))
+                    this.m_cacheObject.Add(guidId, retVal);
+            }
+            return retVal;
         }
 
         /// <summary>
@@ -385,6 +401,10 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         {
 
             var data = this.ToModel(value);
+
+            if (data.Key.HasValue && this.m_cacheObject.ContainsKey(data.Key.Value))
+                this.m_cacheObject.Remove(data.Key.Value);
+
             if (data == null) throw new ArgumentException("Could not parse value for save");
 
             var idp = typeof(IRepositoryService<>).MakeGenericType(data.GetType());
