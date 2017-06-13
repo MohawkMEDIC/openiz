@@ -290,18 +290,19 @@ namespace OpenIZ.Messaging.IMSI.Client
 			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
 			// Create with version?
-			if (data.Key != null)
-			{
-                if(asBundle)
-				    return this.Client.Put<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, Bundle.CreateBundle(data));
-                else
-				    return this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, data);
-
-			}
-			else
+			if (data.Key == null && typeof(TModel) != typeof(Bundle))
 			{
 				throw new KeyNotFoundException();
 			}
+
+			if (data.Key == null && typeof(TModel) == typeof(Bundle))
+			{
+				data.Key = Guid.NewGuid();
+			}
+
+			return asBundle ?
+				this.Client.Put<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, Bundle.CreateBundle(data)) :
+				this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, data);
 		}
 
         /// <summary>
