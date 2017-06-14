@@ -33,7 +33,6 @@ using Newtonsoft.Json;
 using System.Collections;
 using OpenIZ.Core.Model.Attributes;
 using System.Diagnostics;
-using Newtonsoft.Json.Linq;
 
 namespace OpenIZ.Core.Applets.ViewModel.Json
 {
@@ -185,18 +184,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 // Array read, we want to re-call the specified parse
                 case JsonToken.StartArray:
                     {
-	                    if (!typeof(IList).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()))
-	                    {
-		                    // Seek to the start object token
-		                    while (r.TokenType != JsonToken.StartObject && r.Read()) ;
-
-		                    if (r.TokenType == JsonToken.StartObject)
-		                    {
-								var formatter = this.GetFormatter(nonGenericT);
-			                    return formatter.Deserialize(r, t, context);
-							}
-	                    }
-
+                        if (!typeof(IList).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()))
+                            throw new JsonSerializationException($"{t} does not implement IList");
                         int depth = r.Depth;
                         var listInstance = Activator.CreateInstance(t) as IList;
                         while (r.Read() && !(r.TokenType == JsonToken.EndArray && r.Depth == depth))
@@ -261,9 +250,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                 return r.Value;
                         }
                     }
-	            case JsonToken.EndArray:
-		            return null;
-				default:
+                default:
                     throw new JsonSerializationException("Invalid serialization");
             }
         }
