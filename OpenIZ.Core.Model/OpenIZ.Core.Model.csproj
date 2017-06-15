@@ -181,6 +181,9 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <None Include="Doc\Query\index.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Schema\BaseTypes.xsd">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

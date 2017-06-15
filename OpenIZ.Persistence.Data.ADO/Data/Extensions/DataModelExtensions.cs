@@ -399,12 +399,15 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 else if (typeof(IIdentifiedEntity).IsAssignableFrom(pi.PropertyType)) // Single
                 {
                     // Single property, we want to execute a get on the key property
-                    var redirectAtt = pi.GetCustomAttribute<SerializationReferenceAttribute>();
-                    if (redirectAtt == null)
-                        continue; // cannot get key property
+                    var pid = pi;
+                    if (pid.Name.EndsWith("Xml")) // Xml purposes only
+                        pid = pi.DeclaringType.GetProperty(pi.Name.Substring(0, pi.Name.Length - 3));
+                    var redirectAtt = pid.GetCustomAttribute<SerializationReferenceAttribute>();
 
                     // We want to issue a query
-                    var keyProperty = pi.DeclaringType.GetProperty(redirectAtt.RedirectProperty);
+                    var keyProperty = redirectAtt != null ? pi.DeclaringType.GetProperty(redirectAtt.RedirectProperty) : pi.DeclaringType.GetProperty(pid.Name + "Key");
+                    if (keyProperty == null)
+                        continue;
                     var keyValue = keyProperty?.GetValue(me);
                     if (keyValue == null ||
                         Guid.Empty.Equals(keyValue))
@@ -417,7 +420,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                         value = adoPersister.Get(context, (Guid)keyValue, principal);
                         context.AddData(keyValue.ToString(), value);
                     }
-                    pi.SetValue(me, value);
+                    pid.SetValue(me, value);
                 }
 
             }

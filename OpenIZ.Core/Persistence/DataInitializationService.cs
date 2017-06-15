@@ -38,6 +38,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Persistence
 {
@@ -90,7 +91,9 @@ namespace OpenIZ.Core.Persistence
         {
             try
             {
+
                 this.m_traceSource.TraceInformation("Applying {0} ({1} objects)...", ds.Id, ds.Action.Count);
+
 
                 foreach (var itm in ds.Action)
                 {
@@ -109,7 +112,10 @@ namespace OpenIZ.Core.Persistence
 
                         Object target = null, existing = null;
                         if (itm.Element.Key.HasValue)
+                        {
+                            ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(itm.Element.Key.Value);
                             existing = idpInstance.Get(itm.Element.Key.Value);
+                        }
                         if (existing != null)
                         {
                             if ((itm as DataInsert)?.SkipIfExists == true) continue;
@@ -152,11 +158,14 @@ namespace OpenIZ.Core.Persistence
                         //
                         // we can insert new reference terms for these reference terms, but cannot insert new concept using the same values for the mnemonic
                         // so we associate the new reference term and the concept
-                        if (target is ConceptReferenceTerm)
+                        if (target is IVersionedAssociation)
                         {
-                            var conceptReferenceTerm = target as ConceptReferenceTerm;
-                            conceptReferenceTerm.EffectiveVersionSequenceId = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Get(new Identifier<Guid>(conceptReferenceTerm.SourceEntityKey.Value), AuthenticationContext.Current.Principal, true)?.VersionSequence;
-                            target = conceptReferenceTerm;
+                            var ivr = target as IVersionedAssociation;
+                            ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(ivr.SourceEntityKey.Value);
+                            ivr.EffectiveVersionSequenceId = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Get(new Identifier<Guid>(ivr.SourceEntityKey.Value), AuthenticationContext.Current.Principal, true)?.VersionSequence;
+                            if (ivr.EffectiveVersionSequenceId == null)
+                                throw new KeyNotFoundException($"Dataset contains a reference to an unkown source entity : {ivr.SourceEntityKey}");
+                            target = ivr;
                         }
 
                         if (existing == null && (itm is DataInsert || (itm is DataUpdate && (itm as DataUpdate).InsertIfNotExists)))

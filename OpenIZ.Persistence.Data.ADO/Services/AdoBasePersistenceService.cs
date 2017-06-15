@@ -509,7 +509,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     foreach (var i in retVal.Where(i => i != null))
                         connection.AddCacheCommit(i);
 
-                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o =>
+                    ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueUserWorkItem(o =>
                     {
                         foreach (var itm in (o as IEnumerable<IdentifiedData>))
                             ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);

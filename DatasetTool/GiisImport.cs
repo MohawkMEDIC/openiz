@@ -761,12 +761,12 @@ namespace OizDevTool
             //var pfacilities = facilities.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
 
             Console.WriteLine("Map OpenIZ Places...");
-            placeEntityMap = places.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
-            facilityMap = facilities.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
+            placeEntityMap = places.Where(o=>o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_PLCID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
+            //facilityMap = facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
             facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", ""))).Id, o => o.Key.Value);
 
             Console.WriteLine("Map OpenIZ Materials...");
-            manufacturedMaterialMap = manufmaterials.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
+            manufacturedMaterialMap = manufmaterials.Where(o=> o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM_LOT")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
             // Map materials
             foreach (var itm in materials)
             {
@@ -1224,7 +1224,7 @@ namespace OizDevTool
                     EmailConfirmed = !String.IsNullOrEmpty(itm.Email),
                     LastLoginTime = itm.Lastlogin,
                     SecurityHash = Guid.Empty.ToString(),
-                    Lockout = itm.IsActive ? null : (DateTime?)DateTime.MaxValue,
+                    Lockout = itm.IsActive ? null :(DateTime?) DateTime.Parse("9999-12-31T23:59:59.9999999Z"),
                     PasswordHash = BitConverter.ToString(Convert.FromBase64String(itm.Password)).Replace("-", ""),
                     UserClass = UserClassKeys.HumanUser,
                     TwoFactorEnabled = false,

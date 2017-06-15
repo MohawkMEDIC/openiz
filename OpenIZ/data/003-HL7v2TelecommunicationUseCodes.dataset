@@ -77,13 +77,15 @@
       </name>
     </ReferenceTerm>
   </insert>
+  <!--
+  Email address specifies type off address not the use of addressu
   <insert>
     <ConceptReferenceTerm xmlns="http://openiz.org/model">
       <source>2d26aa29-a563-4a65-9ba8-c3afb9b49ac1</source>
       <term>75876a5b-f754-4c46-a045-e231ced9ed82</term>
       <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
     </ConceptReferenceTerm>
-  </insert>
+  </insert>-->
   <insert skipIfError="false" skipIfExists="false">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>93ef75b2-7416-474a-a528-5d0d29427efc</id>
@@ -100,8 +102,6 @@
     <Concept xmlns="http://openiz.org/model">
       <id>804a4e92-fe62-4601-a4aa-0cf84533b633</id>
       <creationTime>2017-05-20T14:45:06.2791888-04:00</creationTime>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
       <mnemonic>ORN</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
@@ -152,8 +152,6 @@
     <Concept xmlns="http://openiz.org/model">
       <id>3480e220-a7e3-4774-8db7-4c96202c4f12</id>
       <creationTime>2017-05-20T14:45:06.2791888-04:00</creationTime>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
       <isReadonly>false</isReadonly>
       <mnemonic>VHN</mnemonic>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>

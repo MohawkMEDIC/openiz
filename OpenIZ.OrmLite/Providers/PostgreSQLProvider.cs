@@ -139,7 +139,7 @@ namespace OpenIZ.OrmLite.Providers
         {
             var finStmt = stmt.Build();
 
-#if DEBUG
+#if DB_DEBUG
             if(System.Diagnostics.Debugger.IsAttached)
                 this.Explain(context, CommandType.Text, finStmt.SQL, finStmt.Arguments.ToArray());
 #endif 
