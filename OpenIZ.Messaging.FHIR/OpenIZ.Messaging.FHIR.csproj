@@ -54,8 +54,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\RepositoryResourceHandlerBase.cs" />
     <Compile Include="Handlers\ImmunizationRecommendationResourceHandler.cs" />
     <Compile Include="Handlers\ImmunizationResourceHandler.cs" />
+    <Compile Include="Handlers\ObservationHandler.cs" />
     <Compile Include="Handlers\PatientResourceHandler.cs" />
     <Compile Include="Handlers\ResourceHandlerBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

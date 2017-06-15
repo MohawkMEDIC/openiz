@@ -18,7 +18,7 @@
  * Date: 2016-8-14
  */
 
-using MARC.Everest.Connectors;
+ using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
@@ -215,6 +215,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		{
             var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
 
+            
             query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
 
             if (queryId == Guid.Empty)

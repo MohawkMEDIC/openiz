@@ -42,7 +42,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 	/// <summary>
 	/// Represents a resource handler which can handle patients.
 	/// </summary>
-	public class PatientResourceHandler : ResourceHandlerBase<Patient, Core.Model.Roles.Patient>
+	public class PatientResourceHandler : RepositoryResourceHandlerBase<Patient, Core.Model.Roles.Patient>
 	{
 		/// <summary>
 		/// The repository.
@@ -55,29 +55,6 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		public PatientResourceHandler()
 		{
 			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-		}
-
-		/// <summary>
-		/// Create the specified patient instance
-		/// </summary>
-		/// <param name="modelInstance">The model instance.</param>
-		/// <param name="issues">The issues.</param>
-		/// <param name="mode">The mode.</param>
-		/// <returns>Returns the created model.</returns>
-		protected override Core.Model.Roles.Patient Create(Core.Model.Roles.Patient modelInstance, List<IResultDetail> issues, TransactionMode mode)
-		{
-			return this.repository.Insert(modelInstance);
-		}
-
-		/// <summary>
-		/// Delete the specified patient
-		/// </summary>
-		/// <param name="modelId">The model identifier.</param>
-		/// <param name="details">The details.</param>
-		/// <returns>Returns the deleted model.</returns>
-		protected override Core.Model.Roles.Patient Delete(Guid modelId, List<IResultDetail> details)
-		{
-			return this.repository.Obsolete(modelId);
 		}
 
 		/// <summary>
@@ -185,48 +162,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			return patient;
 		}
 
-		/// <summary>
-		/// Query for patients.
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <param name="issues">The issues.</param>
-		/// <param name="offset">The offset.</param>
-		/// <param name="count">The count.</param>
-		/// <param name="totalResults">The total results.</param>
-		/// <returns>Returns the list of models which match the given parameters.</returns>
-		protected override IEnumerable<Core.Model.Roles.Patient> Query(Expression<Func<Core.Model.Roles.Patient, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
-		{
-            var obsoletionReference = Expression.MakeBinary(ExpressionType.NotEqual, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(Core.Model.Roles.Patient).GetProperty(nameof(Entity.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Obsolete));
-            query = Expression.Lambda<Func<Core.Model.Roles.Patient, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
 
-            if (queryId == Guid.Empty)
-                return this.repository.Find(query, offset, count, out totalResults);
-            else
-                return (this.repository as IPersistableQueryRepositoryService).Find<Core.Model.Roles.Patient>(query, offset, count, out totalResults, queryId);
 
-		}
-
-		/// <summary>
-		/// Retrieves the specified patient.
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <param name="details">The details.</param>
-		/// <returns>Returns the model which matches the given id.</returns>
-		protected override Core.Model.Roles.Patient Read(Identifier<Guid> id, List<IResultDetail> details)
-		{
-			return this.repository.Get(id.Id, id.VersionId);
-		}
-
-		/// <summary>
-		/// Update the specified patient.
-		/// </summary>
-		/// <param name="model">The model.</param>
-		/// <param name="details">The details.</param>
-		/// <param name="mode">The mode.</param>
-		/// <returns>Returns the updated model.</returns>
-		protected override Core.Model.Roles.Patient Update(Core.Model.Roles.Patient model, List<IResultDetail> details, TransactionMode mode)
-		{
-			return this.repository.Save(model);
-		}
 	}
 }

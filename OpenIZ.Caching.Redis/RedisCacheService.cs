@@ -108,6 +108,7 @@ namespace OpenIZ.Caching.Redis
         /// </summary>
         private IdentifiedData DeserializeObject(HashEntry[] data)
         {
+
             if (data == null || data.Length == 0) return null;
 
             Type type = Type.GetType(data.FirstOrDefault(o => o.Name == "type").Value);
@@ -284,7 +285,10 @@ namespace OpenIZ.Caching.Redis
         /// </summary>
         public TData GetCacheItem<TData>(Guid key) where TData : IdentifiedData
         {
-            return (TData)this.GetCacheItem(key);
+            var retVal = this.GetCacheItem(key);
+            if (retVal is TData)
+                return (TData)retVal;
+            else return null;
         }
 
         /// <summary>

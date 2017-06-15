@@ -44,6 +44,7 @@
     <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
     <map fhir="in-catchment" model="tag[catchmentIndicator].value"/>
     <map fhir="is-outreach" model="relationship[HasComponent].source.tag[outreach]"/>
+    <map fhir="is-backEntry" model="tag[backEntry].value"/>
     <map fhir="location" model="participation[Location].player.id"/>
     <map fhir="location.name" model="participation[Location].player.name.component.value"/>
     <map fhir="location.identifier" model="participation[Location].player.identifier" type="identifier"/>
@@ -63,5 +64,21 @@
     <map fhir="location" model="participation[DedicatedServiceDeliveryLocation].player.id"/>
     <map fhir="location.name" model="participation[DedicatedServiceDeliveryLocation].player.name.component.value"/>
     <map fhir="location.address" model="participation[DedicatedServiceDeliveryLocation].player.address.component.value"/>
+    <map fhir="tetanusStatus" model="extension[http://openiz.org/extensions/patient/contrib/timr/tetanusStatus].value"/>
+    <map fhir="breastFeedingStatus" model="extension[http://openiz.org/extensions/patient/contrib/timr/breastFeedingStatus].value"/>
+    <map fhir="pmtct" model="extension[http://openiz.org/extensions/patient/contrib/timr/pmtct].value"/>
+    <map fhir="mosquitoNetStatus" model="extension[http://openiz.org/extensions/patient/contrib/timr/mosquitoNetStatus].value"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="category" model="typeConcept" type="concept"/>
+    <map fhir="code" model="typeConcept" type="concept"/>
+    <map fhir="data-absent-reason" model="reasonConcept"/>
+    <map fhir="encounter" model="relationship[HasComponent].source"/>
+    <map fhir="identifier" model="identifier" type="identifier"/>
+    <map fhir="patient" model="participation[RecordTarget].player"/>
+    <map fhir="performer" model="participation[Authorororiginator].player"/>
+    <map fhir="status" model="statusConcept" type="concept"/>
+    <map fhir="interpretation" model="interpretationConcept" type="concept"/>
   </type>
 </QueryParameterMap>
