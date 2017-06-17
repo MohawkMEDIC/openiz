@@ -514,7 +514,7 @@ namespace OizDevTool
                     new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("GIIS_FACID", "GIIS Facility Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.9"), hf.Id.ToString()),
                     new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("HIE_FRID", "Facility Register Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.10"), hf.Code)
                 },
-                StatusConceptKey = hf.IsActive ? StatusKeys.Active : StatusKeys.Nullfied,
+                StatusConceptKey = hf.IsActive ? StatusKeys.Active : StatusKeys.Nullified,
                 Extensions = new List<EntityExtension>()
                 {
                     new EntityExtension() {
@@ -577,7 +577,9 @@ namespace OizDevTool
                 {
                     MaterialEntityId = mmat,
                     ReorderQuantity = stockPolicy?.ReorderQty,
-                    SafetyQuantity = stockPolicy?.SafetyStock
+                    SafetyQuantity = stockPolicy?.SafetyStock,
+                    AMC = 0,
+                    Multiplier = 1
                 });
             }
 
@@ -660,7 +662,7 @@ namespace OizDevTool
                     new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("GIIS_PLCID", "GIIS Place Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.11"), plc.Id.ToString()),
                     new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("HIE_VRID", "Village Register Codes", "1.3.6.1.4.1.<<YOUR.PEN>>.12"), plc.Code)
                 },
-                StatusConceptKey = plc.IsActive ? StatusKeys.Active : StatusKeys.Nullfied,
+                StatusConceptKey = plc.IsActive ? StatusKeys.Active : StatusKeys.Nullified,
                 Extensions = new List<EntityExtension>()
                 {
                     new EntityExtension() {

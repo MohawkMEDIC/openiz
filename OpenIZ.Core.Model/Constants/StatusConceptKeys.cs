@@ -44,7 +44,7 @@ namespace OpenIZ.Core.Model.Constants
 		/// <summary>
 		/// Status - Nullified
 		/// </summary>
-		public static readonly Guid Nullfied = Guid.Parse("CD4AA3C4-02D5-4CC9-9088-EF8F31E321C5");
+		public static readonly Guid Nullified = Guid.Parse("CD4AA3C4-02D5-4CC9-9088-EF8F31E321C5");
 
 		/// <summary>
 		/// Status - Obsolete

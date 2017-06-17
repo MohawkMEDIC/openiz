@@ -35,7 +35,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                 retVal.Status = new FhirCode<ObservationStatus>(ObservationStatus.Final);
             else if (model.StatusConceptKey == StatusKeys.Active)
                 retVal.Status = new FhirCode<ObservationStatus>(ObservationStatus.Preliminary);
-            else if (model.StatusConceptKey == StatusKeys.Nullfied)
+            else if (model.StatusConceptKey == StatusKeys.Nullified)
                 retVal.Status = new FhirCode<ObservationStatus>(ObservationStatus.EnteredInError);
 
             if (model.Relationships.Any(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.Replaces))

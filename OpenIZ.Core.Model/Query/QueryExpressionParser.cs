@@ -422,7 +422,7 @@ namespace OpenIZ.Core.Model.Query
 
             }
 
-            Debug.WriteLine(String.Format("Converted {0} to {1}", httpQueryParameters, retVal));
+            //Debug.WriteLine(String.Format("Converted {0} to {1}", httpQueryParameters, retVal));
 
             if (retVal == null)
                 return null;

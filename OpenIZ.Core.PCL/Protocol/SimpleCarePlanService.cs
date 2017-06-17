@@ -251,7 +251,7 @@ namespace OpenIZ.Core.Protocol
                 lock (currentProcessing)
                 {
                     var thdPatient = currentProcessing.Clone() as Patient;
-                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.ToArray().Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose && o.Act?.StatusConceptKey != StatusKeys.Nullfied));
+                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.ToList().Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose && o.Act?.StatusConceptKey != StatusKeys.Nullified));
                     protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(thdPatient, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
                 }
 
