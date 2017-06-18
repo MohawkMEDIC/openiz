@@ -15,6 +15,7 @@ using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Diagnostics;
+using OpenIZ.Core.Model.Map;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -94,7 +95,7 @@ namespace OpenIZ.Core.Services.Impl
 
                     // Skip ignore properties
                     if (ignoreProperties.Contains(serializationName)) continue;
-                       
+
                     // Test
                     if (existingValue == updatedValue)
                         continue; // same 
@@ -111,7 +112,7 @@ namespace OpenIZ.Core.Services.Impl
                             // Generate tests
                             IdentifiedData existingId = existingValue as IdentifiedData,
                                 updatedId = updatedValue as IdentifiedData;
-                            if(existingId.Key == updatedId.Key)
+                            if (existingId.Key == updatedId.Key)
                                 retVal.AddRange(this.DiffInternal(existingId, updatedId, $"{path}{serializationName}.", ignoreProperties));
                             else
                             {
@@ -121,7 +122,7 @@ namespace OpenIZ.Core.Services.Impl
                         }
                         else if (existingValue is IList && !existingValue.GetType().GetTypeInfo().IsArray)
                         {
-                           
+
                             // Simple or complex list?
                             if (typeof(IIdentifiedEntity).GetTypeInfo().IsAssignableFrom(existingValue.GetType().StripGeneric().GetTypeInfo()))
                             {
@@ -184,9 +185,9 @@ namespace OpenIZ.Core.Services.Impl
                     var pi = cvalue.GetType().GetRuntimeProperty(classAtt.ClassifierProperty);
                     var redirectProperty = pi.GetCustomAttribute<SerializationReferenceAttribute>();
                     if (redirectProperty != null)
-                        serializationName += "." + cvalue.GetType().GetRuntimeProperty(redirectProperty.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName ;
+                        serializationName += "." + cvalue.GetType().GetRuntimeProperty(redirectProperty.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
                     else
-                        serializationName += "." + pi.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName ;
+                        serializationName += "." + pi.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
 
                     cvalue = pi.GetValue(cvalue);
                     classAtt = cvalue?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
@@ -276,9 +277,9 @@ namespace OpenIZ.Core.Services.Impl
                     else
                         break;
                 }
-              
+
                 // Operation type
-                switch(op.OperationType)
+                switch (op.OperationType)
                 {
                     case PatchOperationType.Add:
                         // We add the value!!! Yay!
@@ -304,27 +305,33 @@ namespace OpenIZ.Core.Services.Impl
 
                         break;
                     case PatchOperationType.Replace:
-                        property.SetValue(applyParent, op.Value);
-                        break;
+                        {
+                            Object val = null;
+                            if (MapUtil.TryConvert(op.Value, property.PropertyType.StripNullable(), out val))
+                                property.SetValue(applyParent, val);
+                            else
+                                property.SetValue(applyParent, op.Value);
+                            break;
+                        }
                     case PatchOperationType.Test:
                         if (force) continue;
                         // We test the value! Also pretty cool
                         if (applyTo is IdentifiedData && !(applyTo as IdentifiedData).SemanticEquals(op.Value as IdentifiedData))
                             throw new PatchAssertionException(op.Value, applyTo, op);
-                        else if(applyTo is IList)
+                        else if (applyTo is IList)
                         {
                             // Identified data
                             if (typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(property.PropertyType.StripGeneric().GetTypeInfo()))
                             {
                                 var result = this.ExecuteLambda("Any", applyTo, property, pathName, op);
-                                if(!(bool)result)
+                                if (!(bool)result)
                                     throw new PatchAssertionException($"Could not find instance matching {op.Path.Replace(pathName, "")} = {op.Value} in collection {applyTo} at {op}");
                             }
                             else if (!(applyTo as IList).OfType<Object>().Any(o => o.Equals(op.Value)))
                                 throw new PatchAssertionException($"Assertion failed: {op.Value} could not be found in list {applyTo} at {op}");
 
                         }
-                        else if(applyTo?.Equals(op.Value) == false && applyTo != op.Value)
+                        else if (applyTo?.Equals(op.Value) == false && applyTo != op.Value)
                             throw new PatchAssertionException(op.Value, applyTo, op);
                         break;
                 }

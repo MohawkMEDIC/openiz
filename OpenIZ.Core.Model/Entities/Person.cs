@@ -81,14 +81,19 @@ namespace OpenIZ.Core.Model.Entities
 		{
 			get
 			{
-				return this.DateOfBirth?.ToUniversalTime().ToString("o");
+				return this.DateOfBirth?.ToString("yyyy-MM-dd");
 			}
 			set
 			{
-				if (!String.IsNullOrEmpty(value))
-					this.DateOfBirth = DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-				else
-					this.DateOfBirth = null;
+                if (!String.IsNullOrEmpty(value))
+                {
+                    if(value.Length > 10)
+                        this.DateOfBirth = DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture);
+                    else
+                        this.DateOfBirth = DateTime.ParseExact(value.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+                }
+                else
+                    this.DateOfBirth = null;
 			}
 		}
 

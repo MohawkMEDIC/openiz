@@ -535,5 +535,21 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlIgnore, JsonIgnore]
         IEnumerable<ITag> ITaggable.Tags { get { return this.Tags.OfType<ITag>(); } }
+
+        /// <summary>
+        /// Copies the entity
+        /// </summary>
+        /// <returns></returns>
+        public IdentifiedData Copy()
+        {
+            var retVal = base.Clone() as Act;
+            retVal.Relationships = new List<ActRelationship>(this.Relationships.ToArray());
+            retVal.Identifiers = new List<ActIdentifier>(this.Identifiers.ToArray());
+            retVal.Notes = new List<ActNote>(this.Notes.ToArray());
+            retVal.Participations = new List<ActParticipation>(this.Participations.ToArray());
+            retVal.Tags = new List<ActTag>(this.Tags.ToArray());
+            retVal.Extensions = new List<ActExtension>(this.Extensions.ToArray());
+            return retVal;
+        }
     }
 }

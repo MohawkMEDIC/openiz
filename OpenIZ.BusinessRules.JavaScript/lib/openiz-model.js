@@ -7641,7 +7641,7 @@ var OpenIZModel = OpenIZModel || {
         /** 
          *             Status - Nullified            
          */
-        Nullfied: 'cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5',
+        Nullified: 'cd4aa3c4-02d5-4cc9-9088-ef8f31e321c5',
         /** 
          *             Status - Obsolete            
          */

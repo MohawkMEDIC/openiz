@@ -186,7 +186,7 @@ namespace OpenIZ.Core.Protocol
                     lock (this.m_patientPromise)
                         if (!this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing))
                         {
-                            currentProcessing = p.Clone() as Patient;
+                            currentProcessing = p.Copy() as Patient;
 
                             // Are the participations of the patient null?
                             if (p.Participations.Count == 0 && p.VersionKey.HasValue)
@@ -250,8 +250,8 @@ namespace OpenIZ.Core.Protocol
                 List<Act> protocolActs = new List<Act>();
                 lock (currentProcessing)
                 {
-                    var thdPatient = currentProcessing.Clone() as Patient;
-                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.ToList().Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose && o.Act?.StatusConceptKey != StatusKeys.Nullified));
+                    var thdPatient = currentProcessing.Copy() as Patient;
+                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.ToList().Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose && o.Act?.StatusConceptKey != StatusKeys.Nullified && o.Act?.StatusConceptKey != StatusKeys.Obsolete));
                     protocolActs = execProtocols.AsParallel().SelectMany(o => o.Calculate(thdPatient, parmDict)).OrderBy(o => o.StopTime - o.StartTime).ToList();
                 }
 

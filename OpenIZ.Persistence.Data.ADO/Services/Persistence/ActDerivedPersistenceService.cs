@@ -93,7 +93,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if (typeof(TModel).BaseType == typeof(Act))
                 this.m_actPersister.UpdateCoreProperties(context, data, principal);
-            return base.UpdateInternal(context, data, principal);
+            return base.InsertInternal(context, data, principal);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override TModel ObsoleteInternal(DataContext context, TModel data, IPrincipal principal)
         {
             var retVal = this.m_actPersister.ObsoleteInternal(context, data, principal);
-            return data;
+            return base.InsertInternal(context, data, principal);
         }
 
     }

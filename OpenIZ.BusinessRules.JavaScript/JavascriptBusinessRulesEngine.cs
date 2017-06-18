@@ -278,7 +278,14 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public List<Func<Object, Object[]>> GetValidators<TBinding>()
         {
-            var className = typeof(TBinding).GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
+            return this.GetValidators(typeof(TBinding));
+        }
+
+        /// <summary>
+        /// Get validator functions for binding
+        /// </summary>
+        public List<Func<Object, Object[]>> GetValidators(Type tbinding) { 
+            var className = tbinding.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
             
             // Try to get the binding
             List<Func<object, Object[]>> callList = null;
@@ -326,12 +333,12 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
             try
             {
-                var callList = this.GetCallList<TBinding>(action);
-                if(callList.Count == 0)
-                    callList = this.GetCallList(data.GetType(), action);
+                if (data == default(TBinding)) return data;
+
+                var callList = this.GetCallList(data.GetType(), action).Union(this.GetCallList<TBinding>(action)).Distinct();
                 var retVal = data;
 
-                if (callList.Count > 0)
+                if (callList.Count() > 0)
                 {
                     dynamic viewModel = this.m_bridge.ToViewModel(retVal);
                     foreach (var c in callList)
@@ -357,7 +364,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
             try
             {
-                var callList = this.GetValidators<TBinding>();
+                var callList = this.GetValidators(data.GetType()).Union(this.GetValidators<TBinding>()).Distinct() ;
                 var retVal = new List<DetectedIssue>();
                 foreach (var c in callList)
                 {

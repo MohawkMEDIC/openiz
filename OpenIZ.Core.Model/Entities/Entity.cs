@@ -507,5 +507,23 @@ namespace OpenIZ.Core.Model.Entities
 
         [XmlIgnore, JsonIgnore]
         IEnumerable<ITag> ITaggable.Tags { get { return this.Tags.OfType<ITag>(); } }
+
+        /// <summary>
+        /// Copies the entity
+        /// </summary>
+        /// <returns></returns>
+        public IdentifiedData Copy()
+        {
+            var retVal = base.Clone() as Entity;
+            retVal.Relationships = new List<EntityRelationship>(this.Relationships.ToArray());
+            retVal.Identifiers = new List<EntityIdentifier>(this.Identifiers.ToArray());
+            retVal.Names = new List<EntityName>(this.Names.ToArray());
+            retVal.Notes = new List<EntityNote>(this.Notes.ToArray());
+            retVal.Participations = new List<ActParticipation>(this.Participations.ToArray());
+            retVal.Addresses = new List<EntityAddress>(this.Addresses.ToArray());
+            retVal.Tags = new List<EntityTag>(this.Tags.ToArray());
+            retVal.Extensions = new List<EntityExtension>(this.Extensions.ToArray());
+            return retVal;
+        }
     }
 }

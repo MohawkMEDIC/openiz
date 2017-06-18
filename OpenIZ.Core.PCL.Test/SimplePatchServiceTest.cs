@@ -37,16 +37,21 @@ namespace OpenIZ.Core.PCL.Test
         /// <summary>
         /// Serialize patch
         /// </summary>
-        private void SerializePatch(Patch patch)
+        private Patch SerializePatch(Patch patch)
         {
             String patchXml = String.Empty;
+            Patch retVal = null;
             using (StringWriter sw = new StringWriter())
             {
                 var xsz = new XmlSerializer(typeof(Patch));
                 xsz.Serialize(sw, patch);
                 patchXml = sw.ToString();
             }
-
+            using(StringReader sr = new StringReader(patchXml))
+            {
+                var xsz = new XmlSerializer(typeof(Patch));
+                retVal = xsz.Deserialize(sr) as Patch;
+            }
             var jser = new JsonViewModelSerializer();
             string patchJson = JsonConvert.SerializeObject(patch, Formatting.Indented, new JsonSerializerSettings()
             {
@@ -55,6 +60,7 @@ namespace OpenIZ.Core.PCL.Test
                 TypeNameHandling = TypeNameHandling.Auto,
                 Binder = new ModelSerializationBinder()
             });
+            return retVal;
         }
 
         /// <summary>
@@ -347,6 +353,9 @@ namespace OpenIZ.Core.PCL.Test
         [TestMethod]
         public void PatchShouldUpdateTargetObject()
         {
+            Guid oguid = Guid.NewGuid(),
+                nguid = Guid.NewGuid();
+
             Patient a = new Patient()
             {
                 Key = Guid.Empty,
@@ -366,6 +375,14 @@ namespace OpenIZ.Core.PCL.Test
                 Tags = new System.Collections.Generic.List<Model.DataTypes.EntityTag>()
                 {
                     new Model.DataTypes.EntityTag("KEY", "VALUE")
+                },
+                Relationships = new System.Collections.Generic.List<Model.Entities.EntityRelationship>() {
+                    new Model.Entities.EntityRelationship()
+                    {
+                        Key = Guid.NewGuid(),
+                        RelationshipTypeKey = EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation,
+                        TargetEntityKey = oguid
+                    }
                 }
             },
             b = new Patient()
@@ -373,7 +390,7 @@ namespace OpenIZ.Core.PCL.Test
                 Key = Guid.Empty,
                 VersionKey = Guid.NewGuid(),
                 DateOfBirth = DateTime.MaxValue,
-                DateOfBirthPrecision = Model.DataTypes.DatePrecision.Full,
+                DateOfBirthPrecision = Model.DataTypes.DatePrecision.Day,
                 Identifiers = new System.Collections.Generic.List<Model.DataTypes.EntityIdentifier>()
                 {
                     new Model.DataTypes.EntityIdentifier(Guid.Empty, "1234") { Key = a.Identifiers[0].Key }
@@ -389,6 +406,14 @@ namespace OpenIZ.Core.PCL.Test
                 Tags = new System.Collections.Generic.List<Model.DataTypes.EntityTag>()
                 {
                     new Model.DataTypes.EntityTag("KEY", "VALUE2")
+                },
+                Relationships = new System.Collections.Generic.List<Model.Entities.EntityRelationship>() {
+                    new Model.Entities.EntityRelationship()
+                    {
+                        Key = Guid.NewGuid(),
+                        RelationshipTypeKey = EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation,
+                        TargetEntityKey = nguid
+                    }
                 }
             };
 
@@ -396,10 +421,10 @@ namespace OpenIZ.Core.PCL.Test
             var patch = patchService.Diff(a, b);
             var patchString = patch.ToString();
             Assert.IsNotNull(patch);
-            Assert.AreEqual(16, patch.Operation.Count);
+            Assert.AreEqual(15, patch.Operation.Count);
 
             // Debug info
-            this.SerializePatch(patch);
+            patch = this.SerializePatch(patch);
 
             // 1. Patch should be fine. data now = b
             var data = patchService.Patch(patch, a) as Patient;
@@ -419,7 +444,7 @@ namespace OpenIZ.Core.PCL.Test
             Assert.AreEqual(1, a.Tags.Count);
             Assert.AreEqual("VALUE", a.Tags[0].Value);
             Assert.AreEqual(a.VersionKey, patch.Operation[1].Value);
-
+            Assert.AreEqual(nguid, data.Relationships[0].TargetEntityKey);
         }
     }
 }

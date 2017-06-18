@@ -68,7 +68,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             retVal.ClassConceptKey = actInstance?.ClassConceptKey;
             retVal.MoodConceptKey = actInstance?.MoodConceptKey;
-
+            retVal.TemplateKey = actInstance?.TemplateKey;
             return retVal;
         }
 
@@ -378,7 +378,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Acts.Act ObsoleteInternal(DataContext context, Core.Model.Acts.Act data, IPrincipal principal)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
-            return base.ObsoleteInternal(context, data, principal);
+            return base.UpdateInternal(context, data, principal);
         }
 
         /// <summary>

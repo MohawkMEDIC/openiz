@@ -148,6 +148,10 @@ namespace OpenIZ.Messaging.FHIR.Util
                     if (v.Length > 2)
                         switch (v.Substring(0, 2))
                         {
+                            case "ap":
+                                chop = true;
+                                opValue = "~";
+                                break;
                             case "gt":
                                 chop = true;
                                 opValue = ">";

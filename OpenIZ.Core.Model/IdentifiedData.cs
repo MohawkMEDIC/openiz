@@ -192,7 +192,7 @@ namespace OpenIZ.Core.Model
         /// <summary>
         /// Clone the specified data
         /// </summary>
-        public IdentifiedData Clone()
+        public virtual IdentifiedData Clone()
         {
             var retVal = this.MemberwiseClone() as IdentifiedData;
             retVal.m_delayLoad = true;

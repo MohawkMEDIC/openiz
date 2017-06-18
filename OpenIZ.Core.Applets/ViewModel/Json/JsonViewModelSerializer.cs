@@ -241,9 +241,11 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                 else if (t.StripNullable() == typeof(Guid))
                                     return Guid.Parse((string)r.Value);
                                 else if (t.StripNullable() == typeof(Int32))
-									return "NaN".Equals(r.Value) ? 0 : Int32.Parse((String)r.Value);
+                                    return "NaN".Equals(r.Value) ? 0 : Int32.Parse((String)r.Value);
                                 else if (t.StripNullable() == typeof(Decimal))
                                     return Decimal.Parse((String)r.Value);
+                                else if (t.StripNullable() == typeof(byte[]))
+                                    return Convert.FromBase64String((String)r.Value);
                                 else
                                     return r.Value;
                             default:

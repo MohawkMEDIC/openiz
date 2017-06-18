@@ -236,7 +236,7 @@ namespace OpenIZ.Core.Http
                         }
                         catch (Exception e)
                         {
-                            s_tracer.TraceError("Error downloading {0}: {1}", url, e);
+                            s_tracer.TraceError("Error downloading {0}: {1}", url, e.Message);
                         }
                 }, TaskContinuationOptions.LongRunning);
                 httpTask.Wait();
@@ -250,7 +250,7 @@ namespace OpenIZ.Core.Http
             }
             catch (Exception e)
             {
-                s_tracer.TraceError("Error invoking HTTP: {0}", e);
+                s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
                 this.Responded?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 500));
                 throw;
             }
@@ -309,7 +309,7 @@ namespace OpenIZ.Core.Http
             }
             catch (Exception e)
             {
-                s_tracer.TraceError("Error invoking HTTP: {0}", e);
+                s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
                 this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, null, 500));
                 throw;
             }
@@ -490,7 +490,7 @@ namespace OpenIZ.Core.Http
             }
             catch (Exception e)
             {
-                s_tracer.TraceError("Error invoking HTTP: {0}", e);
+                s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
                 this.Responded?.Invoke(this, new RestResponseEventArgs("PATCH", url, null, contentType, null, 500));
                 throw;
             }
@@ -543,7 +543,7 @@ namespace OpenIZ.Core.Http
             }
             catch (Exception e)
             {
-                s_tracer.TraceError("Error invoking HTTP: {0}", e);
+                s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
                 this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 500));
                 throw;
             }

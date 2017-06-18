@@ -145,7 +145,7 @@ namespace OpenIZ.Core.Model.Map
             }
             else if (m_destType.GetTypeInfo().IsEnum && value.GetType() == typeof(int))
             {
-                result = value;
+                result = Enum.ToObject(m_destType, value);
                 return true;
             }
             else if (m_destType.GetTypeInfo().IsEnum && value.GetType() == typeof(String)) // No map exists yet

@@ -72,12 +72,17 @@ namespace OpenIZ.Core.Model.Roles
         public String DeceasedDateXml {
             get
             {
-                return this.DeceasedDate?.ToUniversalTime().ToString("o");
+                return this.DeceasedDate?.ToString("yyyy-MM-dd");
             }
             set
             {
                 if (!String.IsNullOrEmpty(value))
-                    this.DeceasedDate = DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                {
+                    if (value.Length > 10)
+                        this.DeceasedDate = DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture);
+                    else
+                        this.DeceasedDate = DateTime.ParseExact(value.Substring(0, 10), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal);
+                }
                 else
                     this.DeceasedDate = null;
 

@@ -16,20 +16,22 @@ namespace OpenIZ.Core.Model.AMI.Security
     public class AuditInfo : IdentifiedData
     {
 
-        /// <summary>
-        /// Audit information
-        /// </summary>
-        public AuditInfo()
-        {
-
-        }
 
         /// <summary>
         /// Creates a new instance of audit information
         /// </summary>
-        public AuditInfo(AuditData audit)
+        public AuditInfo()
         {
-            this.Audit = audit;
+            this.Audit = new List<AuditData>();
+        }
+
+        /// <summary>
+        ///  Audit info with data
+        /// </summary>
+        /// <param name="data"></param>
+        public AuditInfo(AuditData data)
+        {
+            this.Audit = new List<AuditData>() { data };
         }
 
         /// <summary>
@@ -48,7 +50,7 @@ namespace OpenIZ.Core.Model.AMI.Security
         /// Gets or sets the audit
         /// </summary>
         [XmlElement("audit")]
-        public AuditData Audit { get; set; }
+        public List<AuditData> Audit { get; set; }
 
         /// <summary>
         /// When was the audit modified
@@ -57,7 +59,7 @@ namespace OpenIZ.Core.Model.AMI.Security
         {
             get
             {
-                return this.Audit.Timestamp;
+                return this.Audit.Min(o=>o.Timestamp);
             }
         }
     }

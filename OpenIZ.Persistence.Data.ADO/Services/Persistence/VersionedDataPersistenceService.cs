@@ -116,6 +116,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.CreatedBy.EnsureExists(context, principal);
             data.CreatedByKey = data.CreatedBy?.Key ?? data.CreatedByKey;
 
+
             // This is technically an insert and not an update
             SqlStatement currentVersionQuery = context.CreateSqlStatement<TDomain>().SelectFrom()
                 .Where(o => o.Key == data.Key && !o.ObsoletionTime.HasValue)
@@ -149,7 +150,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data.CreatedByKey = newEntityVersion.CreatedByKey = data.CreatedByKey ?? user.Value;
             // Obsolete the old version 
             existingObject.ObsoletedByKey = data.CreatedByKey ?? user;
-            existingObject.ObsoletionTime = DateTime.Now;
+            existingObject.ObsoletionTime = DateTimeOffset.Now;
+            newEntityVersion.CreationTime = DateTimeOffset.Now;
             newEntityVersion = context.Insert<TDomain>(newEntityVersion);
             nonVersionedObect = context.Update<TDomainKey>(nonVersionedObect);
             context.Update(existingObject);
@@ -161,6 +163,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             //return base.Update(context, data, principal);
         }
 
+       
         /// <summary>
         /// Query internal
         /// </summary>
@@ -371,17 +374,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     // Since this is a versioned association an a versioned association only exists between Concept, Act, or Entity
                     if (itm is VersionedAssociation<Concept>)
                     {
-                        versionQuery = context.CreateSqlStatement<DbConceptVersion>().SelectFrom().Where(o => o.VersionKey == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbConceptVersion>(o => o.VersionSequenceId);
+                        versionQuery = context.CreateSqlStatement<DbConceptVersion>().SelectFrom().Where(o => o.VersionKey == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbConceptVersion>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
                         currentVersion = context.FirstOrDefault<DbConceptVersion>(versionQuery);
                     }
                     else if (itm is VersionedAssociation<Act>)
                     {
-                        versionQuery = context.CreateSqlStatement<DbActVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbActVersion>(o => o.VersionSequenceId);
+                        versionQuery = context.CreateSqlStatement<DbActVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbActVersion>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
                         currentVersion = context.FirstOrDefault<DbActVersion>(versionQuery);
                     }
                     else if (itm is VersionedAssociation<Entity>)
                     {
-                        versionQuery = context.CreateSqlStatement<DbEntityVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbEntityVersion>(o => o.VersionSequenceId);
+                        versionQuery = context.CreateSqlStatement<DbEntityVersion>().SelectFrom().Where(o => o.Key == itm.SourceEntityKey && !o.ObsoletionTime.HasValue).OrderBy<DbEntityVersion>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
                         currentVersion = context.FirstOrDefault<DbEntityVersion>(versionQuery);
                     }
 
@@ -391,7 +394,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             // Get existing
             // TODO: What happens which this is reverse?
-            var existing = context.Query<TDomainAssociation>(o => o.SourceKey == source.Key && o.EffectiveVersionSequenceId <= source.VersionSequence && (o.ObsoleteVersionSequenceId > source.VersionSequence || !o.ObsoleteVersionSequenceId.HasValue));
+            var existing = context.Query<TDomainAssociation>(o => o.SourceKey == source.Key && !o.ObsoleteVersionSequenceId.HasValue);
 
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Any(ecn => ecn.Key == o.Key));

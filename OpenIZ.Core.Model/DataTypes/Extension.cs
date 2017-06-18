@@ -58,7 +58,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Value as string of bytes
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, SerializationReference(nameof(ExtensionValueXml))]
         public string ExtensionValueString
         {
             get

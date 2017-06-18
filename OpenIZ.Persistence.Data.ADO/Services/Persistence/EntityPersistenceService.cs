@@ -81,7 +81,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             retVal.ClassConceptKey = entInstance.ClassConceptKey;
             retVal.DeterminerConceptKey = entInstance.DeterminerConceptKey;
-            
+            retVal.TemplateKey = entInstance.TemplateKey;
             // Inversion relationships
             //if (retVal.Relationships != null)
             //{
