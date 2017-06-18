@@ -9,6 +9,7 @@ using System.Security;
 using System.ServiceModel.Web;
 using System.Text;
 using System.Threading.Tasks;
+using MARC.HI.EHRS.SVC.Auditing.Data;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -17,25 +18,29 @@ namespace OpenIZ.Messaging.AMI.Wcf
     /// </summary>
     public partial class AmiBehavior
     {
-
-        /// <summary>
-        /// Create/send an audit 
-        /// </summary>
-        public void CreateAudit(AuditInfo audit)
+		/// <summary>
+		/// Create/send an audit
+		/// </summary>
+		/// <param name="audit">The audit.</param>
+		/// <exception cref="System.Security.SecurityException">Audit service does not exist!</exception>
+		public void CreateAudit(AuditInfo audit)
         {
-
             // Audit the access
             var auditService = ApplicationContext.Current.GetService<IAuditorService>();
             if (auditService == null)
                 throw new SecurityException("Audit service does not exist!");
-            auditService.SendAudit(audit.Audit);
 
+			audit.Audit.ForEach(a => auditService.SendAudit(a));
+			 
             // Persist this audit as well?
             var auditRepositoryService = ApplicationContext.Current.GetService<IAuditRepositoryService>();
-            if (auditRepositoryService != null)
-                audit.Audit = auditRepositoryService.Insert(audit.Audit);
 
-            WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
+	        if (auditRepositoryService != null)
+	        {
+		        audit.Audit = audit.Audit.Select(a => auditRepositoryService.Insert(a)).ToList();
+			}
+
+	        WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
 
         }
     }
