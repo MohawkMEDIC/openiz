@@ -147,9 +147,10 @@ namespace OpenIZ.Core.Services.Impl
 
 			try
 			{
-				alert = message.Flags == AlertMessageFlags.Acknowledged ? 
-						persistenceService.Obsolete(message, AuthenticationContext.Current.Principal, TransactionMode.Commit) : 
-						persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+				// obsolete the alert
+				alert = message.ObsoletionTime.HasValue ? 
+					persistenceService.Obsolete(message, AuthenticationContext.Current.Principal, TransactionMode.Commit) : 
+					persistenceService.Update(message, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
 				this.Received?.Invoke(this, new AlertEventArgs(alert));
 			}
