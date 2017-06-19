@@ -119,7 +119,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
 			if (data.Policies != null)
 			{
-				context.Delete<DbSecurityDevicePolicy>(o => o.SourceKey == data.Key);
+				context.Delete<DbSecurityApplicationPolicy>(o => o.SourceKey == data.Key);
 				foreach (var pol in data.Policies.Select(o => new DbSecurityApplicationPolicy
 				{
 					PolicyKey = o.PolicyKey.Value,
