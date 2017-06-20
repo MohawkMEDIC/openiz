@@ -319,7 +319,11 @@ namespace OpenIZ.Core.Model.Collection
                     {
                         properties = model.GetType().GetRuntimeProperties().Where(p => p.GetCustomAttribute<SerializationReferenceAttribute>() != null ||
                             typeof(IList).GetTypeInfo().IsAssignableFrom(p.PropertyType.GetTypeInfo()) && p.GetCustomAttributes<XmlElementAttribute>().Count() > 0 && followList).ToList();
-                        m_propertyCache.Add(model.GetType(), properties);
+
+	                    if (!m_propertyCache.ContainsKey(model.GetType()))
+	                    {
+							m_propertyCache.Add(model.GetType(), properties);
+						}
                     }
                 
                 currentBundle.m_modifiedOn = DateTimeOffset.Now;
