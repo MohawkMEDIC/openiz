@@ -30,15 +30,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
             if (auditService == null)
                 throw new SecurityException("Audit service does not exist!");
 
-			audit.Audit.ForEach(a => auditService.SendAudit(a));
-			 
-            // Persist this audit as well?
-            var auditRepositoryService = ApplicationContext.Current.GetService<IAuditRepositoryService>();
+			ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueNonPooledWorkItem(o =>
+			{
+				var adt = o as AuditInfo;
 
-	        if (auditRepositoryService != null)
-	        {
-		        audit.Audit = audit.Audit.Select(a => auditRepositoryService.Insert(a)).ToList();
-			}
+				adt.Audit.ForEach(a => auditService.SendAudit(a));
+
+				// Persist this audit as well?
+				var auditRepositoryService = ApplicationContext.Current.GetService<IAuditRepositoryService>();
+
+				if (auditRepositoryService != null)
+				{
+					adt.Audit = adt.Audit.Select(a => auditRepositoryService.Insert(a)).ToList();
+				}
+			}, audit);
 
 	        WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
 
