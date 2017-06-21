@@ -314,7 +314,8 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"Unable to locate persistence service:{nameof(IDataPersistenceService<ExtensionType>)}");
 			}
 
-			return persistenceService.Query(e => e.Name == value.ToString(), AuthenticationContext.Current.Principal).FirstOrDefault();
+			var url = value.ToString();
+			return persistenceService.Query(e => e.Name == url, AuthenticationContext.Current.Principal).FirstOrDefault();
 		}
 
 		/// <summary>

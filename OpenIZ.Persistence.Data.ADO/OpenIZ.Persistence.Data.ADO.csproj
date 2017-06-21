@@ -157,11 +157,13 @@
     <Compile Include="Services\Persistence\PlacePersistenceService.cs" />
     <Compile Include="Services\Persistence\ProtocolPersistenceService.cs" />
     <Compile Include="Services\Persistence\ProviderPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ReferenceTermNamePersistenceService.cs" />
     <Compile Include="Services\Persistence\SecurityPersistenceServices.cs" />
     <Compile Include="Services\Persistence\SimpleVersionedEntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\SubstanceAdministrationPersistenceService.cs" />
     <Compile Include="Services\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\VersionedDataPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ReferenceTermPersistenceService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Alert\OpenIZ.Core.Alert.csproj">

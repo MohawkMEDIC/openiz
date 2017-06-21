@@ -17,7 +17,7 @@
       <mnemonic>CACT</mnemonic>
       <codeSystem>BAB1D66A-1E98-4BFD-9B4A-7C4BE88F35D1</codeSystem>
       <name>
-        <language>CACT</language>
+        <language>en</language>
         <value>ControlActEvent</value>
       </name>
     </ReferenceTerm>

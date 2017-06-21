@@ -20,6 +20,7 @@
 using OpenIZ.Core.Model.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +40,8 @@ using System.Diagnostics;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Data;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -318,12 +321,25 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var retVal = base.InsertInternal(context, data, principal);
 
             // Identifiers
-            if (data.Identifiers != null)
-                base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.EntityIdentifier, DbEntityIdentifier>(
-                   data.Identifiers,
-                    retVal,
-                    context,
-                    principal);
+	        if (data.Identifiers != null)
+	        {
+		        // Validate unique values for IDs
+		        var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(new Identifier<Guid>(o.AuthorityKey.Value), principal, true)?.IsUnique == true);
+
+		        foreach (var entityIdentifier in uniqueIds)
+		        {
+			        if (context.Query<DbEntityIdentifier>(c => c.SourceKey != data.Key && c.AuthorityKey == entityIdentifier.AuthorityKey && c.Value == entityIdentifier.Value).Any())
+			        {
+						throw new DuplicateNameException(entityIdentifier.Value);
+					}
+				}
+
+				base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.EntityIdentifier, DbEntityIdentifier>(
+					data.Identifiers,
+					retVal,
+					context,
+					principal);
+			}
 
             // Relationships
             if (data.Relationships != null)
@@ -406,12 +422,25 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
 
             // Identifiers
-            if (data.Identifiers != null)
-                base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.EntityIdentifier, DbEntityIdentifier>(
-                   data.Identifiers,
-                    retVal,
-                    context,
-                    principal);
+	        if (data.Identifiers != null)
+	        {
+				// Validate unique values for IDs
+		        var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(new Identifier<Guid>(o.AuthorityKey.Value), principal, true)?.IsUnique == true);
+
+		        foreach (var entityIdentifier in uniqueIds)
+		        {
+			        if (context.Query<DbEntityIdentifier>(c => c.SourceKey != data.Key && c.AuthorityKey == entityIdentifier.AuthorityKey && c.Value == entityIdentifier.Value).Any())
+			        {
+				        throw new DuplicateNameException(entityIdentifier.Value);
+			        }
+		        }
+
+		        base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.EntityIdentifier, DbEntityIdentifier>(
+			        data.Identifiers,
+			        retVal,
+			        context,
+			        principal);
+			}
 
             // Relationships
             if (data.Relationships != null)
