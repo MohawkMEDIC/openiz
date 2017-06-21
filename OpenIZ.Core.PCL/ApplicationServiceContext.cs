@@ -36,5 +36,9 @@ namespace OpenIZ.Core
         /// </summary>
         public static IServiceProvider Current { get; set; }
         
+        /// <summary>
+        /// Type of application hosting this OpenIZ
+        /// </summary>
+        public static OpenIZHostType HostType { get; set; }
     }
 }

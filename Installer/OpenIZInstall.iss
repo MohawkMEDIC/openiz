@@ -177,6 +177,7 @@ Source: ..\bin\release\OpenIZ.Authentication.OAUTH2.dll; DestDir: {app}; Compone
 
 ; APIs
 Source: ..\bin\Release\OpenIZ.Core.Model.ViewModelSerializers.dll; DestDir: {app}\dev\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}\dev\api; Components: tools\dev
 Source: ..\bin\Release\OpenIZ.Core.Applets.dll; DestDir: {app}\dev\api; Components: tools\dev
 Source: ..\bin\Release\OpenIZ.Core.Model.AMI.dll; DestDir: {app}\dev\api; Components: tools\dev
 Source: ..\bin\Release\OpenIZ.Messaging.AMI.Client.dll; DestDir: {app}\dev\api; Components: tools\dev
@@ -185,7 +186,6 @@ Source: ..\bin\Release\OpenIZ.Messaging.IMSI.Client.dll; DestDir: {app}\dev\api;
 Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}\dev\api; Components: tools\dev
 Source: ..\bin\Release\OpenIZ.Messaging.RISI.Client.dll; DestDir: {app}\dev\api; Components: tools\dev
 Source: ..\bin\Release\OpenIZ.Core.Model.dll; DestDir: {app}\dev\api; Components: tools\dev
-
 Source: ..\bin\Release\OpenIZ.Core.Applets.xml; DestDir: {app}\dev\api; Components: tools\dev
 Source: ..\bin\Release\OpenIZ.Core.Model.AMI.xml; DestDir: {app}\dev\api; Components: tools\dev
 Source: ..\bin\Release\OpenIZ.Messaging.AMI.Client.xml; DestDir: {app}\dev\api; Components: tools\dev
@@ -202,11 +202,12 @@ Source: ..\bin\Release\SeedData.xml; DestDir: {app}; Components: tools\dev
 ; Data Stuff
 Source: ..\bin\release\data\*.dataset; DestDir: {app}\data; Components: msg\imsi
 Source: ..\bin\release\applets\*.pak; DestDir: {app}\applets; Components: msg\ami
-
+Source: ..\..\medicsvccore\MARC.HI.EHRS.QM.Persistence.Data\SQL\PSQL9\*.sql; DestDir: {app}\sql;  Components: msg
 ; ADO Stuff
 Source: ..\bin\release\OpenIZ.Warehouse.ADO.dll; DestDir: {app}; Components: db\ado
 Source: ..\bin\release\OpenIZ.Persistence.Data.ADO.dll; DestDir: {app}; Components: db\ado
 Source: ..\bin\release\OpenIZ.OrmLite.dll; DestDir: {app}; Components: db\ado
+Source: ..\OpenIZ.Persistence.Data.ADO\Data\SQL\PSQL\*.sql; DestDir: {app}\sql; Components: db\ado
 
 ; MSSQL Stuff
 Source: ..\bin\release\OpenIZ.Persistence.Data.MSSQL.dll; DestDir: {app}; Components: db\mssql

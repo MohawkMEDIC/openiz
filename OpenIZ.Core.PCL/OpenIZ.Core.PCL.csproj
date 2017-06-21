@@ -75,6 +75,7 @@
     <Compile Include="Interop\ServiceEndpointOptions.cs" />
     <Compile Include="Interop\ServiceOptions.cs" />
     <Compile Include="Interop\ServiceResourceOptions.cs" />
+    <Compile Include="OpenIZHostType.cs" />
     <Compile Include="Patch\SimplePatchService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IActExtensionRepositoryService.cs" />

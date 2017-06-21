@@ -394,7 +394,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             // Get existing
             // TODO: What happens which this is reverse?
-            var existing = context.Query<TDomainAssociation>(o => o.SourceKey == source.Key && !o.ObsoleteVersionSequenceId.HasValue);
+            var existing = context.Query<TDomainAssociation>(o => o.SourceKey == source.Key);
 
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Any(ecn => ecn.Key == o.Key));

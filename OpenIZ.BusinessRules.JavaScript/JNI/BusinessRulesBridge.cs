@@ -117,6 +117,17 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// True if the system is operating on the OpenIZ Front end
+        /// </summary>
+        public bool IsInFrontEnd
+        {
+            get
+            {
+                return ApplicationServiceContext.HostType != OpenIZHostType.Server;
+            }
+        }
+
+        /// <summary>
         /// Saves tags associated with the specified object
         /// </summary>
         public object SaveTags(ExpandoObject obj)

@@ -107,6 +107,17 @@ namespace OizDevTool
             [Description("The directory in which to output generate files")]
             public String OutputDirectory { get; set; }
 
+            [Description("Skips import of users")]
+            [Parameter("skip-users")]
+            public bool SkipUsers { get; set; }
+
+            [Description("Skips import of facilities")]
+            [Parameter("skip-facilities")]
+            public bool SkipFacilities { get; set; }
+
+            [Description("Skips import of places")]
+            [Parameter("skip-places")]
+            public bool SkipPlaces { get; set; }
         }
 
         private static Guid industryManufacturer = Guid.NewGuid();
@@ -388,7 +399,7 @@ namespace OizDevTool
             {
                 Key = id,
                 Addresses = child.Domicile == null ? null : new List<EntityAddress>() { MapAddress(child.Domicile, AddressUseKeys.HomeAddress) },
-                DateOfBirth = parms.Anonymize ? child.Birthdate.AddDays((Guid.NewGuid().ToByteArray()[0] % 7) - 4 ) : child.Birthdate,
+                DateOfBirth = parms.Anonymize ? child.Birthdate.AddDays((Guid.NewGuid().ToByteArray()[0] % 7) - 4) : child.Birthdate,
                 DateOfBirthPrecision = DatePrecision.Day,
                 DeceasedDate = child.Status.Name == "Dead" ? (DateTime?)DateTime.MinValue : null,
                 GenderConceptKey = child.Gender ? GT_MALE : GT_FEMALE,
@@ -427,7 +438,7 @@ namespace OizDevTool
                     Key = Guid.NewGuid(),
                     Names = new List<EntityName>()
                     {
-                        parms.Anonymize ? new EntityName(NameUseKeys.OfficialRecord, SeedData.SeedData.Current.PickRandomFamilyName(), SeedData.SeedData.Current.PickRandomGivenName("Female").Name, SeedData.SeedData.Current.PickRandomGivenName("Female").Name) 
+                        parms.Anonymize ? new EntityName(NameUseKeys.OfficialRecord, SeedData.SeedData.Current.PickRandomFamilyName(), SeedData.SeedData.Current.PickRandomGivenName("Female").Name, SeedData.SeedData.Current.PickRandomGivenName("Female").Name)
                             : new EntityName(NameUseKeys.OfficialRecord, child.MotherLastname, child.MotherFirstname)
                     },
                     Telecoms = new List<EntityTelecomAddress>()
@@ -763,12 +774,12 @@ namespace OizDevTool
             //var pfacilities = facilities.ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
 
             Console.WriteLine("Map OpenIZ Places...");
-            placeEntityMap = places.Where(o=>o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_PLCID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
+            placeEntityMap = places.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_PLCID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
             //facilityMap = facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
             facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", ""))).Id, o => o.Key.Value);
 
             Console.WriteLine("Map OpenIZ Materials...");
-            manufacturedMaterialMap = manufmaterials.Where(o=> o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM_LOT")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
+            manufacturedMaterialMap = manufmaterials.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM_LOT")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
             // Map materials
             foreach (var itm in materials)
             {
@@ -778,7 +789,7 @@ namespace OizDevTool
             }
 
             DatasetInstall resultSet = new DatasetInstall() { Id = $"Ad-hoc GIIS import {String.Join(":", parms.FacilityId)}" };
-            
+
             IEnumerable facilityIdentifiers = parms.FacilityId;
             if (facilityIdentifiers == null || facilityIdentifiers.OfType<String>().Count() == 0)
                 facilityIdentifiers = facilityMap.Keys.Select(o => o.ToString());
@@ -1122,6 +1133,7 @@ namespace OizDevTool
 
 
 
+            Console.WriteLine("Exporting GIIS Items to OpenIZ IMS Format");
             var materialDataset = new DatasetInstall() { Id = "Manufactured Materials from GIIS" };
             foreach (var il in ItemLot.GetItemLotList())
             {
@@ -1178,21 +1190,23 @@ namespace OizDevTool
             Console.WriteLine("Exporting GIIS Facilities to OpenIZ IMS Format");
             DatasetInstall facilityDataset = new DatasetInstall() { Action = new List<DataInstallAction>() };
             facilityDataset.Id = "Facilities from GIIS";
-            foreach (var itm in HealthFacility.GetHealthFacilityList().OrderBy(o => o.Id))
-                facilityDataset.Action.Add(new DataInsert()
-                {
-                    Element = MapFacility(itm)
-                });
+            if (!parms.SkipFacilities)
+                foreach (var itm in HealthFacility.GetHealthFacilityList().OrderBy(o => o.Id))
+                    facilityDataset.Action.Add(new DataInsert()
+                    {
+                        Element = MapFacility(itm)
+                    });
 
             // Places
             Console.WriteLine("Exporting GIIS Places to OpenIZ IMS Format");
             DatasetInstall placeDataset = new DatasetInstall() { Action = new List<DataInstallAction>() };
             placeDataset.Id = "Places from GIIS";
-            foreach (var itm in GIIS.DataLayer.Place.GetPlaceList().OrderBy(o => o.ParentId))
-                placeDataset.Action.Add(new DataInsert()
-                {
-                    Element = MapPlace(itm)
-                });
+            if (!parms.SkipPlaces)
+                foreach (var itm in GIIS.DataLayer.Place.GetPlaceList().OrderBy(o => o.ParentId))
+                    placeDataset.Action.Add(new DataInsert()
+                    {
+                        Element = MapPlace(itm)
+                    });
 
             DBManager.ExecuteNonQueryCommand("UPDATE \"USER\" SET \"LASTLOGIN\" = NULL WHERE \"LASTLOGIN\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
             DBManager.ExecuteNonQueryCommand("UPDATE \"USER\" SET \"PREVLOGIN\" = NULL WHERE \"PREVLOGIN\" = '-infinity'", System.Data.CommandType.Text, new List<Npgsql.NpgsqlParameter>());
@@ -1204,134 +1218,134 @@ namespace OizDevTool
             roleMap.Add(Role.GetRoleByName("Vaccinator").Id, Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434"));
             roleMap.Add(Role.GetRoleByName("Administrator").Id, Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"));
 
-
-            foreach (var itm in User.GetUserList())
-            {
-                if (userDataset.Action.Any(o => (o.Element as SecurityUser)?.UserName.Trim().ToLower() == itm.Username.Trim().ToLower()) ||
-                    itm.Username.ToLower() == "administrator")
-                    continue; /// Apparently user names are distinct based on case?
-                Guid userId = Guid.NewGuid(), entityId = Guid.NewGuid();
-                userMap.Add(itm.Id, userId);
-
-                if (!userEntityMap.TryGetValue(itm.Id, out entityId))
+            if (!parms.SkipUsers)
+                foreach (var itm in User.GetUserList())
                 {
-                    entityId = Guid.NewGuid();
-                    userEntityMap.Add(itm.Id, entityId);
-                }
-                var securityUser = new SecurityUser()
-                {
-                    Key = userId,
-                    UserName = itm.Username,
-                    Email = itm.Email,
-                    EmailConfirmed = !String.IsNullOrEmpty(itm.Email),
-                    LastLoginTime = itm.Lastlogin,
-                    SecurityHash = Guid.Empty.ToString(),
-                    Lockout = itm.IsActive ? null :(DateTime?) DateTime.Parse("9999-12-31T23:59:59.9999999Z"),
-                    PasswordHash = BitConverter.ToString(Convert.FromBase64String(itm.Password)).Replace("-", ""),
-                    UserClass = UserClassKeys.HumanUser,
-                    TwoFactorEnabled = false,
-                    ObsoletionTime = itm.Deleted ? (DateTime?)DateTime.Now : null,
-                    ObsoletedByKey = itm.Deleted ? (Guid?)Guid.Parse(AuthenticationContext.SystemUserSid) : null,
-                };
-                var userEntity = new UserEntity()
-                {
-                    Key = entityId,
-                    Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, itm.Lastname, itm.Firstname) },
+                    if (userDataset.Action.Any(o => (o.Element as SecurityUser)?.UserName.Trim().ToLower() == itm.Username.Trim().ToLower()) ||
+                        itm.Username.ToLower() == "administrator")
+                        continue; /// Apparently user names are distinct based on case?
+                    Guid userId = Guid.NewGuid(), entityId = Guid.NewGuid();
+                    userMap.Add(itm.Id, userId);
 
-                    SecurityUserKey = userId,
-                    Identifiers = new List<EntityIdentifier>()
+                    if (!userEntityMap.TryGetValue(itm.Id, out entityId))
+                    {
+                        entityId = Guid.NewGuid();
+                        userEntityMap.Add(itm.Id, entityId);
+                    }
+                    var securityUser = new SecurityUser()
+                    {
+                        Key = userId,
+                        UserName = itm.Username,
+                        Email = itm.Email,
+                        EmailConfirmed = !String.IsNullOrEmpty(itm.Email),
+                        LastLoginTime = itm.Lastlogin,
+                        SecurityHash = Guid.Empty.ToString(),
+                        Lockout = itm.IsActive ? null : (DateTime?)DateTime.Parse("9999-12-31T23:59:59.9999999Z"),
+                        PasswordHash = BitConverter.ToString(Convert.FromBase64String(itm.Password)).Replace("-", ""),
+                        UserClass = UserClassKeys.HumanUser,
+                        TwoFactorEnabled = false,
+                        ObsoletionTime = itm.Deleted ? (DateTime?)DateTime.Now : null,
+                        ObsoletedByKey = itm.Deleted ? (Guid?)Guid.Parse(AuthenticationContext.SystemUserSid) : null,
+                    };
+                    var userEntity = new UserEntity()
+                    {
+                        Key = entityId,
+                        Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, itm.Lastname, itm.Firstname) },
+
+                        SecurityUserKey = userId,
+                        Identifiers = new List<EntityIdentifier>()
                             {
                                 new EntityIdentifier(new AssigningAuthority("GIIS_USER_ID", "GIIS User Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.15"), itm.Id.ToString())
                             },
-                    Tags = new List<EntityTag>()
+                        Tags = new List<EntityTag>()
                             {
                                 new EntityTag("http://openiz.org/tags/contrib/importedData", "true")
                             },
-                    StatusConceptKey = itm.IsActive ? StatusKeys.Active : StatusKeys.Obsolete
+                        StatusConceptKey = itm.IsActive ? StatusKeys.Active : StatusKeys.Obsolete
 
-                };
-                if (!String.IsNullOrEmpty(itm.Email))
-                    userEntity.Telecoms = new List<EntityTelecomAddress>() { new EntityTelecomAddress(TelecomAddressUseKeys.WorkPlace, itm.Email) };
+                    };
+                    if (!String.IsNullOrEmpty(itm.Email))
+                        userEntity.Telecoms = new List<EntityTelecomAddress>() { new EntityTelecomAddress(TelecomAddressUseKeys.WorkPlace, itm.Email) };
 
-                Guid facilityId = Guid.Empty;
-                if (facilityMap.TryGetValue(itm.HealthFacilityId, out facilityId))
-                    userEntity.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, new Entity() { Key = facilityId }));
+                    Guid facilityId = Guid.Empty;
+                    if (facilityMap.TryGetValue(itm.HealthFacilityId, out facilityId))
+                        userEntity.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, new Entity() { Key = facilityId }));
 
-                // data element 
-                var securityUserData = new DataInsert()
-                {
-                    Element = securityUser,
-                    Association = new List<DataAssociation>()
-                };
-
-                // Role
-                foreach (var r in Role.GetRolesOfUser(itm.Id))
-                {
-                    Guid roleId = Guid.Empty;
-                    if (!roleMap.TryGetValue(r.Id, out roleId))
+                    // data element 
+                    var securityUserData = new DataInsert()
                     {
-                        roleId = Guid.NewGuid();
-                        roleMap.Add(r.Id, roleId);
-                    }
-
-                    var role = new SecurityRole()
-                    {
-                        Key = roleId,
-                        Name = r.Name,
-                        ObsoletionTime = r.IsActive ? null : (DateTime?)DateTime.Now,
-                        ObsoletedByKey = r.IsActive ? null : (Guid?)Guid.Parse(AuthenticationContext.SystemUserSid)
+                        Element = securityUser,
+                        Association = new List<DataAssociation>()
                     };
 
-                    // Add roles to the user
-                    securityUserData.Association.Add(new DataAssociation()
+                    // Role
+                    foreach (var r in Role.GetRolesOfUser(itm.Id))
                     {
-                        PropertyName = "Roles",
-                        Element = new SecurityRole() { Key = role.Key }
-                    });
-
-                    // Add role
-                    if (role.Key != Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434") &&
-                        role.Key != Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"))
-                        userDataset.Action.Add(new DataInsert()
+                        Guid roleId = Guid.Empty;
+                        if (!roleMap.TryGetValue(r.Id, out roleId))
                         {
-                            Element = role
+                            roleId = Guid.NewGuid();
+                            roleMap.Add(r.Id, roleId);
+                        }
+
+                        var role = new SecurityRole()
+                        {
+                            Key = roleId,
+                            Name = r.Name,
+                            ObsoletionTime = r.IsActive ? null : (DateTime?)DateTime.Now,
+                            ObsoletedByKey = r.IsActive ? null : (Guid?)Guid.Parse(AuthenticationContext.SystemUserSid)
+                        };
+
+                        // Add roles to the user
+                        securityUserData.Association.Add(new DataAssociation()
+                        {
+                            PropertyName = "Roles",
+                            Element = new SecurityRole() { Key = role.Key }
                         });
 
-                    // Vaccinator?
-                    if (r.Name == "Vaccinator")
-                    {
+                        // Add role
+                        if (role.Key != Guid.Parse("43167DCB-6F77-4F37-8222-133E675B4434") &&
+                            role.Key != Guid.Parse("f6d2ba1d-5bb5-41e3-b7fb-2ec32418b2e1"))
+                            userDataset.Action.Add(new DataInsert()
+                            {
+                                Element = role
+                            });
 
-                        // Provider entity
-                        var providerEntity = new Provider()
+                        // Vaccinator?
+                        if (r.Name == "Vaccinator")
                         {
-                            Key = Guid.NewGuid(),
-                            Names = userEntity.Names,
-                            Telecoms = userEntity.Telecoms,
-                            Identifiers = userEntity.Identifiers.Select(o => new EntityIdentifier(new AssigningAuthority("PROVIDER_ID", "TImR Assigned Provider ID", "1.3.6.1.4.1.<<YOUR.PEN>>.16"), o.Value)).ToList(),
-                            Tags = new List<EntityTag>()
+
+                            // Provider entity
+                            var providerEntity = new Provider()
+                            {
+                                Key = Guid.NewGuid(),
+                                Names = userEntity.Names,
+                                Telecoms = userEntity.Telecoms,
+                                Identifiers = userEntity.Identifiers.Select(o => new EntityIdentifier(new AssigningAuthority("PROVIDER_ID", "TImR Assigned Provider ID", "1.3.6.1.4.1.<<YOUR.PEN>>.16"), o.Value)).ToList(),
+                                Tags = new List<EntityTag>()
                             {
                                 new EntityTag("http://openiz.org/tags/contrib/importedData", "true")
                             },
-                            StatusConceptKey = itm.IsActive ? StatusKeys.Active : StatusKeys.Obsolete
-                        };
-                        userDataset.Action.Add(new DataInsert() { Element = providerEntity });
+                                StatusConceptKey = itm.IsActive ? StatusKeys.Active : StatusKeys.Obsolete
+                            };
+                            userDataset.Action.Add(new DataInsert() { Element = providerEntity });
 
-                        // Create a heath care provider
-                        userEntity.Relationships.Add(new EntityRelationship()
-                        {
-                            RelationshipTypeKey = EntityRelationshipTypeKeys.AssignedEntity,
-                            TargetEntityKey = providerEntity.Key
-                        });
+                            // Create a heath care provider
+                            userEntity.Relationships.Add(new EntityRelationship()
+                            {
+                                RelationshipTypeKey = EntityRelationshipTypeKeys.AssignedEntity,
+                                TargetEntityKey = providerEntity.Key
+                            });
+                        }
                     }
+
+
+                    userDataset.Action.Add(securityUserData);
+                    userDataset.Action.Add(new DataInsert()
+                    {
+                        Element = userEntity
+                    });
                 }
-
-
-                userDataset.Action.Add(securityUserData);
-                userDataset.Action.Add(new DataInsert()
-                {
-                    Element = userEntity
-                });
-            }
 
 
 
