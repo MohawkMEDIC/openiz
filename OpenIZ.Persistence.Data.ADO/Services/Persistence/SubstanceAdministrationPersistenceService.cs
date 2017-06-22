@@ -26,6 +26,7 @@ using OpenIZ.OrmLite;
 using System;
 using System.Linq;
 using System.Security.Principal;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -63,7 +64,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Acts.SubstanceAdministration InsertInternal(DataContext context, Core.Model.Acts.SubstanceAdministration data, IPrincipal principal)
         {
             if(data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context, principal) as Concept;
-            if(data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
+            if (data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
+            else
+                data.RouteKey = NullReasonKeys.NoInformation;
+
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
             return base.InsertInternal(context, data, principal);
@@ -77,6 +81,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if (data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context, principal) as Concept;
             if (data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
+            else
+                data.RouteKey = NullReasonKeys.NoInformation;
+
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
             return base.UpdateInternal(context, data, principal);
