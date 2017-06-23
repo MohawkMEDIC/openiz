@@ -315,17 +315,37 @@ namespace OizDevTool
             return VaccinationEvent.GetChildVaccinationEvent(child.Id).Where(o => o.NonvaccinationReasonId != 0 || o.VaccinationStatus).AsParallel().Select(o =>
             {
 
-                String matId = null;
-                if (!m_cachedDose.TryGetValue(o.VaccineLotId, out matId))
-                {
-                    matId = o.Dose.ScheduledVaccination.Item.Code;
-                    lock (m_cachedDose)
-                        if (!m_cachedDose.ContainsKey(o.VaccineLotId))
-                            m_cachedDose.Add(o.VaccineLotId, matId);
-                }
-
                 try
                 {
+                    String matId = null;
+                    if (!m_cachedDose.TryGetValue(o.DoseId, out matId))
+                    {
+                        var ds = Dose.GetDoseById(o.DoseId);
+                        if (ds == null)
+                            throw new KeyNotFoundException($"Dose {o.DoseId}");
+                        var sv = ScheduledVaccination.GetScheduledVaccinationById(ds.ScheduledVaccinationId);
+                        if (sv == null)
+                            throw new KeyNotFoundException($"ScheduledVaccination {o.DoseId}");
+
+                        var itm = Item.GetItemById(sv.ItemId);
+                        if (itm == null)
+                            throw new KeyNotFoundException($"Item {sv.ItemId}");
+
+                        matId = itm.Code;
+                        lock (m_cachedDose)
+                            if (!m_cachedDose.ContainsKey(o.DoseId))
+                                m_cachedDose.Add(o.DoseId, matId);
+                    }
+
+                    if (o.VaccineLotId > 0 && !manufacturedMaterialMap.ContainsKey(o.VaccineLotId))
+                        throw new KeyNotFoundException($"ManufacturedMaterial - ?>> {o.VaccineLotId}");
+                    if (!materialMap.ContainsKey(matId))
+                        throw new KeyNotFoundException($"Material - ?>> {matId}");
+                    if (o.NonvaccinationReasonId > 0 && !nonVaccinationReasonMap.ContainsKey(o.NonVaccinationReason.Code))
+                        throw new KeyNotFoundException($"NullReason - ?>> {o.NonVaccinationReason.Code}");
+                    if (!facilityMap.ContainsKey(o.HealthFacilityId))
+                        throw new KeyNotFoundException($"Place - ?>> {o.HealthFacilityId}");
+
                     var retVal = new SubstanceAdministration()
                     {
                         Key = Guid.NewGuid(),
@@ -349,15 +369,23 @@ namespace OizDevTool
                     new ActParticipation(ActParticipationKey.RecordTarget, patient.Key.Value),
                     o.VaccineLotId <= 0 ? null : new ActParticipation(ActParticipationKey.Consumable, manufacturedMaterialMap[o.VaccineLotId]),
                     o.Dose?.ScheduledVaccination?.ItemId == null ? null : new ActParticipation(ActParticipationKey.Product, materialMap[matId]),
-                    userEntityMap[o.ModifiedBy] != Guid.Empty ? new ActParticipation(ActParticipationKey.Authororiginator, userEntityMap[o.ModifiedBy]) : null
+                    userEntityMap.ContainsKey(o.ModifiedBy) && userEntityMap[o.ModifiedBy] != Guid.Empty ? new ActParticipation(ActParticipationKey.Authororiginator, userEntityMap[o.ModifiedBy]) : null
                 }
                     };
+
+                    if (o.Dose.Fullname.Contains("BCG"))
+                        retVal.SequenceId = 0;
+
+                    // In cacthment tag
+                    if (o.HealthFacilityId != o.Child.HealthcenterId)
+                        retVal.Tags.Add(new ActTag("catchmentIndicator", "False"));
+
                     retVal.Participations.RemoveAll(n => n == null);
                     return retVal;
                 }
                 catch (Exception e)
                 {
-                    Console.Error.WriteLine("Error: Data consistency issue on vaccination record {0}, skipping", o.Id);
+                    Console.Error.WriteLine("Error: Data consistency issue on vaccination record {0}, skipping - {1}", o.Id, e.Message);
                     return null;
                 }
             }).ToList();
@@ -579,14 +607,15 @@ namespace OizDevTool
 
                 // first add stock relationship
                 var itml = ItemLot.GetItemLotByGtinAndLotNo(itm.Gtin, itm.LotNumber);
-                var mmat = materialMap[itml.ItemObject.Code];
+                var mat = materialMap[itml.ItemObject.Code];
+                var mmat = manufacturedMaterialMap[itml.Id];
                 if (itml.ExpireDate < DateTime.Now)
                     continue;
 
                 retVal.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.OwnedEntity, mmat) { Quantity = (int)0 });
                 stockPolicyObject.Add(new
                 {
-                    MaterialEntityId = mmat,
+                    MaterialEntityId = mat,
                     ReorderQuantity = stockPolicy?.ReorderQty,
                     SafetyQuantity = stockPolicy?.SafetyStock,
                     AMC = 0,
@@ -775,7 +804,7 @@ namespace OizDevTool
 
             Console.WriteLine("Map OpenIZ Places...");
             placeEntityMap = places.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_PLCID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
-            //facilityMap = facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
+            facilityMap = facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
             facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", ""))).Id, o => o.Key.Value);
 
             Console.WriteLine("Map OpenIZ Materials...");
@@ -864,7 +893,7 @@ namespace OizDevTool
 
                     int bdone = (int)(pdone * (Console.WindowWidth - 55) / 2);
                     Console.CursorLeft = 2;
-                    Console.Write("Child: {0} > {1} [{2}{3}] [{4:#0}% - ETA:{5}] ", chld.Id, dbChild.Key,
+                    Console.Write("Child: {0} > {1} [{2}{3}] [{4:#0}% - ETA:{5}] ", chld.Id, dbChild.Key.ToString().Substring(0, 6),
                         Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
                         Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2) - bdone)) : "",
                         pdone * 100, remaining.ToString("mm'm 'ss's'"));
@@ -908,7 +937,7 @@ namespace OizDevTool
                             Console.CursorLeft = 2;
                             if ((int)(e.Progress * 200) != lastPerc)
                             {
-                                Console.Write("DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", (e.State as IIdentifiedEntity)?.Key.Value,
+                                Console.Write("DB: {0} [{1}{2}] [{3:#0}% - ETA:{4}] ", (e.State as IIdentifiedEntity)?.Key.Value.ToString().Substring(0, 6),
                                        Console.WindowWidth - 55 > 2 ? new String('=', bdone) : "",
                                        Console.WindowWidth - 55 > 2 ? new String(' ', (int)(((Console.WindowWidth - 55) / 2) - bdone)) : "",
                                        pdone * 100, remaining.ToString("mm'm 'ss's'"));
@@ -935,20 +964,19 @@ namespace OizDevTool
             if (!parms.LiveMigration)
             {
 
-                XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
-                using (var fs = File.Create(Path.Combine(parms.OutputDirectory, "990-GIIS.authorities.dataset")))
-                    xsz.Serialize(fs, new DatasetInstall()
-                    {
-                        Action = resultSet.Action
+                resultSet.Action.InsertRange(0, resultSet.Action.ToArray()
                         .Where(o => o.Element is Entity || o.Element is Act)
                         .Select(o =>
                             (o.Element as Entity)?.Identifiers?.Select(a => a?.Authority) ?? (o.Element as Act)?.Identifiers?.Select(a => a?.Authority)
                         ).SelectMany(o => o).Where(o => o != null).Distinct(new AuthorityComparer()).Select(a => new DataInsert()
                         {
+                            IgnoreErrors = true,
                             SkipIfExists = true,
                             Element = a
-                        }).OfType<DataInstallAction>().ToList()
-                    });
+                        }).OfType<DataInstallAction>());
+
+
+                XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
 
                 using (var fs = File.Create(Path.Combine(parms.OutputDirectory, $"999-Facility-{String.Join("-", parms.FacilityId.OfType<String>().ToArray())}.dataset")))
                     xsz.Serialize(fs, resultSet);

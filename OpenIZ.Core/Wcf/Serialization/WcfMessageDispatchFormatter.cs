@@ -41,6 +41,7 @@ using System.Diagnostics;
 using OpenIZ.Core.Model.Collection;
 using Newtonsoft.Json.Converters;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Wcf.Compression;
 
 namespace OpenIZ.Core.Wcf.Serialization
 {
@@ -165,6 +166,7 @@ namespace OpenIZ.Core.Wcf.Serialization
 					// Use JSON Serializer
 					else if (contentType?.StartsWith("application/json") == true)
                     {
+
                         // Read the binary contents form the WCF pipeline
                         XmlDictionaryReader bodyReader = request.GetReaderAtBodyContents();
                         bodyReader.ReadStartElement("Binary");

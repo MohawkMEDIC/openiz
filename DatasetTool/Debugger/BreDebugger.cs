@@ -211,16 +211,16 @@ namespace OizDevTool.Debugger
                 return StepMode.Into;
         }
 
-        [DebuggerCommand("ob", "Sets the break output to block mode")]
+        [Command("ob", "Sets the break output to block mode")]
         public void OutputBlock() => this.m_blocPrint = true;
 
-        [DebuggerCommand("ol", "Sets the break output to line mode")]
+        [Command("ol", "Sets the break output to line mode")]
         public void OutputLine() => this.m_blocPrint = false;
 
         /// <summary>
         /// Loads a script to be debugged
         /// </summary>
-        [DebuggerCommand("o", "Open a script file to be debugged")]
+        [Command("o", "Open a script file to be debugged")]
         public void LoadScript(String file)
         {
             if (!Path.IsPathRooted(file))
@@ -242,7 +242,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Loads a script to be debugged
         /// </summary>
-        [DebuggerCommand("x", "Executes the loaded file")]
+        [Command("x", "Executes the loaded file")]
         public void Execute()
         {
             // Exec = continue execution
@@ -275,7 +275,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Loads a script to be debugged
         /// </summary>
-        [DebuggerCommand("x", "Loads and executes the specified file")]
+        [Command("x", "Loads and executes the specified file")]
         public void Execute(String file)
         {
             this.LoadScript(file);
@@ -285,7 +285,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set a breakpoint
         /// </summary>
-        [DebuggerCommand("gn", "Go until next breakpoint")]
+        [Command("gn", "Go until next breakpoint")]
         public void GoNext()
         {
             this.StepRegister(false);
@@ -304,7 +304,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set a breakpoint
         /// </summary>
-        [DebuggerCommand("gi", "Steps into the current line number")]
+        [Command("gi", "Steps into the current line number")]
         public void GoIn()
         {
             this.StepRegister(true);
@@ -325,7 +325,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set a breakpoint
         /// </summary>
-        [DebuggerCommand("go", "Steps over the current line number")]
+        [Command("go", "Steps over the current line number")]
         public void GoOver()
         {
             if (this.m_currentDebug != null)
@@ -346,7 +346,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set a breakpoint
         /// </summary>
-        [DebuggerCommand("gu", "Steps out of the current scope ")]
+        [Command("gu", "Steps out of the current scope ")]
         public void GoOut()
         {
             if (this.m_currentDebug != null)
@@ -367,7 +367,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump locals
         /// </summary>
-        [DebuggerCommand("dl", "Dumps local variables to console")]
+        [Command("dl", "Dumps local variables to console")]
         public void DumpLocals()
         {
             this.DumpLocals(null);
@@ -376,7 +376,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump locals
         /// </summary>
-        [DebuggerCommand("dl", "Dumps specified local variable to console")]
+        [Command("dl", "Dumps specified local variable to console")]
         public void DumpLocals(String id)
         {
             this.DumpLocals(id, null);
@@ -385,7 +385,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump locals
         /// </summary>
-        [DebuggerCommand("dl", "Dumps specified local variable path to console")]
+        [Command("dl", "Dumps specified local variable path to console")]
         public void DumpLocals(String id, String path)
         {
             this.ThrowIfNotDebugging();
@@ -415,7 +415,7 @@ namespace OizDevTool.Debugger
         /// Dump scope as json
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dlv", "Dumps local as ViewModel JSON to screen")]
+        [Command("dlv", "Dumps local as ViewModel JSON to screen")]
         public void DumpLocalsJson(String id)
         {
             this.DumpLocalsJson(id, null);
@@ -425,7 +425,7 @@ namespace OizDevTool.Debugger
         /// Dump scope
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dlv", "Dumps local as ViewModel JSON to screen")]
+        [Command("dlv", "Dumps local as ViewModel JSON to screen")]
         public void DumpLocalsJson(String id, String path)
         {
 
@@ -466,7 +466,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump locals
         /// </summary>
-        [DebuggerCommand("dg", "Dumps global variables to console")]
+        [Command("dg", "Dumps global variables to console")]
         public void DumpGlobals()
         {
             this.DumpGlobals(null);
@@ -475,7 +475,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump locals
         /// </summary>
-        [DebuggerCommand("dg", "Dumps specified global variable to console")]
+        [Command("dg", "Dumps specified global variable to console")]
         public void DumpGlobals(String id)
         {
             this.DumpGlobals(id, null);
@@ -484,7 +484,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump locals
         /// </summary>
-        [DebuggerCommand("dg", "Dumps specified global variable path to console")]
+        [Command("dg", "Dumps specified global variable path to console")]
         public void DumpGlobals(String id, String path)
         {
             this.ThrowIfNotDebugging();
@@ -514,7 +514,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump locals
         /// </summary>
-        [DebuggerCommand("cs", "Shows the current callstack")]
+        [Command("cs", "Shows the current callstack")]
         public void CallStack()
         {
             this.ThrowIfNotDebugging();
@@ -535,7 +535,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print line of code
         /// </summary>
-        [DebuggerCommand("pl", "Prints the current line of code")]
+        [Command("pl", "Prints the current line of code")]
         public void PrintLoc()
         {
             this.ThrowIfNotDebugging();
@@ -545,7 +545,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print block of code
         /// </summary>
-        [DebuggerCommand("pb", "Prints the current block of code")]
+        [Command("pb", "Prints the current block of code")]
         public void PrintBlock()
         {
             this.ThrowIfNotDebugging();
@@ -556,7 +556,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print block of code
         /// </summary>
-        [DebuggerCommand("pf", "Prints the current file in memory")]
+        [Command("pf", "Prints the current file in memory")]
         public void PrintFile()
         {
             this.PrintFile(null, null);
@@ -565,7 +565,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print file
         /// </summary>
-        [DebuggerCommand("pf", "Prints the current file in memory from the start-end lines")]
+        [Command("pf", "Prints the current file in memory from the start-end lines")]
         public void PrintFile(string start, string end)
         {
             String fileName = null;
@@ -601,7 +601,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("go.validate", "Executes the validator for the current scope object")]
+        [Command("go.validate", "Executes the validator for the current scope object")]
         public void ExecuteValidator()
         {
             this.ExecuteValidator(false, this.m_scopeObject?.GetType());
@@ -610,7 +610,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("gi.validate", "Steps into the validator for the current scope object casting it before running")]
+        [Command("gi.validate", "Steps into the validator for the current scope object casting it before running")]
         public void ExecuteStepValidator(string cast)
         {
             var t = Type.GetType(cast);
@@ -627,7 +627,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("go.validate", "Executes the validator for the current scope object casting it before running")]
+        [Command("go.validate", "Executes the validator for the current scope object casting it before running")]
         public void ExecuteValidator(string cast)
         {
             var t = Type.GetType(cast);
@@ -643,7 +643,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("gi.validate", "Steps into the validator for the current scope object")]
+        [Command("gi.validate", "Steps into the validator for the current scope object")]
         public void ExecuteStepValidator()
         {
             this.ExecuteValidator(true, this.m_scopeObject?.GetType());
@@ -699,7 +699,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("go.rule", "Executes the validator for the current scope object")]
+        [Command("go.rule", "Executes the validator for the current scope object")]
         public void ExecuteRule(String @event)
         {
             this.ExecuteRule(@event, false, this.m_scopeObject?.GetType());
@@ -708,7 +708,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("gi.rule", "Steps into the validator for the current scope object casting it before running")]
+        [Command("gi.rule", "Steps into the validator for the current scope object casting it before running")]
         public void ExecuteRule(String @event, string cast)
         {
             var t = Type.GetType(cast);
@@ -725,7 +725,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("go.rule", "Executes the validator for the current scope object casting it before running")]
+        [Command("go.rule", "Executes the validator for the current scope object casting it before running")]
         public void ExecuteStepRule(String @event, string cast)
         {
             var t = Type.GetType(cast);
@@ -741,7 +741,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Executes a validator
         /// </summary>
-        [DebuggerCommand("gi.rule", "Steps into the validator for the current scope object")]
+        [Command("gi.rule", "Steps into the validator for the current scope object")]
         public void ExecuteStepRule(String @event)
         {
             this.ExecuteRule(@event, true, this.m_scopeObject?.GetType());

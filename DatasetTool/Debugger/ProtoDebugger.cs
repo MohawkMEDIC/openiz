@@ -187,7 +187,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Loads a script to be debugged
         /// </summary>
-        [DebuggerCommand("o", "Adds a protocol file to the planner")]
+        [Command("o", "Adds a protocol file to the planner")]
         public void Add(String file)
         {
             if (!Path.IsPathRooted(file))
@@ -207,7 +207,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Clear protocol repository
         /// </summary>
-        [DebuggerCommand("c", "Clear the protocol repository")]
+        [Command("c", "Clear the protocol repository")]
         public void Clear()
         {
             ApplicationContext.Current.RemoveServiceProvider(typeof(ICarePlanService));
@@ -220,7 +220,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Loads a script to be debugged
         /// </summary>
-        [DebuggerCommand("od", "Adds all files dir to care planner")]
+        [Command("od", "Adds all files dir to care planner")]
         public void AddDir(String dir)
         {
             if (!Path.IsPathRooted(dir))
@@ -253,7 +253,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// List all protocols
         /// </summary>
-        [DebuggerCommand("pl", "Displays a list of clinical protocols that have been loaded in this session")]
+        [Command("pl", "Displays a list of clinical protocols that have been loaded in this session")]
         public void ListProtocols()
         {
             Console.WriteLine("ID#{0}NAME", new String(' ', 38));
@@ -265,7 +265,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set a breakpoint
         /// </summary>
-        [DebuggerCommand("go", "Runs the clinical protocols to construct a care plan")]
+        [Command("go", "Runs the clinical protocols to construct a care plan")]
         public object Run()
         {
 
@@ -290,7 +290,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set a breakpoint
         /// </summary>
-        [DebuggerCommand("go.encounter", "Runs the clinical protocols to construct a care plan as appointments")]
+        [Command("go.encounter", "Runs the clinical protocols to construct a care plan as appointments")]
         public object RunEncounter()
         {
 

@@ -45,8 +45,10 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 		/// <param name="endpointDispatcher">The endpoint dispatcher of the endpoint.</param>
 		public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
-			// Apply to each operation the AMI formatter
-			foreach (var op in endpoint.Contract.Operations)
+            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new AmiMessageInspector());
+
+            // Apply to each operation the AMI formatter
+            foreach (var op in endpoint.Contract.Operations)
 			{
 				op.OperationBehaviors.Add(new AmiSerializerOperationBehavior());
 			}

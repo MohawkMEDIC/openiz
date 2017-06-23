@@ -57,10 +57,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		// Trace source
 		private TraceSource traceSource = new TraceSource("OpenIZ.Messaging.AMI");
 
-		/// <summary>
-		/// Create a diagnostic report
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        /// <summary>
+        /// Perform a ping
+        /// </summary>
+        public void Ping()
+        {
+            WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
+        }
+
+        /// <summary>
+        /// Create a diagnostic report
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
 		public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
 		{
 			var persister = ApplicationContext.Current.GetService<IDataPersistenceService<DiagnosticReport>>();

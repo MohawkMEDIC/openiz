@@ -88,6 +88,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         IdentifiedData Options();
 
         /// <summary>
+        /// Ping the server
+        /// </summary>
+        [WebInvoke(UriTemplate = "/", Method = "PING", BodyStyle = WebMessageBodyStyle.Bare)]
+        void Ping();
+
+        /// <summary>
         /// Search for the specified resource type
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]

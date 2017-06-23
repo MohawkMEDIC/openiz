@@ -339,6 +339,22 @@ namespace OpenIZ.Messaging.IMSI.Client
         }
 
         /// <summary>
+        /// Perform a ping
+        /// </summary>
+        public bool Ping()
+        {
+            try
+            {
+                this.Client.Invoke<Object, Object>("PING", "/", null, null);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Gets the options for the IMS
         /// </summary>
         public ServiceOptions Options()

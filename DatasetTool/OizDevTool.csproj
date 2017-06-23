@@ -67,11 +67,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin.cs" />
     <Compile Include="Debugger\ProtoDebugger.cs" />
     <Compile Include="Debugger\BreDebugger.cs" />
     <Compile Include="Debugger\Debug.cs" />
     <Compile Include="Debugger\DebuggerBase.cs" />
-    <Compile Include="Debugger\DebuggerCommandAttribute.cs" />
+    <Compile Include="CommandAttribute.cs" />
+    <Compile Include="InteractiveBase.cs" />
     <Compile Include="Warehouse.cs" />
     <Compile Include="ExampleAttribute.cs" />
     <Compile Include="InteractiveAttribute.cs" />

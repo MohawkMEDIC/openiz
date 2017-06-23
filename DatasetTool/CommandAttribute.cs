@@ -4,19 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OizDevTool.Debugger
+namespace OizDevTool
 {
     /// <summary>
     /// Represents a debugger command 
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class DebuggerCommandAttribute : Attribute
+    public class CommandAttribute : Attribute
     {
 
         /// <summary>
         /// Ctore for debugger command
         /// </summary>
-        public DebuggerCommandAttribute(String cmd, String desc)
+        public CommandAttribute(String cmd, String desc)
         {
             this.Command = cmd;
             this.Description = desc;

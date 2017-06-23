@@ -115,7 +115,7 @@ namespace OpenIZ.Messaging.AMI
         {
             get
             {
-                var caps = ServiceEndpointCapabilities.None;
+                var caps = ServiceEndpointCapabilities.Compression;
                 if (this.m_webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication?.CustomUserNamePasswordValidator != null))
                     caps |= ServiceEndpointCapabilities.BasicAuth;
                 if (this.m_webHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
@@ -140,7 +140,9 @@ namespace OpenIZ.Messaging.AMI
 				foreach (ServiceEndpoint endpoint in this.m_webHost.Description.Endpoints)
 				{
 					this.tracer.TraceInformation("Starting AMI on {0}...", endpoint.Address);
-					endpoint.EndpointBehaviors.Add(new AmiRestEndpointBehavior());
+                    (endpoint.Binding as WebHttpBinding).ContentTypeMapper = new AmiContentTypeHandler();
+
+                    endpoint.EndpointBehaviors.Add(new AmiRestEndpointBehavior());
 					endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
 				}
 

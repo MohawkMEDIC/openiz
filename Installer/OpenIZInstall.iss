@@ -124,6 +124,7 @@ Source: ..\bin\Release\OpenIZ.Core.Alert.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.Model.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.dll; DestDir: {app}; Components: core
 Source: ..\bin\release\OpenIZ.exe; DestDir: {app}; Components: core
+Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}; Components: core
 
 ; AMI
 Source: ..\Solution Items\MARC.Util.CertificateTools.dll; DestDir: {app}; Components: msg\ami

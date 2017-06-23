@@ -78,7 +78,7 @@ namespace OpenIZ.Core.Wcf.Security
                 String authorization = httpMessage.Headers[System.Net.HttpRequestHeader.Authorization];
                 if (authorization == null)
                 {
-                    if (httpMessage.Method == "OPTIONS")
+                    if (httpMessage.Method == "OPTIONS" || httpMessage.Method == "PING")
                     {
                         //operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Identities"] = identities;
                         operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Principal"] = Core.Security.AuthenticationContext.AnonymousPrincipal;
@@ -87,7 +87,10 @@ namespace OpenIZ.Core.Wcf.Security
                         return true; // OPTIONS is non PHI infrastructural
                     }
                     else
+                    {
+
                         throw new UnauthorizedRequestException("Missing Authorization header", "Bearer", this.m_configuration.Security.ClaimsAuth.Realm, this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
+                    }
                 }
                 else if (!authorization.Trim().StartsWith("bearer", StringComparison.InvariantCultureIgnoreCase))
                     throw new UnauthorizedRequestException("Invalid authentication scheme", "Bearer", this.m_configuration.Security.ClaimsAuth.Realm, this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());

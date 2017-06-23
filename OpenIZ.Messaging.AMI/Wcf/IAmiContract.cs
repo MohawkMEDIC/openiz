@@ -98,6 +98,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	public interface IAmiContract
 	{
 
+        /// <summary>
+        /// Ping the service to determine up/down
+        /// </summary>
+        [WebInvoke(UriTemplate = "/", Method = "PING")]
+        void Ping();
+
 		/// <summary>
 		/// Accepts a certificate signing request.
 		/// </summary>

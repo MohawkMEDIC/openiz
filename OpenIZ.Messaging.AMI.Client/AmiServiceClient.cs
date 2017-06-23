@@ -99,12 +99,28 @@ namespace OpenIZ.Messaging.AMI.Client
 			}
 		}
 
-		/// <summary>
-		/// Creates a security application.
-		/// </summary>
-		/// <param name="applicationInfo">The security application to be created.</param>
-		/// <returns>Returns the created security application.</returns>
-		public SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo)
+        /// <summary>
+        /// Perform a ping
+        /// </summary>
+        public bool Ping()
+        {
+            try
+            {
+                this.Client.Invoke<Object, Object>("PING", "/", null, null);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Creates a security application.
+        /// </summary>
+        /// <param name="applicationInfo">The security application to be created.</param>
+        /// <returns>Returns the created security application.</returns>
+        public SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo)
 		{
 			return this.Client.Post<SecurityApplicationInfo, SecurityApplicationInfo>("application", this.Client.Accept, applicationInfo);
 		}

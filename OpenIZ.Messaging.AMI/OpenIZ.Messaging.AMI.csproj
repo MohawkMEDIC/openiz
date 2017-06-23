@@ -49,6 +49,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
@@ -80,6 +81,8 @@
     <Compile Include="Wcf\Behavior\AmiRestEndpointBehavior.cs" />
     <Compile Include="Wcf\Behavior\AmiSerializerOperationBehavior.cs" />
     <Compile Include="Wcf\IAmiContract.cs" />
+    <Compile Include="Wcf\AmiMessageInspector.cs" />
+    <Compile Include="Wcf\AmiContentTypeHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Alert\OpenIZ.Core.Alert.csproj">

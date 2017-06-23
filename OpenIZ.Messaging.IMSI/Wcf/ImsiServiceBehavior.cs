@@ -80,6 +80,14 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         private Dictionary<Object, Object> m_loadCache = new Dictionary<Object, Object>();
 
         /// <summary>
+        /// Ping the server
+        /// </summary>
+        public void Ping()
+        {
+            WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
+        }
+
+        /// <summary>
         /// Create the specified resource
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]

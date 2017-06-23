@@ -25,14 +25,12 @@ namespace OizDevTool.Debugger
     /// <summary>
     /// Debugger base
     /// </summary>
-    public abstract class DebuggerBase
+    public abstract class DebuggerBase : InteractiveBase
     {
         // Exit debugger
         private bool m_exitRequested = false;
 
-        // Current scope
-        protected object m_scopeObject = null;
-
+    
         private bool m_fullStack = false;
 
 
@@ -68,7 +66,6 @@ namespace OizDevTool.Debugger
         };
 
         protected string m_workingDirectory;
-        protected string m_prompt = "dbg >";
         private ConsoleColor m_promptColor = Console.ForegroundColor;
 
         /// <summary>
@@ -76,31 +73,16 @@ namespace OizDevTool.Debugger
         /// </summary>
         public DebuggerBase(string workingDir)
         {
+            this.m_prompt = "dbg >";
             this.m_workingDirectory = workingDir ?? Environment.CurrentDirectory;
             this.Breakpoints = new List<int>();
         }
 
-        /// <summary>
-        /// Get response color
-        /// </summary>
-        protected ConsoleColor GetResponseColor()
-        {
-            return this.m_promptColor != ConsoleColor.Blue ? ConsoleColor.Blue : ConsoleColor.Red;
-        }
-
-        /// <summary>
-        /// Prompt
-        /// </summary>
-        protected void Prompt()
-        {
-            Console.ForegroundColor = this.m_promptColor;
-            Console.Write(this.m_prompt);
-        }
 
         /// <summary>
         /// Print stack
         /// </summary>
-        protected void PrintStack(Exception e)
+        protected override void PrintStack(Exception e)
         {
             if (!this.m_fullStack)
             {
@@ -124,86 +106,15 @@ namespace OizDevTool.Debugger
 
             Console.CursorVisible = true;
             EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
-            Console.WriteLine("{0} for help use ?", this.GetType().GetCustomAttribute<DescriptionAttribute>()?.Description ?? this.GetType().Name);
             Console.WriteLine("Working Directory: {0}", this.m_workingDirectory);
-
-            var col = Console.ForegroundColor;
-
-            // Now drop to a command prompt
-            while (!m_exitRequested)
-            {
-                this.Prompt();
-                var cmd = Console.ReadLine();
-
-                Console.ForegroundColor = this.GetResponseColor();
-                if (String.IsNullOrEmpty(cmd)) continue;
-
-                // Get tokens / parms
-                var tokens = cmd.Split(' ').ToArray();
-                List<String> tToken = new List<string>() { tokens[0] };
-                String sstr = String.Empty;
-                foreach (var tkn in tokens.Skip(1))
-                {
-                    if (tkn.StartsWith("'") && tkn.EndsWith("'"))
-                        tToken.Add(tkn.Substring(1, tkn.Length - 2));
-                    else if (tkn.StartsWith("'"))
-                        sstr = tkn.Substring(1);
-                    else if (sstr != String.Empty && tkn.EndsWith("'"))
-                    {
-                        sstr += " " + tkn.Substring(0, tkn.Length - 1);
-                        tToken.Add(sstr);
-                        sstr = String.Empty;
-                    }
-                    else if (sstr != String.Empty)
-                        sstr += " " + tkn;
-                    else
-                        tToken.Add(tkn);
-                }
-                tokens = tToken.ToArray();
-
-                // Get tokens
-                var cmdMi = this.GetType().GetMethods().Where(o => o.GetCustomAttribute<DebuggerCommandAttribute>()?.Command == tokens[0] && o.GetParameters().Length == tokens.Length - 1).FirstOrDefault();
-                if (cmdMi == null)
-                    Console.Error.WriteLine("ERR: Command {0} with {1} parms not found", tokens[0], tokens.Length - 1);
-                else
-                {
-                    var parmValues = tokens.Length > 1 ? tokens.OfType<Object>().Skip(1).ToArray() : null;
-
-                    try
-                    {
-                        if (cmdMi.ReturnType == typeof(void))
-                            cmdMi.Invoke(this, parmValues);
-                        else
-                            this.m_scopeObject = cmdMi.Invoke(this, parmValues);
-                    }
-                    catch (Exception e)
-                    {
-                        this.PrintStack(e);
-                    }
-                }
-
-                Console.ForegroundColor = col;
-            }
-        }
-
-        [DebuggerCommand("say", "")]
-        public void BeaverSay(String phrase)
-        {
-            String[] beaver = { "       .-\"\"\"-.__   ", "      /      ' o'\\", "   ,-;  '.  :   _c", "  :_.\"\\._ ) ::-", "         \"\"m \"m" };
-            String[] bubble = { $"\t/{new String('-', phrase.Length + 4)}\\", $"\t|  {phrase}  |", $"\t\\{new String('-', phrase.Length + 4)}/" };
-
-
-            foreach (var itm in bubble)
-                Console.WriteLine(itm);
-            foreach (var itm in beaver)
-                Console.WriteLine(itm);
-
+            base.Exec();
+          
         }
 
         /// <summary>
         /// Output full stack
         /// </summary>
-        [DebuggerCommand("ofs", "Enables printing of full stack traces")]
+        [Command("ofs", "Enables printing of full stack traces")]
         public void OutputFullStack()
         {
             this.m_fullStack = !this.m_fullStack;
@@ -213,7 +124,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print working directory
         /// </summary>
-        [DebuggerCommand("pwd", "Prints the current working directory")]
+        [Command("pwd", "Prints the current working directory")]
         public void PrintWorkingDirectory()
         {
             Console.WriteLine(this.m_workingDirectory);
@@ -222,7 +133,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print data query
         /// </summary>
-        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        [Command("pdq", "Prints the result of a data query")]
         public void PrintDataQuery(String type, String qry)
         {
             this.PrintDataQuery(type, qry, null, null);
@@ -231,7 +142,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print data query
         /// </summary>
-        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        [Command("pdq", "Prints the result of a data query")]
         public void PrintDataQuery(String type, String qry, String skip, String take)
         {
             this.PrintDataQuery(type, qry, skip, take, null);
@@ -240,7 +151,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print data query
         /// </summary>
-        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        [Command("pdq", "Prints the result of a data query")]
         public void PrintDataQuery(String type, String qry, String path)
         {
             this.PrintDataQuery(type, qry, null, null, path);
@@ -248,7 +159,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Print data query
         /// </summary>
-        [DebuggerCommand("pdq", "Prints the result of a data query")]
+        [Command("pdq", "Prints the result of a data query")]
         public void PrintDataQuery(String type, String qry, String skip, String take, String path)
         {
             var t = Type.GetType(type);
@@ -282,7 +193,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Changes working directory
         /// </summary>
-        [DebuggerCommand("cd", "Changes the working directory")]
+        [Command("cd", "Changes the working directory")]
         public void ChangeWorkingDirectory(String dir)
         {
             if (dir == "..")
@@ -302,7 +213,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Changes working directory
         /// </summary>
-        [DebuggerCommand("ls", "List files in the working directory")]
+        [Command("ls", "List files in the working directory")]
         public void ListWorkingDirectory()
         {
             this.ListWorkingDirectory(null);
@@ -311,7 +222,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// List working directory
         /// </summary>
-        [DebuggerCommand("ls", "List files in the directory relative to the working directory")]
+        [Command("ls", "List files in the directory relative to the working directory")]
         public void ListWorkingDirectory(String dir)
         {
 
@@ -350,7 +261,7 @@ namespace OizDevTool.Debugger
         /// Set breakpoint
         /// </summary>
         /// <param name="ln"></param>
-        [DebuggerCommand("b", "Sets a breakpoint on the specified line")]
+        [Command("b", "Sets a breakpoint on the specified line")]
         public void BreakpointSet(String line)
         {
             this.Breakpoints.Add(Int32.Parse(line));
@@ -359,7 +270,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set breakpoint
         /// </summary>
-        [DebuggerCommand("bl", "Lists all set breakpoints")]
+        [Command("bl", "Lists all set breakpoints")]
         public void BreakpointList()
         {
             foreach (var itm in this.Breakpoints)
@@ -369,7 +280,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set breakpoint
         /// </summary>
-        [DebuggerCommand("bd", "Deletes the breakpoint at the specified line")]
+        [Command("bd", "Deletes the breakpoint at the specified line")]
         public void BreakpointDelete(String line)
         {
             this.Breakpoints.Remove(Int32.Parse(line));
@@ -378,7 +289,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set breakpoint
         /// </summary>
-        [DebuggerCommand("bc", "Clears all breakpoints")]
+        [Command("bc", "Clears all breakpoints")]
         public void BreakpointClear()
         {
             this.Breakpoints.Clear();
@@ -388,7 +299,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set breakpoint
         /// </summary>
-        [DebuggerCommand("ss", "Sets the current scope of the debugger")]
+        [Command("ss", "Sets the current scope of the debugger")]
         public virtual object SetScope(String scope)
         {
             return scope;
@@ -397,7 +308,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set breakpoint
         /// </summary>
-        [DebuggerCommand("ss", "Sets the current scope of the debugger to the value")]
+        [Command("ss", "Sets the current scope of the debugger to the value")]
         public virtual object SetScope(String type, String data)
         {
             var t = Type.GetType(type);
@@ -427,7 +338,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set scope json
         /// </summary>
-        [DebuggerCommand("sj", "Sets the current scope to an anonymous type from json")]
+        [Command("sj", "Sets the current scope to an anonymous type from json")]
         public object SetScopeJson(String json)
         {
             return JsonConvert.DeserializeObject(json, new JsonSerializerSettings()
@@ -441,7 +352,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set scope json
         /// </summary>
-        [DebuggerCommand("sfv", "Sets the current scope the contents of a JSON view model file")]
+        [Command("sfv", "Sets the current scope the contents of a JSON view model file")]
         public object SetScopeJsonFile(String type, String file)
         {
 
@@ -466,7 +377,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set scope json
         /// </summary>
-        [DebuggerCommand("sfj", "Sets the current scope the contents of a JSON file")]
+        [Command("sfj", "Sets the current scope the contents of a JSON file")]
         public object SetScopeJsonFile(String file)
         {
             var filePath = file;
@@ -484,7 +395,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set scope json
         /// </summary>
-        [DebuggerCommand("sfx", "Sets the current scope the contents of a XML file")]
+        [Command("sfx", "Sets the current scope the contents of a XML file")]
         public object SetScopeXmlFile(String type, String file)
         {
             var filePath = file;
@@ -510,7 +421,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Set scope to null
         /// </summary>
-        [DebuggerCommand("sn", "Sets the scope to null")]
+        [Command("sn", "Sets the scope to null")]
         public object ClearScope()
         {
             return null;
@@ -520,7 +431,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Clear screen
         /// </summary>
-        [DebuggerCommand("clear", "Clears the screen")]
+        [Command("clear", "Clears the screen")]
         public void ClearScreen()
         {
             Console.Clear();
@@ -529,7 +440,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump scope variable to screen
         /// </summary>
-        [DebuggerCommand("ps", "Prints scope to the screen")]
+        [Command("ps", "Prints scope to the screen")]
         public void PrintScope()
         {
             if (this.m_scopeObject == null)
@@ -545,7 +456,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump scope variable to screen
         /// </summary>
-        [DebuggerCommand("ds", "Dumps scope to the screen")]
+        [Command("ds", "Dumps scope to the screen")]
         public void DumpScope()
         {
             this.DumpScope(null);
@@ -554,7 +465,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Exchange scope
         /// </summary>
-        [DebuggerCommand("xs", "Exchanges the current scope for the vaue of a property on another scope")]
+        [Command("xs", "Exchanges the current scope for the vaue of a property on another scope")]
         public object ExchangeScope(String path)
         {
             return this.GetScopeObject(this.m_scopeObject, path);
@@ -563,7 +474,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Dump scope variable to screen
         /// </summary>
-        [DebuggerCommand("ds", "Dumps specified scope's path to the screen ")]
+        [Command("ds", "Dumps specified scope's path to the screen ")]
         public void DumpScope(String path)
         {
             this.PrintScope();
@@ -646,7 +557,7 @@ namespace OizDevTool.Debugger
         /// Dump scope as json
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dj", "Dumps scope as JSON to screen")]
+        [Command("dj", "Dumps scope as JSON to screen")]
         public void DumpScopeJson()
         {
             this.DumpScopeJson(null);
@@ -656,7 +567,7 @@ namespace OizDevTool.Debugger
         /// Dump scope
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dj", "Dumps scope as JSON to screen")]
+        [Command("dj", "Dumps scope as JSON to screen")]
         public void DumpScopeJson(String path)
         {
             var obj = this.GetScopeObject(this.m_scopeObject, path);
@@ -674,7 +585,7 @@ namespace OizDevTool.Debugger
         /// Dump scope as json
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dx", "Dumps scope as XML to screen")]
+        [Command("dx", "Dumps scope as XML to screen")]
         public void DumpScopeXml()
         {
             this.DumpScopeXml(null);
@@ -684,7 +595,7 @@ namespace OizDevTool.Debugger
         /// Dump scope
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dx", "Dumps scope as XML to screen")]
+        [Command("dx", "Dumps scope as XML to screen")]
         public void DumpScopeXml(String path)
         {
             var obj = this.GetScopeObject(this.m_scopeObject, path);
@@ -702,7 +613,7 @@ namespace OizDevTool.Debugger
         /// Dump scope
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dv", "Dumps scope as ViewModel (mobile) to screen")]
+        [Command("dv", "Dumps scope as ViewModel (mobile) to screen")]
         public void DumpScopeView()
         {
             this.DumpScopeView(null);
@@ -712,7 +623,7 @@ namespace OizDevTool.Debugger
         /// Dump scope
         /// </summary>
         /// <param name="path"></param>
-        [DebuggerCommand("dv", "Dumps scope as ViewModel (mobile) to screen")]
+        [Command("dv", "Dumps scope as ViewModel (mobile) to screen")]
         public void DumpScopeView(String path)
         {
             var obj = this.GetScopeObject(this.m_scopeObject, path);
@@ -763,37 +674,11 @@ namespace OizDevTool.Debugger
         }
 
 
-        /// <summary>
-        /// Get help
-        /// </summary>
-        [DebuggerCommand("?", "Shows help and exits")]
-        public void Help()
-        {
-
-            foreach (var mi in this.GetType().GetMethods().OrderBy(o => o.Name))
-            {
-                var itm = mi.GetCustomAttribute<DebuggerCommandAttribute>();
-                if (itm == null || String.IsNullOrEmpty(itm.Description)) continue;
-                Console.Write("{0:2} {1}", itm.Command, String.Join(" ", mi.GetParameters().Select(o => $"[{o.Name}]")));
-                Console.WriteLine("{0}{1}", new String(' ', 40 - Console.CursorLeft), itm.Description);
-
-            }
-        }
-
-        /// <summary>
-        /// Exit the debugger
-        /// </summary>
-        [DebuggerCommand("q", "Quits the debugger")]
-        public virtual void Exit()
-        {
-            this.m_exitRequested = true;
-            Environment.Exit(0);
-        }
-
+      
         /// <summary>
         /// List all services 
         /// </summary>
-        [DebuggerCommand("lds", "Lists all services available to the debugger")]
+        [Command("lds", "Lists all services available to the debugger")]
         public void ListServiceInfo()
         {
             this.ListServiceInfo(null);
@@ -802,7 +687,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Lists all services available to the debugger
         /// </summary>
-        [DebuggerCommand("lds", "Lists all services available to the debugger")]
+        [Command("lds", "Lists all services available to the debugger")]
         public void ListServiceInfo(String name)
         {
             Console.WriteLine("Context ID: {0}", ApplicationContext.Current.ContextId);
@@ -828,7 +713,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Load specified data as scope
         /// </summary>
-        [DebuggerCommand("sd", "Loads specified data type with id from the database into the scope variable")]
+        [Command("sd", "Loads specified data type with id from the database into the scope variable")]
         public Object SetScopeDatabase(String type, String id)
         {
             var t = Type.GetType(type);
@@ -853,7 +738,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Inserts the current scope item to the database
         /// </summary>
-        [DebuggerCommand("dbi", "Inserts the current scoped object in the store")]
+        [Command("dbi", "Inserts the current scoped object in the store")]
         public Object InsertScopeDb()
         {
             var idp = typeof(IDataPersistenceService<>).MakeGenericType(this.m_scopeObject.GetType());
@@ -868,7 +753,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Load specified data as scope
         /// </summary>
-        [DebuggerCommand("sdq", "Sets scope to the result of the specified database query")]
+        [Command("sdq", "Sets scope to the result of the specified database query")]
         public Object SetScopeDatabaseQuery(String type, String qry)
         {
             return this.SetScopeDatabaseQuery(type, qry, null, null);
@@ -877,7 +762,7 @@ namespace OizDevTool.Debugger
         /// <summary>
         /// Load specified data as scope
         /// </summary>
-        [DebuggerCommand("sdq", "Sets scope to the result of the specified database query")]
+        [Command("sdq", "Sets scope to the result of the specified database query")]
         public Object SetScopeDatabaseQuery(String type, String qry, String skip, String take)
         {
             var t = Type.GetType(type);

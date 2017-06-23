@@ -24,6 +24,7 @@ using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
@@ -231,7 +232,32 @@ namespace OpenIZ.Core.Http
                                     // Raise event 
                                     this.FireProgressChanged(o.Result.ContentType, ms.Length / (float)o.Result.ContentLength);
                                 }
-                                retVal = ms.ToArray();
+
+
+                                ms.Seek(0, SeekOrigin.Begin);
+
+                                switch (o.Result.Headers["Content-Encoding"])
+                                {
+                                    case "deflate":
+                                        using (var dfs = new DeflateStream(ms, CompressionMode.Decompress))
+                                        using (var oms = new MemoryStream())
+                                        {
+                                            dfs.CopyTo(oms);
+                                            retVal = oms.ToArray();
+                                        }
+                                        break;
+                                    case "gzip":
+                                        using (var gzs = new GZipStream(ms, CompressionMode.Decompress))
+                                        using (var oms = new MemoryStream())
+                                        {
+                                            gzs.CopyTo(oms);
+                                            retVal = oms.ToArray();
+                                        }
+                                            break;
+                                    default:
+                                        retVal = ms.ToArray();
+                                        break;
+                                }
                             }
                         }
                         catch (Exception e)

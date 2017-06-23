@@ -95,7 +95,7 @@ namespace OpenIZ.Core.Persistence
                 this.m_traceSource.TraceInformation("Applying {0} ({1} objects)...", ds.Id, ds.Action.Count);
 
 
-                foreach (var itm in ds.Action)
+                foreach (var itm in ds.Action.Where(o=>o.Element != null))
                 {
 
                     try
@@ -221,6 +221,7 @@ namespace OpenIZ.Core.Persistence
                             using (var fs = File.OpenRead(f))
                             {
                                 var ds = xsz.Deserialize(fs) as DatasetInstall;
+                                this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Installing {0}...", Path.GetFileName(f));
                                 this.InstallDataset(ds);
                             }
 
