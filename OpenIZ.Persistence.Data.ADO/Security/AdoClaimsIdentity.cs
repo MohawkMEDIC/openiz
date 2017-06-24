@@ -380,9 +380,10 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     new Claim(ClaimTypes.Actor, this.m_securityUser.UserClass.ToString()),
                 };
 
-                if (this.m_securityUser.Email != null && this.m_securityUser.EmailConfirmed)
+                if (this.m_securityUser.Email != null)
                     claims.Add(new Claim(ClaimTypes.Email, this.m_securityUser.Email));
-
+                if (this.m_securityUser.PhoneNumber != null)
+                    claims.Add(new Claim(ClaimTypes.MobilePhone, this.m_securityUser.PhoneNumber));
                 // TODO: Demographic data for the user
                 var retVal = new ClaimsPrincipal(
                         new ClaimsIdentity[] { new ClaimsIdentity(this, claims.AsReadOnly()) }

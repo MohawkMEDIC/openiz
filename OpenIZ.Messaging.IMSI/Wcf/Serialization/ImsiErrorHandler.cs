@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security;
@@ -72,6 +73,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", "Bearer");
             }
+            else if (error is FileNotFoundException || error is KeyNotFoundException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
             else if (error is WebFaultException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = (error as WebFaultException).StatusCode;
             else if (error is Newtonsoft.Json.JsonException ||

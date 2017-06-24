@@ -98,7 +98,7 @@ namespace OizDevTool
 				// Schedule
 				if (!parameters.PatientOnly)
 				{
-					var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now);
+					var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now).Select(o=>o.Copy() as Act);
 
 					Bundle bundle = new Bundle();
 

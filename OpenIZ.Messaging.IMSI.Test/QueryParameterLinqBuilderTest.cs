@@ -211,5 +211,35 @@ namespace OpenIZ.Messaging.IMSI.Test
 			var expr = QueryExpressionParser.BuildLinqExpression<Patient>(httpQueryParameters);
 			Assert.AreEqual(expected, expr.ToString());
 		}
-	}
+
+        /// <summary>
+        /// Tests creation of an OR guard condition
+        /// </summary>
+        [TestMethod]
+        public void TestOrGuardCondition()
+        {
+            String expected = "o => o.Names.Where(guard => ((guard.NameUse.Mnemonic == \"Legal\") Or (guard.NameUse.Mnemonic == \"OfficialRecord\"))).Any(name => name.Component.Where(guard => ((guard.ComponentType.Mnemonic == \"Given\") Or (guard.ComponentType.Mnemonic == \"Family\"))).Any(component => (component.Value == \"John\")))";
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("name[Legal|OfficialRecord].component[Given|Family].value", "John");
+            var expr = QueryExpressionParser.BuildLinqExpression<Patient>(httpQueryParameters);
+            Assert.AreEqual(expected, expr.ToString());
+
+        }
+
+
+        /// <summary>
+        /// Tests creation of an OR guard condition
+        /// </summary>
+        [TestMethod]
+        public void TestOrGuardParse()
+        {
+            String expected = "o => o.Names.Where(guard => (guard.NameUse.Mnemonic == \"L\")).Any(name => name.Component.Where(guard => (guard.ComponentType == null)).Any(component => (component.Value == \"John\")))";
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("name[Legal|OfficialRecord].component[Given|Family].value", "John");
+            var expr = QueryExpressionParser.BuildLinqExpression<Patient>(httpQueryParameters);
+            var pexpr = new NameValueCollection(QueryExpressionBuilder.BuildQuery<Patient>(expr, true).ToArray());
+            Assert.AreEqual(httpQueryParameters.ToString(), pexpr.ToString());
+
+        }
+    }
 }

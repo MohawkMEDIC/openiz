@@ -191,7 +191,8 @@ namespace OpenIZ.Core.Protocol
                             // Are the participations of the patient null?
                             if (p.Participations.Count == 0 && p.VersionKey.HasValue)
                             {
-                                p.Participations = EntitySource.Current.Provider.Query<Act>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key)).OfType<Act>()
+                                p.Participations = EntitySource.Current.Provider.Query<Act>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key) &&
+                                    o.StatusConceptKey != StatusKeys.Nullified && o.StatusConceptKey != StatusKeys.Obsolete).OfType<Act>()
                                     .Select(a =>
                                     new ActParticipation()
                                     {

@@ -127,8 +127,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-
-                return this.ErrorHelper(e, false);
+                throw;
             }
         }
 
@@ -170,8 +169,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
 
-                return this.ErrorHelper(e, false);
             }
         }
 
@@ -225,7 +224,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-                return this.ErrorHelper(e, false);
+                throw;
+
             }
         }
 
@@ -263,8 +263,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
 
-                return this.ErrorHelper(e, false);
             }
         }
 
@@ -344,8 +344,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
 
-                return this.ErrorHelper(e, false);
             }
         }
 
@@ -428,8 +428,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
 
-                return this.ErrorHelper(e, false);
             }
         }
 
@@ -483,71 +483,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
 
-                return this.ErrorHelper(e, false);
             }
         }
 
-        #region Helper Methods
-
-        /// <summary>
-        /// Throw an appropriate exception based on the caught exception
-        /// </summary>
-        private ErrorResult ErrorHelper(Exception e, bool returnBundle)
-        {
-
-            ErrorResult result = new ErrorResult();
-            Trace.TraceError(e.ToString());
-            result.Details.Add(new ResultDetail(DetailType.Error, e.Message));
-
-            HttpStatusCode retCode = HttpStatusCode.OK;
-
-            if (e is NotSupportedException)
-                retCode = System.Net.HttpStatusCode.MethodNotAllowed;
-            else if(e is DetectedIssueException)
-            {
-                retCode = System.Net.HttpStatusCode.BadRequest;
-
-                result.Type = "BusinessRuleViolation";
-                result.Details = (e as DetectedIssueException).Issues.Select(o => new ResultDetail(o.Priority == Core.Services.DetectedIssuePriorityType.Error ? DetailType.Error : o.Priority == Core.Services.DetectedIssuePriorityType.Warning ? DetailType.Warning : DetailType.Information, o.Text)).ToList();
-            }
-            else if (e is NotImplementedException)
-                retCode = System.Net.HttpStatusCode.NotImplemented;
-            else if (e is InvalidDataException || e is ArgumentException)
-                retCode = HttpStatusCode.BadRequest;
-            else if (e is FileLoadException)
-                retCode = System.Net.HttpStatusCode.Gone;
-            else if (e is FileNotFoundException)
-                retCode = System.Net.HttpStatusCode.NotFound;
-            else if (e is PatchAssertionException)
-                retCode = HttpStatusCode.Conflict;
-            else if (e is ConstraintException || e is PatchException)
-                retCode = (HttpStatusCode)422;
-            else if(e is DataPersistenceException)
-            {
-                if (e.InnerException is DuplicateKeyException)
-                    retCode = (HttpStatusCode)409;
-                else
-                    retCode = System.Net.HttpStatusCode.InternalServerError;
-            }
-            else
-                retCode = System.Net.HttpStatusCode.InternalServerError;
-
-            WebOperationContext.Current.OutgoingResponse.StatusCode = retCode;
-            //WebOperationContext.Current.OutgoingResponse.Format = WebMessageFormat.Xml;
-
-            e = e.InnerException;
-            while (e != null)
-            {
-                result.Details.Add(new ResultDetail(DetailType.Error, String.Format("Caused by: ({0}) {1}", e.GetType().Name, e.Message)));
-                e = e.InnerException;
-            }
-
-
-            return result;
-
-        }
-
+     
         /// <summary>
         /// Obsolete the specified data
         /// </summary>
@@ -586,7 +527,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
-                return this.ErrorHelper(e, false);
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+
             }
         }
 
@@ -672,7 +615,9 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
-                this.ErrorHelper(e, false);
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
+
             }
         }
 
@@ -734,7 +679,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
             catch (Exception e)
             {
-                return this.ErrorHelper(e, false);
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                throw;
             }
         }
 
@@ -747,6 +693,5 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             if (!ApplicationContext.Current.IsRunning)
                 throw new DomainStateException();
         }
-        #endregion
     }
 }

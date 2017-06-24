@@ -214,9 +214,7 @@ namespace OpenIZ.Core.Services.Impl
 			var act = persistenceService.Get<Guid>(new Identifier<Guid>(key), AuthenticationContext.Current.Principal, true);
 
 			if (act == null)
-			{
-				throw new InvalidOperationException("Act not found");
-			}
+				throw new KeyNotFoundException(key.ToString());
 
 			var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TAct>();
 

@@ -244,21 +244,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (data.Extensions != null && data.Extensions.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, DbActExtension>(
-                   data.Extensions,
+                   data.Extensions.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
 
             if (data.Identifiers != null && data.Identifiers.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, DbActIdentifier>(
-                   data.Identifiers,
+                   data.Identifiers.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
 
             if (data.Notes != null && data.Notes.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, DbActNote>(
-                   data.Notes,
+                   data.Notes.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
@@ -272,14 +272,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (data.Relationships != null && data.Relationships.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
-                   data.Relationships,
+                   data.Relationships.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
 
             if (data.Tags != null && data.Tags.Any())
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, DbActTag>(
-                   data.Tags,
+                   data.Tags.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
@@ -328,21 +328,21 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (data.Extensions != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActExtension, DbActExtension>(
-                   data.Extensions,
+                   data.Extensions.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
 
             if (data.Identifiers != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActIdentifier, DbActIdentifier>(
-                   data.Identifiers,
+                   data.Identifiers.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
 
             if (data.Notes != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.DataTypes.ActNote, DbActNote>(
-                   data.Notes,
+                   data.Notes.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);
@@ -356,14 +356,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
-                   data.Relationships,
+                   data.Relationships.Where(o => !o.IsEmpty() && o.SourceEntityKey == data.Key),
                     retVal,
                     context,
                     principal);
 
             if (data.Tags != null)
                 base.UpdateAssociatedItems<Core.Model.DataTypes.ActTag, DbActTag>(
-                   data.Tags,
+                   data.Tags.Where(o => !o.IsEmpty()),
                     retVal,
                     context,
                     principal);

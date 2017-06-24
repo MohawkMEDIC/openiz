@@ -161,20 +161,21 @@ namespace OpenIZ.Core.Services.Impl
 
             // Install templates
             var idp = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-            foreach(var itm in pkg.Templates)
-            {
-                if (idp.GetTemplateDefinition(itm.Mnemonic) == null)
+            if(idp != null)
+                foreach(var itm in pkg.Templates)
                 {
-                    this.m_tracer.TraceInfo("Installing {0}...", itm.Mnemonic);
-                    idp.CreateTemplateDefinition(new TemplateDefinition()
+                    if (idp.GetTemplateDefinition(itm.Mnemonic) == null)
                     {
-                        Oid = itm.Oid,
-                        Mnemonic = itm.Mnemonic,
-                        Description = itm.Description,
-                        Name = itm.Mnemonic
-                    });
+                        this.m_tracer.TraceInfo("Installing {0}...", itm.Mnemonic);
+                        idp.CreateTemplateDefinition(new TemplateDefinition()
+                        {
+                            Oid = itm.Oid,
+                            Mnemonic = itm.Mnemonic,
+                            Description = itm.Description,
+                            Name = itm.Mnemonic
+                        });
+                    }
                 }
-            }
 
             AppletCollection.ClearCaches();
 

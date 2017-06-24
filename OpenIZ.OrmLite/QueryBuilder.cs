@@ -255,7 +255,7 @@ namespace OpenIZ.OrmLite
                                     if (typeof(IdentifiedData).IsAssignableFrom(clsModel))
                                         guardCondition.Append(".");
                                 }
-                                subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key));
+                                subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key.Split('|')));
                             }
 
                             // Generate method

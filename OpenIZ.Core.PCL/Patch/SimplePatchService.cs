@@ -149,7 +149,7 @@ namespace OpenIZ.Core.Services.Impl
 
                             }
                         }
-                        else if (existingValue?.Equals(updatedValue) == false)// simple value has changed
+                        else if (updatedValue?.Equals(existingValue) == false)// simple value has changed
                         {
                             // Generate tests
                             retVal.AddRange(this.GenerateTests(existingValue, $"{path}{serializationName}"));

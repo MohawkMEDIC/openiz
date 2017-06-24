@@ -148,7 +148,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override TextObservation UpdateInternal(DataContext context, TextObservation data, IPrincipal principal)
         {
             var obsData = this.m_observationPersistence.UpdateInternal(context, data, principal);
-            context.Update(new DbTextObservation()
+            context.Insert(new DbTextObservation()
             {
                 ParentKey = obsData.VersionKey.Value,
                 Value = data.Value
@@ -219,7 +219,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (data.Value != null) data.Value = data.Value?.EnsureExists(context, principal) as Concept;
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
             var obsData = this.m_observationPersistence.InsertInternal(context, data, principal);
-            context.Update(new DbCodedObservation()
+            context.Insert(new DbCodedObservation()
             {
                 ParentKey = obsData.VersionKey.Value,
                 Value = data.ValueKey
@@ -287,7 +287,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context, principal) as Concept;
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
             this.m_observationPersistence.UpdateInternal(context, data, principal);
-            context.Update(new DbQuantityObservation()
+            context.Insert(new DbQuantityObservation()
             {
                 ParentKey = data.VersionKey.Value,
                 UnitOfMeasureKey = data.UnitOfMeasureKey.Value,

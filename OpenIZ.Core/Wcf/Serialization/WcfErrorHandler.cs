@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
             else if(error is DuplicateKeyException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Conflict;
-            else if(error is FileNotFoundException)
+            else if(error is FileNotFoundException || error is KeyNotFoundException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
             else if(error is DomainStateException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;

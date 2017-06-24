@@ -226,7 +226,20 @@ namespace OpenIZ.Core.Model.Query
                             new Type[] { accessExpression.Type, predicateType }) as MethodInfo;
 
                         // Now make expression
-                        var guardLambda = Expression.Lambda(Expression.MakeBinary(ExpressionType.Equal, guardAccessor, Expression.Constant(guard)), guardParameter);
+                        Expression guardExpression = null;
+                        if(guard != null)
+                            foreach(var g in guard.Split('|'))
+                            {
+                                var expr = Expression.MakeBinary(ExpressionType.Equal, guardAccessor, Expression.Constant(g));
+                                if (guardExpression == null)
+                                    guardExpression = expr;
+                                else
+                                    guardExpression = Expression.MakeBinary(ExpressionType.Or, guardExpression, expr);
+                            }
+                        else
+                            guardExpression = Expression.MakeBinary(ExpressionType.Equal, guardAccessor, Expression.Constant(null));
+
+                        var guardLambda = Expression.Lambda(guardExpression, guardParameter);
                         accessExpression = Expression.Call(whereMethod, accessExpression, guardLambda);
 
                         if (currentValue.Value.Length == 1 && currentValue.Value[0].EndsWith("null"))

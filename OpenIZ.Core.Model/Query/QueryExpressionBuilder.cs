@@ -322,13 +322,8 @@ namespace OpenIZ.Core.Model.Query
                             throw new InvalidOperationException("Cannot translate non-binary expression guards");
 
                         // Is the expression the guard?
-                        var expressionMember = binaryExpression.Left as MemberExpression;
-                        var valueExpression = binaryExpression.Right as ConstantExpression;
-                        if (expressionMember.Member.DeclaringType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty != expressionMember.Member.Name)
-                            throw new InvalidOperationException("Guards must be on classifier");
-                        if (valueExpression == null)
-                            throw new InvalidOperationException("Only constant expressions are supported on guards");
-                        return String.Format("{0}[{1}]", path, valueExpression.Value);
+                        String guardString = this.BuildGuardExpression(binaryExpression); 
+                        return String.Format("{0}[{1}]", path, guardString);
 
                     }
                 }
@@ -344,6 +339,31 @@ namespace OpenIZ.Core.Model.Query
                     return String.Format("{0}@{1}", this.ExtractPath(ua.Operand), ua.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName);
                 }
                 return null;
+            }
+
+            /// <summary>
+            /// Build a guard expression
+            /// </summary>
+            private string BuildGuardExpression(BinaryExpression binaryExpression)
+            {
+
+                switch (binaryExpression.NodeType)
+                {
+                    case ExpressionType.Or:
+                        return $"{this.BuildGuardExpression(binaryExpression.Left as BinaryExpression)}|{this.BuildGuardExpression(binaryExpression.Right as BinaryExpression)}";
+                    case ExpressionType.Equal:
+                        var expressionMember = binaryExpression.Left as MemberExpression;
+                        var valueExpression = binaryExpression.Right as ConstantExpression;
+                        if (expressionMember.Member.DeclaringType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty != expressionMember.Member.Name)
+                            throw new InvalidOperationException("Guards must be on classifier");
+                        if (valueExpression == null)
+                            throw new InvalidOperationException("Only constant expressions are supported on guards");
+                        return valueExpression.Value.ToString();
+                    default:
+                        throw new InvalidOperationException($"Binary expressions of {binaryExpression.NodeType} are not permitted");
+
+                }
+
             }
         }
 

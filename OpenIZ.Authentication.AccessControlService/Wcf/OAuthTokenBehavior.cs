@@ -275,6 +275,9 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
 
                 // Add Email address from idp
                 claims.AddRange((oizPrincipal as ClaimsPrincipal).Claims.Where(o => o.Type == ClaimTypes.Email));
+                var tel = (oizPrincipal as ClaimsPrincipal).Claims.FirstOrDefault(o => o.Type == ClaimTypes.MobilePhone)?.Value;
+                if (!String.IsNullOrEmpty(tel))
+                    claims.Add(new Claim("tel", tel));
             }
 
             // Name identifier
