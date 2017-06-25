@@ -288,7 +288,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         protected virtual TModel CacheConvert(Object o, DataContext context, IPrincipal principal)
         {
-            var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
+            var cacheService = new AdoPersistenceCache(context);
 
             var idData = (o as CompositeResult)?.Values.OfType<IDbIdentified>().FirstOrDefault() ?? o as IDbIdentified;
             var objData = (o as CompositeResult)?.Values.OfType<IDbBaseData>().FirstOrDefault() ?? o as IDbBaseData;
@@ -309,7 +309,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 else
                 {
                     cacheItem = this.ToModelInstance(o, context, principal);
-                    cacheService?.Add(cacheItem);
+                    if(context.Transaction == null)
+                        cacheService?.Add(cacheItem);
                 }
                 return cacheItem;
             }

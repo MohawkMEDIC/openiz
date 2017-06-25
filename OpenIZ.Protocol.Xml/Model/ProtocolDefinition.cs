@@ -32,7 +32,9 @@ namespace OpenIZ.Protocol.Xml.Model
     [XmlRoot(nameof(ProtocolDefinition), Namespace = "http://openiz.org/cdss")]
     public class ProtocolDefinition : DecisionSupportBaseElement
     {
-        
+
+        private static XmlSerializer s_xsz = new XmlSerializer(typeof(ProtocolDefinition));
+
         /// <summary>
         /// When clause for the entire protocol
         /// </summary>
@@ -62,8 +64,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// </summary>
         public void Save(Stream ms)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(ProtocolDefinition));
-            xsz.Serialize(ms, this);
+            s_xsz.Serialize(ms, this);
         }
 
         /// <summary>
@@ -71,8 +72,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// </summary>
         public static ProtocolDefinition Load(Stream ms)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(ProtocolDefinition));
-            return xsz.Deserialize(ms) as ProtocolDefinition;
+            return s_xsz.Deserialize(ms) as ProtocolDefinition;
         }
     }
 }

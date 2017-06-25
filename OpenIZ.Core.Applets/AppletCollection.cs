@@ -55,6 +55,7 @@ namespace OpenIZ.Core.Applets
     public class ReadonlyAppletCollection : AppletCollection
     {
 
+
         /// <summary>
         /// Wrapper for the readonly applet collection
         /// </summary>
@@ -136,6 +137,7 @@ namespace OpenIZ.Core.Applets
         private static Object s_syncLock = new object();
 
         private AssetContentResolver m_resolver = null;
+        private Regex m_localizationRegex = new Regex("{{\\s?:?:?'(.*?)'\\s?\\|\\s?i18n\\s?}}");
 
         public const string APPLET_SCHEME = "app://";
         private string m_baseUrl = null;
@@ -529,7 +531,7 @@ namespace OpenIZ.Core.Applets
             else if (content is XElement) // Content is XML
             {
                 using (MemoryStream ms = new MemoryStream())
-                using (XmlWriter xw = XmlWriter.Create(ms, new XmlWriterSettings() { Indent = true }))
+                using (XmlWriter xw = XmlWriter.Create(ms))
                 {
                     (content as XElement).WriteTo(xw);
                     xw.Flush();
@@ -632,14 +634,14 @@ namespace OpenIZ.Core.Applets
                     {
 
                         // Get the databinding data
-	                    XAttribute source = db.Attributes(xs_binding + "source").FirstOrDefault(),
-									filter = db.Attributes(xs_binding + "filter").FirstOrDefault(),
-									key = db.Attributes(xs_binding + "key").FirstOrDefault(),
-									value = db.Attributes(xs_binding + "value").FirstOrDefault(),
-									orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
-									orderBy = db.Attributes(xs_binding + "orderBy").FirstOrDefault();
+                        XAttribute source = db.Attributes(xs_binding + "source").FirstOrDefault(),
+                                    filter = db.Attributes(xs_binding + "filter").FirstOrDefault(),
+                                    key = db.Attributes(xs_binding + "key").FirstOrDefault(),
+                                    value = db.Attributes(xs_binding + "value").FirstOrDefault(),
+                                    orderByDescending = db.Attributes(xs_binding + "orderByDescending").FirstOrDefault(),
+                                    orderBy = db.Attributes(xs_binding + "orderBy").FirstOrDefault();
 
-						var locale = preProcessLocalization;
+                        var locale = preProcessLocalization;
                         int i = 0;
                         var valueSelector = value?.Value;
                         while (i++ < 2)
@@ -674,7 +676,7 @@ namespace OpenIZ.Core.Applets
                                 }
 
                                 // Render expression
-	                            Delegate keyExpression = null, valueExpression = null, dataExpression = null;
+                                Delegate keyExpression = null, valueExpression = null, dataExpression = null;
                                 ParameterExpression parameter = Expression.Parameter(imsiType);
                                 if (key == null)
                                     keyExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(nameof(IIdentifiedEntity.Key))), parameter).Compile();
@@ -700,21 +702,21 @@ namespace OpenIZ.Core.Applets
                                     if (String.IsNullOrEmpty(valueValue)) continue;
                                     optAtt.Add(new XAttribute("value", keyValue), new XText(valueValue));
 
-	                                foreach (var dataBinding in db.Attributes().Where(c => c.Name.ToString().StartsWith((xs_binding + "data-").ToString())))
-	                                {
-		                                if (dataBinding != null)
-		                                {
-			                                dataExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(dataBinding.Value)), parameter).Compile();
-			                                var dataValue = dataExpression?.DynamicInvoke(itm)?.ToString();
+                                    foreach (var dataBinding in db.Attributes().Where(c => c.Name.ToString().StartsWith((xs_binding + "data-").ToString())))
+                                    {
+                                        if (dataBinding != null)
+                                        {
+                                            dataExpression = Expression.Lambda(Expression.MakeMemberAccess(parameter, imsiType.GetRuntimeProperty(dataBinding.Value)), parameter).Compile();
+                                            var dataValue = dataExpression?.DynamicInvoke(itm)?.ToString();
 
-			                                if (string.IsNullOrEmpty(dataValue))
-			                                {
-				                                continue;
-			                                }
+                                            if (string.IsNullOrEmpty(dataValue))
+                                            {
+                                                continue;
+                                            }
 
-											optAtt.Add(new XAttribute(dataBinding.Name.LocalName, dataValue));
-										}
-									}
+                                            optAtt.Add(new XAttribute(dataBinding.Name.LocalName, dataValue));
+                                        }
+                                    }
 
                                     db.Add(optAtt);
                                 }
@@ -786,36 +788,30 @@ namespace OpenIZ.Core.Applets
 
                 // Render out the content
                 using (StringWriter sw = new StringWriter())
-                using (XmlWriter xw = XmlWriter.Create(sw, new XmlWriterSettings() { Indent = true, OmitXmlDeclaration = true }))
+
+                using (XmlWriter xw = XmlWriter.Create(sw, new XmlWriterSettings() { OmitXmlDeclaration = true }))
                 {
                     htmlContent.WriteTo(xw);
                     xw.Flush();
 
-                    byte[] renderBuffer = null;
-
-                    // Process localization
+                    String retVal = sw.ToString();
                     if (!String.IsNullOrEmpty(preProcessLocalization))
                     {
-                        Regex re = new Regex("{{\\s?:?:?'(.*?)'\\s?\\|\\s?i18n\\s?}}");
                         var assetString = this.GetStrings(preProcessLocalization);
-                        renderBuffer = Encoding.UTF8.GetBytes(re.Replace(sw.ToString(), (m) => assetString.FirstOrDefault(o => o.Key == m.Groups[1].Value).Value ?? m.Groups[1].Value));
+                        retVal = this.m_localizationRegex.Replace(retVal, (m) => assetString.FirstOrDefault(o => o.Key == m.Groups[1].Value).Value ?? m.Groups[1].Value);
                     }
-                    else
-                        renderBuffer = Encoding.UTF8.GetBytes(sw.ToString());
 
+                    var byteData = Encoding.UTF8.GetBytes(retVal);
                     // Add to cache
                     lock (s_syncLock)
                         if (!s_cache.ContainsKey(assetPath))
-                            s_cache.Add(assetPath, renderBuffer);
+                            s_cache.Add(assetPath, byteData);
 
-                    return renderBuffer;
+                    return byteData;
                 }
-
             }
             else
                 return null;
-
-
         }
 
         /// <summary>

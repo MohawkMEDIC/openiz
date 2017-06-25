@@ -33,6 +33,7 @@ namespace OpenIZ.Core.Data.Warehouse
     [XmlRoot(nameof(DatamartSchema), Namespace = "http://openiz.org/warehousing")]
     public class DatamartSchema : IDatamartSchemaPropertyContainer
     {
+        private static XmlSerializer s_xsz = new XmlSerializer(typeof(DatamartSchema));
 
         /// <summary>
         /// Datamart schema
@@ -72,8 +73,7 @@ namespace OpenIZ.Core.Data.Warehouse
         /// </summary>
         public static DatamartSchema Load(Stream source)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(DatamartSchema));
-            return xsz.Deserialize(source) as DatamartSchema;
+            return s_xsz.Deserialize(source) as DatamartSchema;
         }
     }
 }

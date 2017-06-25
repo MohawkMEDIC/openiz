@@ -141,7 +141,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         /// </summary>
         public bool ShouldForceLoad(string childProperty, Guid key)
         {
-            var propertyDescription = this.ElementDescription?.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
+            var propertyDescription = this.ElementDescription?.FindProperty(childProperty) as PropertyModelDescription;
             if(propertyDescription?.Action != SerializationBehaviorType.Always)
                 return false;
 
@@ -208,7 +208,7 @@ namespace OpenIZ.Core.Applets.ViewModel
         public bool ShouldSerialize(String childProperty)
         {
             if (childProperty == "id") return true;
-            var propertyDescription = this.ElementDescription?.Properties.FirstOrDefault(o => o.Name == childProperty) as PropertyModelDescription;
+            var propertyDescription = this.ElementDescription?.FindProperty(childProperty) as PropertyModelDescription;
             if (propertyDescription?.Action == SerializationBehaviorType.Never || // Never serialize
                 this.ElementDescription == null ||
                 (!this.ElementDescription.All && propertyDescription == null))

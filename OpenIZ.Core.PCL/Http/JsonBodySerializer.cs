@@ -60,7 +60,7 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		public void Serialize(System.IO.Stream s, object o)
 		{
-			using (TextWriter tw = new StreamWriter(s, System.Text.Encoding.UTF8, 1024, true))
+			using (TextWriter tw = new StreamWriter(s, System.Text.Encoding.UTF8, 2048, true))
 			using (JsonTextWriter jw = new JsonTextWriter(tw))
 				this.m_serializer.Serialize(jw, o);
 		}
@@ -70,7 +70,7 @@ namespace OpenIZ.Core.Http
 		/// </summary>
 		public object DeSerialize(System.IO.Stream s)
 		{
-			using (TextReader tr = new StreamReader(s, System.Text.Encoding.UTF8, true, 1024, true))
+			using (TextReader tr = new StreamReader(s, System.Text.Encoding.UTF8, true, 2048, true))
 			using (JsonTextReader jr = new JsonTextReader(tr))
 				return this.m_serializer.Deserialize(jr, this.m_type);
 		}

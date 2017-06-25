@@ -256,7 +256,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         internal override TModel Get(DataContext context, Guid key, IPrincipal principal)
         {
             // Attempt to get a cahce item
-            var retVal = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(key);
+            var cacheService = new AdoPersistenceCache(context);
+            var retVal = cacheService.GetCacheItem<TModel>(key);
             if (retVal != null)
                 return retVal;
             else
@@ -279,6 +280,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (uuid.Id != Guid.Empty)
             {
+
                 var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(uuid.Id) as TModel;
                 if (cacheItem != null && (cacheItem.VersionKey.HasValue && uuid.VersionId == cacheItem.VersionKey.Value || uuid.VersionId == Guid.Empty) &&
                     (loadFast && cacheItem.LoadState >= LoadState.PartialLoad || !loadFast && cacheItem.LoadState == LoadState.FullLoad))
@@ -403,6 +405,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 decimal obsVersion = 0;
                 if (!sourceVersionMaps.TryGetValue(del.SourceKey, out obsVersion))
                     obsVersion = source.VersionSequence.GetValueOrDefault();
+
+                this.m_tracer.TraceInformation("----- OBSOLETING {0} ---- \r\n{1}", del.Key, new System.Diagnostics.StackTrace(true));
                 del.ObsoleteVersionSequenceId = obsVersion;
                 context.Update<TDomainAssociation>(del);
             }

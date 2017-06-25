@@ -41,6 +41,7 @@ namespace OpenIZ.Core.Model.Map
         private Dictionary<Type, ClassMap> m_classCache = new Dictionary<Type, ClassMap>();
         // Lock object
         private Object m_lockObject = new Object();
+        private static XmlSerializer s_xsz = new XmlSerializer(typeof(ModelMap));
 
 
         /// <summary>
@@ -50,8 +51,7 @@ namespace OpenIZ.Core.Model.Map
         /// <returns></returns>
         public static ModelMap Load(Stream sourceStream)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(ModelMap));
-            var retVal = xsz.Deserialize(sourceStream) as ModelMap;
+            var retVal = s_xsz.Deserialize(sourceStream) as ModelMap;
             var validation = retVal.Validate();
             if (validation.Any(o => o.Level == ResultDetailType.Error))
                 throw new ModelMapValidationException(validation);

@@ -106,15 +106,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// <returns></returns>
         public override Bundle UpdateInternal(DataContext context, Bundle data, IPrincipal principal)
         {
-            foreach (var itm in data.Item)
-            {
-                var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
-	            var svc = ApplicationContext.Current.GetService(idp);
-				var mi = svc.GetType().GetRuntimeMethod("Update", new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
-
-				itm.CopyObjectData(mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm, principal }));
-			}
-            return data;
+            return this.InsertInternal(context, data, principal);
         }
 
     

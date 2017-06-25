@@ -60,7 +60,7 @@ namespace OpenIZ.OrmLite
         /// Data dictionary
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
-        
+
         /// <summary>
         /// Cache on commit
         /// </summary>
@@ -160,7 +160,7 @@ namespace OpenIZ.OrmLite
                 lock (this.m_preparedCommands)
                     if (!this.m_preparedCommands.ContainsKey(cmd.CommandText)) // Check after lock
                         this.m_preparedCommands.Add(cmd.CommandText, cmd);
-           
+
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace OpenIZ.OrmLite
             this.m_preparedCommands.TryGetValue(sql, out retVal);
             return retVal;
         }
-        
+
         /// <summary>
         /// True if the command is prepared
         /// </summary>
@@ -219,7 +219,19 @@ namespace OpenIZ.OrmLite
         public void AddCacheCommit(IdentifiedData data)
         {
             if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value) && data.Key.HasValue)
-                this.m_cacheCommit.Add(data.Key.Value, data);
+                lock (this.m_lockObject)
+                    this.m_cacheCommit.Add(data.Key.Value, data);
+        }
+
+
+        /// <summary>
+        /// Add cache commit
+        /// </summary>
+        public IdentifiedData GetCacheCommit(Guid key)
+        {
+            IdentifiedData retVal = null;
+            this.m_cacheCommit.TryGetValue(key, out retVal);
+            return retVal;
         }
 
         /// <summary>
@@ -255,7 +267,7 @@ namespace OpenIZ.OrmLite
             String sql = retVal.ToString();
             var qList = query.Arguments.ToArray();
             int parmId = 0;
-            while(sql.Contains("?"))
+            while (sql.Contains("?"))
             {
                 var pIndex = sql.IndexOf("?");
                 retVal.Remove(pIndex, 1);
@@ -271,8 +283,8 @@ namespace OpenIZ.OrmLite
         public void AddQuery(SqlStatement domainQuery, IEnumerable<object> results)
         {
             var key = this.GetQueryLiteral(domainQuery);
-            lock(this.m_cachedQuery)
-                if(!this.m_cachedQuery.ContainsKey(key))
+            lock (this.m_cachedQuery)
+                if (!this.m_cachedQuery.ContainsKey(key))
                     this.m_cachedQuery.Add(key, results);
         }
 

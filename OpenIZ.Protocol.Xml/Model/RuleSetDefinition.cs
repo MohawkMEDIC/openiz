@@ -55,6 +55,8 @@ namespace OpenIZ.Protocol.Xml.Model
     public class RuleSetDefinition : DecisionSupportBaseElement
     {
 
+        private static XmlSerializer s_xsz = new XmlSerializer(typeof(RuleSetDefinition));
+
         /// <summary>
         /// Triggers for the ruleset
         /// </summary>
@@ -84,8 +86,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// </summary>
         public void Save(Stream ms)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(RuleSetDefinition));
-            xsz.Serialize(ms, this);
+            s_xsz.Serialize(ms, this);
         }
 
         /// <summary>
@@ -93,8 +94,7 @@ namespace OpenIZ.Protocol.Xml.Model
         /// </summary>
         public static RuleSetDefinition Load(Stream ms)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(RuleSetDefinition));
-            return xsz.Deserialize(ms) as RuleSetDefinition;
+            return s_xsz.Deserialize(ms) as RuleSetDefinition;
         }
 
     }

@@ -39,6 +39,10 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
 
         // Description lookup
         private Dictionary<String, PropertyContainerDescription> m_description = new Dictionary<String, PropertyContainerDescription>();
+        // Root type names
+        private static Dictionary<Type, String> m_rootTypeNames = new Dictionary<Type, string>();
+        // Serializer
+        private static XmlSerializer s_xsz = new XmlSerializer(typeof(ViewModelDescription));
 
         // Lock object
         protected object m_lockObject = new object();
@@ -75,8 +79,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         /// </summary>
         public static ViewModelDescription Load(Stream stream)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(ViewModelDescription));
-            var retVal = xsz.Deserialize(stream) as ViewModelDescription;
+            var retVal = s_xsz.Deserialize(stream) as ViewModelDescription;
             retVal.Initialize();
             return retVal;
         }
@@ -100,7 +103,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
             {
                 value = this.Model.Find(o => o.TypeName == name);
                 lock (this.m_lockObject)
-                    if(!this.m_description.ContainsKey(name))
+                    if (!this.m_description.ContainsKey(name))
                         this.m_description.Add(name, value);
             }
             return value;
@@ -111,8 +114,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         public PropertyContainerDescription FindDescription(Type rootType)
         {
             PropertyContainerDescription retVal = null;
-            string rootTypeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
-                               rootType.Name;
+
+            string rootTypeName = this.GetTypeName(rootType);
+
             // Type name
             if (!this.m_description.TryGetValue(rootTypeName, out retVal))
             {
@@ -123,19 +127,34 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
                 {
                     rootType = rootType.GetTypeInfo().BaseType;
                     if (rootType == null) break;
-                    typeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
-                        rootType.Name;
+                    typeName = this.GetTypeName(rootType);
 
-                    if(!this.m_description.TryGetValue(typeName, out retVal))
+                    if (!this.m_description.TryGetValue(typeName, out retVal))
                         retVal = this.Model.FirstOrDefault(o => o.TypeName == typeName);
                 }
 
-                if (retVal != null)
-                    lock (this.m_lockObject)
-                        if (!this.m_description.ContainsKey(rootTypeName))
-                            this.m_description.Add(rootTypeName, retVal);
+                lock (this.m_lockObject)
+                    if (!this.m_description.ContainsKey(rootTypeName))
+                        this.m_description.Add(rootTypeName, retVal);
             }
             return retVal;
+        }
+
+        /// <summary>
+        /// Get type name
+        /// </summary>
+        private string GetTypeName(Type rootType)
+        {
+            string rootTypeName = null;
+            if (!m_rootTypeNames.TryGetValue(rootType, out rootTypeName))
+            {
+                rootTypeName = rootType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName ??
+                                           rootType.Name;
+                lock (m_rootTypeNames)
+                    if (!m_rootTypeNames.ContainsKey(rootType))
+                        m_rootTypeNames.Add(rootType, rootTypeName);
+            }
+            return rootTypeName;
         }
 
         /// <summary>
@@ -148,7 +167,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
             PropertyContainerDescription retVal = null;
             String pathName = propertyName;
             var pathContext = context;
-            while(pathContext != null) { 
+            while (pathContext != null)
+            {
                 pathName = pathContext.GetName() + "." + pathName;
                 pathContext = pathContext.Parent;
             }
@@ -157,13 +177,12 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
             {
 
                 // Find the property information
-                retVal = context?.Properties.FirstOrDefault(o => o.Name == propertyName);
+                retVal = context?.FindProperty(propertyName);
                 if (retVal == null)
-                    retVal = context?.Properties.FirstOrDefault(o => o.Name == "*");
-                if (retVal != null)
-                    lock (this.m_lockObject)
-                        if(!this.m_description.ContainsKey(pathName))
-                            this.m_description.Add(pathName, retVal);
+                    retVal = context?.FindProperty("*");
+                lock (this.m_lockObject)
+                    if (!this.m_description.ContainsKey(pathName))
+                        this.m_description.Add(pathName, retVal);
             }
             return retVal;
         }
@@ -215,7 +234,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
 
             foreach (var td in victim.Properties)
             {
-                var mergeModel = merged.Properties.FirstOrDefault(o => o.Name == td.Name);
+                var mergeModel = merged.FindProperty(td.Name);
                 if (mergeModel == null)
                     merged.Properties.Add(td);
                 else

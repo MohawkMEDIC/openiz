@@ -47,6 +47,8 @@ namespace OpenIZ.Core.Model.Query
         private static Dictionary<Type, Dictionary<String, PropertyInfo>> m_memberCache = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
         // Cast cache
         private static Dictionary<String, Type> m_castCache = new Dictionary<string, Type>();
+        // Redirect cache
+        private static Dictionary<Type, Dictionary<String, PropertyInfo>> m_redirectCache = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 
         /// <summary>
         /// Buidl linq expression
@@ -161,7 +163,27 @@ namespace OpenIZ.Core.Model.Query
                         memberInfo = accessExpression.Type.GetRuntimeProperty(memberInfo.Name.Replace("Xml", ""));
                     else if (pMember != memberPath.Last())
                     {
-                        var backingFor = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == memberInfo.Name);
+                        PropertyInfo backingFor = null;
+
+                        // Look in member cache
+                        if (!m_redirectCache.TryGetValue(accessExpression.Type, out memberCache))
+                        {
+                            memberCache = new Dictionary<string, PropertyInfo>();
+                            lock (m_redirectCache)
+                                if (!m_redirectCache.ContainsKey(accessExpression.Type))
+                                    m_redirectCache.Add(accessExpression.Type, memberCache);
+                        }
+
+                        // Now find backing
+                        if (!memberCache.TryGetValue(pMember, out backingFor))
+                        {
+                            backingFor = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty == memberInfo.Name);
+                            // Member cache
+                            lock (memberCache)
+                                if (!memberCache.ContainsKey(pMember))
+                                    memberCache.Add(pMember, backingFor);
+                        }
+                        
                         if (backingFor != null)
                             memberInfo = backingFor;
                     }

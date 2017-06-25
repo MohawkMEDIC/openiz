@@ -32,6 +32,9 @@ namespace OpenIZ.Core.Applets.Model
 	public class AppletPackage
 	{
 
+        // Serializer
+        private static XmlSerializer s_xsz = new XmlSerializer(typeof(AppletPackage));
+
         /// <summary>
         /// Load the specified manifest name
         /// </summary>
@@ -48,8 +51,7 @@ namespace OpenIZ.Core.Applets.Model
         {
             using (GZipStream gzs = new GZipStream(resourceStream,  CompressionMode.Decompress))
             {
-                XmlSerializer xsz = new XmlSerializer(typeof(AppletPackage));
-                var amfst = xsz.Deserialize(gzs) as AppletPackage;
+                var amfst = s_xsz.Deserialize(gzs) as AppletPackage;
                 return amfst;
             }
         }
@@ -96,8 +98,7 @@ namespace OpenIZ.Core.Applets.Model
         {
             using (GZipStream gzs = new GZipStream(stream, CompressionMode.Compress))
             {
-                XmlSerializer xsz = new XmlSerializer(typeof(AppletPackage));
-                xsz.Serialize(gzs, this);
+                s_xsz.Serialize(gzs, this);
             }
         }
     }

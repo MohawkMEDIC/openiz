@@ -78,12 +78,9 @@ namespace OpenIZ.Messaging.IMSI.Client
             String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
             // Create with version?
-            if (data.Key != null)
+            if (data.Key != null && !asBundle)
             {
-                if(asBundle)
-                    return this.Client.Post<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, Bundle.CreateBundle(data));
-                else
-                    return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
+                return this.Client.Post<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key), this.Client.Accept, data);
             }
             else
             {
@@ -184,55 +181,55 @@ namespace OpenIZ.Messaging.IMSI.Client
             return this.Query(query, 0, null);
         }
 
-		/// <summary>
-		/// Performs a query.
-		/// </summary>
-		/// <typeparam name="TModel">The type of object to query.</typeparam>
-		/// <param name="query">The query parameters as a LINQ expression.</param>
-		/// <param name="offset">The offset of the query.</param>
-		/// <param name="count">The count of the query results.</param>
-		/// <param name="all">Whether the query should return all nested properties.</param>
-		/// <returns>Returns a Bundle containing the data.</returns>
-		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, bool all, Guid? queryId = null) where TModel : IdentifiedData
-		{
-			// Map the query to HTTP parameters
-			var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
+        /// <summary>
+        /// Performs a query.
+        /// </summary>
+        /// <typeparam name="TModel">The type of object to query.</typeparam>
+        /// <param name="query">The query parameters as a LINQ expression.</param>
+        /// <param name="offset">The offset of the query.</param>
+        /// <param name="count">The count of the query results.</param>
+        /// <param name="all">Whether the query should return all nested properties.</param>
+        /// <returns>Returns a Bundle containing the data.</returns>
+        public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, bool all, Guid? queryId = null) where TModel : IdentifiedData
+        {
+            // Map the query to HTTP parameters
+            var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
 
-			queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
+            queryParms.Add(new KeyValuePair<string, object>("_offset", offset));
 
-			if (count.HasValue)
-			{
-				queryParms.Add(new KeyValuePair<string, object>("_count", count));
-			}
+            if (count.HasValue)
+            {
+                queryParms.Add(new KeyValuePair<string, object>("_count", count));
+            }
 
-			if (all)
-			{
-				queryParms.Add(new KeyValuePair<string, object>("_all", true));
-			}
+            if (all)
+            {
+                queryParms.Add(new KeyValuePair<string, object>("_all", true));
+            }
 
             if (queryId.HasValue)
                 queryParms.Add(new KeyValuePair<string, object>("_queryId", queryId.ToString()));
 
-			// Resource name
-			string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+            // Resource name
+            string resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-			// The IMSI uses the XMLName as the root of the request
-			var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
+            // The IMSI uses the XMLName as the root of the request
+            var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
 
-			// Return value
-			return retVal;
-		}
+            // Return value
+            return retVal;
+        }
 
-		/// <summary>
-		/// Performs a query.
-		/// </summary>
-		/// <typeparam name="TModel">The type of object to query.</typeparam>
-		/// <param name="query">The query parameters as a LINQ expression.</param>
-		/// <param name="offset">The offset of the query.</param>
-		/// <param name="count">The count of the query results.</param>
-		/// <param name="expandProperties">An property traversal for which to expand upon.</param>
-		/// <returns>Returns a Bundle containing the data.</returns>
-		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string[] expandProperties = null, Guid? queryId = null) where TModel : IdentifiedData
+        /// <summary>
+        /// Performs a query.
+        /// </summary>
+        /// <typeparam name="TModel">The type of object to query.</typeparam>
+        /// <param name="query">The query parameters as a LINQ expression.</param>
+        /// <param name="offset">The offset of the query.</param>
+        /// <param name="count">The count of the query results.</param>
+        /// <param name="expandProperties">An property traversal for which to expand upon.</param>
+        /// <returns>Returns a Bundle containing the data.</returns>
+        public Bundle Query<TModel>(Expression<Func<TModel, bool>> query, int offset, int? count, string[] expandProperties = null, Guid? queryId = null) where TModel : IdentifiedData
         {
             // Map the query to HTTP parameters
             var queryParms = QueryExpressionBuilder.BuildQuery(query, true).ToList();
@@ -246,7 +243,7 @@ namespace OpenIZ.Messaging.IMSI.Client
 
             if (expandProperties != null && expandProperties.Length > 0)
             {
-	            queryParms.AddRange(expandProperties.Select(i => new KeyValuePair<string, object>("_expand", i)));
+                queryParms.AddRange(expandProperties.Select(i => new KeyValuePair<string, object>("_expand", i)));
             }
 
             if (queryId.HasValue)
@@ -280,30 +277,30 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// <param name="data">The data to be updated.</param>
         /// <returns>Returns the updated data.</returns>
         public TModel Update<TModel>(TModel data, bool asBundle) where TModel : IdentifiedData
-		{
-			if (data == null)
-			{
-				throw new ArgumentNullException(nameof(data));
-			}
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException(nameof(data));
+            }
 
-			// Resource name
-			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+            // Resource name
+            String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
-			// Create with version?
-			if (data.Key == null && typeof(TModel) != typeof(Bundle))
-			{
-				throw new KeyNotFoundException();
-			}
+            // Create with version?
+            if (data.Key == null && typeof(TModel) != typeof(Bundle))
+            {
+                throw new KeyNotFoundException();
+            }
 
-			if (data.Key == null && typeof(TModel) == typeof(Bundle))
-			{
-				data.Key = Guid.NewGuid();
-			}
+            if (data.Key == null && typeof(TModel) == typeof(Bundle))
+            {
+                data.Key = Guid.NewGuid();
+            }
 
-			return asBundle ?
-				this.Client.Put<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, Bundle.CreateBundle(data)) :
-				this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, data);
-		}
+            return asBundle ?
+                this.Client.Put<Bundle, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, Bundle.CreateBundle(data)) :
+                this.Client.Put<TModel, TModel>(String.Format("{0}/{1}", resourceName, data.Key.Value), this.Client.Accept, data);
+        }
 
         /// <summary>
         /// Sends a patch operation to the server.
@@ -312,17 +309,17 @@ namespace OpenIZ.Messaging.IMSI.Client
         /// <returns>Returns the updated version GUID.</returns>
         public Guid Patch(Patch patch)
         {
-	        if (patch == null)
-	        {
-				throw new ArgumentNullException(nameof(patch));
-			}
+            if (patch == null)
+            {
+                throw new ArgumentNullException(nameof(patch));
+            }
 
-	        if (patch.AppliesTo == null)
-	        {
-		        throw new InvalidOperationException();
-	        }
+            if (patch.AppliesTo == null)
+            {
+                throw new InvalidOperationException();
+            }
 
-	        // Resource name
+            // Resource name
             string resourceName = patch.AppliesTo.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
             // First we determine which resource we're patching patch
@@ -367,43 +364,43 @@ namespace OpenIZ.Messaging.IMSI.Client
 
         private bool disposedValue = false; // To detect redundant calls
 
-		/// <summary>
-		/// Dispose of any managed resources.
-		/// </summary>
-		/// <param name="disposing">Whether the current invocation is disposing.</param>
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!disposedValue)
-			{
-				if (disposing)
-				{
-					this.Client?.Dispose();
-				}
+        /// <summary>
+        /// Dispose of any managed resources.
+        /// </summary>
+        /// <param name="disposing">Whether the current invocation is disposing.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.Client?.Dispose();
+                }
 
-				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-				// TODO: set large fields to null.
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
 
-				disposedValue = true;
-			}
-		}
+                disposedValue = true;
+            }
+        }
 
-		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-		// ~ImsiServiceClient() {
-		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-		//   Dispose(false);
-		// }
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~ImsiServiceClient() {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
 
-		/// <summary>
-		/// Dispose of any resources.
-		/// </summary>
-		public void Dispose()
-		{
-			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-			Dispose(true);
-			// TODO: uncomment the following line if the finalizer is overridden above.
-			// GC.SuppressFinalize(this);
-		}
+        /// <summary>
+        /// Dispose of any resources.
+        /// </summary>
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
 
-		#endregion IDisposable Support
-	}
+        #endregion IDisposable Support
+    }
 }

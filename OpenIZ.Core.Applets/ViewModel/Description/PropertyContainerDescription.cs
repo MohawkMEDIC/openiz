@@ -33,6 +33,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
     public abstract class PropertyContainerDescription
     {
 
+        // Property models by name
+        private Dictionary<String, PropertyModelDescription> m_properties = new Dictionary<string, PropertyModelDescription>();
+
         /// <summary>
         /// Gets the name of the object
         /// </summary>
@@ -46,6 +49,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
             this.Properties = new List<PropertyModelDescription>();
         }
 
+        
         /// <summary>
         /// Property container description
         /// </summary>
@@ -70,6 +74,21 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         [XmlAttribute("ref")]
         public String Ref { get; set; }
 
+        /// <summary>
+        /// Find property
+        /// </summary>
+        public PropertyModelDescription FindProperty(String name)
+        {
+            PropertyModelDescription model = null;
+            if(!this.m_properties.TryGetValue(name, out model))
+            {
+                model = this.Properties.FirstOrDefault(o => o.Name == name);
+                lock (this.m_properties)
+                    if (!this.m_properties.ContainsKey(name))
+                        this.m_properties.Add(name, model);
+            }
+            return model;
+        }
 
     }
 }

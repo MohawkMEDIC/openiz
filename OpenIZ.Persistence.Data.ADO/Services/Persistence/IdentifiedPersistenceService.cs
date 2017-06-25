@@ -128,7 +128,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         internal override TModel Get(DataContext context, Guid key, IPrincipal principal)
         {
-            var retVal = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(key);
+            var cacheService = new AdoPersistenceCache(context);
+            var retVal = cacheService?.GetCacheItem<TModel>(key);
             if (retVal != null)
                 return retVal;
             else

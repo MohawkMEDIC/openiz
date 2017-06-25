@@ -45,6 +45,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.DataType;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
+using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -126,7 +127,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         internal virtual TData Get(DataContext context, Guid key, IPrincipal principal)
         {
             int tr = 0;
-            var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
+            var cacheService = new AdoPersistenceCache(context);
+
             var cacheItem = cacheService?.GetCacheItem<TData>(key);
             if (cacheItem != null)
             {
@@ -365,6 +367,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         {
             // Try the cache if available
             var guidIdentifier = containerId as Identifier<Guid>;
+
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TData>(guidIdentifier.Id) as TData;
             if (loadFast && cacheItem != null)
             {

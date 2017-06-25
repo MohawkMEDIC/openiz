@@ -366,7 +366,7 @@ namespace AppletCompiler
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
                                 MimeType = "text/css",
-                                Content = parms.Optimize && !itm.Contains(".min") ? new Microsoft.Ajax.Utilities.Minifier().MinifyStyleSheet(File.ReadAllText(itm)) : File.ReadAllText(itm)
+                                Content = File.ReadAllText(itm)
                             });
                             break;
                         case ".js":
@@ -374,7 +374,7 @@ namespace AppletCompiler
                             {
                                 Name = ResolveName(itm.Replace(path, "")),
                                 MimeType = "text/javascript",
-                                Content = parms.Optimize && !itm.Contains(".min") ? new Microsoft.Ajax.Utilities.Minifier().MinifyJavaScript(File.ReadAllText(itm)) : File.ReadAllText(itm)
+                                Content = parms.Optimize && !itm.Contains("rules") ? new Microsoft.Ajax.Utilities.Minifier().MinifyJavaScript(File.ReadAllText(itm), new Microsoft.Ajax.Utilities.CodeSettings() { MinifyCode = false, StripDebugStatements = true, LocalRenaming = Microsoft.Ajax.Utilities.LocalRenaming.KeepAll, PreserveFunctionNames = true }) : File.ReadAllText(itm)
                             });
                             break;
                         case ".json":

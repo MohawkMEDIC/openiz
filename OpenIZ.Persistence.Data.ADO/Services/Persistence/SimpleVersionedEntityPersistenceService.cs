@@ -34,9 +34,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             // We need to join, but to what?
             // True to get the cache item
-            var cacheService = ApplicationContext.Current.GetService<IDataCachingService>();
+            var cacheService = new AdoPersistenceCache(context);
             var cacheItem = cacheService?.GetCacheItem<TModel>(key) as TModel;
-            if (cacheItem != null)
+            if (cacheItem != null && context.Transaction == null)
             {
                 if (cacheItem.LoadState < context.LoadState)
                 {

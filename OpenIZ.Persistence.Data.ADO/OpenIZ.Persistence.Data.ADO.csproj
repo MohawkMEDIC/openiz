@@ -135,6 +135,7 @@
     <Compile Include="Services\IAdoPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActDerivedPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActPersistenceService.cs" />
+    <Compile Include="Services\Persistence\AdoPersistenceCache.cs" />
     <Compile Include="Services\Persistence\AlertPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
     <Compile Include="Services\Persistence\AssigningAuthorityPersistenceService.cs" />

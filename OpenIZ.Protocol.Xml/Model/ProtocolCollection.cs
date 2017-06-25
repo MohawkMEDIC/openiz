@@ -33,14 +33,14 @@ namespace OpenIZ.Protocol.Xml.Model
     [XmlType(nameof(ProtocolCollection), Namespace = "http://openiz.org/cdss")]
     public class ProtocolCollection : DecisionSupportBaseElement
     {
+        private static XmlSerializer s_xsz = new XmlSerializer(typeof(ProtocolCollection));
 
         /// <summary>
         /// Loads the protocol collection from a stream
         /// </summary>
         public static ProtocolCollection Load(Stream s)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(ProtocolCollection));
-            return xsz.Deserialize(s) as ProtocolCollection;
+            return s_xsz.Deserialize(s) as ProtocolCollection;
         }
 
         /// <summary>

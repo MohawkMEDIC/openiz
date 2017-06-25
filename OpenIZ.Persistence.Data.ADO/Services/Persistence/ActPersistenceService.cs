@@ -178,7 +178,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             DbActVersion dbActVersion = (dataInstance as CompositeResult)?.Values.OfType<DbActVersion>().FirstOrDefault() ?? dataInstance as DbActVersion ?? context.FirstOrDefault<DbActVersion>(o => o.VersionKey == (dataInstance as DbActSubTable).ParentKey);
             DbAct dbAct = (dataInstance as CompositeResult)?.Values.OfType<DbAct>().FirstOrDefault() ?? context.FirstOrDefault<DbAct>(o => o.Key == dbActVersion.Key);
             Act retVal = null;
-            IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
+            var cache= new AdoPersistenceCache(context);
 
             if (!dbActVersion.ObsoletionTime.HasValue)
                 switch (dbAct.ClassConceptKey.ToString().ToUpper())
@@ -356,7 +356,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
-                   data.Relationships.Where(o => !o.IsEmpty() && o.SourceEntityKey == data.Key),
+                   data.Relationships.Where(o => !o.IsEmpty() && (o.SourceEntityKey == data.Key || !o.SourceEntityKey.HasValue)),
                     retVal,
                     context,
                     principal);

@@ -113,11 +113,7 @@ namespace OpenIZ.Core.Http
             // URL is relative to base address
 
             Uri baseUrl = new Uri(this.Description.Endpoint[0].Address);
-            UriBuilder uriBuilder = new UriBuilder();
-            uriBuilder.Scheme = baseUrl.Scheme;
-            uriBuilder.Host = baseUrl.Host;
-            uriBuilder.Port = baseUrl.Port;
-            uriBuilder.Path = baseUrl.AbsolutePath;
+            UriBuilder uriBuilder = new UriBuilder(baseUrl);
             if (!String.IsNullOrEmpty(resourceName))
                 uriBuilder.Path += "/" + resourceName;
 

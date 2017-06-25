@@ -41,6 +41,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 
 namespace OpenIZ.Persistence.Data.ADO.Data
 {
@@ -97,6 +98,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
 
             // Is there a classifier?
             var idpInstance = AdoPersistenceService.GetPersister(me.GetType()) as IAdoPersistenceService;
+            var cacheService = new AdoPersistenceCache(context);
 
             IIdentifiedEntity existing = null;
 
@@ -144,9 +146,10 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 IDbIdentified dataObject = null;
 
                 // We've seen this before
+
                 String classKey = $"{dataType}.{classifierValue}";
                 if (m_classIdCache.TryGetValue(classKey, out objIdCache))
-                    existing = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(objIdCache) as IdentifiedData;
+                    existing = cacheService?.GetCacheItem(objIdCache) as IdentifiedData;
                 if (existing == null)
                 {
                     dataObject = context.FirstOrDefault(dataType, stmt) as IDbIdentified;
@@ -155,7 +158,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                         lock (m_classIdCache)
                             if (!m_classIdCache.ContainsKey(classKey))
                                 m_classIdCache.Add(classKey, dataObject.Key);
-                        var existCache = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem((dataObject as IDbIdentified).Key);
+                        var existCache = cacheService?.GetCacheItem((dataObject as IDbIdentified).Key);
                         if (existCache != null)
                             existing = existCache as IdentifiedData;
                         else

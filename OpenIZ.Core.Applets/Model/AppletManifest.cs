@@ -35,13 +35,15 @@ namespace OpenIZ.Core.Applets.Model
 	public class AppletManifest
 	{
 
-		/// <summary>
-		/// Load the specified manifest name
-		/// </summary>
-		public static AppletManifest Load(Stream resourceStream)
+        private static XmlSerializer x_xsz = new XmlSerializer(typeof(AppletManifest));
+
+        /// <summary>
+        /// Load the specified manifest name
+        /// </summary>
+        public static AppletManifest Load(Stream resourceStream)
 		{
-			XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
-			var amfst = xsz.Deserialize (resourceStream) as AppletManifest;
+			
+			var amfst = x_xsz.Deserialize (resourceStream) as AppletManifest;
             amfst.Initialize();
             return amfst;
 		}
@@ -51,8 +53,7 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         public void Save(Stream resourceStream)
         {
-            XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
-            xsz.Serialize(resourceStream, this);
+            x_xsz.Serialize(resourceStream, this);
         }
 
         /// <summary>
