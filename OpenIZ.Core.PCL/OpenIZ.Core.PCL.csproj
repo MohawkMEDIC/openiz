@@ -78,6 +78,7 @@
     <Compile Include="OpenIZHostType.cs" />
     <Compile Include="Patch\SimplePatchService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol\ProtocolComparer.cs" />
     <Compile Include="Services\IActExtensionRepositoryService.cs" />
     <Compile Include="Services\IActRepositoryService.cs" />
     <Compile Include="Services\IAssigningAuthorityRepositoryService.cs" />

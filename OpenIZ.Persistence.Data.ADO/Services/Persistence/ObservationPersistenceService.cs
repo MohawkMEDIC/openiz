@@ -97,6 +97,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             return base.UpdateInternal(context, data, principal);
         }
+
+        /// <summary>
+        /// Updates the specified observation
+        /// </summary>
+        public override Observation ObsoleteInternal(DataContext context, Observation data, IPrincipal principal)
+        {
+            if (data.InterpretationConcept != null) data.InterpretationConcept = data.InterpretationConcept?.EnsureExists(context, principal) as Concept;
+            data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
+
+            return base.ObsoleteInternal(context, data, principal);
+        }
     }
 
     /// <summary>
@@ -162,6 +173,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override TextObservation ObsoleteInternal(DataContext context, TextObservation data, IPrincipal principal)
         {
             var obsData = this.m_observationPersistence.ObsoleteInternal(context, data, principal);
+            context.Insert(new DbTextObservation()
+            {
+                ParentKey = obsData.VersionKey.Value,
+                Value = data.Value
+            });
             return data;
         }
     }
@@ -218,7 +234,24 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if (data.Value != null) data.Value = data.Value?.EnsureExists(context, principal) as Concept;
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
-            var obsData = this.m_observationPersistence.InsertInternal(context, data, principal);
+            var obsData = this.m_observationPersistence.UpdateInternal(context, data, principal);
+            context.Insert(new DbCodedObservation()
+            {
+                ParentKey = obsData.VersionKey.Value,
+                Value = data.ValueKey
+            });
+            return data;
+
+        }
+
+        /// <summary>
+        /// Update the specified observation
+        /// </summary>
+        public override Core.Model.Acts.CodedObservation ObsoleteInternal(DataContext context, Core.Model.Acts.CodedObservation data, IPrincipal principal)
+        {
+            if (data.Value != null) data.Value = data.Value?.EnsureExists(context, principal) as Concept;
+            data.ValueKey = data.Value?.Key ?? data.ValueKey;
+            var obsData = this.m_observationPersistence.ObsoleteInternal(context, data, principal);
             context.Insert(new DbCodedObservation()
             {
                 ParentKey = obsData.VersionKey.Value,
@@ -287,6 +320,24 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context, principal) as Concept;
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
             this.m_observationPersistence.UpdateInternal(context, data, principal);
+            context.Insert(new DbQuantityObservation()
+            {
+                ParentKey = data.VersionKey.Value,
+                UnitOfMeasureKey = data.UnitOfMeasureKey.Value,
+                Value = data.Value
+
+            });
+            return data;
+        }
+
+        /// <summary>
+        /// Update the specified observation
+        /// </summary>
+        public override Core.Model.Acts.QuantityObservation ObsoleteInternal(DataContext context, Core.Model.Acts.QuantityObservation data, IPrincipal principal)
+        {
+            if (data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context, principal) as Concept;
+            data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
+            this.m_observationPersistence.ObsoleteInternal(context, data, principal);
             context.Insert(new DbQuantityObservation()
             {
                 ParentKey = data.VersionKey.Value,

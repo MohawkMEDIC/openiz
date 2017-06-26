@@ -103,7 +103,8 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             var other = obj as Tag<TSourceType>;
             if (other == null) return false;
-            return base.SemanticEquals(obj) && other.TagKey == this.TagKey &&
+            return 
+                other.TagKey == this.TagKey &&
                 other.Value == this.Value;
         }
 

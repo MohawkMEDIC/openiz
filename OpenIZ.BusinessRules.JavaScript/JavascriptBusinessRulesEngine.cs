@@ -321,9 +321,24 @@ namespace OpenIZ.BusinessRules.JavaScript
             }
             catch (Exception e)
             {
-                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
-                throw new BusinessRulesExecutionException($"Error running business rule {action} for {data}", e);
+                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, this.ProduceLiteral(data), e);
+                throw new BusinessRulesExecutionException($"Error running business rule {action} for {this.ProduceLiteral(data)}", e);
             }
+        }
+
+        /// <summary>
+        /// Produce a literal representation of the data
+        /// </summary>
+        private object ProduceLiteral(object data)
+        {
+            StringBuilder sb = new StringBuilder();
+            var dict = data as IDictionary<String, Object>;
+            if (dict != null)
+                foreach (var kv in dict)
+                    sb.AppendFormat("{0}={{{1}}}", kv.Key, this.ProduceLiteral(kv.Value));
+            else
+                sb.Append(data?.ToString() ?? "null");
+            return sb.ToString();
         }
 
         /// <summary>

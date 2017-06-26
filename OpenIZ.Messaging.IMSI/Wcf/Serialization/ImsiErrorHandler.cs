@@ -96,6 +96,11 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                     Details = (error as DetectedIssueException).Issues.Select(o => new ResultDetail(o.Priority == Core.Services.DetectedIssuePriorityType.Error ? DetailType.Error : o.Priority == Core.Services.DetectedIssuePriorityType.Warning ? DetailType.Warning : DetailType.Information, o.Text)).ToList()
                 };
             }
+            else if (error is PatchAssertionException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Conflict;
+            else if(error is PatchException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotAcceptable;
+
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
 

@@ -41,6 +41,7 @@ using Jint.Runtime.Debugger;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Diagnostics;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.BusinessRules.JavaScript.JNI
 {
@@ -50,6 +51,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
     public class BusinessRulesBridge
     {
 
+        private Regex date_regex = new Regex(@"(\d{4})-(\d{2})-(\d{2})");
         // View model serializer
         private JsonViewModelSerializer m_modelSerializer = new JsonViewModelSerializer();
 
@@ -246,7 +248,16 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 else if (kv.Value is JArray)
                     expandoDic.Add(kv.Key == "item" ? "$item" : kv.Key, (kv.Value as JArray).Select(o => o is JValue ? (o as JValue).Value : ConvertToJint(o as JObject)).ToArray());
                 else
-                    expandoDic.Add(kv.Key, (kv.Value as JValue).Value);
+                {
+                    object jValue = (kv.Value as JValue).Value;
+                    if (jValue is String && date_regex.IsMatch(jValue.ToString())) // Correct dates
+                    {
+                        var dValue = date_regex.Match(jValue.ToString());
+                        expandoDic.Add(kv.Key, new DateTime(Int32.Parse(dValue.Groups[1].Value), Int32.Parse(dValue.Groups[2].Value), Int32.Parse(dValue.Groups[3].Value)));
+                    }
+                    else
+                        expandoDic.Add(kv.Key, (kv.Value as JValue).Value);
+                }
             }
             return retVal;
         }

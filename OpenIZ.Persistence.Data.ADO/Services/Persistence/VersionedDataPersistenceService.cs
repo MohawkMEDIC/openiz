@@ -362,7 +362,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             // Ensure the source key is set
             foreach (var itm in storage)
-                if (itm.SourceEntityKey == Guid.Empty ||
+                if (itm.SourceEntityKey.GetValueOrDefault() == Guid.Empty ||
                     itm.SourceEntityKey == null)
                     itm.SourceEntityKey = source.Key;
                 else if (itm.SourceEntityKey != source.Key && !sourceVersionMaps.ContainsKey(itm.SourceEntityKey ?? Guid.Empty)) // The source comes from somewhere else

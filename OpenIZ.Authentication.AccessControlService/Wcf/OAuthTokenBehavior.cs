@@ -234,7 +234,7 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
 
             // TODO: Add configuration for expiry
             DateTime issued = DateTime.Parse((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString("o")),
-                expires = DateTime.Parse((oizPrincipal as ClaimsPrincipal)?.FindFirst(ClaimTypes.Expiration)?.Value ?? DateTime.Now.Add(this.m_configuration.ValidityTime).ToString("o"));
+                expires = DateTime.Now.Add(this.m_configuration.ValidityTime);
 
 
 
