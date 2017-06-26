@@ -32,7 +32,7 @@ namespace OpenIZ.Core.Applets.Model
 	/// </summary>
 	[XmlType(nameof(AppletManifest), Namespace = "http://openiz.org/applet")]
 	[XmlRoot(nameof(AppletManifest), Namespace = "http://openiz.org/applet")]
-	public class AppletManifest
+	public class AppletManifest : IEquatable<AppletManifest>
 	{
 
         private static XmlSerializer x_xsz = new XmlSerializer(typeof(AppletManifest));
@@ -175,6 +175,25 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         [XmlElement("strings")]
         public List<AppletStrings> Strings { get; set; }
-    }
-}
 
+		/// <summary>
+		/// Indicates whether the current object is equal to another object of the same type.
+		/// </summary>
+		/// <param name="other">An object to compare with this object.</param>
+		/// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
+		public bool Equals(AppletManifest other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+
+			if (this.Info == null && other.Info == null)
+			{
+				return true;
+			}
+
+			return this.Info?.Id == other.Info?.Id;
+		}
+	}
+}

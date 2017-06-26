@@ -142,18 +142,27 @@ namespace OpenIZ.Core.Services.Impl
                 Directory.CreateDirectory(appletDir);
 
             // Install
-            String pakFile = Path.Combine(appletDir, package.Meta.Id + ".pak");
+            var pakFile = Path.Combine(appletDir, package.Meta.Id + ".pak");
             if (this.m_appletCollection.Any(o=>o.Info.Id == package.Meta.Id) && File.Exists(pakFile) && !isUpgrade)
                 throw new InvalidOperationException($"Cannot replace {package.Meta} unless upgrade is specifically specified");
 
-            using (FileStream fs = File.Create(pakFile))
-                package.Save(fs);
+	        using (var fs = File.Create(pakFile))
+	        {
+				package.Save(fs);
+			}
 
-            lock (this.m_fileDictionary)
-                if(!this.m_fileDictionary.ContainsKey(package.Meta.Id))
-                    this.m_fileDictionary.Add(package.Meta.Id, pakFile);
+	        lock (this.m_fileDictionary)
+		        if (!this.m_fileDictionary.ContainsKey(package.Meta.Id))
+			        this.m_fileDictionary.Add(package.Meta.Id, pakFile);
 
-            var pkg = package.Unpack();
+			var pkg = package.Unpack();
+
+			// remove the package from the collection if this is an upgrade
+	        if (isUpgrade)
+	        {
+		        this.m_appletCollection.Remove(pkg);
+	        }
+
             this.m_appletCollection.Add(pkg);
 
             // We want to install the templates & protocols into the DB
