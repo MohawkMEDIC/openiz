@@ -27,6 +27,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
         // Sync lock
         private Object m_syncLock = new object();
 
+        // Static ync lock
+        private static object s_syncLock = new Object();
+
         // Related load methods
         private static Dictionary<Type, MethodInfo> m_relatedLoadMethods = new Dictionary<Type, MethodInfo>();
         // Classifiers
@@ -180,7 +183,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
                 var classifierAtt = type.StripGeneric().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                 if (classifierAtt != null)
                     retVal = new Json.JsonReflectionClassifier(type);
-                lock (this.m_syncLock)
+                lock (m_classifiers)
                     if (!m_classifiers.ContainsKey(type))
                         m_classifiers.Add(type, retVal);
             }
