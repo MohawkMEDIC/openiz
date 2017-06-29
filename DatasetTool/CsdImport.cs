@@ -293,7 +293,20 @@ namespace OizDevTool
 			AssigningAuthority assigningAuthority;
 
 			if (!assigningAuthorityKeys.ContainsKey(otherId.assigningAuthorityName))
-			{ 
+			{
+				// lookup by NSID
+				assigningAuthority = metadataService.FindAssigningAuthority(a => a.DomainName == otherId.assigningAuthorityName).FirstOrDefault();
+
+				if (assigningAuthority != null)
+				{
+					assigningAuthorityKeys.Add(otherId.assigningAuthorityName, assigningAuthority.Key.Value);
+					return assigningAuthority;
+				}
+
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
+				Console.ResetColor();
+
 				// lookup by URL
 				assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == otherId.assigningAuthorityName).FirstOrDefault();
 
