@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F1A82A4F-4A57-47D7-AE76-444C8A4FF54A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenIZ.Core.Model</RootNamespace>
+    <AssemblyName>OpenIZ.Core.Model</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\OpenIZ.Core.Model.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Release\OpenIZ.Core.Model.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Acts\Act.cs" />
+    <Compile Include="Acts\ActParticipation.cs" />
+    <Compile Include="Acts\ActProtocol.cs" />
+    <Compile Include="Acts\ActRelationship.cs" />
+    <Compile Include="Acts\CarePlan.cs" />
+    <Compile Include="Acts\ControlAct.cs" />
+    <Compile Include="Acts\Observation.cs" />
+    <Compile Include="Acts\PatientEncounter.cs" />
+    <Compile Include="Acts\Protocol.cs" />
+    <Compile Include="Acts\SubstanceAdministration.cs" />
+    <Compile Include="Attributes\AutoLoadAttribute.cs" />
+    <Compile Include="Attributes\BindingAttribute.cs" />
+    <Compile Include="Attributes\ClassifierAttribute.cs" />
+    <Compile Include="Attributes\DataIgnoreAttribute.cs" />
+    <Compile Include="Attributes\KeyLookupAttribute.cs" />
+    <Compile Include="Attributes\NonCachedAttribute.cs" />
+    <Compile Include="Attributes\SerializationReferenceAttribute.cs" />
+    <Compile Include="Attributes\SimpleValueAttribute.cs" />
+    <Compile Include="BaseEntityData.cs" />
+    <Compile Include="Association.cs" />
+    <Compile Include="Collection\Bundle.cs" />
+    <Compile Include="Collection\ILockable.cs" />
+    <Compile Include="Constants\ActClassKeys.cs" />
+    <Compile Include="Constants\ActMoodKeys.cs" />
+    <Compile Include="Constants\ActParticipationKey.cs" />
+    <Compile Include="Constants\ActReasonKeys.cs" />
+    <Compile Include="Constants\ActRelationshipTypeKeys.cs" />
+    <Compile Include="Constants\AddressKeys.cs" />
+    <Compile Include="Constants\CodeSystemKeys.cs" />
+    <Compile Include="Constants\ConceptClassKeys.cs" />
+    <Compile Include="Constants\ConceptRelationshipTypeKeys.cs" />
+    <Compile Include="Constants\ConceptSetKeys.cs" />
+    <Compile Include="Constants\ContainerCapKeys.cs" />
+    <Compile Include="Constants\ContainerSeparatorTypeKeys.cs" />
+    <Compile Include="Constants\ContainerTypeKeys.cs" />
+    <Compile Include="Constants\DeterminerConceptKeys.cs" />
+    <Compile Include="Constants\EntityClassConceptKeys.cs" />
+    <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
+    <Compile Include="Constants\NameKeys.cs" />
+    <Compile Include="Constants\NullReasonKeys.cs" />
+    <Compile Include="Constants\PhoneticAlgorithmKeys.cs" />
+    <Compile Include="Constants\StatusConceptKeys.cs" />
+    <Compile Include="Constants\TelecomAddressUseKeys.cs" />
+    <Compile Include="Constants\UserClassKeys.cs" />
+    <Compile Include="DataTypes\AssigningAuthority.cs" />
+    <Compile Include="DataTypes\CodeSystem.cs" />
+    <Compile Include="DataTypes\Concept.cs" />
+    <Compile Include="DataTypes\ConceptClass.cs" />
+    <Compile Include="DataTypes\ConceptName.cs" />
+    <Compile Include="DataTypes\ConceptReferenceTerm.cs" />
+    <Compile Include="DataTypes\ConceptRelationship.cs" />
+    <Compile Include="DataTypes\ConceptRelationshipType.cs" />
+    <Compile Include="DataTypes\ConceptSet.cs" />
+    <Compile Include="DataTypes\DatePrecision.cs" />
+    <Compile Include="DataTypes\Extension.cs" />
+    <Compile Include="DataTypes\ExtensionType.cs" />
+    <Compile Include="DataTypes\Identifier.cs" />
+    <Compile Include="DataTypes\IdentifierType.cs" />
+    <Compile Include="DataTypes\Note.cs" />
+    <Compile Include="DataTypes\PhoneticAlgorithm.cs" />
+    <Compile Include="DataTypes\ReferenceTerm.cs" />
+    <Compile Include="DataTypes\ReferenceTermName.cs" />
+    <Compile Include="DataTypes\Tag.cs" />
+    <Compile Include="DataTypes\TemplateDefinition.cs" />
+    <Compile Include="Entities\Container.cs" />
+    <Compile Include="Entities\UserEntity.cs" />
+    <Compile Include="EntityLoader\EntitySource.cs" />
+    <Compile Include="EntityLoader\IEntitySourceProvider.cs" />
+    <Compile Include="Entities\ApplicationEntity.cs" />
+    <Compile Include="Entities\DeviceEntity.cs" />
+    <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\EntityAddress.cs" />
+    <Compile Include="Entities\EntityAddressComponent.cs" />
+    <Compile Include="Entities\EntityName.cs" />
+    <Compile Include="Entities\EntityNameComponent.cs" />
+    <Compile Include="Entities\EntityRelationship.cs" />
+    <Compile Include="Entities\EntityTelecomAddress.cs" />
+    <Compile Include="Entities\GenericComponentValues.cs" />
+    <Compile Include="Entities\ManufacturedMaterial.cs" />
+    <Compile Include="Entities\Material.cs" />
+    <Compile Include="Entities\Organization.cs" />
+    <Compile Include="Entities\Person.cs" />
+    <Compile Include="Entities\PersonLanguageCommunication.cs" />
+    <Compile Include="Entities\Place.cs" />
+    <Compile Include="Entities\PlaceService.cs" />
+    <Compile Include="Exceptions\ModelMapValidationException.cs" />
+    <Compile Include="Exceptions\ModelValidationException.cs" />
+    <Compile Include="Extensions\BooleanExtensionHandler.cs" />
+    <Compile Include="Extensions\DecimalExtensionHandler.cs" />
+    <Compile Include="Extensions\DictionaryExtensionHandler.cs" />
+    <Compile Include="Extensions\StringExtensionHandler.cs" />
+    <Compile Include="IdentifiedData.cs" />
+    <Compile Include="Interfaces\IBaseEntityData.cs" />
+    <Compile Include="Interfaces\IExtensionHandler.cs" />
+    <Compile Include="Interfaces\IIdentifiedEntity.cs" />
+    <Compile Include="Interfaces\ISimpleAssociation.cs" />
+    <Compile Include="Interfaces\ISecurable.cs" />
+    <Compile Include="Interfaces\ITaggable.cs" />
+    <Compile Include="Interfaces\IVersionedAssociation.cs" />
+    <Compile Include="Interfaces\IVersionedEntity.cs" />
+    <Compile Include="Map\CastMap.cs" />
+    <Compile Include="Map\ClassMap.cs" />
+    <Compile Include="Map\ClassRedirect.cs" />
+    <Compile Include="Map\CollapseKey.cs" />
+    <Compile Include="Map\AggregationFunctionType.cs" />
+    <Compile Include="Map\MapUtil.cs" />
+    <Compile Include="Map\ModelExpressionVisitor.cs" />
+    <Compile Include="Map\ModelMap.cs" />
+    <Compile Include="Map\ModelMapper.cs" />
+    <Compile Include="Map\OpenIZConvert.cs" />
+    <Compile Include="Map\PropertyMap.cs" />
+    <Compile Include="Map\SortOrderType.cs" />
+    <Compile Include="Map\ValidationResultDetail.cs" />
+    <Compile Include="Patch\Patch.cs" />
+    <Compile Include="Patch\PatchInfo.cs" />
+    <Compile Include="Patch\PatchOperation.cs" />
+    <Compile Include="Patch\PatchOperationType.cs" />
+    <Compile Include="Patch\PatchTarget.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\NameValueCollection.cs" />
+    <Compile Include="Query\QueryExpressionBuilder.cs" />
+    <Compile Include="Query\QueryExpressionParser.cs" />
+    <Compile Include="ExtensionMethods\ExtensionMethods.cs" />
+    <Compile Include="Roles\Patient.cs" />
+    <Compile Include="Roles\Provider.cs" />
+    <Compile Include="Security\SecurityApplication.cs" />
+    <Compile Include="Security\SecurityDevice.cs" />
+    <Compile Include="Security\SecurityEntity.cs" />
+    <Compile Include="Security\SecurityPolicy.cs" />
+    <Compile Include="Security\SecurityRole.cs" />
+    <Compile Include="Security\SecurityUser.cs" />
+    <Compile Include="Serialization\ModelSerializationBinder.cs" />
+    <Compile Include="NonVersionedEntityData.cs" />
+    <Compile Include="VersionedAssociation.cs" />
+    <Compile Include="VersionedEntityData.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
+    <None Include="Doc\Query\index.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Schema\BaseTypes.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Schema\ModelMap.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Schema\OpenIZModel.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

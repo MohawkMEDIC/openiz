@@ -1,0 +1,357 @@
+﻿{
+  "$type": "Patient",
+  "multipleBirthOrder": "1",
+  "genderConcept": null,
+  "dateOfBirth": "2016-07-01T10:20:20.109Z",
+  "dateOfBirthPrecision": false,
+  "identifier": {
+    "NEW": {
+      "authority": "NEW",
+      "value": "123123123123123"
+    }
+  },
+  "relationship": {
+    "Mother": {
+      "targetModel": {
+        "name": {
+          "OfficialRecord": {
+            "component": {
+              "Given": [ "Christine ", " H" ],
+              "Family": [ "Bear" ]
+            }
+          }
+        },
+        "identifier": { "$other": { "value": "123456789" } },
+        "telecom": { "$other": { "value": "123123123" } },
+        "$type": "Person"
+      }
+    },
+    "$other": {
+      "targetModel": {
+        "name": {
+          "OfficialRecord": {
+            "component": {
+              "Given": [ "John ", " C" ],
+              "Family": [ "Bear" ]
+            }
+          }
+        },
+        "telecom": { "$other": { "value": "123123123" } }
+      }
+    }
+  },
+  "participation": {
+    "RecordTarget": [
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "actTime": "2016-07-01T10:20:20.109Z",
+          "doseSequence": 0,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6ccbec1-74ed-4bc9-b187-951ea3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "BCG" ] } } ] }
+              }
+            ]
+          },
+          "_enabled": true,
+          "$$hashKey": "object:38"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "actTime": "2016-07-01T10:20:20.109Z",
+          "doseSequence": 0,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951ea3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "OPV" ] } } ] }
+              }
+            ]
+          },
+          "_enabled": true,
+          "$$hashKey": "object:44"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 1,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951ea3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "OPV" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:49",
+          "_enabled": true
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 2,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951ea3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "OPV" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:54"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence":3,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951ea3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "OPV" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:59"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 1,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "PENTA" ] } } ] }
+              }
+            ]
+          },
+          "_enabled": true,
+          "$$hashKey": "object:65"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 2,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "PENTA" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:71"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence":3,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "PENTA" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:76"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 1,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "PCV" ] } } ] }
+              }
+            ]
+          },
+          "_enabled": true,
+          "$$hashKey": "object:82"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 2,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "PCV" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:88"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence":3,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "PCV" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:93"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 1,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "ROTA" ] } } ] }
+              }
+            ]
+          },
+          "_enabled": true,
+          "$$hashKey": "object:99"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 2,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "ROTA" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:105"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 1,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "MR" ] } } ] }
+              }
+            ]
+          },
+          "_enabled": true,
+          "$$hashKey": "object:111"
+        }
+      },
+      {
+        "sourceModel": {
+          "$type": "SubstanceAdministration",
+          "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
+          "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
+          "startTime": "2016-07-25T10:20:20.109Z",
+          "stopTime": "2016-07-25T10:20:20.109Z",
+          "doseSequence": 2,
+          "participation": {
+            "ExposureAgent": [
+              {
+                "id": "d6cfbec1-74ed-4bc9-b187-951fa3c17e92",
+                "name": { "OfficialRecord": [ { "component": { "Other": [ "MR" ] } } ] }
+              }
+            ]
+          },
+          "$$hashKey": "object:117"
+        }
+      }
+    ]
+  },
+  "name": {
+    "OfficialRecord": {
+      "component": {
+        "Given": [ "William ", " P" ],
+        "Family": [ "Bear" ]
+      }
+    }
+  },
+  "extension": {
+    "http://openiz.org/extensions/patient/contrib/timr/pctmtStatus": [ "0" ],
+    "http://openiz.org/extensions/patient/contrib/timr/breastFeedingStatus": [ "1" ],
+    "http://openiz.org/extensions/patient/contrib/timr/tetanusStatus": [ "locale.common.unknown" ],
+    "http://openiz.org/extensions/patient/contrib/timr/mosquitoNetStatus": [ "1" ]
+  },
+  "tag": { "hasBirthCertificate": true }
+}

@@ -1,0 +1,14 @@
+License of Third Party Libraries:
+
+Apache 2.0 Licensed Components:
+	- MARC-HI Everest (http://everest.codeplex.com)
+	- MARC-HI Service Core (http://medicsvccore.codeplex.com)
+	- Twilio API (http://twilio.com)
+
+MIT Licensed Components:
+	- Newtonsoft JSON (http://www.newtonsoft.com/json)
+
+BSD Licensed Components:
+	- Antlr Components (http://www.antlr.org/)
+	- Expression Evaluator (https://github.com/RupertAvery/csharpeval)
+	- JInt (https://github.com/sebastienros/jint)

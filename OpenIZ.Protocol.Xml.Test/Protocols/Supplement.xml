@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-24
+ -->
+<ProtocolDefinition xmlns="http://openiz.org/cdss" id="zz_VITA" name="Vitamin A Supplement" uuid="D743E71F-86BD-4992-A50B-4FF05838095C">
+  <when evaluation="and">
+    <linqExpression>now.Subtract(DateOfBirth.Value.Date).TotalDays &lt;= 1825</linqExpression>
+  </when>
+  <rule id="VITA" repeat="9">
+    <when evaluation="and">
+      <!-- Vitamin A not set yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=Supplement-VitaminA&amp;
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=$index
+      </imsiExpression>
+      <linqExpression>index > 0</linqExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+          {
+				      "$type": "SubstanceAdministration",
+              template: {
+                  mnemonic: "Act.SubstanceAdmin.Supplement"
+              },
+             
+              "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "7D84A057-1FCC-4054-A51F-B77D230FC6D1", "mnemonic" : "DrugTherapy" },
+				      "doseSequence": 1,
+              "doseQuantity" : 1.0,
+              "doseUnitModel" : {
+                "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
+                "mnemonic" : "DOSE"
+              },
+              "routeModel" : {
+                "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
+                "mnemonic": "RouteOfAdministration-PO"
+              },
+              "siteModel" : {
+                "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
+                "mnemonic": 'Site-Oral'
+              },
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "7D80E518-6E04-4091-8D19-7265BB09BC1F",
+                    "typeConceptModel": {
+                      "id" : "3023bad7-8c16-49ea-81fc-eee6232b80e7",
+                      "mnemonic": "Supplement-VitaminA"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["Vitamin A Supplement"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["Vitamin A"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+        ]]>
+        </jsonModel>
+        <assign propertyName="SequenceId">index</assign>
+        <assign propertyName="ActTime">DateOfBirth.Value.Date.AddMonths(index * 6)</assign>
+        <assign propertyName="StartTime">DateOfBirth.Value.Date.AddMonths(index * 6).AddDays(-DateOfBirth.Value.Day + 1)</assign>
+        <assign propertyName="StopTime">DateOfBirth.Value.Date.AddMonths((index+1) * 6).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</assign>
+      </action>
+    </then>
+  </rule>
+</ProtocolDefinition>

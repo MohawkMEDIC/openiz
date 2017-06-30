@@ -1,0 +1,464 @@
+﻿<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>4853A702-FFF3-4EFB-8DD7-54AACCA53664</id>
+      <name>UCUM</name>
+      <oid>2.16.840.1.113883.6.8</oid>
+      <authority>UCUM</authority>
+	  <url>http://hl7.org/fhir/sid/ucum</url>
+      <description>Universal Codes for Units of Measure</description>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e22f220a-119f-4192-8813-20b66f5558d9</id>
+      
+      <mnemonic>mmHg</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>mmHg</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>bb1d639d-aea8-4750-a24c-b2548d2b6fe4</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-mmHg</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>e22f220a-119f-4192-8813-20b66f5558d9</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>mmHg</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f3f079c4-21c2-4210-9cbd-99b455ebc02e</id>
+      
+      <mnemonic>/min</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Per minute</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>564ebc64-1b56-48cd-907d-41bb47b7834f</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-perMinute</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>f3f079c4-21c2-4210-9cbd-99b455ebc02e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Per minute</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>80c4cc63-0a46-44ad-ac00-ada885ca512e</id>
+      
+      <mnemonic>%</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Percent</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>7bea593b-454a-4de4-bad9-4866fd14fe09</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Percentage</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>80c4cc63-0a46-44ad-ac00-ada885ca512e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Percent</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3c3a3a78-d074-412c-b437-971a12c69562</id>
+      
+      <mnemonic>cel</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Celsius</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>83792d73-6a3a-4a72-b13a-ba95ef4a83ea</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Celsius</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>3c3a3a78-d074-412c-b437-971a12c69562</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Celsius</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>c9d9b0b9-2284-4c74-8828-22fdc619c48f</id>
+      
+      <mnemonic>cm</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Centimetre</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>eeefb6bb-18b1-478d-9cc5-575325b947a8</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Centimetre</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>c9d9b0b9-2284-4c74-8828-22fdc619c48f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Centimetres</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>a5cab5f4-3a08-4543-8e71-8c07b0c5416e</id>
+      
+      <mnemonic>kg</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Kilograms</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>a0a8d4db-db72-4bc7-9b8c-c07cef7bc796</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Kilograms</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>a5cab5f4-3a08-4543-8e71-8c07b0c5416e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Kilograms</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>981e822b-7362-4abd-88a6-7ebefdc69c03</id>
+      
+      <mnemonic>[degF]</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Degrees Fahrenheit</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>4400ec99-e5ae-4ff8-bc4b-69a6ac7d77d7</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Fahrenheit</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>981e822b-7362-4abd-88a6-7ebefdc69c03</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Degrees Fahrenheit</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b104b90b-4e0f-45bb-a939-8e1468b4a9f0</id>
+      
+      <mnemonic>[in_us]</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>US Inches</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>9e974584-7c48-457e-a79c-031cdd62714a</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-UsInches</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>b104b90b-4e0f-45bb-a939-8e1468b4a9f0</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>US Inches</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>1dbfb8d5-1659-40d9-9e4c-828b4047c58e</id>
+      
+      <mnemonic>dose</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Dose</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Dose</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>1dbfb8d5-1659-40d9-9e4c-828b4047c58e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Dose</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>70313bb5-9c1d-44ba-9302-875ec0c4e622</id>
+      
+      <mnemonic>puff</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Puff</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>2cedfe61-4549-4d93-a936-79c942e683cc</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Puff</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>70313bb5-9c1d-44ba-9302-875ec0c4e622</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Puff</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>329535eb-d6cf-4a62-aeb8-43e959f1ad09</id>
+      
+      <name>Units of Measure</name>
+      <mnemonic>UnitOfMeasure</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.35</oid>
+      <url>http://openiz.org/conceptsets/contrib/UnitOfMeasure</url>
+      <concept>bb1d639d-aea8-4750-a24c-b2548d2b6fe4</concept>
+      <concept>564ebc64-1b56-48cd-907d-41bb47b7834f</concept>
+      <concept>7bea593b-454a-4de4-bad9-4866fd14fe09</concept>
+      <concept>83792d73-6a3a-4a72-b13a-ba95ef4a83ea</concept>
+      <concept>eeefb6bb-18b1-478d-9cc5-575325b947a8</concept>
+      <concept>a0a8d4db-db72-4bc7-9b8c-c07cef7bc796</concept>
+      <concept>4400ec99-e5ae-4ff8-bc4b-69a6ac7d77d7</concept>
+      <concept>9e974584-7c48-457e-a79c-031cdd62714a</concept>
+      <concept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</concept>
+      <concept>2cedfe61-4549-4d93-a936-79c942e683cc</concept>
+    </ConceptSet>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>329535eb-d6cf-4a62-aeb8-43e959f1adaa</id>
+
+      <name>Units of Measure for Weight</name>
+      <mnemonic>UnitOfMeasureWeight</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.36</oid>
+      <url>http://openiz.org/conceptsets/contrib/UnitOfMeasureWeight</url>
+      <concept>a0a8d4db-db72-4bc7-9b8c-c07cef7bc796</concept>
+    </ConceptSet>
+  </update>
+</dataset>

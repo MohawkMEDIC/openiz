@@ -1,0 +1,448 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="BCP 47 Language Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</id>
+      <name>BCP 47 Language Codes</name>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.99</oid>
+	    <url>urn:ietf:bcp:47</url>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>de73d61f-7d30-4138-8401-8084b9aee57f</id>
+      <mnemonic>ar</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Arabic</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>516cc7c0-cdea-4a84-b11e-8c7bad938c27</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ar</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>de73d61f-7d30-4138-8401-8084b9aee57f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Arabic</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5aabae8c-888a-4155-8d8e-0a09860c14f7</id>
+      <mnemonic>bn</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Bengali</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>f56cbd9b-420b-407d-98d3-00d58f36f64a</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>bn</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>5aabae8c-888a-4155-8d8e-0a09860c14f7</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Bengali</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>65733823-2ff6-454f-b386-1da4ec33cd0b</id>
+      <creationTime>2017-04-09T19:39:27.4707244-04:00</creationTime>
+      <mnemonic>ny</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Chichewa</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>94f30629-0613-4186-95b2-ed40bc30664c</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ny</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>65733823-2ff6-454f-b386-1da4ec33cd0b</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Chichewa</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>624f388d-1d4f-4a4d-9c42-6206e8ff7994</id>
+      <mnemonic>zh</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Chinese</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>7e969b68-d2cb-4fb1-8b6e-3e153a68fd23</id>
+      <creationTime>2017-04-09T19:39:27.4707244-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>zh</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>624f388d-1d4f-4a4d-9c42-6206e8ff7994</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Chinese</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7d15f84c-e118-440b-88d4-d4fbfa1ad306</id>
+      <mnemonic>en</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>English</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>3a8c4eaf-d15b-40ce-9bd8-eac516581ae6</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>en</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>7d15f84c-e118-440b-88d4-d4fbfa1ad306</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>English</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3f75084c-dc4d-4f1e-b14f-6910c742520c</id>
+      <mnemonic>fr</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>French</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>9630857e-7850-4577-9300-739379a71d8f</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>fr</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>3f75084c-dc4d-4f1e-b14f-6910c742520c</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>French</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2aed5fc8-5d98-4806-8f5c-99e4768ab183</id>
+      <mnemonic>de</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>German</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>139013e9-0394-4d30-bc4f-98d7898a5b4c</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>de</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>2aed5fc8-5d98-4806-8f5c-99e4768ab183</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>German</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b886beab-3f73-436c-abc5-3ce26521ba4e</id>
+      <mnemonic>ja</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Japanese</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>fa5c5ae7-5eb5-477b-8f30-7cacf1546237</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ja</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>b886beab-3f73-436c-abc5-3ce26521ba4e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Japanese</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>bab0febc-69f9-4683-8aa2-ec0830cd6a77</id>
+      <mnemonic>ko</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Korean</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>318af92f-ddfa-45b9-9c7b-a74c688c914b</id>
+      <creationTime>2017-04-09T19:39:27.4707244-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ko</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>bab0febc-69f9-4683-8aa2-ec0830cd6a77</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Korean</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>bd488ee8-a604-481c-bdc3-40aa96f55c0c</id>
+      <mnemonic>mi</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Maori</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>e5980ab7-5d71-4107-9dad-13d707521269</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>mi</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>bd488ee8-a604-481c-bdc3-40aa96f55c0c</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Maori</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7b0b8fb8-114f-4258-a263-2b61416683d7</id>
+      <mnemonic>es</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Spanish</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>27a35f16-0f7a-4e76-b9c3-4fd98471de14</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>es</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>7b0b8fb8-114f-4258-a263-2b61416683d7</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Spanish</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>95d4dc6e-a325-4c7c-bd45-f32a53a40be4</id>
+      <mnemonic>sw</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Swahili</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>95ae185b-53be-4a82-bbd8-9a8200d611c3</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>sw</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>95d4dc6e-a325-4c7c-bd45-f32a53a40be4</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Swahili</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f617b169-5a74-43ff-813d-8bb6de4651d5</id>
+      <mnemonic>ty</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Tahitian</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>3a9535bb-3e11-4194-b477-0c0d14a11e2c</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ty</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>f617b169-5a74-43ff-813d-8bb6de4651d5</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Tahitian</value>
+      </name>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5c41e210-b4e0-4172-a257-43369b299072</id>
+      <mnemonic>vi</mnemonic>
+      <codeSystem>cce854a8-25c5-4f66-9e41-c0f45cdd2f9e</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Vietnamese</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>f767e0c6-bfe3-4351-91cc-9685543a6c1d</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>vi</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>5c41e210-b4e0-4172-a257-43369b299072</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Vietnamese</value>
+      </name>
+    </Concept>
+  </insert>
+</dataset>

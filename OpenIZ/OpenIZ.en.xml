@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-6-14
+ -->
+<locale name="en" xmlns="urn:marc-hi:ca/localization">
+  
+  <!-- MESSAGE VALIDATION ERRORS -->
+  <string name="MSGE001">Cannot locate map between domain and model instances.</string>
+  <string name="MSGE002">Invalid query parameter format. Expected format is UUID</string>
+  <string name="MSGE003">Path indicates update for resource different than message content</string>
+  <!-- PERSISTENCE ERRORS -->
+  <string name="DBPE001">Unable to locate appropriate persistence handler</string>
+  <string name="DBPE002">Attempt to update an obsolete version</string>
+  <!-- FORMAL CONSTRAINTS -->
+  <string name="DBCE001">Attempt to insert an entity with KEY specified</string>
+  <string name="DBCE002">Attempt to update an entity with no KEY specified</string>
+  <string name="DBCE003">Attempt to update a readonly object</string>
+  <string name="DBCE004">Attempt to create an association to a versioned entity with no EffectiveVersion specified</string>
+  <string name="DBCE005">Attempt to create an association to an entity with no source KEY</string>
+
+  <!-- SECURITY ERRORS -->
+  <string name="SECE001">Client made claim which it is not permitted to make</string>
+  <string name="SECE002">Claim {0} is not valid</string>
+</locale>

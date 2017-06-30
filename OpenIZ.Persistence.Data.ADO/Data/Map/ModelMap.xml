@@ -1,0 +1,415 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-6-14
+ -->
+<modelMap xmlns="http://openiz.org/model/map">
+  
+  <!-- Alerts -->
+  <class modelClass="OpenIZ.Core.Alert.Alerting.AlertMessage, OpenIZ.Core.Alert, Version=0.6.0.0"
+  domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Alerts.DbAlertMessage, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+    <property modelName="Key" domainName="Key"/>
+    <property modelName="CreationTime" domainName="CreationTime" />
+    <property modelName="CreatedByKey" domainName="CreatedByKey"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByKey"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+    <property modelName="From" domainName="FromInfo"/>
+    <property modelName="TimeStamp" domainName="MessageUtc" />
+    <property modelName="Subject" domainName="Subject"/>
+    <property modelName="Body" domainName="Body"/>
+    <property modelName="To" domainName="ToInfo"/>
+  </class>
+  
+  <!-- Security Users -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityUser, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+  </class>
+
+  <!-- Security Application -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityApplication, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityApplication, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="Name" domainName="PublicId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+    <property modelName="ApplicationSecret" domainName="Secret" />
+  </class>
+
+  <!-- Security Device -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityDevice, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityDevice, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="Name" domainName="PublicId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
+  </class>
+
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityRole, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+
+  </class>
+
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityRolePolicy, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityDevicePolicy, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityApplicationPolicy, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicy, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Security.DbSecurityPolicy, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+  </class>
+
+  <!-- Concepts -->
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptSet, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+  </class>
+  <class modelClass="OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptVersion, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="PreviousVersionKey" domainName="ReplacesVersionKey"/>
+    <property modelName="StatusConceptKey" domainName="StatusKey"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
+
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptClass, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="UpdatedTime"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.DataType.DbPhoneticAlgorithm, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="Handler" domainName="HandlerClass"/>
+    
+  </class>
+
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.CodeSystem, OpenIZ.Core.Model, Version=0.6.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbCodeSystem, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+    <property modelName="Authority" domainName="Domain"/>
+    
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationshipType, OpenIZ.Core.Model, Version=0.6.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptRelationshipType, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+    
+  </class>
+
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptRelationship, OpenIZ.Core.Model, Version=0.6.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptRelationship, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="TargetConceptKey" domainName="TargetKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTerm, OpenIZ.Core.Model, Version=0.6.0.0"
+        domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbReferenceTerm, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ReferenceTermName, OpenIZ.Core.Model, Version=0.6.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbReferenceTermName, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="Language" domainName="LanguageCode"/>
+    <property modelName="Name" domainName="Value"/>
+
+  </class>
+
+  <!-- Reference Terms -->
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm, OpenIZ.Core.Model, Version=0.6.0.0" domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptReferenceTerm, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="ReferenceTermKey" domainName="TargetKey"/>
+  </class>
+  
+  <!-- Concept Names -->
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Concepts.DbConceptName, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <!-- Entity Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityVersion, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="PreviousVersionKey" domainName="ReplacesVersionKey"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
+
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityName, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="NameUseKey" domainName="UseConceptKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityNameComponent, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityNameComponent, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityAddress, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityAddress, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="AddressUseKey" domainName="UseConceptKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityAddressComponent, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityAddressComponent, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbEntityRelationship, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="TargetEntityKey" domainName="TargetKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.DataType.DbEntityIdentifier, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="IdentifierTypeKey" domainName="TypeKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.IdentifierType, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.DataType.DbIdentifierType, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.AssigningAuthority, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.DataType.DbAssigningAuthority, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbTelecomAddress, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="AddressUseKey" domainName="TelecomUseKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityExtension, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbEntityExtension, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="ExtensionValueXml" domainName="Value"/>
+    <property modelName="ExtensionDisplay" domainName="Display"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbEntityNote, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityTag, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbEntityTag, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbExtensionType, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+  </class>
+
+  <!-- Person Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbPerson, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.PersonLanguageCommunication, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbPersonLanguageCommunication, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <!-- Patient Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Roles.DbPatient, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+
+  </class>
+
+  <!-- Material Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Material, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbMaterial, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.ManufacturedMaterial, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbManufacturedMaterial, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+
+  </class>
+
+  <!-- Provider Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Roles.DbProvider, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ProviderSpecialtyKey" domainName="Specialty"/>
+    <property modelName="VersionKey" domainName="ParentKey"/>
+
+  </class>
+
+  <!-- Industry Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Organization, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbOrganization, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.Place, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbPlace, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.PlaceService, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbPlaceService, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <!-- Security entities -->
+  <class modelClass="OpenIZ.Core.Model.Entities.ApplicationEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbApplicationEntity, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.DeviceEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbDeviceEntity, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.UserEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Entities.DbUserEntity, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <!-- Represents Act Model -->
+  <class modelClass="OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActVersion, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="PreviousVersionKey" domainName="ReplacesVersionKey"/>
+    <property modelName="VersionSequence" domainName="VersionSequenceId"/>
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+
+
+  </class>
+
+  <!-- Represents Act Model --><!--
+  <class modelClass="OpenIZ.Core.Model.Acts.ActProtocol, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActProtocol, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+</class>-->
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbActExtension, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="ExtensionValueXml" domainName="Value"/>
+    <property modelName="ExtensionDisplay" domainName="Display"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActNote, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbActNote, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActTag, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbActTag, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActRelationship, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="TargetActKey" domainName="TargetKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.DataType.DbActIdentifier, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="IdentifierTypeKey" domainName="TypeKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActParticipation, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="PlayerEntityKey" domainName="TargetKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbSubstanceAdministration, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="RouteKey" domainName="RouteConceptKey"/>
+    <property modelName="SiteKey" domainName="SiteConceptKey"/>
+    <property modelName="DoseUnitKey" domainName="DoseUnitConceptKey"/>
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.PatientEncounter, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbPatientEncounter, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.Observation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbObservation, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.QuantityObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbQuantityObservation, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.CodedObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbCodedObservation, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ValueKey" domainName="Value"/>
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  
+  
+  <class modelClass="OpenIZ.Core.Model.Acts.TextObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbTextObservation, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.TemplateDefinition, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Extensibility.DbTemplateDefinition, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="ModifiedOn" domainName="CreationTime"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.Protocol, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbProtocol, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActProtocol, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbActProtocol, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+
+    <property modelName="ProtocolKey" domainName="ProtocolKey"/>
+    <property modelName="SourceEntityKey" domainName="SourceKey"/>
+    <property modelName="StateData" domainName="State"/>
+    
+  </class>
+</modelMap>

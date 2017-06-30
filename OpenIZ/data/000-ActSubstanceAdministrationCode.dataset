@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="HL7v3 ActSubstanceAdministrationCode Concept Set" xmlns="http://openiz.org/data">
+
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>147d50f0-60c7-4ffe-9c71-8f1f3a3cfa75</id>
+      <name>Administration Act Type Codes</name>
+      <mnemonic>SubstanceAdministrationTypeConcepts</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.26</oid>
+      <url>http://openiz.org/valuset/v3-ActSubstanceAdministrationCode</url>
+      <concept>0331E13F-F471-4FBD-92DC-66E0A46239D5</concept>
+      <concept>7D84A057-1FCC-4054-A51F-B77D230FC6D1</concept>
+      <concept>6E7A3521-2967-4C0A-80EC-6C5C197B2178</concept>
+      <concept>F3BE6B88-BC8F-4263-A779-86F21EA10A47</concept>
+    </ConceptSet>
+  </update>
+</dataset>

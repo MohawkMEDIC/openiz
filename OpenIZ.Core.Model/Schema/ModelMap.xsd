@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2015 rel. 4 (http://www.altova.com) by Justin Fyfe (Mohawk College) -->
+<xs:schema xmlns:tns="http://openiz.org/model/map" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://openiz.org/model/map" elementFormDefault="qualified">
+	<xs:element name="modelMap" type="tns:ModelMap" nillable="true"/>
+	<xs:complexType name="ModelMap">
+		<xs:sequence>
+			<xs:element name="class" type="tns:ClassMap" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ClassMap">
+		<xs:sequence>
+			<xs:element name="collapseKey" type="tns:CollapseKey" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="property" type="tns:PropertyMap" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="base" type="tns:PropertyMap" minOccurs="0" maxOccurs="1"/>
+			<xs:element name="cast" type="tns:CastMap" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="modelClass" type="xs:string"/>
+		<xs:attribute name="domainClass" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="CollapseKey">
+		<xs:attribute name="propertyName" type="xs:string"/>
+		<xs:attribute name="keyName" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="PropertyMap">
+		<xs:sequence>
+			<xs:element name="via" type="tns:PropertyMap" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="modelName" type="xs:string"/>
+		<xs:attribute name="domainName" type="xs:string"/>
+		<xs:attribute name="dontLoad" type="xs:boolean"/>
+		<xs:attribute name="aggregate" type="tns:AggregationFunctionType" />
+		<xs:attribute name="orderBy" type="xs:string"/>
+		<xs:attribute name="sortOrder" type="tns:SortOrderType"/>
+		<xs:attribute name="isAssociation" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:simpleType name="AggregationFunctionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="None"/>
+			<xs:enumeration value="last"/>
+			<xs:enumeration value="first"/>
+			<xs:enumeration value="single"/>
+			<xs:enumeration value="count"/>
+			<xs:enumeration value="sum"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SortOrderType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="asc"/>
+			<xs:enumeration value="desc"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="CastMap" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:PropertyMap">
+				<xs:attribute name="type" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

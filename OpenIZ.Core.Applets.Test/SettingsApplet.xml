@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-2
+ -->
+<AppletManifest xmlns="http://openiz.org/applet">
+	<info id="org.openiz.applets.core.settings" version="0.5.0.0">
+    <icon>@drawable/cogs</icon>
+    <name>System Settings</name>
+    <groupName>Administration</groupName>
+    <author>OpenIZ.org Community</author>
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.3.10</demand>
+	</info>
+  <menuItem launch="app://openiz.org/applet/org.openiz.applets.core.settings/index">
+    <icon>app://openiz.org/drawable/cogs.png</icon>
+    <text lang="en">Settings</text>
+  </menuItem>
+	<asset name="index.html" mimeType="text/html">
+		<contentHtml>
+      <script>index-controller</script>
+      <content>
+
+      <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="ConfigurationController">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Realm Settings</h3>
+								</div>
+								<div class="panel-body">
+									<div class="container">
+										<div class="row">
+											<div class="col-md-12">
+												<img src="app://openiz.org/drawable/drk_grid" style="width:64px; height:64px; float:left" />
+												<em>A realm is a collection of servers with which the mobile application can interact. In order to join the realm you will
+											need to enter the following information about the realm. If your app is already connected to a realm, you may leave the realm using this panel.</em>
+											</div>
+										</div>
+									</div>
+									<form name="realmForm" novalidate="novalidate">
+										<div class="input-group">
+											<span class="input-group-addon" id="deviceNameLabel">Device Name:</span>
+											<input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Za-z][A-Za-z.0-9-]+$/i" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
+											<span class="input-group-addon">
+												<span class=" glyphicon glyphicon-phone">
+												</span>
+											</span>
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="realmServerLabel">Realm:</span>
+											<input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
+											<span class="input-group-addon">
+												<span class=" glyphicon glyphicon-globe">
+												</span>
+											</span>
+										</div>
+										<div class="btn-group pull-right">
+											<button class="btn-danger btn" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
+												<span class="glyphicon glyphicon-resize-full">
+												</span> Leave Realm</button>
+											<button class="btn-primary btn" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">Join Realm <span class="glyphicon glyphicon-resize-small"></span></button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<form name="configurationForm" novalidate="novalidate">
+					<div class="container">
+						<!-- Security Settings -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h3 class="panel-title">
+											<a href="#securitySettings" data-toggle="collapse">Security Settings</a>
+										</h3>
+									</div>
+									<div class="panel-collapse collapse" id="securitySettings">
+										<div class="panel-body">
+											<div class="container">
+												<div class="row">
+													<div class="col-md-12">
+														<img src="app://openiz.org/drawable/drk_shield" style="width:64px; height:64px; float:left" />
+														<em>Use this area to configure security settings related to OpenIZ</em>
+													</div>
+												</div>
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon" id="dataRetentionLabel">Data Retention Policy:</span>
+												<select ng-model="config.security.retention" class="form-control" name="dataRetention" id="dataRetention" aria-describedBy="dataRetentionLabel">
+													<option value="any">Store Data Locally</option>
+													<option value="requirelocal">Require Local Encryption</option>
+													<option value="onlineonly">Online Only</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Facility Settings -->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h3 class="panel-title">
+											<a href="#facilitySettings" data-toggle="collapse">Facility Settings</a>
+										</h3>
+									</div>
+									<div class="panel-collapse collapse" id="facilitySettings">
+										<div class="panel-body">
+											<div class="container">
+												<div class="row">
+													<div class="col-md-12">
+														<img src="app://openiz.org/drawable/drk_facility" style="width:64px; height:64px; float:left" />
+														<em>Select the facility/facilities in which this device will be used. This setting controls what data is synchronized.</em>
+													</div>
+												</div>
+											</div>
+											<div class="input-group">
+												<span class="input-group-addon" id="facilityNameLabel">Facility:</span>
+												<select ng-required="true" ng-pattern="/\d+/" data-openiz-tag="select2" multiple="multiple" style="width:100%" ng-model="config.facility.fac" class="form-control" name="dataRetention" id="dataRetention" aria-describedBy="dataRetentionLabel">
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="btn-group pull-right">
+									<button class="btn-danger btn" ng-click="close()">
+										<span class="glyphicon glyphicon-remove">
+										</span> Cancel</button>
+									<button class="btn-primary btn" ng-click="save(config)">Save <span class="glyphicon glyphicon-ok"></span></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<!-- OpenIZ:Scripts -->
+			</body>
+      </content>
+
+    </contentHtml>
+	</asset>
+	<asset name="index-controller" mimeType="text/javascript">
+		<contentText><![CDATA[
+			// angular stuff
+			var configApp = angular.module('index', []);
+
+			configApp.controller('ConfigurationController', ['$scope', function ($scope)
+			{
+
+				$scope.config = {
+					security : OpenIZ.Configuration.getSection("SecurityConfigurationSection"),
+					realmName : OpenIZ.Configuration.getRealm()
+				};
+				$scope.master = {};
+
+				// leave realm
+				$scope.leaveRealm = function(realm)
+				{
+					OpenIZ.Configuration.leaveRealm(realm);
+				}
+
+				// join realm
+				$scope.joinRealm = function(realm) {
+					OpenIZ.Configuration.joinRealm(realm.domain, realm.deviceName);
+				};
+
+				// Close app
+				$scope.close = function() {
+					OpenIZ.App.close();
+				}
+
+				// Save config
+				$scope.save = function(config) {
+					if(OpenIZ.Configuration.save(config))
+						OpenIZ.App.close();
+				}
+
+				$scope.reset = function() {
+					$scope.user = angular.copy($scope.master);
+				};
+
+				$scope.reset();
+			}]);
+
+		]]></contentText>
+	</asset>
+</AppletManifest>

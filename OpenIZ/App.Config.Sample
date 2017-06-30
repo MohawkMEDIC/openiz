@@ -1,0 +1,930 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- This is a sample Application Configuration File for OpenIZ IMS -->
+<configuration>
+  <configSections>
+    <section name="system.identityModel" type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral"/>
+    <!-- The following lines must always exist in your configuration file -->
+    <section name="marc.hi.ehrs.svc.core" type="MARC.HI.EHRS.SVC.Core.Configuration.HostConfigurationSectionHandler, MARC.HI.EHRS.SVC.Core, Version=2.0.0.0"/>
+    <section name="openiz.core" type="OpenIZ.Core.Configuration.ConfigurationSectionHandler, OpenIZ.Core, Version=0.6.0.0"/>
+
+    <!-- Registers the Microsoft SQL Server configuration section
+    <section name="openiz.persistence.data.mssql" type="OpenIZ.Persistence.Data.MSSQL.Configuration.SqlConfigurationSectionHandler, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
+    -->
+    <!-- Registers the IMSI (IMS Interface) configuration endpoint
+    <section name="openiz.messaging.imsi" type="OpenIZ.Messaging.IMSI.Configuration.ImsiConfigurationSectionHandler, OpenIZ.Messaging.IMSI, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the OpenIZ Reporting Engine configuration section
+    <section name="openiz.reporting.core" type="OpenIZ.Reporting.Core.Configuration.ReportingConfigurationSectionHandler, OpenIZ.Reporting.Core, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the Authentication Control Service Configuration
+      Do not un-comment if you are using a third party IdP like IdentityServer3
+    <section name="openiz.authentication.oauth2" type="OpenIZ.Authentication.OAuth2.Configuration.ConfigurationSectionHandler, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+      -->
+
+    <!-- Registers the HL7 FHIR interface configuration
+    <section name="marc.hi.ehrs.svc.messaging.fhir" type="MARC.HI.EHRS.SVC.Messaging.FHIR.Configuration.ConfigurationSectionHandler, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0"/>
+    -->
+
+    <!-- Registers the Administration Management Interface (AMI)
+    <section name="openiz.messaging.ami" type="OpenIZ.Messaging.AMI.Configuration.AmiConfigurationSectionHandler, OpenIZ.Messaging.AMI, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the Memory Caching Configuration 
+    <section name="openiz.caching.memory" type="OpenIZ.Caching.Memory.Configuration.ConfigurationSectionHandler, OpenIZ.Caching.Memory, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the Timer Job Configuration 
+    <section name="marc.hi.svc.core.timer" type="MARC.HI.EHRS.SVC.Core.Timer.Configuration.TimerConfigurationSectionHandler, MARC.HI.EHRS.SVC.Core.Timer, Version=2.0.0.0"/>
+    -->
+
+    <!-- Registers the ADO.NET (PostgreSQL, SQLite, etc) persistence configuration
+    <section name="openiz.persistence.data.ado" type="OpenIZ.Persistence.Data.ADO.Configuration.AdoConfigurationSectionHandler, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the HL7 v2.x Interface Configuration
+    <section name="marc.hi.ehrs.svc.messaging.hapi" type="MARC.HI.EHRS.SVC.Messaging.HAPI.Configuration.ConfigurationSectionHandler, MARC.HI.EHRS.SVC.Messaging.HAPI, Version=2.0.0.0"/>
+    -->
+
+    <!-- Registers JIRA Diagnostics for capturing diagnostic (sherlock) reports
+    <section name="openiz.persistence.diagnostics.jira" type="OpenIZ.Persistence.Diagnostics.Jira.Configuration.ConfigurationSectionHandler, OpenIZ.Persistence.Diagnostics.Jira, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the EMail Two-Factor Authentication and Password Recovery Section
+    <section name="openiz.core.security.tfa.email" type="OpenIZ.Core.Security.Tfa.Email.Configuration.ConfigurationSectionHandler, OpenIZ.Core.Security.Tfa.Email, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers Twilio SMS Two-Factor Authentication and Password recovery 
+    <section name="openiz.core.security.tfa.twilio" type="OpenIZ.Core.Security.Tfa.Twilio.Configuration.ConfigurationSectionHandler, OpenIZ.Core.Security.Tfa.Twilio, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the HL7 v2.x notification services for PIX/PDQ 
+    <section name="openiz.messaging.hl7.notification.pixpdq" type="OpenIZ.Messaging.HL7.Configuration.Hl7ConfigurationSectionHandler, OpenIZ.Messaging.HL7, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the PostgreSQL Report Data Store 
+    <section name="openiz.persistence.reporting.psql" type="OpenIZ.Persistence.Reporting.PSQL.Configuration.ConfigurationSectionHandler, OpenIZ.Persistence.Reporting.PSQL, Version=0.6.0.0"/>
+    -->
+
+    <!-- Registers the ADO.NET (PostgreSQL, SQLite, etc.) data warehouse store
+    <section name="openiz.warehouse.ado" type="OpenIZ.Warehouse.ADO.Configuration.AdoConfigurationSectionHandler, OpenIZ.Warehouse.ADO, Version=0.8.0.0"/>
+    -->
+
+    <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
+
+    <!-- Registers ADO.NET query persistence section
+    <section name="marc.hi.ehrs.qm.persistence.data" type="MARC.HI.EHRS.QM.Persistence.Data.Configuration.ConfigurationHandler, MARC.HI.EHRS.QM.Persistence.Data, Version=2.0.0.0"/>
+    -->
+
+    <!-- Registers the REDIS cache service
+    <section name="openiz.caching.redis" type="OpenIZ.Caching.Redis.Configuration.RedisConfigurationHandler, OpenIZ.Caching.Redis, Version=0.8.0.0"/>
+    -->
+
+    <!-- Registers IHE ATNA (DICOM/RFC-3881) auditing
+    <section name="marc.hi.ehrs.svc.auditing.atna" type="MARC.HI.EHRS.SVC.Auditing.Atna.Configuration.ConfigurationSectionHandler, MARC.HI.EHRS.SVC.Auditing.Atna, Version=1.0.0.0"/>
+    -->
+  </configSections>
+  <system.data>
+    <DbProviderFactories>
+      <clear/>
+      <add name="PostgreSQL Data Provider" invariant="Npgsql" description=".Net Framework Data Provider for PostgreSQL" type="Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7"/>
+      <!-- other provider entries elided -->
+    </DbProviderFactories>
+  </system.data>
+  
+  <!-- The following sections contain configuration for the REST endpoints being run on this server 
+  NOTE: This section is a standard Microsoft.NET configuration section, for more details on setting up WCF endpoints please consult https://msdn.microsoft.com/en-us/library/ms731354(v=vs.110).aspx -->
+  <system.serviceModel>
+    <services>
+      <!-- Enable this configuration to setup GS1 BMS (Business Messaging Standard) Messaging - Note the GS1 BMS Service must also be running
+      <service name="GS1BMS" behaviorConfiguration="gs1_behavior">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://0.0.0.0:8080/gs1"/>
+          </baseAddresses>
+        </host>
+        <endpoint address="http://0.0.0.0:8080/gs1" binding="webHttpBinding" contract="GS1BMS" name="GS1BMS_Behavior" bindingConfiguration="gs1_binding"/>
+      </service>
+      -->
+      <!-- Enable this configuration to setup HL7 FHIR Endpoint Messaging - Note the HL7 FHIR Service must also be running
+      <service name="MARC.HI.EHRS.SVC.Messaging.FHIR.Wcf.FhirServiceBehavior" behaviorConfiguration="fhir_Behavior">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://127.0.0.1:8080/fhir" />
+          </baseAddresses>
+        </host>
+        <endpoint address="http://127.0.0.1:8080/fhir" contract="MARC.HI.EHRS.SVC.Messaging.FHIR.Wcf.IFhirServiceContract" binding="webHttpBinding" bindingConfiguration="fhir_Binding" />
+      </service>
+      -->
+      <!-- Enable this configuration to setup OAUTH2 Access Control Service 
+      <service name="OpenIZ.Authentication.OAuth2" behaviorConfiguration="oauth2_behavior">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://0.0.0.0:8080/auth"/>
+          </baseAddresses>
+        </host>
+        <endpoint address="http://0.0.0.0:8080/auth" binding="webHttpBinding" name="OpenIZ.Authentication.OAuth2" contract="OpenIZ.Authentication.OAuth2" bindingConfiguration="oauth2_binding"/>
+      </service>
+      -->
+      <!-- Enable this coniguration to setup AMI REST endpoint
+      <service name="AMI" behaviorConfiguration="ami_behavior">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://0.0.0.0:8080/ami"/>
+          </baseAddresses>
+        </host>
+        <endpoint address="http://0.0.0.0:8080/ami" binding="webHttpBinding" name="AMI" contract="AMI_1.0" bindingConfiguration="ami_binding"/>
+      </service>
+      -->
+      <!-- Enable this configuration to setup IMSI behavior
+      <service name="IMSI" behaviorConfiguration="imsi_behavior">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://0.0.0.0:8080/imsi"/>
+          </baseAddresses>
+        </host>
+        <endpoint address="http://0.0.0.0:8080/imsi" binding="webHttpBinding" name="IMSI" contract="IMSI_1.0" bindingConfiguration="imsi_binding"/>
+      </service>
+      -->
+      <!-- Enable this configuration to setup RISI behavior 
+      <service name="RISI" behaviorConfiguration="risi_behavior">
+        <host>
+          <baseAddresses>
+            <add baseAddress="http://0.0.0.0:8080/risi"/>
+          </baseAddresses>
+        </host>
+        <endpoint address="http://0.0.0.0:8080/risi" binding="webHttpBinding" name="RISI" contract="RISI_1.0" bindingConfiguration="risi_binding"/>
+      </service>
+      -->
+    </services>
+    <!-- Microsoft.NET WCF Binding Configuration -->
+    <bindings>
+      <webHttpBinding>
+        
+        <!--
+        Enable this when this endpoint is running the AMI
+        
+        <binding name="ami_binding" maxReceivedMessageSize="2147483647">
+          <security mode="None">
+          </security>
+        </binding>
+        -->
+        
+        <!--
+        Enable this when this endpoint is running HL7 FHIR
+        
+        <binding name="fhir_Binding">
+          <security mode="None" >
+          </security>
+        </binding>
+        -->
+        <!--
+        Enable this when this endpoint is running the ACS endpoint
+        
+        <binding name="oauth2_binding">
+          <security mode="TransportCredentialOnly">
+            <transport clientCredentialType="Basic"/>
+          </security>
+        </binding>
+        -->
+        
+        <!--
+        Enable this when this endpoint is running GS1 endpoint
+        
+        <binding name="gs1_binding">
+          <security mode="None">
+          </security>
+        </binding>
+        -->
+        <!--
+        Enable this when this endpoint is running IMSI endpoint
+        <binding name="imsi_binding">
+          <security mode="None">
+          </security>
+        </binding>
+        -->
+        
+        <!--
+        Enable this when this endpoint is running RISI endpoint
+        <binding name="risi_binding">
+          <security mode="None">
+          </security>
+        </binding>
+        -->
+      </webHttpBinding>
+    </bindings>
+    <!-- Microsoft.NET WCF Service Behaviors for endpoints-->
+    <behaviors>
+      <serviceBehaviors>
+        <!--
+        Enable this when the GS1 interface is running to enable exception details
+        <behavior name="gs1_behavior">
+          <serviceDebug includeExceptionDetailInFaults="true"/>
+          <serviceMetadata httpGetEnabled="true" httpGetUrl="http://0.0.0.0:8080/gs1"/>
+        </behavior>
+        -->
+        <!--
+        Enable this when the HL7 FHIR interface is running and using OAUTH 2 authentication with JWT tokens
+        <behavior name="fhir_Behavior">
+          <serviceDebug includeExceptionDetailInFaults="False" />
+          <serviceMetadata httpGetEnabled="False" httpGetUrl="http://0.0.0.0:8080/fhir" />
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+            <authorizationPolicies>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+            </authorizationPolicies>
+          </serviceAuthorization>
+        </behavior>
+        -->
+        <!--
+        Enable this when the OAUTH2 interface is running
+        <behavior name="oauth2_behavior">
+          <serviceAuthorization principalPermissionMode="Custom">
+            <authorizationPolicies>
+              <add policyType="OpenIZ.Authentication.OAuth2.Wcf.ClientAuthorizationPolicy, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+            </authorizationPolicies>
+          </serviceAuthorization>
+          <serviceCredentials>
+            <userNameAuthentication userNamePasswordValidationMode="Custom"
+                                    customUserNamePasswordValidatorType="OpenIZ.Authentication.OAuth2.Wcf.ClientCredentialValidator, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+          </serviceCredentials>
+        </behavior>
+        -->
+        <!--
+        Enable this when the IMSI interface is running
+        <behavior name="imsi_behavior">
+          <serviceDebug includeExceptionDetailInFaults="false" httpHelpPageEnabled="true" httpHelpPageUrl="http://0.0.0.0:8080/help/imsi"/>
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+            <authorizationPolicies>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+            </authorizationPolicies>
+          </serviceAuthorization>
+          <serviceCredentials>
+          </serviceCredentials>
+        </behavior>
+        -->
+        <!--
+        Enable this when the AMI interface is running
+        <behavior name="ami_behavior">
+          <serviceDebug includeExceptionDetailInFaults="true"/>
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+            <authorizationPolicies>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+            </authorizationPolicies>
+          </serviceAuthorization>
+          <serviceCredentials>
+          </serviceCredentials>
+        </behavior>
+        -->
+        <!--
+        Enable this when the RISI interface is running
+        <behavior name="risi_behavior">
+          <serviceDebug includeExceptionDetailInFaults="true" />
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+            <authorizationPolicies>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+            </authorizationPolicies>
+          </serviceAuthorization>
+        </behavior>
+        -->
+      </serviceBehaviors>
+    </behaviors>
+  </system.serviceModel>
+  <!-- The following diagnostic sources can be configured to increase/decrease the verbosity of logging from each component -->
+  <system.diagnostics>
+    <sources>
+      <source name="OpenIZ.OrmLite" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Persistence.Data.ADO" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Persistence.Data.ADO.Services.Identity" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Core.Model.Map" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Persistence.Data.MSSQL.Services.Persistence" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Persistence.Data.MSSQL.Services.Identity" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Caching.Memory" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Core.DataSet" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Messaging.AMI" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Messaging.IMSI" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Messaging.RISI" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Persistence.Reporting" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Messaging.FHIR" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Messaging.HL7" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="MARC.HI.EHRS.SVC.Messaging.FHIR" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Authentication.OAuth2" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Core" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Core.Map" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Core.Wcf" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console"/>
+        </listeners>
+      </source>
+      <source name="OpenIZ.Persistence.Reporting.PSQL" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console" />
+        </listeners>
+      </source>
+      <source name="OpenIZ.Reporting.Core" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console" />
+        </listeners>
+      </source>
+      <source name="OpenIZ.Reporting.Jasper" switchValue="Error">
+        <listeners>
+          <add name="rollOver" />
+          <add name="console" />
+        </listeners>
+      </source>
+    </sources>
+    <sharedListeners>
+      <!-- Enables the logging to the console -->
+      <add name="console" type="System.Diagnostics.ConsoleTraceListener"/>
+      <!-- Outputs all log messages to an OpenIZ.log file which rolls over each day -->
+      <add name="rollOver" type="MARC.HI.EHRS.SVC.Core.Logging.RollOverTextWriterTraceListener, MARC.HI.EHRS.SVC.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null" initializeData="openiz.log">
+        <filter type="System.Diagnostics.EventTypeFilter" initializeData="Error, Information, Warning, Verbose" />
+      </add>
+    </sharedListeners>
+    <!-- Use this section to attach the trace writers to other sources and the default tracer-->
+    <trace autoflush="true">
+      <listeners>
+        <add name="console" />
+        <add name="rollOver" />
+      </listeners>
+    </trace>
+  </system.diagnostics>
+  <!-- 
+    Enable this section when you wish for the server to store query result sets in the ancillary database. Query persistence greatly increases
+    query performance for large datasets, however does require a specialized database to be setup.
+    
+    The connectionManager should point to a connecton string name whereby the qm-ddl.sql file has been deployed
+    
+    <marc.hi.ehrs.qm.persistence.data>
+      <connectionManager connection=""/>
+    </marc.hi.ehrs.qm.persistence.data>
+  -->
+  <!--
+  Enable this section when you wish to use ADO.NET (PostgreSQL, SQLite, etc.) persistence services. 
+  <openiz.persistence.data.ado>
+    <connectionManager readonlyConnection="<<name of secondary database server connection string>>"
+                       readWriteConnection="<<name of primary database server connection string>>"
+                       traceSql="<<true when SQL statements should be added to log, false otherwise>>"
+                       autoInsertChildren="<<true when child records should be automatically inserted if they are missing, false to abort transaction>>"
+                       provider="<<type of provider to use>>"/>
+  </openiz.persistence.data.ado>
+  
+  The provider types are:
+  
+  PostgreSQL 9.x : OpenIZ.OrmLite.Providers.PostgreSQLProvider, OpenIZ.OrmLite, Version=0.6.0.0
+  SQLite3 : OpenIZ.OrmLite.Providers.SQLite, OpenIZ.OrmLite, Version=0.6.0.0
+  -->
+  <!--
+  Enable this section when you wish to use Microsoft SQL Server Persistence (older)
+  
+  <openiz.persistence.data.mssql>
+    <connectionManager readonlyConnection="<<name of secondary server connection string>>" 
+        readWriteConnection="<<name of primary server connection string>>" 
+        traceSql="<<true if SQL should be added to logs>>" 
+        keyedInserts="<<true to update objects which are being inserted and already have a duplicate key>>"
+      />
+  </openiz.persistence.data.mssql>
+
+-->
+
+  <!--
+  Enable this section when you wish to use REDIS distributed caching
+  
+  <openiz.caching.redis>
+    <server>
+      <add host="<<REDIS server (default localhost)>>" port="<< REDIS port (default 6379)>>"/>
+    </server>
+  </openiz.caching.redis>
+  -->
+  <!--
+  Enable this section when you wish to use in-process memory caching. This speeds up performance quite a bit for queries.
+  
+  
+  <openiz.caching.memory autoRegister="<<true if new types not listed in cacheTarget should be automatically registered>>">
+    <cacheTarget>
+      <add type="<<AQN of type to be registered>>" maxAge="10:00:00:00" maxSize="<<maximum size of cache in object count>>">
+        Use the following seed queries to pre-cache items matching the specified query
+        <seed>
+          <add>statusConcept.mnemonic=ACTIVE</add>
+          <add>...</add>
+        </seed>
+      </add>
+    </cacheTarget>
+  </openiz.caching.memory>-->
+  <!--
+  Enable this section when this host process will run the OAUTH2.0 ACS service
+  -->
+  <openiz.authentication.oauth2>
+
+    <!-- The expiry limit of a session issued from this OAUTH2.0 server. Ensure that issuerName matches the FQDN of the server this process is running on
+    <token expiry="01:00:00:00" issuerName="http://localhost:8080/auth"/>
+    -->
+
+    <!-- The key to use to sign all issued OAUTH JWT tokens, must be either certificate or symmetric
+    <signature>
+      <certificate storeLocation="Local" storeName="" x509FindType="" findValue=""/>
+      <symmetric secret="<<Server Secret Here>>"/>
+    </signature>
+    -->
+
+    <!-- Claims which are allowed to be set by the client when making an OAUTH request
+    <claims>
+      <add claimType="http://openiz.org/claims/device-id"/>
+      <add claimType="http://openiz.org/claims/scope"/>
+      <add claimType="urn:oasis:names:tc:xacml:2.0:resource:resource-id"/>
+      <add claimType="urn:oasis:names:tc:xacml:2.0:action:purpose"/>
+      <add claimType="urn:oasis:names:tc:xspa:1.0:subject:facility"/>
+      <add claimType="urn:oasis:names:tc:xspa:1.0:subject:organization-id"/>
+      <add claimType="urn:oasis:names:tc:xacml:1.0:subject:subject-id"/>
+    </claims>
+    -->
+    <!-- Scopes for which this OAUTH server is allowed to service. This should match the public FQDN of the services clients will use
+
+    <scopes>
+      <add name="http://localhost:8080/imsi"/>
+      <add name="http://localhost:8080/ami"/>
+      <add name="http://localhost:8080/fhir"/>
+      <add name="http://localhost:8080/gs1"/>
+    </scopes>
+    -->
+  </openiz.authentication.oauth2>
+  
+  <!-- Core Configuration -->
+  <openiz.core>
+  
+    <!-- The number of CPU threads to reserve for asynchronous PCL tasks -->
+    <threading poolSize="16"/>
+    
+    <security>
+      <!-- The applets section controls how applet files in the applet/ directory can be loaded and installed -->
+      <applet allowUnsignedApplets="false">
+        <!-- Publisher keys (for signed applets) which this server trusts and should load -->
+        <trustedPublishers>
+          <add>84BD51F0584A1F708D604CF0B8074A68D3BEB973</add>
+        </trustedPublishers>
+      </applet>
+      
+      <!-- Token validation settings if JWT token security is used -->
+      <token realm="localhost">
+        <!-- Audience tokens which are acceptable to the Core JWT validator-->
+        <audience>
+          <add name="http://localhost:8080/imsi"/>
+          <add name="http://localhost:8080/ami"/>
+        </audience>
+        <!-- Token issuers which are to be trusted by this server -->
+        <issuer>
+          <!--Example: Using a server shared secret: <add name="http://localhost:8080/auth" secret="<<Server Secret Here>>"/>-->
+        </issuer>
+      </token>
+      <!-- Basic authentication settings if HTTP-BASIC security is to be used -->
+      <basic requireClientAuth="true" realm="192.168.0.102">
+        <allowedClaims>
+          <add claimType="urn:oasis:names:tc:xacml:2.0:action:purpose"/>
+        </allowedClaims>
+      </basic>
+    </security>
+  </openiz.core>
+  
+  
+  <!--
+  Enable this section if this service is running HL7 FHIR endpoints.
+  
+  <marc.hi.ehrs.svc.messaging.fhir>
+  
+    <service landingPage="<<Path To HTML File for Landing>>" wcfServiceName="MARC.HI.EHRS.SVC.Messaging.FHIR.WcfCore.FhirServiceBehavior" />
+    
+    Represent one or more resources which should be exposed on the FHIR interface
+    
+    <resourceProcessors>
+      <add type="OpenIZ.Messaging.FHIR.Handlers.PatientResourceHandler, OpenIZ.Messaging.FHIR, Version=0.6.0.0, Culture=neutral, PublicKeyToken=null" />
+      <add type="OpenIZ.Messaging.FHIR.Handlers.ImmunizationRecommendationResourceHandler, OpenIZ.Messaging.FHIR, Version=0.6.0.0, Culture=neutral, PublicKeyToken=null" />
+      <add type="OpenIZ.Messaging.FHIR.Handlers.ImmunizationResourceHandler, OpenIZ.Messaging.FHIR, Version=0.6.0.0, Culture=neutral, PublicKeyToken=null" />
+    </resourceProcessors>
+    
+    Cross-origin Resource Scripting (CORS) header controls which allow JavaScript to access this server directly
+    
+    <cors>
+      <add resource="*" domain="*">
+        <action>GET</action>
+        <action>OPTIONS</action>
+        <action>PATCH</action>
+        <action>PUT</action>
+        <action>HEAD</action>
+        <action>POST</action>
+        <header>Accept</header>
+        <header>Content-Type</header>
+        <header>Content-Encoding</header>
+        <header>Accept-Encoding</header>
+      </add>
+    </cors>
+  </marc.hi.ehrs.svc.messaging.fhir>-->
+  <!--
+  Enable this section if this service is hosting the IMSI
+  <openiz.messaging.imsi>
+    <service wcfServiceName="imsiService"/>
+  </openiz.messaging.imsi>
+  -->
+  <!--
+  Enable this section if this service is hosting the Administrative interface
+  <openiz.messaging.ami>
+    Connection strings to the Windows based CERTAdmin 
+    <ca autoApprove="false" name="CANAME" serverName="DOMAIN\SERVERNAME" />
+  </openiz.messaging.ami>
+  -->
+  <!--
+  Enable this section if you wish to host an HL7 v2.x LLP receiver  
+  <marc.hi.ehrs.svc.messaging.hapi>
+    <services>
+      <service name="LLP Listener" timeout="00:00:30" address="llp://0.0.0.0:2100">
+        <handler type="OpenIZ.Messaging.HL7.AdtMessageHandler, OpenIZ.Messaging.HL7, Version=0.6.0.0">
+          <message name="ADT^A01"/>
+          <message name="ADT^A04"/>
+          <message name="ADT^A05"/>
+          <message name="ADT^A08"/>
+        </handler>
+        <handler type="OpenIZ.Messaging.HL7.NotSupportedMessageHandler, OpenIZ.Messaging.HL7, Version=0.6.0.0">
+          <message name="*"/>
+        </handler>
+      </service>
+    </services>
+  </marc.hi.ehrs.svc.messaging.hapi>-->
+  
+  <!-- Core Configuration for the Service Core. Please configure this carefully to prevent collisions with other deployments -->
+  <marc.hi.ehrs.svc.core>
+    <system>
+      <device id="1.3.6.1.4.1.YOUR.PEN.HERE.3.1.5.9" name="My OpenIZ Server"/>
+    </system>
+    <!-- Custodial information for records -->
+    <custodianship>
+      <name>My Custodianship Information</name>
+      <!-- Identifies the domain under which identifiers are reported from this registry -->
+      <id domain="1.3.6.1.4.1.YOUR.PEN.HERE.3.1.5.9.0" value="OpenIZ1"/>
+    </custodianship>
+    <!-- Realm that the persistence engine is running within -->
+    <jurisdiction>
+      <name>Fake Jurisdiction</name>
+      <id domain="1.3.6.1.4.1.YOUR.PEN.HERE.3.1.5.9.0" value="HI"/>
+      <!-- The next three lines identify the realm (roots) that should be
+      returned in messages when communicating with external entities-->
+      <clientExport domain="1.3.6.1.4.1.YOUR.PEN.HERE.3.1.2.1.0"/>
+      <providerExport domain="1.3.6.1.4.1.YOUR.PEN.HERE.3.1.2.1.1"/>
+      <sdlExport domain="1.3.6.1.4.1.YOUR.PEN.HERE.3.1.2.1.2"/>
+      <defaultLanguageCode code="en"/>
+    </jurisdiction>
+    <!-- 
+    Service Providers are like mini-application services that run inside the OpenIZ host process. If you enable / disable services
+    then your instance of OpenIZ will behave differently and will have more/less functionality 
+    -->
+    <serviceProviders>
+
+      <!--
+      Enable one of these services for the type of password hashing you would like in OpenIZ
+      
+      SHA256: <add type="OpenIZ.Core.Security.SHA256PasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
+      SHA1: <add type="OpenIZ.Core.Security.SHA1PasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
+      MD5: <add type="OpenIZ.Core.Security.MD5PasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
+      Plain: <add type="OpenIZ.Core.Security.PlainTextPasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
+      -->
+
+      <!--
+      Enable these services if you are running Microsoft SQL Server Persistence Services
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlServerPersistenceService, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlPolicyInformationService, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlRoleProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlIdentityProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlApplicationIdentityProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>-->
+      
+      <!--
+      Enable these services for ADO.NET persistence 
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoApplicationIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoDeviceIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPersistenceService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPolicyInformationService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoRoleProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.AdoOidRegistrarService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      -->
+    
+      <!-- 
+      Enable this service to allow contact on the IMS interface
+      <add type="OpenIZ.Messaging.IMSI.ImsiMessageHandler, OpenIZ.Messaging.IMSI, Version=0.6.0.0"/>
+      -->
+      
+      <!-- 
+      Enable this service to allow contact on the RISI (report) interface
+      <add type="OpenIZ.Messaging.RISI.RisiMessageHandler, OpenIZ.Messaging.RISI, Version=0.6.0.0"/>
+      -->
+      
+      <!-- 
+      Enable this interface to allow contact on the Administrative interface
+      <add type="OpenIZ.Messaging.AMI.AmiMessageHandler, OpenIZ.Messaging.AMI, Version=0.6.0.0"/>
+      -->
+
+      <!-- 
+      Enable this interface to set this service as an ACS
+      <add type="OpenIZ.Authentication.OAuth2.OAuthMessageHandler, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+      -->
+
+      <!--
+      Enable this interface to allow contact on a GS1 BMS message
+      <add type="OpenIZ.Messaging.GS1.StockServiceMessageHandler, OpenIZ.Messaging.GS1, Version=0.6.0.0"/>
+      -->
+
+      <!-- 
+      Enable this service if this host is to act as a data intializer which is responsible for setting up the primary database.
+      Only one machine in an OpenIZ cluster should be a data initializer
+      <add type="OpenIZ.Core.Persistence.DataInitializationService, OpenIZ.Core, Version=0.6.0.0"/>
+      -->
+
+      <!-- 
+      Enable this service to allow communications using HL7v2.x messaging
+      <add type="MARC.HI.EHRS.SVC.Messaging.HAPI.HL7MessageHandler, MARC.HI.EHRS.SVC.Messaging.HAPI, Version=2.0.0.0"/>
+      -->
+
+      <!-- 
+      Enable this service to allow communications using HL7 FHIR messaging
+      <add type="MARC.HI.EHRS.SVC.Messaging.FHIR.FhirMessageHandler, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0"/>
+      -->
+
+      <!-- Core Services: Disabling these are unwise -->
+      <add type="OpenIZ.Core.Services.Impl.LocalConceptRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalPatientRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalSecurityRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalMaterialRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalPlaceRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalProviderRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalPersonRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalMetadataRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalActRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalAlertRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalOrganizationRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalIdentifierTypeRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalAssigningAuthorityRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalStockManagementRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalEntityRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.SimplePatchService, OpenIZ.Core.PCL, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalBatchRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.ThreadPoolService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalServiceManager, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Security.Audit.AuditDaemonService, OpenIZ.Core, Version=0.8.0.0"/>
+
+      <!-- Change this if you wish to use an external policy decision service (PDP) -->
+      <add type="OpenIZ.Core.Security.LocalPolicyDecisionService, OpenIZ.Core, Version=0.6.0.0"/>
+
+      <!-- Change this if you wish to use a custom phonetic algorithm calculation service -->
+      <add type="OpenIZ.Core.Services.Impl.NullPhoneticAlgorithmHandler, OpenIZ.Core.PCL, Version=0.6.0.0"/>
+
+      <!--
+      Enable this service if you wish for sherlock diagnostic reports to go to a JIRA server
+      <add type="OpenIZ.Persistence.Diagnostics.Jira.DiagnosticReportPersistenceService, OpenIZ.Persistence.Diagnostics.Jira, Version=0.6.0.0"/>
+      -->
+
+      <!--
+      Enable this service if you wish to use the in-process memory caching
+      <add type="OpenIZ.Caching.Memory.MemoryCacheService, OpenIZ.Caching.Memory, Version=0.6.0.0"/>
+      -->
+      <!--
+      Enable this service if you wish to enable REDIS shared memory caching
+      <add type="OpenIZ.Caching.Redis.RedisCacheService, OpenIZ.Caching.Redis, Version=0.8.0.0"/>
+      -->
+      
+      <!--
+      Enable this service if you wish to enable timer jobs (recommended)
+      <add type="MARC.HI.EHRS.SVC.Core.Timer.TimerService, MARC.HI.EHRS.SVC.Core.Timer, Version=0.6.0.0"/>
+      -->
+      
+      <!--
+      Enable this service to broadcast new patient registrations to a IHE PIX based client registry
+      <add type="OpenIZ.Messaging.HL7.Services.ClientRegistryNotificationService, OpenIZ.Messaging.HL7, Version=0.6.0.0"/>
+      -->
+      
+      <!--
+      If you wish to enable Two-factor authentication on this server you will need to enable a relay service. This is a default implementation
+      <add type="OpenIZ.Core.Security.DefaultTfaRelayService, OpenIZ.Core, Version=0.6.0.0"/>
+      -->
+      <!--
+      For password reset, the service will require a TFA Secret generator, this defualt implementation generates a 4 digit numeric code
+      <add type="OpenIZ.Core.Security.SimpleTfaSecretGenerator, OpenIZ.Core, Version=0.6.0.0"/>
+      -->
+
+      <!--
+      Enabling these services will provide two-factor mechanisms for email and SMS
+      <add type="OpenIZ.Core.Security.Tfa.Email.TfaEmailMechanism, OpenIZ.Core.Security.Tfa.Email, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Security.Tfa.Twilio.TfaTwilioMechanism, OpenIZ.Core.Security.Tfa.Twilio, Version=0.6.0.0"/>-->
+      -->
+
+      <!--
+      Enabling this service will allow caching of report parameters using PostgreSQL
+      <add type="OpenIZ.Persistence.Reporting.PSQL.ReportingPersistenceService, OpenIZ.Persistence.Reporting.PSQL, Version=0.6.0.0"/>
+      -->
+      
+      <!-- This service loads all business rules from installed applets on the server. You can override this behavior by implementing a different daemon service -->
+      <add type="OpenIZ.Core.Services.Daemons.AppletBusinessRulesDaemon, OpenIZ.Core, Version=0.6.0.0" />
+      
+      <!-- This service allows maintenance of applets on the server using a directory -->
+      <add type="OpenIZ.Core.Services.Impl.LocalAppletManagerService, OpenIZ.Core, Version=0.8.0.0"/>
+      
+      <!-- 
+      Enable this service to allow for persistence of queries to/from an ADO.NET based data source
+      <add type="MARC.HI.EHRS.QM.Persistence.Data.AdoQueryPersistenceService, MARC.HI.EHRS.QM.Persistence.Data, Version=2.0.0.0"/>
+      -->
+      
+      <!-- This service allows for clinical protocols to be loaded from installed applets on the server -->
+      <add type="OpenIZ.Protocol.Xml.AppletClinicalProtocolRepository, OpenIZ.Protocol.Xml, Version=0.8.0.0"/>
+      
+      <!-- This service provides simple generation of a care plan using the protocol repository. More complex care plans can be calculated
+      by overriding this implementation with a custom implementation -->
+      <add type="OpenIZ.Core.Protocol.SimpleCarePlanService, OpenIZ.Core.PCL, Version=0.8.0.0"/>
+      
+      <!-- 
+      Enable this service to store data warehousing information to an ADO.NET source
+      <add type="OpenIZ.Warehouse.ADO.ADODataWarehouse, OpenIZ.Warehouse.ADO, Version=0.8.0.0"/>
+      -->
+      
+      <!--
+      Enable this service to use Jasper Reports Server for the purpose of rendering reports
+      <add type="OpenIZ.Reporting.Jasper.JasperReportExecutor, OpenIZ.Reporting.Jasper, Version=1.0.0.0" />
+      -->
+      
+      <!-- 
+      Enable this service to allow the OpenIZ host to send audits to an RFC-3881 or DICOM audit repository
+      <add type="MARC.HI.EHRS.SVC.Auditing.Atna.AtnaAuditService, MARC.HI.EHRS.SVC.Auditing.Atna, Version=2.0.0.0"/>
+      -->
+      
+    </serviceProviders>
+  </marc.hi.ehrs.svc.core>
+  <!-- 
+  Enable this section when JIRA is being used as the storage provider for diagnostic events and bug reports
+  <openiz.persistence.diagnostics.jira>
+    <jira url="<<url to JIRA>>" project="<<JIRA project where bugs should be filed>>"/>
+    <auth username="" password=""/>
+  </openiz.persistence.diagnostics.jira>
+  -->
+  
+  <!--
+  Enable this section when two-factor authentication via e-mail is being used
+  <openiz.core.security.tfa.email>
+    <smtp server="" ssl="" username="" password="" />
+  </openiz.core.security.tfa.email>
+  -->
+  <!--
+  Enable this section when two-factor authentication via Twilio SMS is being used
+  <openiz.core.security.tfa.twilio>
+    <sms sid="" auth="" from="" />
+  </openiz.core.security.tfa.twilio>
+  -->
+  <!--
+  Enable this section when PIX/PDQ notifications are being sent 
+  <openiz.messaging.hl7.notification.pixpdq concurrencyLevel="2">
+    <targets>
+      <add connectionString="<<address of the PIX endpoint>>" deviceId="<<SENDING_DEVICE>>|<<SENDING_FACILITY>>" name="<<Name of IHE Recipient>>" myActor="PAT_IDENTITY_SRC">
+        <notify domain="<<OID which new patients should carry to trigger a notification>>">
+          <action type="Any"/>
+        </notify>
+      </add>
+    </targets>
+  </openiz.messaging.hl7.notification.pixpdq>-->
+  <!--
+  Enable this section when report parameters and report meta-data are to be stored using postgresql
+  <openiz.persistence.reporting.psql>
+    <connectionManager readonlyConnection="<<connection string name to secondary>>"
+                       readWriteConnection="<<connection string name to primary>>"
+                       traceSql="true"
+                       autoUpdateExisting="true"
+                       provider="OpenIZ.OrmLite.Providers.PostgreSQLProvider, OpenIZ.OrmLite, Version=0.6.0.0"/>
+  </openiz.persistence.reporting.psql>
+  -->
+  <openiz.reporting.core>
+    <reportEngine type="OpenIZ.Reporting.Jasper.JasperReportExecutor, OpenIZ.Reporting.Jasper, Version=1.0.0.0" address="http://jasperintl.marc-hi.ca:8080/jasperserver"/>
+    <credentials type="UsernamePassword">
+      <credential username="jasperadmin" password="jasperadmin" />
+    </credentials>
+  </openiz.reporting.core>
+  <!--
+  Enable this section for core timer jobs to be enabled
+  <marc.hi.svc.core.timer>
+    This job is sed to clean all stale queries from the query persistence table and should only be enabled if query persistence is also enabled
+    <job timer="00:01:00:00.0000" type="MARC.HI.EHRS.QM.Persistence.Data.QueryPersistenceCleanJob, MARC.HI.EHRS.QM.Persistence.Data, Version=2.0.0.0"/>
+  </marc.hi.svc.core.timer>
+  -->
+  <!--
+  Enable this section when ADO.NET persistence is being used for the ad-hoc data warehouse functions
+  <openiz.warehouse.ado>
+    <connectionManager readonlyConnection="<<connection string name to secondary>>"
+                          readWriteConnection="<<connection string name to primary>>"
+                          traceSql="false"
+                          provider="<<ADO provider AQN to use when connecting to the warehouse (see primary ado configuration)>>"/>
+  </openiz.warehouse.ado>
+  -->
+  <!--
+  Enable this section when audits are to be sent in RFC-3881 or DICOM format to an audit repository
+  <marc.hi.ehrs.svc.auditing.atna messagePublisher="AtnaApi.Transport.UdpSyslogTransport, AtnaApi, Version=1.0.0.0" format="RFC-3881 or DICOM">
+    <destination endpoint="<<ip address:port of audit repository>>" />
+  </marc.hi.ehrs.svc.auditing.atna>-->
+  <connectionStrings>
+    <!-- This is the standard .NET connection string section. You should collect all your connection strings used in previous configuration seti-->
+  </connectionStrings>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5"/>
+  </startup>
+  <entityFramework>
+    <defaultConnectionFactory type="System.Data.Entity.Infrastructure.SqlConnectionFactory, EntityFramework" />
+    <providers>
+      <provider invariantName="System.Data.SqlClient" type="System.Data.Entity.SqlServer.SqlProviderServices, EntityFramework.SqlServer" />
+    </providers>
+  </entityFramework>
+
+</configuration>

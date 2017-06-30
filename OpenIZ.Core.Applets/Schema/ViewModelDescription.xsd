@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://openiz.org/model/view" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://openiz.org/model/view" elementFormDefault="qualified">
+	<xs:complexType name="ClassifierModelDescription">
+		<xs:attribute name="classifier" type="xs:string"/>
+	</xs:complexType>
+	<xs:simpleType name="SerializationBehaviorType">
+		<xs:list>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="default"/>
+					<xs:enumeration value="always"/>
+					<xs:enumeration value="never"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:list>
+	</xs:simpleType>
+	<xs:complexType name="PropertyContainerDescription" abstract="true">
+		<xs:sequence>
+			<xs:element name="property" type="tns:PropertyModelDescription" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="all" type="xs:boolean" default="false"/>
+		<xs:attribute name="ref" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="PropertyModelDescription" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:PropertyContainerDescription">
+				<xs:attribute name="name" type="xs:string"/>
+				<xs:attribute name="classifier" type="xs:string"/>
+				<xs:attribute name="behavior" type="tns:SerializationBehaviorType" default="default"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="ViewModel" type="tns:ViewModelDescription" nillable="true"/>
+	<xs:complexType name="ViewModelDescription">
+		<xs:sequence>
+			<xs:element name="include" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="type" type="tns:TypeModelDescription" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+	<xs:complexType name="TypeModelDescription" mixed="false">
+		<xs:complexContent>
+			<xs:extension base="tns:PropertyContainerDescription">
+				<xs:attribute name="type" type="xs:string"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="loaderModel" type="tns:ViewModelDescription"/>
+</xs:schema>
