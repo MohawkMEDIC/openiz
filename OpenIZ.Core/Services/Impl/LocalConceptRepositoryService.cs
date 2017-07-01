@@ -730,5 +730,13 @@ namespace OpenIZ.Core.Services.Impl
 
 			return term;
 		}
-	}
+
+        /// <summary>
+        /// Find concepts by reference terms
+        /// </summary>
+        public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemDomain)
+        {
+            return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Authority == codeSystemDomain && r.ReferenceTerm.Mnemonic == code));
+        }
+    }
 }

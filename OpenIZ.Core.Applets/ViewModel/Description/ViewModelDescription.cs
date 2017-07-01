@@ -37,6 +37,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
     public class ViewModelDescription
     {
 
+
+        // Initialized?
+        private bool m_isInitialized = false;
         // Description lookup
         private Dictionary<String, PropertyContainerDescription> m_description = new Dictionary<String, PropertyContainerDescription>();
         // Root type names
@@ -89,8 +92,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         /// </summary>
         public void Initialize()
         {
-            foreach (var itm in this.Model)
-                itm.Initialize();
+            if(!this.m_isInitialized)
+                foreach (var itm in this.Model)
+                    itm.Initialize();
         }
 
         /// <summary>

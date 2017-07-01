@@ -33,7 +33,10 @@ namespace OizDevTool
         /// </summary>
         protected ConsoleColor GetResponseColor()
         {
-            return this.m_promptColor != ConsoleColor.Blue ? ConsoleColor.Blue : ConsoleColor.Red;
+            if(Console.BackgroundColor == ConsoleColor.Black)
+                return this.m_promptColor != ConsoleColor.Cyan ? ConsoleColor.Cyan : ConsoleColor.Magenta;
+            else
+                return this.m_promptColor != ConsoleColor.Blue ? ConsoleColor.Blue : ConsoleColor.Red;
         }
 
         /// <summary>

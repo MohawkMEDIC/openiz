@@ -157,9 +157,12 @@ namespace OizDevTool.Debugger
         public ProtoDebugger(StringCollection sources, String rootPath) : base(rootPath)
         {
 
-
             ApplicationServiceContext.Current = ApplicationContext.Current;
-            ApplicationContext.Current.RemoveServiceProvider(typeof(IClinicalProtocolRepositoryService));
+            try
+            {
+                ApplicationContext.Current.RemoveServiceProvider(typeof(IClinicalProtocolRepositoryService));
+            }
+            catch { }
             ApplicationContext.Current.AddServiceProvider(typeof(FileSystemResolver));
             ApplicationContext.Current.AddServiceProvider(typeof(ServiceManager));
             ApplicationContext.Current.AddServiceProvider(typeof(DebugProtocolRepository));

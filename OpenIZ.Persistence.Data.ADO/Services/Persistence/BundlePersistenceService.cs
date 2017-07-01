@@ -16,6 +16,8 @@ using OpenIZ.Core.Model;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -35,12 +37,69 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             return m_mapper.MapModelInstance<Bundle, Object>(modelInstance);
         }
 
+
+        /// <summary>
+        /// Reorganize all the major items for insert
+        /// </summary>
+        private Bundle ReorganizeForInsert(Bundle bundle)
+        {
+            Bundle retVal = new Bundle() { Item = new List<IdentifiedData>() };
+
+            foreach(var itm in bundle.Item.Where(o=>o != null))
+            {
+                // Are there any relationships
+                if (itm is Entity)
+                {
+                    var ent = itm as Entity;
+                    foreach(var rel in ent.Relationships)
+                    {
+                        var bitm = bundle.Item.FirstOrDefault(o => o.Key == rel.TargetEntityKey);
+                        if (bitm == null) continue;
+
+                        if (retVal.Item.Any(o => o.Key == rel.TargetEntityKey))
+                            continue;
+                        retVal.Item.Add(bitm); // make sure it gets inserted first
+                    }
+
+                }
+                else if(itm is Act)
+                {
+                    var act = itm as Act;
+                    foreach (var rel in act.Relationships)
+                    {
+                        var bitm = bundle.Item?.FirstOrDefault(o => o.Key == rel?.TargetActKey);
+                        if (bitm == null) continue;
+
+                        if (retVal.Item.Any(o => o.Key == rel.TargetActKey))
+                            continue;
+                        retVal.Item.Add(bitm); // make sure it gets inserted first
+                    }
+
+                    foreach (var rel in act.Participations)
+                    {
+                        var bitm = bundle.Item?.FirstOrDefault(o => o.Key == rel?.PlayerEntityKey);
+                        if (bitm == null) continue;
+
+                        if (retVal.Item.Any(o => o.Key == rel.PlayerEntityKey))
+                            continue;
+                        retVal.Item.Add(bitm); // make sure it gets inserted first
+                    }
+                }
+
+                retVal.Item.Add(itm);
+            }
+
+            return retVal;
+        }
+
         /// <summary>
         /// Insert or update contents of the bundle
         /// </summary>
         /// <returns></returns>
         public override Bundle InsertInternal(DataContext context, Bundle data, IPrincipal principal)
         {
+            if (data.Item == null) return data;
+            data = this.ReorganizeForInsert(data);
             context.PrepareStatements = true;
             for(int i  = 0; i < data.Item.Count; i++)
             {

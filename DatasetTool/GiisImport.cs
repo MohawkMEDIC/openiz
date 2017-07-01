@@ -359,7 +359,7 @@ namespace OizDevTool
                         IsNegated = o.NonvaccinationReasonId != 0,
                         ReasonConceptKey = o.NonvaccinationReasonId > 0 ? (Guid?)nonVaccinationReasonMap[o.NonVaccinationReason.Code] : null,
                         MoodConceptKey = ActMoodKeys.Eventoccurrence,
-                        SequenceId = o.Dose?.DoseNumber ?? 0,
+                        SequenceId = o.Dose?.Fullname == "BCG" ? 0 : ( o.Dose?.DoseNumber ?? 0),
                         TypeConceptKey = Guid.Parse("6e7a3521-2967-4c0a-80ec-6c5c197b2178"),
                         RouteKey = NullReasonKeys.NoInformation,
                         DoseUnitKey = Guid.Parse("A77B8D83-1CC9-4806-A268-5D1738154AFA"),
@@ -917,7 +917,8 @@ namespace OizDevTool
 
                 if (parms.SingleTransaction)
                 {
-                    Bundle b = new Bundle() { Item = resultSet.Action.Select(o => o.Element).ToList() };
+                    Bundle b = new Bundle() { Item = resultSet.Action.Where(o=>o.Element != null).Select(o => o.Element).ToList() };
+                    Console.WriteLine("Will live insert {0} items", b.Item.Count());
                     start = DateTime.Now;
                     remaining = TimeSpan.MaxValue;
                     float pdone = 0;

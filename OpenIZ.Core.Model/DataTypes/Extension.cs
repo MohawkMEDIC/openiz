@@ -205,6 +205,15 @@ namespace OpenIZ.Core.Model.DataTypes
             this.ExtensionValueXml = value;
         }
 
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public EntityExtension(Guid extensionType, Type extensionHandlerType, object value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValueXml = (Activator.CreateInstance(extensionHandlerType) as IExtensionHandler)?.Serialize(value);
+        }
+
     }
 
     /// <summary>
@@ -230,6 +239,15 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             this.ExtensionTypeKey = extensionType;
             this.ExtensionValueXml = value;
+        }
+
+        /// <summary>
+        /// Creates an entity extension
+        /// </summary>
+        public ActExtension(Guid extensionType, Type extensionHandlerType, object value)
+        {
+            this.ExtensionTypeKey = extensionType;
+            this.ExtensionValueXml = (Activator.CreateInstance(extensionHandlerType) as IExtensionHandler)?.Serialize(value);
         }
     }
 }
