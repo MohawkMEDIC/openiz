@@ -406,7 +406,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 if (!sourceVersionMaps.TryGetValue(del.SourceKey, out obsVersion))
                     obsVersion = source.VersionSequence.GetValueOrDefault();
 
-                this.m_tracer.TraceInformation("----- OBSOLETING {0} ---- \r\n{1}", del.Key, new System.Diagnostics.StackTrace(true));
+#if DEBUG
+                this.m_tracer.TraceInformation("----- OBSOLETING {0} {1} ---- \r\n{2}", del.GetType().Name, del.Key, new System.Diagnostics.StackTrace(true));
+#endif
                 del.ObsoleteVersionSequenceId = obsVersion;
                 context.Update<TDomainAssociation>(del);
             }

@@ -131,9 +131,14 @@ namespace OpenIZ.Core.Services.Impl
             // Serialize
             var queueFile = Directory.GetFiles(queueDirectory).FirstOrDefault();
             this.m_tracer.TraceInformation("Will dequeue {0}", Path.GetFileNameWithoutExtension(queueFile));
-            using (var fs = File.OpenRead(queueFile))
-                return QueueEntry.Load(fs).ToObject();
 
+            object retVal = null;
+            using (var fs = File.OpenRead(queueFile))
+            {
+                retVal = QueueEntry.Load(fs).ToObject();
+            }
+            File.Delete(queueFile);
+            return retVal;
         }
 
 
@@ -183,17 +188,31 @@ namespace OpenIZ.Core.Services.Impl
 
             this.m_tracer.TraceInformation("Opening queue {0}... Exhausing existing items...", queueDirectory);
 
-            // If there's anything in the directory notify
-            foreach(var itm in Directory.GetFiles(queueDirectory))
-                this.Queued?.Invoke(this, new PersistentQueueEventArgs(queueName, Path.GetFileNameWithoutExtension(itm)));
-
             // Watchers
             lock (this.m_watchers)
             {
-                var fsWatch = new FileSystemWatcher(queueDirectory);
-                fsWatch.Created += (o, e) => this.Queued?.Invoke(this, new PersistentQueueEventArgs(queueName, Path.GetFileNameWithoutExtension(e.FullPath)));
+                var fsWatch = new FileSystemWatcher(queueDirectory, "*");
+                fsWatch.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.CreationTime;
+                fsWatch.Created += (o, e) =>
+                {
+                    this.Queued?.Invoke(this, new PersistentQueueEventArgs(queueName, Path.GetFileNameWithoutExtension(e.FullPath)));
+                };
+                fsWatch.Changed += (o, e) =>
+                {
+                    this.Queued?.Invoke(this, new PersistentQueueEventArgs(queueName, Path.GetFileNameWithoutExtension(e.FullPath)));
+                };
+                fsWatch.EnableRaisingEvents = true;
                 this.m_watchers.Add(queueName, fsWatch);
             }
+
+            // If there's anything in the directory notify
+            foreach (var itm in Directory.GetFiles(queueDirectory, "*"))
+            {
+                this.m_tracer.TraceInformation(">>++>> {0}", Path.GetFileNameWithoutExtension(itm));
+                this.Queued?.Invoke(this, new PersistentQueueEventArgs(queueName, Path.GetFileNameWithoutExtension(itm)));
+            }
+
+            
         }
 
         /// <summary>

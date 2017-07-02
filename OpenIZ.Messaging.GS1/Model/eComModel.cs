@@ -9079,7 +9079,7 @@ namespace OpenIZ.Messaging.GS1.Model {
         
         private TransactionalPartyType ultimateCustomerField;
         
-        private EcomStringAttributeValuePairListType[][] avpListField;
+        private EcomStringAttributeValuePairListType[] avpListField;
         
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -9106,7 +9106,7 @@ namespace OpenIZ.Messaging.GS1.Model {
         /// <remarks/>
         [System.Xml.Serialization.XmlArrayAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
         [System.Xml.Serialization.XmlArrayItemAttribute("eComStringAttributeValuePairList", typeof(EcomStringAttributeValuePairListType), Form=System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable=false)]
-        public EcomStringAttributeValuePairListType[][] avpList {
+        public EcomStringAttributeValuePairListType[] avpList {
             get {
                 return this.avpListField;
             }

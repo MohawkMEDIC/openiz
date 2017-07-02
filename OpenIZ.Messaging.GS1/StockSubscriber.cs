@@ -16,7 +16,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Messaging.GS1.Configuration;
 
-namespace OpenIZ.Messaging.GS1.Sender
+namespace OpenIZ.Messaging.GS1
 {
     /// <summary>
     /// Represents a notification service that listens to stock events and then prepares them for broadcast
@@ -41,7 +41,7 @@ namespace OpenIZ.Messaging.GS1.Sender
         private Gs1Util m_gs1Util;
 
         // Configuration
-        private Gs1Configuration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.gs1") as Gs1Configuration;
+        private Gs1ConfigurationSection m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.gs1") as Gs1ConfigurationSection;
 
         /// <summary>
         /// Daemon is started
@@ -191,7 +191,7 @@ namespace OpenIZ.Messaging.GS1.Sender
                         }
                     }
                 },
-                orderLineItem = act.LoadCollection<ActParticipation>("Participations").Select(o => this.m_gs1Util.CreateOrderLineItem(o)).ToArray()
+                orderLineItem = act.LoadCollection<ActParticipation>("Participations").Where(o=>o.ParticipationRoleKey == ActParticipationKey.Product ).Select(o => this.m_gs1Util.CreateOrderLineItem(o)).ToArray()
             };
 
             for (int i = 0; i < order.orderLineItem.Length; i++)

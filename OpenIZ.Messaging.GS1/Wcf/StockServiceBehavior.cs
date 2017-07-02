@@ -47,7 +47,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
     {
 
         // Configuration
-        private Gs1Configuration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.gs1") as Gs1Configuration;
+        private Gs1ConfigurationSection m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.gs1") as Gs1ConfigurationSection;
 
         // Act repository
         private IActRepositoryService m_actRepository;
@@ -68,19 +68,16 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// </summary>
         public StockServiceBehavior()
         {
-            ApplicationContext.Current.Started += (o, e) =>
-            {
-                this.m_actRepository = ApplicationContext.Current.GetService<IActRepositoryService>();
-                this.m_materialRepository = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
-                this.m_placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
-                this.m_stockService = ApplicationContext.Current.GetService<IStockManagementRepositoryService>();
-                this.m_gs1Util = new Gs1Util();
-            };
+            this.m_actRepository = ApplicationContext.Current.GetService<IActRepositoryService>();
+            this.m_materialRepository = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+            this.m_placeRepository = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+            this.m_stockService = ApplicationContext.Current.GetService<IStockManagementRepositoryService>();
+            this.m_gs1Util = new Gs1Util();
         }
 
         // IMSI Trace host
         private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.GS1");
-        
+
         /// <summary>
         /// The issue despactch advice message will insert a new shipped order into the TImR system.
         /// </summary>
@@ -113,7 +110,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
 
                 var oidService = ApplicationContext.Current.GetService<IOidRegistrarService>();
                 var gln = oidService.GetOid("GLN");
-                var issuingAuthority = oidService.FindData($"{gln.Oid}.{adv.despatchAdviceIdentification.contentOwner.gln}");
+                var issuingAuthority = oidService.FindData($"{gln.Oid}.{adv.despatchAdviceIdentification.contentOwner?.gln}");
                 if (issuingAuthority == null)
                     issuingAuthority = oidService.GetOid(this.m_configuration.DefaultContentOwnerAssigningAuthority);
 
@@ -167,8 +164,9 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 {
                     foreach (var line in dal.despatchAdviceLineItem)
                     {
-                        if (line.despatchedQuantity.measurementUnitCode != "dose")
-                            throw new InvalidOperationException("Despatched quantity must be reported in doses");
+                        if (line.despatchedQuantity.measurementUnitCode != "dose" &&
+                            line.despatchedQuantity.measurementUnitCode != "unit")
+                            throw new InvalidOperationException("Despatched quantity must be reported in units or doses");
 
                         var material = this.m_gs1Util.GetManufacturedMaterial(line.transactionalTradeItem, this.m_configuration.AutoCreateMaterials);
 
@@ -187,7 +185,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
             {
                 ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(orderTransaction);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error issuing despatch advice: {0}", e);
                 throw new Exception($"Error issuing despatch advice: {e.Message}", e);
@@ -491,9 +489,10 @@ namespace OpenIZ.Messaging.GS1.Wcf
         public void IssueOrderResponse(OrderResponseMessageType orderResponse)
         {
             // TODO: Validate the standard header
-            // Loop 
+
             Bundle orderTransaction = new Bundle();
 
+            // Loop 
             foreach (var resp in orderResponse.orderResponse)
             {
 
@@ -502,8 +501,49 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 if (orderRequestAct == null)
                     throw new KeyNotFoundException("Could not find originalOrder");
 
+                // Update the supplier if it exists
+                Place sourceLocation = this.m_gs1Util.GetLocation(resp.seller);
+                if (sourceLocation != null && !orderRequestAct.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Distributor))
+                {
+                    // Add participation
+                    orderRequestAct.Participations.Add(new ActParticipation()
+                    {
+                        ActKey = orderRequestAct.Key,
+                        PlayerEntityKey = sourceLocation.Key,
+                        ParticipationRoleKey = ActParticipationKey.Distributor
+                    });
+                }
+                else if (resp.seller != null && sourceLocation == null)
+                {
+                    throw new KeyNotFoundException($"Could not find seller id with {resp.seller?.additionalPartyIdentification?.FirstOrDefault()?.Value ?? resp.seller.gln}");
+                }
+
+                var oidService = ApplicationContext.Current.GetService<IOidRegistrarService>();
+                var gln = oidService.GetOid("GLN");
+                var issuingAuthority = oidService.FindData($"{gln.Oid}.{resp.orderResponseIdentification.contentOwner.gln}");
+                if (issuingAuthority == null)
+                    issuingAuthority = oidService.GetOid(this.m_configuration.DefaultContentOwnerAssigningAuthority);
+
+                if (issuingAuthority == null)
+                    throw new KeyNotFoundException("Cannot find default issuing authority for advice identification. Please configure a valid OID");
+
+                orderRequestAct.Identifiers.Add(new ActIdentifier(new AssigningAuthority(issuingAuthority.Mnemonic, issuingAuthority.Name, issuingAuthority.Oid), resp.orderResponseIdentification.entityIdentification));
+
                 // If the original order request is not comlete, then complete it
-                ApplicationContext.Current.GetService<ITagPersistenceService>().Save(orderRequestAct.Key.Value, new ActTag("orderStatus", "accepted"));
+                var existingTag = orderRequestAct.Tags.FirstOrDefault(o => o.TagKey == "orderStatus");
+                if (existingTag == null)
+                {
+                    existingTag = new ActTag("orderStatus", "");
+                    orderRequestAct.Tags.Add(existingTag);
+                }
+
+                // Accepted or not
+                if (resp.responseStatusCode?.Value == "ACCEPTED")
+                    existingTag.Value = "accepted";
+                else if (resp.responseStatusCode?.Value == "REJECTED")
+                    existingTag.Value = "rejected";
+
+                orderTransaction.Add(orderRequestAct);
             }
 
             // insert transaction
@@ -513,8 +553,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
             }
             catch (Exception e)
             {
-                this.m_tracer.TraceError("Error issuing order response : {0}", e);
-                throw new Exception($"Error issuing order response: {e.Message}", e);
+                this.m_tracer.TraceError("Error issuing despatch advice: {0}", e);
+                throw new Exception($"Error issuing despatch advice: {e.Message}", e);
             }
 
         }

@@ -35,6 +35,7 @@
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.ServiceModel" />
@@ -48,11 +49,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\Gs1Configuration.cs" />
+    <Compile Include="Configuration\As2ServiceElement.cs" />
     <Compile Include="Gs1ModelExtensions.cs" />
     <Compile Include="Model\eComModel.cs" />
     <Compile Include="Model\Gs1Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sender\StockSubscriber.cs" />
+    <Compile Include="Transport\As2ServiceClient.cs" />
+    <Compile Include="Transport\As2IntegrationService.cs" />
+    <Compile Include="StockSubscriber.cs" />
     <Compile Include="StockServiceMessageHandler.cs" />
     <Compile Include="Wcf\IStockService.cs" />
     <Compile Include="Wcf\StockServiceBehavior.cs" />
@@ -78,7 +82,9 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
-    <None Include="Data\Gs1ExtensionTypes.dataset" />
+    <None Include="Data\100-Gs1ExtensionTypes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

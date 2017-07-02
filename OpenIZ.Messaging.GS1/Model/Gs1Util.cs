@@ -22,7 +22,7 @@ namespace OpenIZ.Messaging.GS1.Model
     public class Gs1Util
     {
         // Configuration
-        private Gs1Configuration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.gs1") as Gs1Configuration;
+        private Gs1ConfigurationSection m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.gs1") as Gs1ConfigurationSection;
 
         // Act repository
         private IActRepositoryService m_actRepository;
@@ -49,6 +49,8 @@ namespace OpenIZ.Messaging.GS1.Model
         /// </summary>
         public TransactionalPartyType CreateLocation(Place place)
         {
+            if (place == null) return null;
+
             var oidService = ApplicationContext.Current.GetService<IOidRegistrarService>();
             var gln = oidService.GetOid("GLN");
             return new TransactionalPartyType()
@@ -79,6 +81,8 @@ namespace OpenIZ.Messaging.GS1.Model
         /// </summary>
         public Place GetLocation(TransactionalPartyType gs1Party)
         {
+
+            if (gs1Party == null) return null;
 
             Place retVal = null;
             int tr = 0;
@@ -114,18 +118,18 @@ namespace OpenIZ.Messaging.GS1.Model
             Guid orderId = Guid.Empty;
             Act retVal = null;
 
-            var oidService = ApplicationContext.Current.GetService<IOidRegistrarService>();
-            var gln = oidService.GetOid("GLN");
-            var issuingAuthority = oidService.FindData($"{gln.Oid}.{documentReference.contentOwner.gln}");
-            if (issuingAuthority == null)
-                issuingAuthority = oidService.GetOid(this.m_configuration.DefaultContentOwnerAssigningAuthority);
-            if (issuingAuthority == null)
-                throw new InvalidOperationException("Could not find assigning authority linked with document reference owner. Please specify a default in the configuration");
-
             if (Guid.TryParse(documentReference.entityIdentification, out orderId))
                 retVal = this.m_actRepository.Get<Act>(orderId, Guid.Empty);
             if (retVal == null)
             {
+                var oidService = ApplicationContext.Current.GetService<IOidRegistrarService>();
+                var gln = oidService.GetOid("GLN");
+                var issuingAuthority = oidService.FindData($"{gln.Oid}.{documentReference.contentOwner?.gln}");
+                if (issuingAuthority == null)
+                    issuingAuthority = oidService.GetOid(this.m_configuration.DefaultContentOwnerAssigningAuthority);
+                if (issuingAuthority == null)
+                    throw new InvalidOperationException("Could not find assigning authority linked with document reference owner. Please specify a default in the configuration");
+
                 int tr = 0;
                 retVal = this.m_actRepository.Find<Act>(o => o.ClassConceptKey == ActClassKeys.Supply && o.MoodConceptKey == moodConceptKey && o.Identifiers.Any(i => i.Value == documentReference.entityIdentification && i.Authority.DomainName == issuingAuthority.Mnemonic), 0, 1, out tr).FirstOrDefault();
             }
@@ -194,9 +198,9 @@ namespace OpenIZ.Messaging.GS1.Model
             var quantityCode = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(material.QuantityConceptKey.Value, "UCUM");
             return new OrderLineItemType()
             {
-                requestedQuantity = new QuantityType() { Value = (decimal)participation.Quantity, measurementUnitCode = quantityCode.Mnemonic ?? "dose", codeListVersion = "UCUM" },
+                requestedQuantity = new QuantityType() { Value = (decimal)participation.Quantity, measurementUnitCode = quantityCode?.Mnemonic ?? "dose", codeListVersion = "UCUM" },
                 additionalOrderLineInstruction =
-                    material.LoadProperty<Concept>("TypeConcept").Mnemonic.StartsWith("VaccineType") ?
+                    material.LoadProperty<Concept>("TypeConcept")?.Mnemonic.StartsWith("VaccineType") == true ?
                         new Description200Type[] {
                             new Description200Type() { languageCode = "en", Value = "FRAGILE" },
                             new Description200Type() { languageCode = "en", Value = "KEEP REFRIGERATED" }
@@ -223,7 +227,7 @@ namespace OpenIZ.Messaging.GS1.Model
                 var mmat = material as ManufacturedMaterial;
                 return new TransactionalTradeItemType()
                 {
-                    additionalTradeItemIdentification = material.Identifiers.Where(o => o.Authority.Name != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
+                    additionalTradeItemIdentification = material.LoadCollection<EntityIdentifier>("Identifiers").Where(o => o.Authority.Name != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
                     {
                         Value = o.Value,
                         additionalTradeItemIdentificationTypeCode = o.LoadProperty<AssigningAuthority>("Authority").DomainName
@@ -245,13 +249,14 @@ namespace OpenIZ.Messaging.GS1.Model
             {
                 return new TransactionalTradeItemType()
                 {
-                    additionalTradeItemIdentification = material.Identifiers.Select(o => new AdditionalTradeItemIdentificationType()
+                    additionalTradeItemIdentification = material.LoadCollection<EntityIdentifier>("Identifiers").Select(o => new AdditionalTradeItemIdentificationType()
                     {
                         Value = o.Value,
                         additionalTradeItemIdentificationTypeCode = o.LoadProperty<AssigningAuthority>("Authority").DomainName
                     }).ToArray(),
                     itemTypeCode = typeItemCode,
-                    tradeItemDescription = material.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
+                    tradeItemDescription = cvx?.LoadCollection<ReferenceTermName>("DisplayNames").Select(o => new Description200Type() { Value = o.Name }).FirstOrDefault() ??
+                        material.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
                 };
             }
         }
@@ -273,16 +278,16 @@ namespace OpenIZ.Messaging.GS1.Model
 
             // Lookup material by lot number / gtin
             int tr = 0;
-            ManufacturedMaterial retVal = this.m_materialRepository.FindManufacturedMaterial(m => m.Identifiers.Any(o => o.Value == tradeItem.gtin && o.Authority.DomainName == "GTIN") && m.LotNumber == tradeItem.transactionalItemData[0].lotNumber, 0, 1, out tr).FirstOrDefault();
+            var lotNumberString = tradeItem.transactionalItemData[0].lotNumber;
+            ManufacturedMaterial retVal = this.m_materialRepository.FindManufacturedMaterial(m => m.Identifiers.Any(o => o.Value == tradeItem.gtin && o.Authority.DomainName == "GTIN") && m.LotNumber == lotNumberString, 0, 1, out tr).FirstOrDefault();
             if (retVal == null && createIfNotFound)
             {
-
+                
                 var additionalData = tradeItem.transactionalItemData[0];
                 if (!additionalData.itemExpirationDateSpecified)
                     throw new InvalidOperationException("Cannot auto-create material, expiration date is missing");
-
                 // Material
-                ManufacturedMaterial mmat = new ManufacturedMaterial()
+                retVal = new ManufacturedMaterial()
                 {
                     Key = Guid.NewGuid(),
                     LotNumber = additionalData.lotNumber,
@@ -318,7 +323,15 @@ namespace OpenIZ.Messaging.GS1.Model
                 }
 
                 // Find the type of material
-                var materialReference = this.m_materialRepository.FindMaterial(o => o.TypeConceptKey == retVal.TypeConceptKey && o.ClassConceptKey == EntityClassKeys.Material && o.StatusConceptKey != StatusKeys.Obsolete, 0, 1, out tr).FirstOrDefault();
+                Material materialReference = null;
+                if (tradeItem.additionalTradeItemIdentification != null)
+                    foreach (var id in tradeItem.additionalTradeItemIdentification)
+                    {
+                        materialReference = this.m_materialRepository.FindMaterial(o => o.Identifiers.Any(i => i.Value == id.Value && i.Authority.DomainName == id.additionalTradeItemIdentificationTypeCode) && o.ClassConceptKey == EntityClassKeys.Material && o.StatusConceptKey != StatusKeys.Obsolete, 0, 1, out tr).SingleOrDefault();
+                        if (materialReference != null) break;
+                    }
+                if(materialReference == null)
+                    materialReference = this.m_materialRepository.FindMaterial(o => o.TypeConceptKey == retVal.TypeConceptKey && o.ClassConceptKey == EntityClassKeys.Material && o.StatusConceptKey != StatusKeys.Obsolete, 0, 1, out tr).SingleOrDefault();
                 if (materialReference == null)
                     throw new InvalidOperationException("Cannot find the base Material from trade item type code");
 
@@ -328,7 +341,8 @@ namespace OpenIZ.Messaging.GS1.Model
                     RelationshipTypeKey = EntityRelationshipTypeKeys.ManufacturedProduct,
                     Quantity = (int)(additionalData.tradeItemQuantity?.Value ?? 1),
                     SourceEntityKey = materialReference.Key,
-                    TargetEntityKey = retVal.Key
+                    TargetEntityKey = retVal.Key,
+                    EffectiveVersionSequenceId = materialReference.VersionSequence
                 };
 
                 // TODO: Manufacturer won't be known
@@ -382,14 +396,14 @@ namespace OpenIZ.Messaging.GS1.Model
                     {
                         new Partner()
                         {
-                            Identifier = new PartnerIdentification() { Value = senderInformation.Key.Value.ToString() },
+                            Identifier = new PartnerIdentification() { Authority = ApplicationContext.Current.Configuration.Custodianship.Id.AssigningAuthority?.Name, Value = senderInformation.Key.Value.ToString() },
                             ContactInformation = new ContactInformation[]
                             {
                                 new ContactInformation()
                                 {
-                                    Contact = senderInformation.LoadCollection<EntityName>("Names").FirstOrDefault().ToString(),
-                                    EmailAddress = senderInformation.Telecoms.FirstOrDefault(o=>o.Value.Contains("@")).Value,
-                                    TelephoneNumber = senderInformation.Telecoms.FirstOrDefault(o=>!o.Value.Contains("@")).Value
+                                    Contact = senderInformation.LoadCollection<EntityName>("Names").FirstOrDefault()?.ToString(),
+                                    EmailAddress = senderInformation.LoadCollection<EntityTelecomAddress>("Telecoms").FirstOrDefault(o=>o.Value.Contains("@"))?.Value,
+                                    TelephoneNumber = senderInformation.Telecoms.FirstOrDefault(o=>!o.Value.Contains("@"))?.Value
                                 }
                             }
                     }

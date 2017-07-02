@@ -264,11 +264,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     principal);
 
             if (data.Participations != null && data.Participations.Any())
+            {
+                data.Participations = data.Participations.Where(o => o != null && !o.IsEmpty()).Select(o => new ActParticipation(o.ParticipationRoleKey, o.PlayerEntityKey) { Quantity = o.Quantity }).ToList();
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
-                   data.Participations.Where(o => o != null && !o.IsEmpty()).Select(o=>new ActParticipation(o.ParticipationRoleKey, o.PlayerEntityKey) { Quantity = o.Quantity }).ToList(),
+                   data.Participations,
                     retVal,
                     context,
                     principal);
+            }
 
             if (data.Relationships != null && data.Relationships.Any())
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(
