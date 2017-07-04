@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 				throw new InvalidOperationException($"Cannot delete data using key: {model.Key}");
 			}
 
-			context.Delete<ParameterType>(o => o.Key == model.Key);
+			context.Delete<TDomain>(o => o.Key == model.Key);
 
 			return model;
 		}

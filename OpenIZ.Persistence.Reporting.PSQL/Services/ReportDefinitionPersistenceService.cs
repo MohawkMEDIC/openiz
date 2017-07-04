@@ -124,6 +124,27 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 		}
 
 		/// <summary>
+		/// Obsoletes the specified data.
+		/// </summary>
+		/// <param name="context">The context.</param>
+		/// <param name="model">The model.</param>
+		/// <param name="principal">The principal.</param>
+		/// <returns>Returns the obsoleted data.</returns>
+		public override ReportDefinition ObsoleteInternal(DataContext context, ReportDefinition model, IPrincipal principal)
+		{
+			// delete the report format associations
+			context.Delete<ReportDefinitionFormatAssociation>(c => c.SourceKey == model.Key.Value);
+
+			// delete the report parameter associations
+			context.Delete<ReportParameter>(c => c.ReportId == model.Key.Value);
+
+			// delete the actual report definition
+			base.ObsoleteInternal(context, model, principal);
+
+			return model;
+		}
+
+		/// <summary>
 		/// Converts a domain instance to a model instance.
 		/// </summary>
 		/// <param name="domainInstance">The domain instance to convert.</param>

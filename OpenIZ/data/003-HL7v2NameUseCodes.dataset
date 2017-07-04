@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="HL7v2 Name Use Codes" xmlns="http://openiz.org/data">
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>1d2a42c9-cdca-4346-8467-eebf5a90ea3c</id>
+      <mnemonic>B</mnemonic>
+      <codeSystem>77816823-9392-4ca7-83dd-6e7d4b4164e7</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Official Record</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>1EC9583A-B019-4BAA-B856-B99CAF368656</source>
+      <term>1d2a42c9-cdca-4346-8467-eebf5a90ea3c</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0b04dc0a-bc03-4a8a-9ebb-1c258e5898a8</id>
+      <mnemonic>D</mnemonic>
+      <codeSystem>77816823-9392-4ca7-83dd-6e7d4b4164e7</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Ideographic</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>09000479-4672-44F8-BB4A-72FB25F7356A</source>
+      <term>0b04dc0a-bc03-4a8a-9ebb-1c258e5898a8</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3a192f29-3e46-49be-bcb3-65d3ab909d67</id>
+      <mnemonic>N</mnemonic>
+      <codeSystem>77816823-9392-4ca7-83dd-6e7d4b4164e7</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Nickname</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>C31564EF-CA8D-4528-85A8-88245FCEF344</source>
+      <term>3a192f29-3e46-49be-bcb3-65d3ab909d67</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>a1debf49-a157-4b48-b8ff-e2112890ac83</id>
+      <mnemonic>S</mnemonic>
+      <codeSystem>77816823-9392-4ca7-83dd-6e7d4b4164e7</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Pseudonym</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>C31564EF-CA8D-4528-85A8-88245FCEF344</source>
+      <term>a1debf49-a157-4b48-b8ff-e2112890ac83</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>9b32aa16-5563-48e9-908c-9ef54ecdb777</id>
+      <mnemonic>T</mnemonic>
+      <codeSystem>77816823-9392-4ca7-83dd-6e7d4b4164e7</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Indigenous/Tribal</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>A3FB2A05-5EBE-47AE-AFD0-4C1B22336090</source>
+      <term>9b32aa16-5563-48e9-908c-9ef54ecdb777</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>390a3c3b-fdc8-4b7c-89f5-4c39e3156872</id>
+      <mnemonic>U</mnemonic>
+      <codeSystem>77816823-9392-4ca7-83dd-6e7d4b4164e7</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Unknown</value>
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>95E6843A-26FF-4046-B6F4-EB440D4B85F7</source>
+      <term>390a3c3b-fdc8-4b7c-89f5-4c39e3156872</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+</dataset>
