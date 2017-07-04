@@ -178,6 +178,14 @@ namespace OpenIZ.Core.Services.Impl
 		}
 
 		/// <summary>
+		/// Find concepts by reference terms
+		/// </summary>
+		public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemDomain)
+		{
+			return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Authority == codeSystemDomain && r.ReferenceTerm.Mnemonic == code));
+		}
+
+		/// <summary>
 		/// Searches for a concept set using a given query.
 		/// </summary>
 		/// <param name="query">The query to use for searching for the concept set.</param>
@@ -735,13 +743,5 @@ namespace OpenIZ.Core.Services.Impl
 
 			return term;
 		}
-
-        /// <summary>
-        /// Find concepts by reference terms
-        /// </summary>
-        public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemDomain)
-        {
-            return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Authority == codeSystemDomain && r.ReferenceTerm.Mnemonic == code));
-        }
     }
 }

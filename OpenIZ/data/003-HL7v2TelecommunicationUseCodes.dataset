@@ -99,23 +99,11 @@
     </ReferenceTerm>
   </insert>
   <insert skipIfError="false" skipIfExists="false">
-    <Concept xmlns="http://openiz.org/model">
-      <id>804a4e92-fe62-4601-a4aa-0cf84533b633</id>
-      <creationTime>2017-05-20T14:45:06.2791888-04:00</creationTime>
-      <isReadonly>false</isReadonly>
-      <mnemonic>ORN</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>93ef75b2-7416-474a-a528-5d0d29427efc</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Other Residence Number</value>
-      </name>
-      <conceptSet>1dabe3e2-44b8-4c45-9102-25ea147e5710</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>CEF6EA31-A097-4F59-8723-A38C727C6597</source>
+      <term>93ef75b2-7416-474a-a528-5d0d29427efc</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
   <insert skipIfError="false" skipIfExists="false">
     <ReferenceTerm xmlns="http://openiz.org/model">
@@ -149,23 +137,11 @@
     </ReferenceTerm>
   </insert>
   <insert skipIfError="false" skipIfExists="false">
-    <Concept xmlns="http://openiz.org/model">
-      <id>3480e220-a7e3-4774-8db7-4c96202c4f12</id>
-      <creationTime>2017-05-20T14:45:06.2791888-04:00</creationTime>
-      <isReadonly>false</isReadonly>
-      <mnemonic>VHN</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>4c264604-2384-4882-a988-0441fea1b643</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Vacation Home Number</value>
-      </name>
-      <conceptSet>1dabe3e2-44b8-4c45-9102-25ea147e5710</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>CEF6EA31-A097-4F59-8723-A38C727C6597</source>
+      <term>4c264604-2384-4882-a988-0441fea1b643</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
   <insert skipIfError="false" skipIfExists="false">
     <ReferenceTerm xmlns="http://openiz.org/model">
