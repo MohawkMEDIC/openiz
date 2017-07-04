@@ -38,6 +38,16 @@ namespace OpenIZ.Core.Http
         /// <summary>
         /// Creates the basic credential 
         /// </summary>
+        public HttpBasicCredentials(String userName, string password) : base(null)
+        {
+            this.m_userName = userName;
+            this.m_password = password;
+
+        }
+        
+        /// <summary>
+        /// Creates the basic credential 
+        /// </summary>
         public HttpBasicCredentials(IPrincipal principal, string password) : base(principal)
         {
             if (!principal.Identity.IsAuthenticated)

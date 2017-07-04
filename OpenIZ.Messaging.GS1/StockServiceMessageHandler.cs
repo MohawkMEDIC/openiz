@@ -20,6 +20,7 @@
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Wcf;
+using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Core.Wcf.Security;
 using OpenIZ.Messaging.GS1.Wcf;
 using System;
@@ -120,7 +121,8 @@ namespace OpenIZ.Messaging.GS1
 				foreach (ServiceEndpoint endpoint in this.webHost.Description.Endpoints)
 				{
 					this.traceSource.TraceInformation("Starting GS1 on {0}...", endpoint.Address);
-				}
+                    endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
+                }
 				// Start the webhost
 				this.webHost.Open();
 

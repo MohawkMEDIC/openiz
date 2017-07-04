@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Permissions;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.Core.Services.Impl
 {
@@ -316,14 +317,18 @@ namespace OpenIZ.Core.Services.Impl
 
 			int tr;
 
-			var refTermEnt = refTermService.Query(o => (o.ReferenceTerm.CodeSystem.Url == codeSystem || o.ReferenceTerm.CodeSystem.Oid == codeSystem) && o.SourceEntityKey == conceptId, 0, 1, AuthenticationContext.Current.Principal, out tr).FirstOrDefault();
+            ConceptReferenceTerm refTermEnt = null;
 
-			if (refTermEnt?.ReferenceTermKey != null)
-			{
-				return refTermEnt.ReferenceTerm ?? this.GetReferenceTerm(refTermEnt.ReferenceTermKey.Value);
-			}
+            Regex oidRegex = new Regex("^(\\d+?\\.){1,}\\d+$");
+            Uri uri = null;
+            if (oidRegex.IsMatch(codeSystem))
+                refTermEnt = refTermService.Query(o => (o.ReferenceTerm.CodeSystem.Oid == codeSystem) && o.SourceEntityKey == conceptId, 0, 1, AuthenticationContext.Current.Principal, out tr).FirstOrDefault();
+            else if (Uri.TryCreate(codeSystem, UriKind.Absolute, out uri))
+                refTermEnt = refTermService.Query(o => (o.ReferenceTerm.CodeSystem.Url == codeSystem) && o.SourceEntityKey == conceptId, 0, 1, AuthenticationContext.Current.Principal, out tr).FirstOrDefault();
+            else
+                refTermEnt = refTermService.Query(o => (o.ReferenceTerm.CodeSystem.Authority == codeSystem) && o.SourceEntityKey == conceptId, 0, 1, AuthenticationContext.Current.Principal, out tr).FirstOrDefault();
 
-			return null;
+            return refTermEnt.LoadProperty<ReferenceTerm>("ReferenceTerm");
 		}
 
 		/// <summary>
@@ -730,5 +735,13 @@ namespace OpenIZ.Core.Services.Impl
 
 			return term;
 		}
-	}
+
+        /// <summary>
+        /// Find concepts by reference terms
+        /// </summary>
+        public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, string codeSystemDomain)
+        {
+            return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Authority == codeSystemDomain && r.ReferenceTerm.Mnemonic == code));
+        }
+    }
 }

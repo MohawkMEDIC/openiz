@@ -1,0 +1,85 @@
+﻿using OpenIZ.Core.Interop.Clients;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using OpenIZ.Core.Http;
+using OpenIZ.Messaging.GS1.Model;
+using OpenIZ.Messaging.GS1.Configuration;
+using System.Xml.Serialization;
+using System.IO;
+
+namespace OpenIZ.Messaging.GS1.Transport.AS2
+{
+    /// <summary>
+    /// GS1 service client
+    /// </summary>
+    public class Gs1ServiceClient : ServiceClientBase
+    {
+
+        // Configuration
+        private As2ServiceElement m_configuration;
+
+        /// <summary>
+        /// Create the GS1 service client
+        /// </summary>
+        public Gs1ServiceClient(IRestClient restClient) : base(restClient)
+        {
+            if (!string.IsNullOrEmpty(this.m_configuration.UserName))
+                this.Client.Credentials = new HttpBasicCredentials(this.m_configuration.UserName, this.m_configuration.Password);
+
+            this.Client.Accept = this.Client.Accept ?? "application/xml";
+            this.m_configuration = this.Client.Description as As2ServiceElement;
+        }
+
+        /// <summary>
+        /// Issue an order
+        /// </summary>
+        public void IssueOrder(OrderMessageType orderType)
+        {
+            String boundary = String.Format("------{0:N}", Guid.NewGuid());
+            if (this.m_configuration.UseAS2MimeEncoding)
+                this.Client.Post<MultipartAttachment, object>("/order", String.Format("multipart/form-data; boundary={0}", boundary), this.CreateAttachment(orderType));
+            else
+                this.Client.Post<OrderMessageType, object>("/order", "application/xml", orderType);
+        }
+
+        /// <summary>
+        /// Issue an order
+        /// </summary>
+        public void IssueReceivingAdvice(ReceivingAdviceMessageType advice)
+        {
+            String boundary = String.Format("------{0:N}", Guid.NewGuid());
+            if (this.m_configuration.UseAS2MimeEncoding)
+                this.Client.Post<MultipartAttachment, object>("/receivingAdvice", String.Format("multipart/form-data; boundary={0}", boundary), this.CreateAttachment(advice));
+            else
+                this.Client.Post<ReceivingAdviceMessageType, object>("/receivingAdvice", "application/xml", advice);
+        }
+
+        /// <summary>
+        /// Issue an order
+        /// </summary>
+        public void IssueDespatchAdvice(DespatchAdviceMessageType advice)
+        {
+            String boundary = String.Format("------{0:N}", Guid.NewGuid());
+            if (this.m_configuration.UseAS2MimeEncoding)
+                this.Client.Post<MultipartAttachment, object>("/despatchAdvice", String.Format("multipart/form-data; boundary={0}", boundary), this.CreateAttachment(advice));
+            else
+                this.Client.Post<DespatchAdviceMessageType, object>("/despatchAdvice", "application/xml", advice);
+        }
+
+        /// <summary>
+        /// Create an appropriate MIME encoding
+        /// </summary>
+        private MultipartAttachment CreateAttachment(object content)
+        {
+            XmlSerializer xsz = new XmlSerializer(content.GetType());
+            using (var ms = new MemoryStream())
+            {
+                xsz.Serialize(ms, content);
+                return new MultipartAttachment(ms.ToArray(), "edi/xml", "body", false);
+            }
+        }
+    }
+}
