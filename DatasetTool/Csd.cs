@@ -1899,6 +1899,8 @@ namespace OizDevTool
 
 		private contactPoint[] contactPointField;
 
+		private uniqueID parentField;
+
 		private facilityOrganization[] organizationsField;
 
 		private operatingHours[] operatingHoursField;
@@ -2028,6 +2030,18 @@ namespace OizDevTool
 			set
 			{
 				this.contactPointField = value;
+			}
+		}
+
+		public uniqueID parent
+		{
+			get
+			{
+				return this.parentField;
+			}
+			set
+			{
+				this.parentField = value;
 			}
 		}
 

@@ -245,7 +245,7 @@ namespace OizDevTool
 			Guid key;
 
 			// lookup by entity tag if the entity id value is not a GUID
-			if (!Guid.TryParse(entityId, out key))
+			if (!TryMapKey(entityId, out key))
 			{
 				entity = entityService.Find(p => p.Tags.Any(t => t.TagKey == CsdEntityIdTag && t.Value == entityId)).FirstOrDefault() as T;
 			}
@@ -293,7 +293,20 @@ namespace OizDevTool
 			AssigningAuthority assigningAuthority;
 
 			if (!assigningAuthorityKeys.ContainsKey(otherId.assigningAuthorityName))
-			{ 
+			{
+				// lookup by NSID
+				assigningAuthority = metadataService.FindAssigningAuthority(a => a.DomainName == otherId.assigningAuthorityName).FirstOrDefault();
+
+				if (assigningAuthority != null)
+				{
+					assigningAuthorityKeys.Add(otherId.assigningAuthorityName, assigningAuthority.Key.Value);
+					return assigningAuthority;
+				}
+
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
+				Console.ResetColor();
+
 				// lookup by URL
 				assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == otherId.assigningAuthorityName).FirstOrDefault();
 
@@ -776,6 +789,11 @@ namespace OizDevTool
 					place.Lng = Convert.ToDouble(facility.geocode.longitude);
 				}
 
+				if (facility.parent?.entityID != null)
+				{
+					place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityIdOrTag<Place>(facility.parent.entityID)));
+				}
+
 				if (facility.codedType?.Any() == true)
 				{
 					// we don't support multiple types for a place at the moment, so we only take the first one
@@ -924,9 +942,10 @@ namespace OizDevTool
 		}
 
 		/// <summary>
-		/// Maps the key.
+		/// Attempts to map a key to a <see cref="Guid" /> instance.
 		/// </summary>
 		/// <param name="entityId">The entity identifier.</param>
+		/// <param name="key">The key.</param>
 		/// <returns>Returns a key for a given entity id.</returns>
 		private static bool TryMapKey(string entityId, out Guid key)
 		{
@@ -934,7 +953,7 @@ namespace OizDevTool
 
 			key = Guid.Empty;
 
-			if (entityId.StartsWith("urn:uuid:"))
+			if (entityId?.StartsWith("urn:uuid:") == true)
 			{
 				status = Guid.TryParse(entityId.Substring(9), out key);
 			}
