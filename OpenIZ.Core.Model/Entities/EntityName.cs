@@ -171,5 +171,18 @@ namespace OpenIZ.Core.Model.Entities
         {
             return false;
         }
+
+        /// <summary>
+        /// Represent the name as a string
+        /// </summary>
+        public override string ToString()
+        {
+            if (this.Component.Count == 1)
+                return this.Component[0].Value;
+            else
+            {
+                return $"{this.Component.Find(o => o.ComponentTypeKey == NameComponentKeys.Given)?.Value} {this.Component.Find(o => o.ComponentTypeKey == NameComponentKeys.Family)?.Value}";
+            }
+        }
     }
 }

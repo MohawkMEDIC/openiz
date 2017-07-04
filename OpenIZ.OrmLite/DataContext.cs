@@ -219,10 +219,14 @@ namespace OpenIZ.OrmLite
         public void AddCacheCommit(IdentifiedData data)
         {
             if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value))
+            {
                 lock (this.m_lockObject)
-					// check again
-					if (!m_cacheCommit.ContainsKey(data.Key.Value))
-						this.m_cacheCommit.Add(data.Key.Value, data);
+                    // check again
+                    if (!m_cacheCommit.ContainsKey(data.Key.Value))
+                        this.m_cacheCommit.Add(data.Key.Value, data);
+            }
+            else if(data.Key.HasValue)
+                this.m_cacheCommit[data.Key.Value] = data;
         }
 
 

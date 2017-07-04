@@ -448,6 +448,9 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
             var data = this.ToModel(value);
             if (data == null) throw new ArgumentException("Could not parse value for insert");
 
+            if (data.Key.HasValue && this.m_cacheObject.ContainsKey(data.Key.Value))
+                this.m_cacheObject.Remove(data.Key.Value);
+            
             var idp = typeof(IRepositoryService<>).MakeGenericType(data.GetType());
             var idpInstance = ApplicationServiceContext.Current.GetService(idp);
             if (idpInstance == null)

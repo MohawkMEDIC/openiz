@@ -35,5 +35,31 @@ namespace OpenIZ.Messaging.GS1.Wcf
 		/// </summary>
 		[WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/inventoryReport")]
 		LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestMessageType parameters);
-	}
+
+        /// <summary>
+        /// Represents a request to issue despatch advice
+        /// </summary>
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/despatchAdvice")]
+        void IssueDespatchAdvice(DespatchAdviceMessageType advice);
+
+        /// <summary>
+        /// Issue receiving advice to the OpenIZ IMS system
+        /// </summary>
+        /// TODO: Finish this
+        //[WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/receivingAdvice")]
+        //void IssueReceivingAdvice(ReceivingAdviceMessageType advice);
+
+        /// <summary>
+        /// Represents a request to issue an order
+        /// </summary>
+        /// TODO: Finish this
+        //[WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/order")]
+        //void IssueOrder(OrderMessageType order);
+
+        /// <summary>
+        /// Issues order response
+        /// </summary>
+        [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/orderResponse")]
+        void IssueOrderResponse(OrderResponseMessageType orderResponse);
+    }
 }

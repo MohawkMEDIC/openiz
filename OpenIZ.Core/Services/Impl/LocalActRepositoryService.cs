@@ -191,7 +191,7 @@ namespace OpenIZ.Core.Services.Impl
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.WriteClinicalData)]
         public Act Insert(Act data)
 		{
-			throw new NotImplementedException();
+            return this.Insert<Act>(data);
 		}
 
         /// <summary>

@@ -115,12 +115,21 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns a list of concepts.</returns>
 		IEnumerable<Concept> FindConceptsByReferenceTerm(string code, Uri codeSystem);
 
-		/// <summary>
-		/// Searches for a concept set using a given query.
-		/// </summary>
-		/// <param name="query">The query to use for searching for the concept set.</param>
-		/// <returns>Returns a list of concept sets who match the specified query.</returns>
-		IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query);
+        /// <summary>
+        /// Finds a concept by reference term.
+        /// </summary>
+        /// <param name="code">The code of the reference term.</param>
+        /// <param name="codeSystemDomain">The code system OID of the reference term.</param>
+        /// <returns>Returns a list of concepts.</returns>
+        IEnumerable<Concept> FindConceptsByReferenceTerm(string code, String codeSystemDomain);
+
+
+        /// <summary>
+        /// Searches for a concept set using a given query.
+        /// </summary>
+        /// <param name="query">The query to use for searching for the concept set.</param>
+        /// <returns>Returns a list of concept sets who match the specified query.</returns>
+        IEnumerable<ConceptSet> FindConceptSets(Expression<Func<ConceptSet, bool>> query);
 
 		/// <summary>
 		/// Searches for a concept sets using a given query.

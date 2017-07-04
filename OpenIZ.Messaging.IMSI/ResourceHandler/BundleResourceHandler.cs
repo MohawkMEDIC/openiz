@@ -55,7 +55,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 				throw new ArgumentException("Bundle required", nameof(data));
 			}
 
-			bundle.Reconstitute();
+			//bundle.Reconstitute();
 
 			if (updateIfExists)
 			{
