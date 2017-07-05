@@ -265,7 +265,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             if (data.Participations != null && data.Participations.Any())
             {
-                data.Participations = data.Participations.Where(o => o != null && !o.IsEmpty()).Select(o => new ActParticipation(o.ParticipationRoleKey, o.PlayerEntityKey) { Quantity = o.Quantity }).ToList();
+                data.Participations = data.Participations.Where(o => o != null && !o.IsEmpty()).Select(o => new ActParticipation(o.ParticipationRole?.EnsureExists(context, principal)?.Key ?? o.ParticipationRoleKey , o.PlayerEntityKey) { Quantity = o.Quantity }).ToList();
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
                    data.Participations,
                     retVal,

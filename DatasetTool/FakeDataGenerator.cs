@@ -76,8 +76,8 @@ namespace OizDevTool
 			int tr = 0;
 			Console.WriteLine("Adding minimal loading places...");
 
-			var places = (ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, 1000, out tr, Guid.Empty);
-			places = places.Union((ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, 1000, out tr, Guid.Empty));
+			var places = (ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, Int32.Parse(parameters.FacilityCount ?? "1000"), out tr, Guid.Empty);
+			places = places.Union((ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, Int32.Parse(parameters.FacilityCount ?? "1000"), out tr, Guid.Empty));
 			WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4);
 			Random r = new Random();
 
@@ -93,7 +93,7 @@ namespace OizDevTool
 				// Insert
 				int pPatient = Interlocked.Increment(ref npatients);
 				patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-				Console.WriteLine("Generated Patient #{2:#,###,###}: {0} ({1} mo)", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient);
+				Console.WriteLine("Generated Patient #{2:#,###,###}: {0} ({1} mo) [{3}]", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient, places.FirstOrDefault(p=>p.Key == patient.Relationships.FirstOrDefault(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey).Names.FirstOrDefault().ToString());
 
 				// Schedule
 				if (!parameters.PatientOnly)
@@ -156,7 +156,7 @@ namespace OizDevTool
 
 			int tr = 0, ofs = 0;
 			Console.WriteLine("Querying for places");
-			var results = idp.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 25, AuthenticationContext.SystemPrincipal, out tr);
+			var results = idp.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 1000, AuthenticationContext.SystemPrincipal, out tr);
 			Console.WriteLine("Will create fake stock for {0} places", tr);
 			var r = new Random();
 
@@ -266,7 +266,11 @@ namespace OizDevTool
 			[Parameter("popsize")]
 			[Description("Population size of the generated dataset")]
 			public String PopulationSize { get; set; }
-		}
+
+            [Parameter("facilities")]
+            [Description("Dictates the number of facilities to place the patients in")]
+            public string FacilityCount { get; set; }
+        }
 
 		
 	}

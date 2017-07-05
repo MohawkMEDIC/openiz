@@ -66,9 +66,10 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
                         if (dq == null) break;
                         this.SendQueueMessage(dq);
                     }
-                    catch
+                    catch (Exception ex)
                     {
                         this.m_tracer.TraceError(">>>> !!ALERT!! >>>> Error sending message to GS1 broker. All further communications with the broker will be suspended");
+                        this.m_tracer.TraceError(ex.ToString());
                         this.Stop();
                         break;
                     }
