@@ -381,9 +381,10 @@ namespace OpenIZ.BusinessRules.JavaScript
             {
                 var callList = this.GetValidators(data.GetType()).Union(this.GetValidators<TBinding>()).Distinct() ;
                 var retVal = new List<DetectedIssue>();
+                var vmData = this.m_bridge.ToViewModel(data);
                 foreach (var c in callList)
                 {
-                    var issues = c(this.m_bridge.ToViewModel(data));
+                    var issues = c(vmData);
                     retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o => new DetectedIssue()
                     {
                         Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,

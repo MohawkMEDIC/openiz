@@ -271,9 +271,17 @@ namespace OpenIZ.Messaging.GS1.Wcf
                     // What are the relationships of held entities
                     foreach (var rel in place.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity))
                     {
-                        if (rel.TargetEntity == null)
-                            rel.TargetEntity = this.m_materialRepository.GetManufacturedMaterial(rel.TargetEntityKey.Value, Guid.Empty);
-
+                        if (!(rel.TargetEntity is ManufacturedMaterial))
+                        {
+                            var matl = this.m_materialRepository.GetManufacturedMaterial(rel.TargetEntityKey.Value, Guid.Empty);
+                            if (matl == null)
+                            {
+                                Trace.TraceWarning("It looks like {0} owns {1} but {1} is not a mmat!?!?!", place.Key, rel.TargetEntityKey);
+                                continue;
+                            }
+                            else
+                                rel.TargetEntity = matl;
+                        }
                         var mmat = rel.TargetEntity as ManufacturedMaterial;
                         if (!(mmat is ManufacturedMaterial))
                             continue;
@@ -292,8 +300,10 @@ namespace OpenIZ.Messaging.GS1.Wcf
                             balanceOH -= (decimal)prevAdjustments.Sum(o => o.Participations.FirstOrDefault(p => p.ParticipationRoleKey == ActParticipationKey.Consumable)?.Quantity);
                         }
 
-                        var cvx = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(mat.TypeConceptKey.Value, "CVX");
-
+                        ReferenceTerm cvx = null;
+                        if(mat.TypeConceptKey.HasValue)
+                            cvx = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(mat.TypeConceptKey.Value, "CVX");
+                        
                         var typeItemCode = new ItemTypeCodeType()
                         {
                             Value = cvx?.Mnemonic ?? mmat.TypeConcept?.Mnemonic ?? mat.Key.Value.ToString(),
@@ -303,14 +313,22 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         // First we need the GTIN for on-hand balance
                         tradeItemStatuses.Add(new TradeItemInventoryStatusType()
                         {
-                            gtin = mmat.Identifiers.FirstOrDefault(o => o.Authority.Oid == gtin.Oid)?.Value,
-                            tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
+                            gtin = mmat.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GTIN")?.Value,
                             itemTypeCode = typeItemCode,
-                            additionalTradeItemIdentification = mmat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemIdentificationType()
+                            additionalTradeItemIdentification = mmat.Identifiers.Where(o => o.Authority.DomainName != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
                             {
                                 additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
                                 Value = o.Value
                             }).ToArray(),
+                            tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
+                            tradeItemClassification = new TradeItemClassificationType()
+                            {
+                                additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
+                                {  
+                                    codeListVersion = o.Authority.DomainName,
+                                    Value = o.Value
+                                }).ToArray()
+                            },
                             inventoryDateTime = DateTime.Now,
                             inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "ON_HAND" },
                             transactionalItemData = new TransactionalItemDataType[]
@@ -343,6 +361,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
                                 Value = o.Value
                             }).ToArray(),
+                            tradeItemClassification = new TradeItemClassificationType()
+                            {
+                                additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
+                                {
+                                    codeListVersion = o.Authority.DomainName,
+                                    Value = o.Value
+                                }).ToArray()
+                            },
                             tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
                             inventoryDateTime = DateTime.Now,
                             inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "DAMAGED" },
@@ -376,6 +402,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
                                 Value = o.Value
                             }).ToArray(),
+                            tradeItemClassification = new TradeItemClassificationType()
+                            {
+                                additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
+                                {
+                                    codeListVersion = o.Authority.DomainName,
+                                    Value = o.Value
+                                }).ToArray()
+                            },
                             tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
                             inventoryDateTime = DateTime.Now,
                             inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "COLDCHAIN_FAILED" },
@@ -411,6 +445,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
                                 Value = o.Value
                             }).ToArray(),
+                            tradeItemClassification = new TradeItemClassificationType()
+                            {
+                                additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
+                                {
+                                    codeListVersion = o.Authority.DomainName,
+                                    Value = o.Value
+                                }).ToArray()
+                            },
                             inventoryDateTime = DateTime.Now,
                             inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "EXPIRED" },
                             transactionalItemData = new TransactionalItemDataType[]
@@ -444,6 +486,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                 additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
                                 Value = o.Value
                             }).ToArray(),
+                            tradeItemClassification = new TradeItemClassificationType()
+                            {
+                                additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
+                                {
+                                    codeListVersion = o.Authority.DomainName,
+                                    Value = o.Value
+                                }).ToArray()
+                            },
                             inventoryDateTime = DateTime.Now,
                             inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "WASTED" },
                             transactionalItemData = new TransactionalItemDataType[]

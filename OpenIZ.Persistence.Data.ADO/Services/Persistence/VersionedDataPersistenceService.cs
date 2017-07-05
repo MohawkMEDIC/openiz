@@ -141,7 +141,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             // Client did not change on update, so we need to update!!!
             if (!data.VersionKey.HasValue ||
-               data.VersionKey.Value == existingObject.VersionKey)
+               data.VersionKey.Value == existingObject.VersionKey ||
+               context.Any<TDomain>(o => o.VersionKey == data.VersionKey))
                 data.VersionKey = newEntityVersion.VersionKey = Guid.NewGuid();
 
             data.VersionSequence = newEntityVersion.VersionSequenceId = null;
@@ -407,7 +408,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     obsVersion = source.VersionSequence.GetValueOrDefault();
 
 #if DEBUG
-                this.m_tracer.TraceInformation("----- OBSOLETING {0} {1} ---- \r\n{2}", del.GetType().Name, del.Key, new System.Diagnostics.StackTrace(true));
+                this.m_tracer.TraceInformation("----- OBSOLETING {0} {1} ---- ", del.GetType().Name, del.Key);
 #endif
                 del.ObsoleteVersionSequenceId = obsVersion;
                 context.Update<TDomainAssociation>(del);

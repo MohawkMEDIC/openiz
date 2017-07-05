@@ -214,7 +214,10 @@ namespace OpenIZ.Messaging.GS1.Model
         /// </summary>
         public TransactionalTradeItemType CreateTradeItem(Material material)
         {
-            var cvx = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(material.TypeConceptKey.Value, "CVX");
+
+            ReferenceTerm cvx = null;
+            if(material.TypeConceptKey.HasValue)
+                cvx = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(material.TypeConceptKey.Value, "CVX");
             var typeItemCode = new ItemTypeCodeType()
             {
                 Value = cvx?.Mnemonic ?? material.TypeConcept?.Mnemonic ?? material.Key.Value.ToString(),
@@ -225,6 +228,8 @@ namespace OpenIZ.Messaging.GS1.Model
             if (material is ManufacturedMaterial)
             {
                 var mmat = material as ManufacturedMaterial;
+                var mat = this.m_materialRepository.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "ManufacturedProduct").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
+
                 return new TransactionalTradeItemType()
                 {
                     additionalTradeItemIdentification = material.LoadCollection<EntityIdentifier>("Identifiers").Where(o => o.Authority.Name != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
@@ -232,6 +237,14 @@ namespace OpenIZ.Messaging.GS1.Model
                         Value = o.Value,
                         additionalTradeItemIdentificationTypeCode = o.LoadProperty<AssigningAuthority>("Authority").DomainName
                     }).ToArray(),
+                    tradeItemClassification = new TradeItemClassificationType()
+                    {
+                        additionalTradeItemClassificationCode = mat.LoadCollection<EntityIdentifier>("Identifiers").Select(o => new AdditionalTradeItemClassificationCodeType()
+                        {
+                            Value = o.Value,
+                            codeListVersion = o.LoadProperty<AssigningAuthority>("Authority").DomainName
+                        }).ToArray()
+                    },
                     gtin = material.Identifiers.FirstOrDefault(o => o.Authority.Name == "GTIN").Value,
                     itemTypeCode = typeItemCode,
                     tradeItemDescription = material.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
@@ -249,13 +262,16 @@ namespace OpenIZ.Messaging.GS1.Model
             {
                 return new TransactionalTradeItemType()
                 {
-                    additionalTradeItemIdentification = material.LoadCollection<EntityIdentifier>("Identifiers").Select(o => new AdditionalTradeItemIdentificationType()
+                    tradeItemClassification = new TradeItemClassificationType()
                     {
-                        Value = o.Value,
-                        additionalTradeItemIdentificationTypeCode = o.LoadProperty<AssigningAuthority>("Authority").DomainName
-                    }).ToArray(),
+                        additionalTradeItemClassificationCode = material.LoadCollection<EntityIdentifier>("Identifiers").Select(o => new AdditionalTradeItemClassificationCodeType()
+                        {
+                            Value = o.Value,
+                            codeListVersion = o.LoadProperty<AssigningAuthority>("Authority").DomainName
+                        }).ToArray()
+                    },
                     itemTypeCode = typeItemCode,
-                    tradeItemDescription = cvx?.LoadCollection<ReferenceTermName>("DisplayNames").Select(o => new Description200Type() { Value = o.Name }).FirstOrDefault() ??
+                    tradeItemDescription = cvx?.LoadCollection<ReferenceTermName>("DisplayNames")?.Select(o => new Description200Type() { Value = o.Name })?.FirstOrDefault() ??
                         material.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
                 };
             }

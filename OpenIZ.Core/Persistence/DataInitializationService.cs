@@ -161,8 +161,16 @@ namespace OpenIZ.Core.Persistence
                         if (target is IVersionedAssociation)
                         {
                             var ivr = target as IVersionedAssociation;
+
+                            // Get the type this is bound to
+                            Type stype = target.GetType();
+                            while (!stype.IsGenericType || stype.GetGenericTypeDefinition() != typeof(VersionedAssociation<>))
+                                stype = stype.BaseType;
+
                             ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(ivr.SourceEntityKey.Value);
-                            ivr.EffectiveVersionSequenceId = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Get(new Identifier<Guid>(ivr.SourceEntityKey.Value), AuthenticationContext.Current.Principal, true)?.VersionSequence;
+                            var idt = typeof(IDataPersistenceService<>).MakeGenericType(stype.GetGenericArguments()[0]);
+                            var idp = ApplicationContext.Current.GetService(idt) as IDataPersistenceService;
+                            ivr.EffectiveVersionSequenceId = (idp.Get(ivr.SourceEntityKey.Value) as IVersionedEntity)?.VersionSequence;
                             if (ivr.EffectiveVersionSequenceId == null)
                                 throw new KeyNotFoundException($"Dataset contains a reference to an unkown source entity : {ivr.SourceEntityKey}");
                             target = ivr;

@@ -103,6 +103,7 @@ namespace OpenIZ.Core.Persistence
         [XmlElement("SubstanceAdministration", typeof(SubstanceAdministration), Namespace = "http://openiz.org/model")]
         [XmlElement("QuantityObservation", typeof(QuantityObservation), Namespace = "http://openiz.org/model")]
         [XmlElement("CodedObservation", typeof(CodedObservation), Namespace = "http://openiz.org/model")]
+        [XmlElement("EntityIdentifier", typeof(EntityIdentifier), Namespace = "http://openiz.org/model")]
         [XmlElement("TextObservation", typeof(TextObservation), Namespace = "http://openiz.org/model")]
         [XmlElement("PatientEncounter", typeof(PatientEncounter), Namespace = "http://openiz.org/model")]
         public IdentifiedData Element { get; set; }

@@ -122,7 +122,7 @@
         <property name="relationshipType"/>
         <property name="relationshipTypeModel" behavior="never"/>
       </property>
-      <property name="*" all="false">
+      <property name="*" all="true">
         <property name="source"/>
         <property name="target" />
         <property name="quantity" />

@@ -4,7 +4,7 @@
     <Concept xmlns="http://openiz.org/model">
       <id>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</id>
       <isReadonly>false</isReadonly>
-      <mnemonic>DOSE</mnemonic>
+      <mnemonic>UnitOfMeasure-Dose</mnemonic>
       <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
       <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
     </Concept>
@@ -115,7 +115,7 @@
       <name>
         <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
         <component>
-          <value>Measles and Rubella</value>
+          <value>Measles and Rubella Virus Vaccine</value>
         </component>
       </name>
       <name>

@@ -82,7 +82,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override Core.Model.Entities.ManufacturedMaterial ObsoleteInternal(DataContext context, Core.Model.Entities.ManufacturedMaterial data, IPrincipal principal)
         {
             var obsoleted = this.m_materialPersister.ObsoleteInternal(context, data, principal);
-            return data;
+            return base.InsertInternal(context, data, principal) ;
         }
     }
 }
