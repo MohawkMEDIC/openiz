@@ -136,7 +136,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 					throw new ArgumentOutOfRangeException($"Invalid notification type {workItem.ActionType}");
 			}
 
-			NotifierBase.UpdateMSH(msh, this.TargetConfiguration);
+			NotifierBase.UpdateMSH(msh, patient, this.TargetConfiguration);
 
 			evn.RecordedDateTime.TimeOfAnEvent.Value = (TS)patient.CreationTime.DateTime;
 
