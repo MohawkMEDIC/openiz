@@ -28,13 +28,13 @@ using NHapi.Base.Util;
 using NHapi.Model.V25.Message;
 using OpenIZ.Core;
 using OpenIZ.Core.Services;
-using OpenIZ.Core.Wcf;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using OpenIZ.Core.Interop;
+using System.Security.Principal;
+using NHapi.Model.V231.Segment;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.HL7
 {
@@ -61,6 +61,15 @@ namespace OpenIZ.Messaging.HL7
 			{
 				if (e.Message.Version == "2.3.1" || e.Message.Version == "2.5")
 				{
+					var identityProvider = ApplicationContext.Current.GetService<IDeviceIdentityProviderService>();
+
+					var msh = e.Message.GetStructure("MSH") as MSH;
+
+					// get the device identity by device name, as the device will have to be registered in OpenIZ
+					var deviceIdentity = identityProvider.GetIdentity(msh.SendingApplication.NamespaceID.Value);
+
+					AuthenticationContext.Current = new AuthenticationContext(new GenericPrincipal(deviceIdentity, new string[] {}));
+
 					// Get the MSH segment
 					var terser = new Terser(e.Message);
 					var trigger = terser.Get("/MSH-9-2");
@@ -71,7 +80,7 @@ namespace OpenIZ.Messaging.HL7
 					{
 						case "Q23":
 							if (e.Message is NHapi.Model.V25.Message.QBP_Q21)
-								response = HandleIDQuery(e.Message as NHapi.Model.V25.Message.QBP_Q21, e);
+								response = HandlePixQuery(e.Message as NHapi.Model.V25.Message.QBP_Q21, e);
 							else
 								response = MessageUtil.CreateNack(e.Message, "AR", "200", ApplicationContext.Current.GetLocaleString("MSGE074"));
 							break;
@@ -181,7 +190,7 @@ namespace OpenIZ.Messaging.HL7
 
 				var result = patientRepositoryService.Insert(patient);
 
-				if (result == null || result.VersionKey == null)
+				if (result?.VersionKey == null)
 				{
 					throw new InvalidOperationException(ApplicationContext.Current.GetLocaleString("DTPE001"));
 				}
@@ -215,10 +224,10 @@ namespace OpenIZ.Messaging.HL7
 		/// Handle a PIX query.
 		/// </summary>
 		/// <param name="request">The request.</param>
-		/// <param name="eventArgs">The <see cref="Hl7MessageReceivedEventArgs"/> instance containing the event data.</param>
+		/// <param name="eventArgs">The <see cref="Hl7MessageReceivedEventArgs" /> instance containing the event data.</param>
 		/// <returns>Returns the message result from the query.</returns>
 		/// <exception cref="System.InvalidOperationException"></exception>
-		internal IMessage HandleIDQuery(QBP_Q21 request, Hl7MessageReceivedEventArgs eventArgs)
+		internal IMessage HandlePixQuery(QBP_Q21 request, Hl7MessageReceivedEventArgs eventArgs)
 		{
 			var patientRepositoryService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 

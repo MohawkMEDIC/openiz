@@ -37,11 +37,6 @@ namespace OpenIZ.Messaging.HL7.Queue
 		private readonly IMessage message;
 
 		/// <summary>
-		/// The internal reference to the sync lock object.
-		/// </summary>
-		private object syncLock = new object();
-
-		/// <summary>
 		/// The internal reference to the target configuration.
 		/// </summary>
 		private readonly TargetConfiguration targetConfiguration;
@@ -49,13 +44,14 @@ namespace OpenIZ.Messaging.HL7.Queue
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		private TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MessageQueueWorkItem"/> class
+		/// Initializes a new instance of the <see cref="MessageQueueWorkItem" /> class
 		/// with a specific message.
 		/// </summary>
 		/// <param name="message">The message to send.</param>
+		/// <param name="targetConfiguration">The target configuration.</param>
 		public MessageQueueWorkItem(IMessage message, TargetConfiguration targetConfiguration)
 		{
 			this.message = message;
@@ -68,17 +64,12 @@ namespace OpenIZ.Messaging.HL7.Queue
 		public int FailCount { get; private set; }
 
 		/// <summary>
-		/// Gets or sets the message text.
-		/// </summary>
-		public string MessageText { get; set; }
-
-		/// <summary>
 		/// Tries to send a message to an endpoint.
 		/// </summary>
 		/// <returns>Returns true if the message was sent successfully.</returns>
 		public bool TrySend()
 		{
-			var success = false;
+			var status = false;
 
 			try
 			{
@@ -88,11 +79,11 @@ namespace OpenIZ.Messaging.HL7.Queue
 
 				if (response is NHapi.Model.V231.Message.ACK)
 				{
-					success = (response as NHapi.Model.V231.Message.ACK).MSA.AcknowledgementCode.Value == "AA";
+					status = (response as NHapi.Model.V231.Message.ACK).MSA.AcknowledgementCode.Value.ToUpper() == "AA";
 				}
 				else if (response is ACK)
 				{
-					success = (response as ACK).MSA.AcknowledgmentCode.Value == "AA";
+					status = (response as ACK).MSA.AcknowledgmentCode.Value.ToUpper() == "AA";
 				}
 				else
 				{
@@ -108,7 +99,7 @@ namespace OpenIZ.Messaging.HL7.Queue
 				this.tracer.TraceEvent(TraceEventType.Error, 0, e.Message);
 			}
 
-			return success;
+			return status;
 		}
 	}
 }

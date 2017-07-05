@@ -30,6 +30,7 @@ using OpenIZ.Messaging.HL7.Notifier;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.HL7.Services
 {
@@ -42,22 +43,22 @@ namespace OpenIZ.Messaging.HL7.Services
 		/// <summary>
 		/// The internal reference to the <see cref="NotificationConfiguration"/> instance.
 		/// </summary>
-		private NotificationConfiguration configuration;
+		private readonly NotificationConfiguration configuration;
 
 		/// <summary>
 		/// The internal reference to the sync lock instance.
 		/// </summary>
-		private object syncLock = new object();
+		private readonly object syncLock = new object();
 
 		/// <summary>
 		/// The internal reference to the <see cref="WaitThreadPool"/> instance.
 		/// </summary>
-		private WaitThreadPool threadPool;
+		private readonly WaitThreadPool threadPool;
 
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		private TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ClientRegistryNotificationService"/> class.

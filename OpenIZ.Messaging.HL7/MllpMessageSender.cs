@@ -32,14 +32,14 @@ using System.Text;
 namespace OpenIZ.Messaging.HL7
 {
 	/// <summary>
-	/// MLLP Message Sender
+	/// Represents an MLLP message sender.
 	/// </summary>
 	internal class MllpMessageSender
 	{
 		/// <summary>
 		/// The internal reference to the client certificate.
 		/// </summary>
-		private X509Certificate2 clientCertificate;
+		private readonly X509Certificate2 clientCertificate;
 
 		/// <summary>
 		/// The internal reference to the endpoint.
@@ -49,12 +49,12 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The internal reference to the server certificate chain.
 		/// </summary>
-		private X509Certificate2 serverCertificateChain;
+		private readonly X509Certificate2 serverCertificateChain;
 
 		/// <summary>
 		/// The internal reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		private TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		private readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MllpMessageSender"/> class
@@ -70,7 +70,15 @@ namespace OpenIZ.Messaging.HL7
 			this.serverCertificateChain = serverCertificateChain;
 		}
 
-		private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslpolicyerrors)
+		/// <summary>
+		/// Performs remote certificate validation.
+		/// </summary>
+		/// <param name="sender">The sender.</param>
+		/// <param name="certificate">The certificate.</param>
+		/// <param name="chain">The chain.</param>
+		/// <param name="sslPolicyErrors">The SSL policy errors.</param>
+		/// <returns><c>true</c> if the certificate chain is valid, <c>false</c> otherwise.</returns>
+		private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
 		{
 #if DEBUG
 			if (certificate != null)
@@ -87,9 +95,9 @@ namespace OpenIZ.Messaging.HL7
 				}
 			}
 
-			if (sslpolicyerrors != SslPolicyErrors.None)
+			if (sslPolicyErrors != SslPolicyErrors.None)
 			{
-				this.tracer.TraceEvent(TraceEventType.Error, 0, "SSL Policy Error : {0}", sslpolicyerrors);
+				this.tracer.TraceEvent(TraceEventType.Error, 0, "SSL Policy Error : {0}", sslPolicyErrors);
 			}
 #endif
 
@@ -129,23 +137,19 @@ namespace OpenIZ.Messaging.HL7
 		{
 			// Encode the message
 			var parser = new PipeParser();
-			string strMessage = string.Empty;
-			var id = Guid.NewGuid().ToString();
-
-			strMessage = parser.Encode(message);
+			var strMessage = parser.Encode(message);
 
 #if DEBUG
 			this.tracer.TraceEvent(TraceEventType.Information, 0, strMessage);
 #endif
 
 			// Open a TCP port
-			using (TcpClient client = new TcpClient(AddressFamily.InterNetwork))
+			using (var client = new TcpClient(AddressFamily.InterNetwork))
 			{
 				try
 				{
 					// Connect on the socket
 					client.Connect(this.endpoint.Host, this.endpoint.Port);
-					DateTime start = DateTime.Now;
 
 					// Get the stream
 					using (var stream = client.GetStream())
@@ -161,11 +165,11 @@ namespace OpenIZ.Messaging.HL7
 								this.clientCertificate
 							};
 
-							(realStream as SslStream).AuthenticateAsClient(this.endpoint.ToString(), collection, System.Security.Authentication.SslProtocols.Tls, true);
+							((SslStream)realStream).AuthenticateAsClient(this.endpoint.ToString(), collection, System.Security.Authentication.SslProtocols.Tls, true);
 						}
 
 						// Write message in ASCII encoding
-						byte[] buffer = System.Text.Encoding.UTF8.GetBytes(strMessage);
+						byte[] buffer = Encoding.UTF8.GetBytes(strMessage);
 						byte[] sendBuffer = new byte[buffer.Length + 3];
 
 						sendBuffer[0] = 0x0b;

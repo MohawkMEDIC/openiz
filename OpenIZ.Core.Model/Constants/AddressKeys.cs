@@ -61,20 +61,79 @@ namespace OpenIZ.Core.Model.Constants
 	/// </summary>
 	public static class AddressUseKeys
 	{
+		/// <summary>
+		/// Represents an alphabetic address.
+		/// </summary>
 		public static readonly Guid Alphabetic = Guid.Parse("71D1C07C-6EE6-4240-8A95-19F96583512E");
+
+		/// <summary>
+		/// Represents a bad address, i.e. an address which is old or invalid.
+		/// </summary>
 		public static readonly Guid BadAddress = Guid.Parse("F3132FC0-AADD-40B7-B875-961C40695389");
+
+		/// <summary>
+		/// Represents a workplace address that reaches the person directly without intermediaries.
+		/// </summary>
 		public static readonly Guid Direct = Guid.Parse("D0DB6EDB-6CDC-4671-8BC2-00F1C808E188");
+
+		/// <summary>
+		/// The home address
+		/// </summary>
 		public static readonly Guid HomeAddress = Guid.Parse("493C3E9D-4F65-4E4D-9582-C9008F4F2EB4");
+
+		/// <summary>
+		/// The ideographic
+		/// </summary>
 		public static readonly Guid Ideographic = Guid.Parse("09000479-4672-44F8-BB4A-72FB25F7356A");
+
+		/// <summary>
+		/// The phonetic
+		/// </summary>
 		public static readonly Guid Phonetic = Guid.Parse("2B085D38-3308-4664-9F89-48D8EF4DABA7");
+
+		/// <summary>
+		/// The physical visit
+		/// </summary>
 		public static readonly Guid PhysicalVisit = Guid.Parse("5724A9B6-24B6-43B7-8075-7A0D61FCB814");
+
+		/// <summary>
+		/// The postal address
+		/// </summary>
 		public static readonly Guid PostalAddress = Guid.Parse("7246E98D-20C6-4AE6-85AD-4AA09649FEB7");
+
+		/// <summary>
+		/// Represents a primary address to reach a contact after business hours.
+		/// </summary>
 		public static readonly Guid PrimaryHome = Guid.Parse("C4FAAFD8-FC90-4330-8B4B-E4E64C86B87B");
+
+		/// <summary>
+		/// Represents an address that is a standard address that may be subject to a switchboard or operator prior to reaching the intended entity.
+		/// </summary>
 		public static readonly Guid Public = Guid.Parse("EC35EA7C-55D2-4619-A56B-F7A986412F7F");
+
+		/// <summary>
+		/// Represents an address used for soundex matching purposes.
+		/// </summary>
 		public static readonly Guid Soundex = Guid.Parse("E5794E3B-3025-436F-9417-5886FEEAD55A");
+
+		/// <summary>
+		/// Represents a syllabic address.
+		/// </summary>
 		public static readonly Guid Syllabic = Guid.Parse("B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF");
+
+		/// <summary>
+		/// Represents a temporary address that may be good for visiting or mailing.
+		/// </summary>
 		public static readonly Guid TemporaryAddress = Guid.Parse("CEF6EA31-A097-4F59-8723-A38C727C6597");
+
+		/// <summary>
+		/// Represents a vacation home to reach a person while on vacation.
+		/// </summary>
 		public static readonly Guid VacationHome = Guid.Parse("5D69534C-4597-4D11-BB98-56A9918F5238");
+
+		/// <summary>
+		/// Represents an office address, should be used for business communications
+		/// </summary>
 		public static readonly Guid WorkPlace = Guid.Parse("EAA6F08E-BB8E-4457-9DC0-3A1555FADF5C");
 	}
 }

@@ -29,6 +29,7 @@ using OpenIZ.Messaging.HL7.Configuration;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using OpenIZ.Core.Security;
 using TS = MARC.Everest.DataTypes.TS;
 
 namespace OpenIZ.Messaging.HL7.Notifier
@@ -46,25 +47,30 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <summary>
 		/// The internal reference to the <see cref="IAssigningAuthorityRepositoryService"/> instance.
 		/// </summary>
-		private static IAssigningAuthorityRepositoryService assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
+		private static readonly IAssigningAuthorityRepositoryService assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
 
 		/// <summary>
-		/// The concept repository service.
+		/// Ensures the authentication context is set.
 		/// </summary>
-		private static IConceptRepositoryService conceptRepositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="NotifierBase"/> class.
-		/// </summary>
-		protected NotifierBase()
+		private static void EnsureAuthenticated()
 		{
+			// ensure authenticated
+			AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 		}
 
+		/// <summary>
+		/// Updates the address.
+		/// </summary>
+		/// <param name="entityAddress">The entity address.</param>
+		/// <param name="address">The address.</param>
 		internal static void UpdateAD(EntityAddress entityAddress, XAD address)
 		{
-			tracer.TraceEvent(TraceEventType.Information, 0, "Adding addresses");
+			// ensure authenticated
+			EnsureAuthenticated();
 
-			var addressUse = entityAddress.AddressUse?.Key;
+			tracer.TraceEvent(TraceEventType.Verbose, 0, "Adding addresses");
+
+			var addressUse = entityAddress.AddressUseKey;
 
 			if (addressUse != null)
 			{
@@ -120,7 +126,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="targetConfiguration">The target configuration.</param>
 		internal static void UpdateMSH(MSH msh, TargetConfiguration targetConfiguration)
 		{
-			tracer.TraceEvent(TraceEventType.Information, 0, "Start updating MSH segment");
+			// ensure authenticated
+			EnsureAuthenticated();
+
+			tracer.TraceEvent(TraceEventType.Verbose, 0, "Start updating MSH segment");
 
 			msh.AcceptAcknowledgmentType.Value = "AL";
 			msh.DateTimeOfMessage.TimeOfAnEvent.Value = DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -153,7 +162,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="targetConfiguration">The target configuration.</param>
 		internal static void UpdatePID(Patient patient, PID pid, TargetConfiguration targetConfiguration)
 		{
-			tracer.TraceEvent(TraceEventType.Information, 0, "Start updating PID segment");
+			// ensure authenticated
+			EnsureAuthenticated();
+
+			tracer.TraceEvent(TraceEventType.Verbose, 0, "Start updating PID segment");
 
 			if (patient.GenderConcept?.Key != null)
 			{
@@ -190,20 +202,15 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				NotifierBase.UpdateAD(address, pid.GetPatientAddress(pid.PatientAddressRepetitionsUsed));
 			}
 
-			patient.Identifiers.RemoveAll(i => !targetConfiguration.NotificationDomainConfigurations.Exists(o => o.Domain.Equals(i.Authority.DomainName)));
-
-			if (!patient.Identifiers.Any())
+			for (var i = 0; i < patient.Identifiers.Count(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null); i++)
 			{
-				pid.GetPatientIdentifierList(0).ID.Value = patient.Key.GetValueOrDefault(Guid.NewGuid()).ToString();
-				pid.GetPatientIdentifierList(0).AssigningAuthority.UniversalID.Value = "1.3.6.1.4.1.33349.3.1.5.9.2.10000";
-				pid.GetPatientIdentifierList(0).AssigningAuthority.UniversalIDType.Value = "ISO";
-			}
+				var patientIdentifier = patient.Identifiers.Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null).ToArray()[i];
 
-			foreach (var entityIdentifier in patient.Identifiers.Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null))
-			{
-				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).ID.Value = entityIdentifier.Value;
-				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).AssigningAuthority.UniversalID.Value = entityIdentifier.Authority.Oid;
-				pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).AssigningAuthority.UniversalIDType.Value = "ISO";
+				pid.GetPatientIdentifierList(i).ID.Value = patientIdentifier.Value;
+				pid.GetPatientIdentifierList(i).AssigningAuthority.UniversalID.Value = patientIdentifier.Authority.Oid;
+				pid.GetPatientIdentifierList(i).AssigningAuthority.UniversalIDType.Value = "ISO";
+				pid.GetPatientIdentifierList(i).IdentifierTypeCode.Value = "PI";
+
 			}
 
 			foreach (var personLanguage in patient.LanguageCommunication.Where(l => l.IsPreferred))
@@ -218,10 +225,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			{
 				mother.Identifiers.ForEach(c =>
 				{
-					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.UniversalID.Value = c.Authority.Oid;
-					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.UniversalIDType.Value = "ISO";
-					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.NamespaceID.Value = c.Authority.Oid;
 					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).ID.Value = c.Value;
+					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.NamespaceID.Value = c.Authority.Oid;
+					pid.GetMotherSIdentifier(pid.MotherSIdentifierRepetitionsUsed).AssigningAuthority.UniversalIDType.Value = "ISO";
+					pid.GetPatientIdentifierList(pid.PatientIdentifierListRepetitionsUsed).IdentifierTypeCode.Value = c.Authority.DomainName;
 				});
 
 				mother.Names.ForEach(c =>
@@ -243,7 +250,10 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="name">The XPN segment to update.</param>
 		internal static XPN UpdateXPN(EntityName entityName, XPN name)
 		{
-			tracer.TraceEvent(TraceEventType.Information, 0, "Adding names");
+			// ensure authenticated
+			EnsureAuthenticated();
+
+			tracer.TraceEvent(TraceEventType.Verbose, 0, "Adding names");
 
 			name.NameTypeCode.Value = MessageUtil.GetCode(entityName.NameUseKey.Value, CodeSystemKeys.EntityNameUse);
 			name.DegreeEgMD.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Suffix).Select(c => c.Value));
