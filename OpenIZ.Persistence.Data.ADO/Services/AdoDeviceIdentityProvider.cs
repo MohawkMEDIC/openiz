@@ -45,10 +45,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 	/// </summary>
 	public class AdoDeviceIdentityProvider : IDeviceIdentityProviderService
 	{
-		// Trace source
+		/// <summary>
+		/// The trace source.
+		/// </summary>
 		private readonly TraceSource traceSource = new TraceSource(AdoDataConstants.IdentityTraceSourceName);
 
-		// Configuration
+		/// <summary>
+		/// The configuration.
+		/// </summary>
 		private readonly AdoConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AdoDataConstants.ConfigurationSectionName) as AdoConfiguration;
 
 		/// <summary>
@@ -105,6 +109,32 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 		public IPrincipal Authenticate(X509Certificate2 deviceCertificate)
 		{
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Gets the identity of the device using a given device name.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <returns>Returns the identity of the device.</returns>
+		public IIdentity GetIdentity(string name)
+		{
+			using (var dataContext = this.configuration.Provider.GetReadonlyConnection())
+			{
+				try
+				{
+					dataContext.Open();
+
+					var client = dataContext.FirstOrDefault<DbSecurityDevice>(o => o.PublicId == name);
+
+					return new DeviceIdentity(client.Key, client.PublicId, false);
+
+				}
+				catch (Exception e)
+				{
+					this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, "Error getting identity data for {0} : {1}", name, e);
+					throw;
+				}
+			}
 		}
 	}
 }

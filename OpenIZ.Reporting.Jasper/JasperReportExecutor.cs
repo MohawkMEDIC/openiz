@@ -535,6 +535,15 @@ namespace OpenIZ.Reporting.Jasper
 				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
 			}
 
+			// HACK: remove existing reports to ensure we have the latest reports
+			// otherwise we'd need logic to reconcile which reports have been removed, updated etc.
+			var existingReports = reportDefinitionPersistenceService.Query(r => true, AuthenticationContext.Current.Principal);
+
+			foreach (var reportDefinition in existingReports)
+			{
+				reportDefinitionPersistenceService.Obsolete(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
+
 			var reports = new List<ReportDefinition>();
 
 			foreach (var resourceLookup in resources.ResourceLookups)

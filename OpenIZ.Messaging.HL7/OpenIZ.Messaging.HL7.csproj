@@ -91,6 +91,7 @@
     <Compile Include="Queue\MessageQueueWorkItemCollection.cs" />
     <Compile Include="Queue\QueueTimerJob.cs" />
     <Compile Include="Services\ClientRegistryNotificationService.cs" />
+    <Compile Include="Subscriber\BundlePersistenceSubscriber.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">

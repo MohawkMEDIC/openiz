@@ -60,7 +60,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <summary>
 		/// The public reference to the <see cref="TraceSource"/> instance.
 		/// </summary>
-		private static TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
+		private static readonly TraceSource tracer = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
 		/// Converts an <see cref="XAD"/> address instance to an <see cref="EntityAddress"/> instance.
@@ -170,7 +170,7 @@ namespace OpenIZ.Messaging.HL7
 			if (id == null)
 			{
 				details.Add(new MandatoryElementMissingResultDetail(ResultDetailType.Error, null, null));
-				return assigningAuthority;
+				return null;
 			}
 
 			if (!string.IsNullOrEmpty(id.NamespaceID.Value))
@@ -388,9 +388,9 @@ namespace OpenIZ.Messaging.HL7
 			else
 			{
 #if DEBUG
-				tracer.TraceEvent(TraceEventType.Warning, 0, $"Unable to convert date of birth value: {timestamp.TimeOfAnEvent.Value}");
+				tracer.TraceEvent(TraceEventType.Warning, 0, $"Unable to convert TS value: {timestamp.TimeOfAnEvent.Value}");
 #endif
-				tracer.TraceEvent(TraceEventType.Warning, 0, "Unable to convert date of birth value");
+				tracer.TraceEvent(TraceEventType.Warning, 0, "Unable to convert TS value");
 			}
 
 			return result;
@@ -492,8 +492,12 @@ namespace OpenIZ.Messaging.HL7
 		}
 
 		/// <summary>
-		/// Create NACK
+		/// Creates a negative acknowledgement message.
 		/// </summary>
+		/// <param name="request">The request.</param>
+		/// <param name="errors">The errors.</param>
+		/// <param name="errType">Type of the error.</param>
+		/// <returns>Returns the created negative acknowledgement message instance.</returns>
 		public static IMessage CreateNack(IMessage request, List<IResultDetail> errors, Type errType)
 		{
 			var ack = errType.GetConstructor(Type.EmptyTypes).Invoke(null) as IMessage;
@@ -560,7 +564,7 @@ namespace OpenIZ.Messaging.HL7
 		/// <param name="responseCode">The response code of the message.</param>
 		/// <param name="errCode">The error code of the message.</param>
 		/// <param name="errDescription">The error description of the message.</param>
-		/// <returns></returns>
+		/// <returns>Returns the created negative acknowledgement message instance.</returns>
 		public static IMessage CreateNack(IMessage request, string responseCode, string errCode, string errDescription)
 		{
 			MessageUtil.tracer.TraceEvent(TraceEventType.Warning, 0, $"NACK Condition : {errDescription}");
@@ -674,6 +678,12 @@ namespace OpenIZ.Messaging.HL7
 			if (concept == null)
 			{
 				throw new InvalidOperationException($"Concept not found using key: {conceptKey}");
+			}
+
+			// force load the reference terms because we need to compare against the code system
+			foreach (var conceptReferenceTerm in concept.ReferenceTerms.Where(cr => cr.ReferenceTerm == null && cr.ReferenceTermKey != null))
+			{
+				conceptReferenceTerm.ReferenceTerm = conceptService.GetReferenceTerm(conceptReferenceTerm.ReferenceTermKey.Value);
 			}
 
 			return concept.ReferenceTerms.FirstOrDefault(c => c.ReferenceTerm.CodeSystemKey == codeSystemKey)?.ReferenceTerm.Mnemonic;
