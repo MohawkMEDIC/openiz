@@ -342,6 +342,8 @@ namespace OizDevTool
 
 		private string assigningAuthorityNameField;
 
+		private string valueField;
+
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
 		public string code
@@ -367,6 +369,20 @@ namespace OizDevTool
 			set
 			{
 				this.assigningAuthorityNameField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlTextAttribute()]
+		public string Value
+		{
+			get
+			{
+				return this.valueField;
+			}
+			set
+			{
+				this.valueField = value;
 			}
 		}
 	}

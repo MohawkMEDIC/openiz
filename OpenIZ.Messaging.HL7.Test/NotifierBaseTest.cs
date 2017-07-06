@@ -259,7 +259,7 @@ namespace OpenIZ.Messaging.HL7.Test
 		{
 			var actual = this.genericMessage.GetStructure("MSH") as MSH;
 
-			NotifierBase.UpdateMSH(actual, this.configuration);
+			NotifierBase.UpdateMSH(actual, null, this.configuration);
 
 			Assert.AreEqual("AL", actual.AcceptAcknowledgmentType.Value);
 			Assert.AreEqual("UnitTestDevice", actual.ReceivingApplication.NamespaceID.Value);
@@ -277,7 +277,7 @@ namespace OpenIZ.Messaging.HL7.Test
 			var actual = this.genericMessage.GetStructure("MSH") as MSH;
 
 			this.configuration.NotificationDomainConfigurations.Clear();
-			NotifierBase.UpdateMSH(actual, this.configuration);
+			NotifierBase.UpdateMSH(actual, null, this.configuration);
 
 			Assert.AreEqual("AL", actual.AcceptAcknowledgmentType.Value);
 			Assert.AreEqual("UnitTestDevice", actual.ReceivingApplication.NamespaceID.Value);

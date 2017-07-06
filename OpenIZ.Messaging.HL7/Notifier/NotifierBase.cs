@@ -120,11 +120,12 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		}
 
 		/// <summary>
-		/// Updates a <see cref="MSH"/> segment.
+		/// Updates a <see cref="MSH" /> segment.
 		/// </summary>
 		/// <param name="msh">The MSH segment to update.</param>
+		/// <param name="patient">The patient.</param>
 		/// <param name="targetConfiguration">The target configuration.</param>
-		internal static void UpdateMSH(MSH msh, TargetConfiguration targetConfiguration)
+		internal static void UpdateMSH(MSH msh, Patient patient, TargetConfiguration targetConfiguration)
 		{
 			// ensure authenticated
 			EnsureAuthenticated();
@@ -149,7 +150,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			var configuration = ApplicationContext.Current.Configuration;
 
-			msh.SendingApplication.NamespaceID.Value = configuration.DeviceName;
+			// set MSH-3 as the NSID of the patient identifier
+			msh.SendingApplication.NamespaceID.Value = patient.Identifiers.FirstOrDefault()?.Authority?.DomainName ?? configuration.DeviceName;
 			msh.SendingFacility.NamespaceID.Value = configuration.JurisdictionData.Name;
 			msh.VersionID.VersionID.Value = "2.3.1";
 		}
