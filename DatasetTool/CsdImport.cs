@@ -77,7 +77,7 @@ namespace OizDevTool
 		/// <summary>
 		/// The emergency message.
 		/// </summary>
-		private static string emergencyMessage = null;
+		private static string emergencyMessage;
 
 		/// <summary>
 		/// The address type code system.
@@ -93,11 +93,6 @@ namespace OizDevTool
 		/// The program exit message.
 		/// </summary>
 		private const string ProgramExitMessage = "Unable to continue import CSD document, press any key to exit.";
-
-		/// <summary>
-		/// The CSD entity identifier tag.
-		/// </summary>
-		private const string CsdEntityIdTag = "http://openiz.org/tags/contrib/importedData/csd/entityID";
 
 		/// <summary>
 		/// The imported data tag.
@@ -127,6 +122,8 @@ namespace OizDevTool
 		{
 			ApplicationContext.Current.Start();
 
+			Console.WriteLine("Adding service providers...");
+
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalEntityRepositoryService));
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalMetadataRepositoryService));
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalConceptRepositoryService));
@@ -148,30 +145,32 @@ namespace OizDevTool
 
 			var fileInfo = new FileInfo(parameters.File);
 
+			Console.WriteLine($"Loading file: {fileInfo.Name}...");
+
 			var csd = (CSD)serializer.Deserialize(new StreamReader(parameters.File));
+
+			Console.WriteLine($"File: {fileInfo.Name} loaded successfully, starting mapping process...");
 
 			var stopwatch = new Stopwatch();
 
-			stopwatch.Start();
+			//stopwatch.Start();
 
-			var organizations = MapOrganizations(csd.organizationDirectory).Select(o => new DataUpdate
-			{
-				InsertIfNotExists = true,
-				Element = o
-			});
+			//var organizations = MapOrganizations(csd.organizationDirectory).Select(o => new DataUpdate
+			//{
+			//	InsertIfNotExists = true,
+			//	Element = o
+			//});
 
-			Console.WriteLine("Sorting organizations to preserve hierarchy");
+			//stopwatch.Stop();
 
-			stopwatch.Stop();
-
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"Mapped {organizations.Count()} organizations in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-			Console.ResetColor();
+			//Console.ForegroundColor = ConsoleColor.Green;
+			//Console.WriteLine($"Mapped {organizations.Count()} organizations in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
+			//Console.ResetColor();
 
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
 
-			actions.AddRange(organizations);
+			//actions.AddRange(organizations);
 
 			var places = MapPlaces(csd.facilityDirectory).Select(p => new DataUpdate
 			{
@@ -221,7 +220,7 @@ namespace OizDevTool
 
 			actions.AddRange(services);
 
-			//parameters.Live = true;
+			parameters.Live = true;
 
 			if (parameters.Live)
 			{
@@ -240,7 +239,7 @@ namespace OizDevTool
 
 				Console.WriteLine("Importing data directly into the database...");
 
-				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Rollback);
 
 				Console.WriteLine("The CSD live import is now complete");
 			}
@@ -305,27 +304,25 @@ namespace OizDevTool
 		}
 
 		/// <summary>
-		/// Lookups the by entity identifier or tag.
+		/// Lookups the by entity identifier.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="T">The type of entity to lookup.</typeparam>
 		/// <param name="entityId">The entity identifier.</param>
-		/// <param name="createNewIfNotFound">if set to <c>true</c> [create new if not found].</param>
-		/// <returns>Returns an entity or null of no entity is found.</returns>
-		private static T LookupByEntityIdOrTag<T>(string entityId, bool createNewIfNotFound = true) where T : Entity, new()
+		/// <param name="createNewIfNotFound">if set to <c>true</c> a new entity will be created if one is not found.</param>
+		/// <returns>Returns an entity or null if no entity is found and createNewIfNotFound is set to true.</returns>
+		private static T LookupByEntityId<T>(string entityId, bool createNewIfNotFound = true) where T : Entity, new()
 		{
-			var entityService = ApplicationContext.Current.GetService<IEntityRepositoryService>();
+			var entityService = ApplicationContext.Current.GetService<IDataPersistenceService<T>>();
 
-			T entity;
-			Guid key;
+			int totalResults;
+			var entity = entityService.Query(c => c.Identifiers.Any(i => i.Value == entityId), 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
-			// lookup by entity tag if the entity id value is not a GUID
-			if (!TryMapKey(entityId, out key))
+			if (totalResults > 1)
 			{
-				entity = entityService.Find(p => p.Tags.Any(t => t.TagKey == CsdEntityIdTag && t.Value == entityId)).FirstOrDefault() as T;
-			}
-			else
-			{
-				entity = entityService.Find(p => p.Key == key).FirstOrDefault() as T;
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine($"Warning, found multiple entities with the same entityID: '{entityId}'");
+				Console.WriteLine($"Will default to: '{entity.Key.Value}' {Environment.NewLine}");
+				Console.ResetColor();
 			}
 
 			// if the entity wasn't found, we want to create a new entity
@@ -338,17 +335,6 @@ namespace OizDevTool
 						new EntityTag(ImportedDataTag, "true")
 					}
 				};
-
-				// if the key is an empty GUID, we were unable to parse the entity id as a valid GUID
-				if (key == Guid.Empty)
-				{
-					entity.Key = Guid.NewGuid();
-					entity.Tags.Add(new EntityTag(CsdEntityIdTag, entityId));
-				}
-				else
-				{
-					entity.Key = key;
-				}
 			}
 
 			return entity;
@@ -582,7 +568,7 @@ namespace OizDevTool
 				ExitOnNotFound($"Error, {emergencyMessage} Unable to locate extension type: {extensionUrl}, has this been added to the OpenIZ extension types list?");
 			}
 
-			return new EntityExtension(extensionType.Key.Value, Encoding.ASCII.GetBytes(value));
+			return new EntityExtension(extensionType.Key.Value, extensionType.ExtensionHandler, value);
 		}
 
 		/// <summary>
@@ -642,7 +628,7 @@ namespace OizDevTool
 			{
 				var csdProvider = contact.Item as uniqueID;
 
-				var provider = LookupByEntityIdOrTag<Provider>(csdProvider.entityID);
+				var provider = LookupByEntityId<Provider>(csdProvider.entityID);
 
 				entityRelationship = new EntityRelationship(EntityRelationshipTypeKeys.Contact, provider);
 			}
@@ -778,26 +764,6 @@ namespace OizDevTool
 			}
 
 			return retVal;
-		}
-
-		/// <summary>
-		/// Attempts to map a key to a <see cref="Guid" /> instance.
-		/// </summary>
-		/// <param name="entityId">The entity identifier.</param>
-		/// <param name="key">The key.</param>
-		/// <returns>Returns a key for a given entity id.</returns>
-		private static bool TryMapKey(string entityId, out Guid key)
-		{
-			var status = false;
-
-			key = Guid.Empty;
-
-			if (entityId?.StartsWith("urn:uuid:") == true)
-			{
-				status = Guid.TryParse(entityId.Substring(9), out key);
-			}
-
-			return status;
 		}
 
 		/// <summary>

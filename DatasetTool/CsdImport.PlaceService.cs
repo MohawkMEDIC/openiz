@@ -19,6 +19,9 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Entities;
 
 namespace OizDevTool
@@ -35,18 +38,27 @@ namespace OizDevTool
 		/// <returns>Returns a list of place services.</returns>
 		private static IEnumerable<PlaceService> MapServices(IEnumerable<service> csdServices)
 		{
+			throw new NotImplementedException();
+
+			// TODO: implement
+
+			var placeServiceService = ApplicationContext.Current.GetService<IDataPersistenceService<PlaceService>>();
 			var services = new List<PlaceService>();
 
 			foreach (var csdService in csdServices)
 			{
-				var service = new PlaceService
-				{
-					ServiceConceptKey = MapCodedType(csdService.codedType[0].code, csdService.codedType[0].codingScheme)?.Key,
-				};
+				var service = new PlaceService();
 
 				Guid key;
 
-				service.Key = !TryMapKey(csdService.entityID, out key) ? Guid.NewGuid() : key;
+				//service.Key = !TryMapKey(csdService.entityID, out key) ? Guid.NewGuid() : key;
+
+				// map service concept
+				if (csdService.codedType?.Any() == true)
+				{
+					// we don't support multiple service types for a place service at the moment, so we only take the first one
+					service.ServiceConceptKey = MapCodedType(csdService.codedType[0].code, csdService.codedType[0].codingScheme)?.Key;
+				}
 
 				services.Add(service);
 			}

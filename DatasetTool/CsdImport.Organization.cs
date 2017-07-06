@@ -31,26 +31,17 @@ namespace OizDevTool
 
 		    foreach (var csdOrganization in csdOrganizations)
 		    {
-			    var organization = new Organization();
+			    var key = Guid.NewGuid();
 
-			    Guid key;
-
-			    // attempt to map the key value
-			    if (!TryMapKey(csdOrganization.entityID, out key))
-			    {
-				    key = Guid.NewGuid();
-				    organization.Tags.Add(new EntityTag(CsdEntityIdTag, csdOrganization.entityID));
-			    }
-
-			    organization.Key = key;
+			    int totalResults;
 
 			    // try get existing
-			    organization = organizationService.Get(new Identifier<Guid>(key), AuthenticationContext.SystemPrincipal, false);
+			    var organization = organizationService.Query(c => c.Identifiers.Any(i => i.Value == csdOrganization.entityID), 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
 				if (organization == null)
 				{
 					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"Organization not found using key: {key}, will create one {Environment.NewLine}");
+					Console.WriteLine($"Organization not found using key: {csdOrganization.entityID}, will create one {Environment.NewLine}");
 					Console.ResetColor();
 
 					organization = new Organization
@@ -99,17 +90,9 @@ namespace OizDevTool
 			    // map parent relationships
 			    if (csdOrganization.parent?.entityID != null)
 			    {
-				    Guid parentKey;
-
-				    if (TryMapKey(csdOrganization.parent?.entityID, out parentKey))
-				    {
-					    // if I'm not related to myself... CSD fix
-					    if (parentKey != organization.Key)
-					    {
-						    organization.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityIdOrTag<Organization>(csdOrganization.parent.entityID)));
-					    }
-				    }
-			    }
+				    organization.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
+				    organization.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityId<Organization>(csdOrganization.parent.entityID)));
+				}
 
 			    // map primary name
 			    if (csdOrganization.primaryName != null)
@@ -121,7 +104,7 @@ namespace OizDevTool
 			    // map tags
 			    if (csdOrganization.record?.sourceDirectory != null)
 			    {
-				    organization.Tags.Clear();
+				    organization.Tags.RemoveAll(t => t.TagKey == "sourceDirectory");
 					organization.Tags.Add(new EntityTag("sourceDirectory", csdOrganization.record.sourceDirectory));
 			    }
 

@@ -47,21 +47,12 @@ namespace OizDevTool
 
 			foreach (var facility in csdFacilities)
 			{
-				var place = new Place();
+				var key = Guid.NewGuid();
 
-				Guid key;
-
-				// attempt to map the key value
-				if (!TryMapKey(facility.entityID, out key))
-				{
-					key = Guid.NewGuid();
-					place.Tags.Add(new EntityTag(CsdEntityIdTag, facility.entityID));
-				}
-
-				place.Key = key;
+				int totalResults;
 
 				// try get existing
-				place = placeService.Get(new Identifier<Guid>(key), AuthenticationContext.SystemPrincipal, false);
+				var place = placeService.Query(c => c.Identifiers.Any(i => i.Value == facility.entityID), 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
 				if (place == null)
 				{
@@ -111,16 +102,8 @@ namespace OizDevTool
 				// map parent relationships
 				if (facility.parent?.entityID != null)
 				{
-					Guid parentKey;
-
-					if (TryMapKey(facility.parent?.entityID, out parentKey))
-					{
-						// if I'm not related to myself... CSD fix
-						if (parentKey != place.Key)
-						{
-							place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityIdOrTag<Place>(facility.parent.entityID)));
-						}
-					}
+					place.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
+					place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityId<Place>(facility.parent.entityID)));
 				}
 
 				// map coded type
@@ -143,6 +126,12 @@ namespace OizDevTool
 				{
 					place.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.Assigned);
 					place.Names.AddRange(facility.otherName.Select(f => new EntityName(NameUseKeys.Assigned, f.Value)));
+				}
+
+				// map organization relationships
+				if (facility.organizations?.Any() == true)
+				{
+					//place.Relationships.RemoveAll(r => r.)
 				}
 
 				// map contact points

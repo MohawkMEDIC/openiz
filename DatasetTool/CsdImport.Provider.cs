@@ -48,21 +48,12 @@ namespace OizDevTool
 
 			foreach (var csdProvider in csdProviders)
 			{
-				var provider = new Provider();
+				var key = Guid.NewGuid();
 
-				Guid key;
-
-				// attempt to map the key value
-				if (!TryMapKey(csdProvider.entityID, out key))
-				{
-					key = Guid.NewGuid();
-					provider.Tags.Add(new EntityTag(CsdEntityIdTag, csdProvider.entityID));
-				}
-
-				provider.Key = key;
+				int totalResults;
 
 				// try get existing
-				provider = providerService.Get(new Identifier<Guid>(key), AuthenticationContext.SystemPrincipal, false);
+				var provider = providerService.Query(c => c.Identifiers.Any(i => i.Value == csdProvider.entityID), 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
 				if (provider == null)
 				{

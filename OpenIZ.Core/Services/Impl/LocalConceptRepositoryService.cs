@@ -168,9 +168,15 @@ namespace OpenIZ.Core.Services.Impl
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public IEnumerable<Concept> FindConceptsByReferenceTerm(string code, Uri codeSystem)
 		{
-			if (codeSystem.Scheme == "urn" && codeSystem.LocalPath.StartsWith("oid"))
+			if ((codeSystem.Scheme == "urn" || codeSystem.Scheme == "oid"))
 			{
-				string csOid = codeSystem.LocalPath.Substring(4);
+				var csOid = codeSystem.LocalPath;
+
+				if (codeSystem.LocalPath.StartsWith("oid"))
+				{
+					csOid = codeSystem.LocalPath.Substring(4);
+				}
+
 				return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == csOid && r.ReferenceTerm.Mnemonic == code));
 			}
 
