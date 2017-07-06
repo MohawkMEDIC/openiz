@@ -30,35 +30,49 @@ using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Services.Impl;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Configuration;
 using System.Text;
 using System.Xml.Serialization;
+using MARC.HI.EHRS.SVC.Core.Data;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
 
 namespace OizDevTool
 {
 	/// <summary>
 	/// Represents a CSD import utility.
 	/// </summary>
-    [Description("Care Services Discovery (CSD) tooling")]
-	public class CsdImport
+	[Description("Care Services Discovery (CSD) tooling")]
+	public partial class CsdImport
 	{
 
-        /// <summary>
-        /// Represents CSD options.
-        /// </summary>
-        internal class CsdOptions
-        {
-            /// <summary>
-            /// Gets or sets the file.
-            /// </summary>
-            [Parameter("file")]
-            [Description("The path to the CSD file")]
-            public string File { get; set; }
-        }
+		/// <summary>
+		/// Represents CSD options.
+		/// </summary>
+		internal class CsdOptions
+		{
+			/// <summary>
+			/// Gets or sets the file.
+			/// </summary>
+			[Parameter("file")]
+			[Description("The path to the CSD file")]
+			public string File { get; set; }
+
+			/// <summary>
+			/// Gets or sets a value indicating whether this <see cref="CsdOptions"/> is live.
+			/// </summary>
+			/// <value><c>true</c> if true, data is directly imported into the database vs generating dataset files to be imported at a later date; otherwise, <c>false</c>.</value>
+			[Parameter("live")]
+			[Description("Directly import data into the database vs generating dataset files to import at a later date")]
+			public bool Live { get; set; }
+		}
 
 		/// <summary>
 		/// The emergency message.
@@ -91,11 +105,6 @@ namespace OizDevTool
 		private const string ImportedDataTag = "http://openiz.org/tags/contrib/importedData";
 
 		/// <summary>
-		/// The assigning authority keys.
-		/// </summary>
-		private static readonly Dictionary<string, Guid> assigningAuthorityKeys = new Dictionary<string, Guid>();
-
-		/// <summary>
 		/// The concept keys.
 		/// </summary>
 		private static readonly Dictionary<CompositeKey, Guid> conceptKeys = new Dictionary<CompositeKey, Guid>();
@@ -107,13 +116,13 @@ namespace OizDevTool
 		{
 		}
 
-        /// <summary>
-        /// Imports the CSD.
-        /// </summary>
-        /// <param name="args">The arguments.</param>
-        [ParameterClass(typeof(CsdOptions))]
-        [Description("Converts a Care Services Discovery (CSD) export to DATASET import file")]
-		[Example("Import a Care Services Discovery (CSD) export to a DATASET import file", "--tool=CsdImport --operation=ImportCsd --file=CSD-Organizations-Connectathon-20150120.xml")]
+		/// <summary>
+		/// Imports the CSD.
+		/// </summary>
+		/// <param name="args">The arguments.</param>
+		[ParameterClass(typeof(CsdOptions))]
+		[Description("Converts a Care Services Discovery (CSD) export to DATASET import file")]
+		[Example("Import a Care Services Discovery (CSD) export to a DATASET import file", "--tool=CsdImport --operation=ImportCsd --file=CSD-Organizations-Connectathon-20150120.xml --live")]
 		public static void ImportCsd(string[] args)
 		{
 			ApplicationContext.Current.Start();
@@ -133,6 +142,8 @@ namespace OizDevTool
 
 			var csdDatasetInstall = new DatasetInstall { Id = "CSD", Action = new List<DataInstallAction>() };
 
+			var actions = new List<DataInstallAction>();
+
 			var serializer = new XmlSerializer(typeof(CSD));
 
 			var fileInfo = new FileInfo(parameters.File);
@@ -149,6 +160,8 @@ namespace OizDevTool
 				Element = o
 			});
 
+			Console.WriteLine("Sorting organizations to preserve hierarchy");
+
 			stopwatch.Stop();
 
 			Console.ForegroundColor = ConsoleColor.Green;
@@ -158,7 +171,7 @@ namespace OizDevTool
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
 
-			csdDatasetInstall.Action.AddRange(organizations);
+			actions.AddRange(organizations);
 
 			var places = MapPlaces(csd.facilityDirectory).Select(p => new DataUpdate
 			{
@@ -172,7 +185,7 @@ namespace OizDevTool
 			Console.WriteLine($"Mapped {places.Count()} places in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
 			Console.ResetColor();
 
-			csdDatasetInstall.Action.AddRange(places);
+			actions.AddRange(places);
 
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -189,7 +202,7 @@ namespace OizDevTool
 			Console.WriteLine($"Mapped {providers.Count()} providers in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
 			Console.ResetColor();
 
-			csdDatasetInstall.Action.AddRange(providers);
+			actions.AddRange(providers);
 
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -206,13 +219,74 @@ namespace OizDevTool
 			Console.WriteLine($"Mapped {services.Count()} services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
 			Console.ResetColor();
 
-			csdDatasetInstall.Action.AddRange(services);
+			actions.AddRange(services);
 
-			serializer = new XmlSerializer(typeof(DatasetInstall));
+			//parameters.Live = true;
 
-			using (var fileStream = File.Create($"999-CSD-import-{fileInfo.Name}.dataset"))
+			if (parameters.Live)
 			{
-				serializer.Serialize(fileStream, csdDatasetInstall);
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.WriteLine("Warning, the live flag is set to true, data will be imported directly into the database");
+				Console.ResetColor();
+
+				var bundle = new Bundle
+				{
+					Item = actions.Select(a => a.Element).ToList()
+				};
+
+				Console.WriteLine("Starting live import");
+
+				var bundlePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+
+				Console.WriteLine("Importing data directly into the database...");
+
+				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+
+				Console.WriteLine("The CSD live import is now complete");
+			}
+			else
+			{
+				var entities = new List<Entity>();
+				var relationships = new List<EntityRelationship>();
+
+				foreach (var entity in actions.Where(a => a.Element is Entity).Select(c => c.Element as Entity))
+				{
+					relationships.AddRange(entity.Relationships);
+
+					// HACK: clear the entity relationships because we are going to import them separately
+					entity.Relationships.Clear();
+
+					entities.Add(entity);
+				}
+
+				// add entities to the list of items to import
+				csdDatasetInstall.Action.AddRange(entities.Select(e => new DataUpdate
+				{
+					InsertIfNotExists = true,
+					Element = e
+				}).ToList());
+
+				// add relationships to the list of items to import
+				csdDatasetInstall.Action.AddRange(relationships.Select(e => new DataUpdate
+				{
+					InsertIfNotExists = true,
+					Element = e
+				}).ToList());
+
+				// add the places services to the list of items to import
+				csdDatasetInstall.Action.AddRange(services);
+
+
+				serializer = new XmlSerializer(typeof(DatasetInstall));
+
+				var filename = $"999-CSD-import-{fileInfo.Name}.dataset";
+
+				using (var fileStream = File.Create(filename))
+				{
+					serializer.Serialize(fileStream, csdDatasetInstall);
+				}
+
+				Console.WriteLine($"Dataset file created: {filename}");
 			}
 		}
 
@@ -273,7 +347,7 @@ namespace OizDevTool
 				}
 				else
 				{
-					entity.Key = Guid.Parse(entityId);
+					entity.Key = key;
 				}
 			}
 
@@ -290,52 +364,36 @@ namespace OizDevTool
 		{
 			var metadataService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
 
-			AssigningAuthority assigningAuthority;
+			// lookup by NSID
+			var assigningAuthority = metadataService.FindAssigningAuthority(a => a.DomainName == otherId.assigningAuthorityName).FirstOrDefault();
 
-			if (!assigningAuthorityKeys.ContainsKey(otherId.assigningAuthorityName))
+			if (assigningAuthority != null)
 			{
-				// lookup by NSID
-				assigningAuthority = metadataService.FindAssigningAuthority(a => a.DomainName == otherId.assigningAuthorityName).FirstOrDefault();
-
-				if (assigningAuthority != null)
-				{
-					assigningAuthorityKeys.Add(otherId.assigningAuthorityName, assigningAuthority.Key.Value);
-					return assigningAuthority;
-				}
-
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
-				Console.ResetColor();
-
-				// lookup by URL
-				assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == otherId.assigningAuthorityName).FirstOrDefault();
-
-				if (assigningAuthority != null)
-				{
-					assigningAuthorityKeys.Add(otherId.assigningAuthorityName, assigningAuthority.Key.Value);
-					return assigningAuthority;
-				}
-
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine($"Warning, unable to locate assigning authority by URL using value: {otherId.assigningAuthorityName}, will attempt to lookup by OID");
-				Console.ResetColor();
-
-				// lookup by OID
-				assigningAuthority = metadataService.FindAssigningAuthority(a => a.Oid == otherId.assigningAuthorityName).FirstOrDefault();
-
-				if (assigningAuthority == null)
-				{
-					ExitOnNotFound($"Error, {emergencyMessage} Unable to locate assigning authority using URL or OID. Has {otherId.assigningAuthorityName} been added to the OpenIZ assigning authority list?");
-				}
-
-				assigningAuthorityKeys.Add(otherId.assigningAuthorityName, assigningAuthority.Key.Value);
+				return assigningAuthority;
 			}
-			else
+
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
+			Console.ResetColor();
+
+			// lookup by URL
+			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == otherId.assigningAuthorityName).FirstOrDefault();
+
+			if (assigningAuthority != null)
 			{
-				assigningAuthority = new AssigningAuthority
-				{
-					Key = assigningAuthorityKeys[otherId.assigningAuthorityName]
-				};
+				return assigningAuthority;
+			}
+
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine($"Warning, unable to locate assigning authority by URL using value: {otherId.assigningAuthorityName}, will attempt to lookup by OID");
+			Console.ResetColor();
+
+			// lookup by OID
+			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Oid == otherId.assigningAuthorityName).FirstOrDefault();
+
+			if (assigningAuthority == null)
+			{
+				ExitOnNotFound($"Error, {emergencyMessage} Unable to locate assigning authority using URL or OID. Has {otherId.assigningAuthorityName} been added to the OpenIZ assigning authority list?");
 			}
 
 			return assigningAuthority;
@@ -409,13 +467,14 @@ namespace OizDevTool
 		/// <summary>
 		/// Maps the contact point.
 		/// </summary>
+		/// <param name="addressUseKey">The address use key.</param>
 		/// <param name="contactPoint">The contact point.</param>
 		/// <returns>Returns an entity telecom address.</returns>
-		private static EntityTelecomAddress MapContactPoint(contactPoint contactPoint)
+		private static EntityTelecomAddress MapContactPoint(Guid addressUseKey, contactPoint contactPoint)
 		{
 			var concept = MapCodedType(contactPoint.codedType.code, contactPoint.codedType.codingScheme);
 
-			var entityTelecomAddress = new EntityTelecomAddress(TelecomAddressUseKeys.Public, contactPoint.codedType.Value);
+			var entityTelecomAddress = new EntityTelecomAddress(addressUseKey, contactPoint.codedType.Value);
 
 			if (concept == null)
 			{
@@ -459,7 +518,7 @@ namespace OizDevTool
 				{
 					entityAddress.AddressUseKey = addressUseConcept.Key;
 				}
-			} 
+			}
 
 			if (address.addressLine?.Any() != true)
 			{
@@ -533,27 +592,29 @@ namespace OizDevTool
 		/// <returns>Returns an entity identifier.</returns>
 		private static EntityIdentifier MapEntityIdentifier(otherID otherId)
 		{
-			return new EntityIdentifier(MapAssigningAuthority(otherId), otherId.code);
+			return new EntityIdentifier(MapAssigningAuthority(otherId), otherId.Value);
 		}
 
 		/// <summary>
 		/// Maps the name of the entity.
 		/// </summary>
+		/// <param name="nameUseKey">The name use key.</param>
 		/// <param name="organizationName">Name of the organization.</param>
 		/// <returns>Returns an entity name.</returns>
-		private static EntityName MapEntityNameOrganization(organizationOtherName organizationName)
+		private static EntityName MapEntityNameOrganization(Guid nameUseKey, organizationOtherName organizationName)
 		{
-			return new EntityName(NameUseKeys.OfficialRecord, organizationName.Value);
+			return new EntityName(nameUseKey, organizationName.Value);
 		}
 
 		/// <summary>
 		/// Maps the entity name person.
 		/// </summary>
+		/// <param name="nameUseKey">The name use key.</param>
 		/// <param name="personName">Name of the person.</param>
 		/// <returns>EntityName.</returns>
-		private static EntityName MapEntityNamePerson(personName personName)
+		private static EntityName MapEntityNamePerson(Guid nameUseKey, personName personName)
 		{
-			var entityName = new EntityName(NameUseKeys.OfficialRecord, personName.surname, personName.forename);
+			var entityName = new EntityName(nameUseKey, personName.surname, personName.forename);
 
 			if (personName.honorific != null)
 			{
@@ -597,14 +658,26 @@ namespace OizDevTool
 				var person = new Person
 				{
 					Addresses = csdPerson.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
-					Key = Guid.NewGuid(),
-					Names = csdPerson.name?.Select(MapEntityNamePerson).ToList() ?? new List<EntityName>(),
-					Telecoms = csdPerson.contactPoint?.Select(MapContactPoint).ToList() ?? new List<EntityTelecomAddress>()
+					Key = Guid.NewGuid()
 				};
 
 				if (csdPerson.dateOfBirthSpecified)
 				{
 					person.DateOfBirth = csdPerson.dateOfBirth;
+				}
+
+				// map names
+				if (csdPerson.name?.Any() == true)
+				{
+					person.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
+					person.Names.AddRange(csdPerson.name.Select(c => MapEntityNamePerson(NameUseKeys.OfficialRecord, c)));
+				}
+
+				// map telecommunications
+				if (csdPerson.contactPoint?.Any() == true)
+				{
+					person.Telecoms.RemoveAll(c => c.AddressUseKey == TelecomAddressUseKeys.Public);
+					person.Telecoms.AddRange(csdPerson.contactPoint?.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c)));
 				}
 
 				entityRelationship = new EntityRelationship(EntityRelationshipTypeKeys.Contact, person);
@@ -651,268 +724,6 @@ namespace OizDevTool
 		}
 
 		/// <summary>
-		/// Maps the organizations.
-		/// </summary>
-		/// <param name="csdOrganizations">The CSD organizations.</param>
-		/// <returns>Returns a list of organizations.</returns>
-		private static IEnumerable<Organization> MapOrganizations(IEnumerable<organization> csdOrganizations)
-		{
-			var organizations = new List<Organization>();
-
-			foreach (var csdOrganization in csdOrganizations)
-			{
-				var organization = new Organization
-				{
-					Addresses = csdOrganization.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
-					CreationTime = csdOrganization.record?.created ?? DateTimeOffset.Now,
-					Extensions = csdOrganization.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
-					Identifiers = csdOrganization.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
-					StatusConceptKey = MapStatusCode(csdOrganization.record?.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes"),
-					Tags = new List<EntityTag>
-					{
-						new EntityTag(ImportedDataTag, "true")
-					}
-				};
-
-				Guid key;
-
-				if (!TryMapKey(csdOrganization.entityID, out key))
-				{
-					organization.Key = Guid.NewGuid();
-					organization.Tags.Add(new EntityTag(CsdEntityIdTag, csdOrganization.entityID));
-				}
-				else
-				{
-					organization.Key = key;
-				}
-
-				if (csdOrganization.codedType?.Any() == true)
-				{
-					// we don't support multiple specialties for a organization at the moment, so we only take the first one
-					// TODO: cleanup
-					organization.TypeConceptKey = MapCodedType(csdOrganization.codedType[0].code, csdOrganization.codedType[0].codingScheme)?.Key;
-				}
-
-				if (csdOrganization.specialization?.Any() == true)
-				{
-					// we don't support multiple industry values for a organization at the moment, so we only take the first one
-					// TODO: cleanup
-					organization.IndustryConceptKey = MapCodedType(csdOrganization.specialization[0].code, csdOrganization.specialization[0].codingScheme)?.Key;
-				}
-
-				if (csdOrganization.parent?.entityID != null)
-				{
-					organization.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityIdOrTag<Organization>(csdOrganization.parent.entityID)));
-				}
-
-				if (csdOrganization.primaryName != null)
-				{
-					organization.Names.Add(new EntityName(NameUseKeys.OfficialRecord, csdOrganization.primaryName));
-				}
-
-				if (csdOrganization.record?.sourceDirectory != null)
-				{
-					organization.Tags.Add(new EntityTag("sourceDirectory", csdOrganization.record.sourceDirectory));
-				}
-
-				if (csdOrganization.otherID?.Any() == true)
-				{
-					organization.Identifiers.AddRange(csdOrganization.otherID.Select(MapEntityIdentifier));
-				}
-
-				if (csdOrganization.otherName?.Any() == true)
-				{
-					organization.Names.AddRange(csdOrganization.otherName.Select(MapEntityNameOrganization));
-				}
-
-				if (csdOrganization.contact?.Any() == true)
-				{
-					organization.Relationships.AddRange(csdOrganization.contact.Select(MapEntityRelationshipOrganizationContact));
-				}
-
-				if (csdOrganization.contactPoint?.Any() == true)
-				{
-					organization.Telecoms.AddRange(csdOrganization.contactPoint.Select(MapContactPoint));
-				}
-
-				organizations.Add(organization);
-
-				Console.WriteLine($"Mapped organization: {organization.Key.Value} {string.Join(" ", organization.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
-			}
-
-			return organizations;
-		}
-
-		/// <summary>
-		/// Maps the places.
-		/// </summary>
-		/// <param name="csdFacilities">The CSD facilities.</param>
-		/// <returns>Returns a list of places.</returns>
-		private static IEnumerable<Place> MapPlaces(IEnumerable<facility> csdFacilities)
-		{
-			var places = new List<Place>();
-
-			foreach (var facility in csdFacilities)
-			{
-				var place = new Place
-				{
-					Addresses = facility.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
-					CreationTime = facility.record?.created ?? DateTimeOffset.Now,
-					Extensions = facility.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
-					Identifiers = facility.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
-					StatusConceptKey = MapStatusCode(facility.record?.status, "http://openiz.org/csd/CSD-FacilityStatusCode"),
-					Tags = new List<EntityTag>
-					{
-						new EntityTag(ImportedDataTag, "true")
-					}
-				};
-
-				Guid key;
-
-				if (!TryMapKey(facility.entityID, out key))
-				{
-					place.Key = Guid.NewGuid();
-					place.Tags.Add(new EntityTag(CsdEntityIdTag, facility.entityID));
-				}
-				else
-				{
-					place.Key = key;
-				}
-
-				if (facility.geocode?.latitude != null)
-				{
-					place.Lat = Convert.ToDouble(facility.geocode.latitude);
-				}
-
-				if (facility.geocode?.longitude != null)
-				{
-					place.Lng = Convert.ToDouble(facility.geocode.longitude);
-				}
-
-				if (facility.parent?.entityID != null)
-				{
-					place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityIdOrTag<Place>(facility.parent.entityID)));
-				}
-
-				if (facility.codedType?.Any() == true)
-				{
-					// we don't support multiple types for a place at the moment, so we only take the first one
-					// TODO: cleanup
-					place.TypeConceptKey = MapCodedType(facility.codedType[0].code, facility.codedType[0].codingScheme)?.Key;
-				}
-
-				if (facility.primaryName != null)
-				{
-					place.Names.Add(new EntityName(NameUseKeys.OfficialRecord, facility.primaryName));
-				}
-
-				if (facility.otherName?.Any() == true)
-				{
-					place.Names.AddRange(facility.otherName.Select(f => new EntityName(NameUseKeys.Assigned, f.Value)));
-				}
-
-				if (facility.contactPoint?.Any() == true)
-				{
-					place.Telecoms.AddRange(facility.contactPoint.Select(MapContactPoint));
-				}
-
-				places.Add(place);
-
-				Console.WriteLine($"Mapped place: {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
-			}
-
-			return places;
-		}
-
-		/// <summary>
-		/// Maps the providers.
-		/// </summary>
-		/// <param name="csdProviders">The CSD providers.</param>
-		/// <returns>Returns a list of providers.</returns>
-		private static IEnumerable<Provider> MapProviders(IEnumerable<provider> csdProviders)
-		{
-			var providers = new List<Provider>();
-
-			foreach (var csdProvider in csdProviders)
-			{
-				var provider = new Provider
-				{
-					Addresses = csdProvider.demographic?.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
-					CreationTime = csdProvider.record?.created ?? DateTimeOffset.Now,
-					DateOfBirth = csdProvider.demographic?.dateOfBirth,
-					Extensions = csdProvider.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
-					Identifiers = csdProvider.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
-					LanguageCommunication = csdProvider.language?.Select(MapLanguageCommunication).ToList() ?? new List<PersonLanguageCommunication>(),
-					Names = csdProvider.demographic?.name?.Select(MapEntityNamePerson).ToList() ?? new List<EntityName>(),
-					StatusConceptKey = MapStatusCode(csdProvider.record?.status, "http://openiz.org/csd/CSD-ProviderStatusCodes"),
-					Tags = new List<EntityTag>
-					{
-						new EntityTag(ImportedDataTag, "true")
-					},
-					Telecoms = csdProvider.demographic?.contactPoint?.Select(MapContactPoint).ToList() ?? new List<EntityTelecomAddress>()
-				};
-
-				if (csdProvider.specialty?.Any() == true)
-				{
-					// we don't support multiple specialties for a provider at the moment, so we only take the first one
-					// TODO: cleanup
-					provider.ProviderSpecialtyKey = MapCodedType(csdProvider.specialty[0].code, csdProvider.specialty[0].codingScheme)?.Key;
-				}
-
-				if (csdProvider.codedType?.Any() == true)
-				{
-					// we don't support multiple types for a provider at the moment, so we only take the first one
-					// TODO: cleanup
-					provider.TypeConceptKey = MapCodedType(csdProvider.codedType[0].code, csdProvider.codedType[0].codingScheme)?.Key;
-				}
-
-				Guid key;
-
-				if (!TryMapKey(csdProvider.entityID, out key))
-				{
-					provider.Key = Guid.NewGuid();
-					provider.Tags.Add(new EntityTag(CsdEntityIdTag, csdProvider.entityID));
-				}
-				else
-				{
-					provider.Key = key;
-				}
-
-				providers.Add(provider);
-
-				Console.WriteLine($"Mapped provider: {provider.Key.Value} {string.Join(" ", provider.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
-			}
-
-			return providers;
-		}
-
-		/// <summary>
-		/// Maps the services.
-		/// </summary>
-		/// <param name="csdServices">The CSD services.</param>
-		/// <returns>Returns a list of place services.</returns>
-		private static IEnumerable<PlaceService> MapServices(IEnumerable<service> csdServices)
-		{
-			var services = new List<PlaceService>();
-
-			foreach (var csdService in csdServices)
-			{
-				var service = new PlaceService
-				{
-					ServiceConceptKey = MapCodedType(csdService.codedType[0].code, csdService.codedType[0].codingScheme)?.Key,
-				};
-
-				Guid key;
-
-				service.Key = !TryMapKey(csdService.entityID, out key) ? Guid.NewGuid() : key;
-
-				services.Add(service);
-			}
-
-			return services;
-		}
-
-		/// <summary>
 		/// Maps the status code.
 		/// </summary>
 		/// <param name="code">The code.</param>
@@ -939,6 +750,34 @@ namespace OizDevTool
 			}
 
 			return conceptService.FindConceptsByReferenceTerm(code, new Uri(codeSystem)).FirstOrDefault()?.Key;
+		}
+
+		private static Bundle ReorganizeForInsert(Bundle bundle)
+		{
+			var retVal = new Bundle() { Item = new List<IdentifiedData>() };
+
+			foreach (var itm in bundle.Item.Where(o => o != null))
+			{
+				// Are there any relationships
+				if (itm is Entity)
+				{
+					var ent = itm as Entity;
+
+					foreach (var rel in ent.Relationships)
+					{
+						var bitm = bundle.Item.FirstOrDefault(o => o.Key == rel.TargetEntityKey);
+						if (bitm == null) continue;
+
+						if (retVal.Item.Any(o => o.Key == rel.TargetEntityKey))
+							continue;
+						retVal.Item.Add(bitm); // make sure it gets inserted first
+					}
+				}
+
+				retVal.Item.Add(itm);
+			}
+
+			return retVal;
 		}
 
 		/// <summary>
@@ -971,7 +810,7 @@ namespace OizDevTool
 		{
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(message);
-			Console.WriteLine($"Defaulting to {defaultValueName} {defaultValue}");
+			Console.WriteLine($"Defaulting to {defaultValueName} {defaultValue} {Environment.NewLine}");
 			Console.ResetColor();
 		}
 	}
@@ -1068,6 +907,46 @@ namespace OizDevTool
 		public static bool operator !=(CompositeKey left, CompositeKey right)
 		{
 			return !(left == right);
+		}
+	}
+
+	/// <summary>
+	/// Represents an entity comparer to sort based on parent relationships, inorder to preserve the hierarchy is one exists.
+	/// </summary>
+	/// <seealso cref="Entity" />
+	internal class EntityComparer : IComparer<Entity>
+	{
+		/// <summary>
+		/// Compares the specified left.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>System.Int32.</returns>
+		public int Compare(Entity left, Entity right)
+		{
+			var result = 0;
+
+			Console.WriteLine($"Comparing: {left.Key} to {right.Key}");
+
+			// don't move position
+			if (left.Key == right.Key)
+			{
+				return result;
+			}
+
+			// if I have no relationships, or the next entries relationship of type parent's target is me, move up
+			if (left.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.Parent) ||
+				right.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent && r.TargetEntityKey == left.Key))
+			{
+				result = 1;
+			}
+			// if I am the next entries target, move down
+			else if (left.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent && r.TargetEntityKey == right.Key))
+			{
+				result = -1;
+			}
+
+			return result;
 		}
 	}
 }

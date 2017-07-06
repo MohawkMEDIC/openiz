@@ -68,6 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin.cs" />
+    <Compile Include="CsdImport.Place.cs" />
+    <Compile Include="CsdImport.PlaceService.cs" />
+    <Compile Include="CsdImport.Provider.cs" />
     <Compile Include="Debugger\ProtoDebugger.cs" />
     <Compile Include="Debugger\BreDebugger.cs" />
     <Compile Include="Debugger\Debug.cs" />
@@ -97,6 +100,7 @@
     <None Include="..\OpenIZ.licenseheader">
       <Link>OpenIZ.licenseheader</Link>
     </None>
+    <Compile Include="CsdImport.Organization.cs" />
     <None Include="oizdt.config.empty">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
