@@ -9,6 +9,8 @@ using OpenIZ.Messaging.GS1.Model;
 using OpenIZ.Messaging.GS1.Configuration;
 using System.Xml.Serialization;
 using System.IO;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Messaging.GS1.Transport.AS2
 {
@@ -19,7 +21,7 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
     {
 
         // Configuration
-        private As2ServiceElement m_configuration;
+        private As2ServiceElement m_configuration = (ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.gs1") as Gs1ConfigurationSection)?.Gs1BrokerAddress;
 
         /// <summary>
         /// Create the GS1 service client

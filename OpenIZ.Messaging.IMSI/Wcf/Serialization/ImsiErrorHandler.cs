@@ -89,6 +89,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
             else if (error is DetectedIssueException)
             {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
                 retVal = new ErrorResult()
                 {
                     Key = Guid.NewGuid(),

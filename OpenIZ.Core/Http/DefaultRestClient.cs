@@ -29,6 +29,7 @@ using System.Linq;
 using System.Net;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 namespace OpenIZ.Core.Http
 {
@@ -57,7 +58,7 @@ namespace OpenIZ.Core.Http
 		public RestClient(IRestClientDescription config) : base(config)
 		{
 			// Find the specified certificate
-			if (config.Binding.Security.ClientCertificate != null)
+			if (config.Binding?.Security?.ClientCertificate != null)
 			{
 				this.ClientCertificates = new X509Certificate2Collection();
 				var cert = SecurityUtils.FindCertificate(config.Binding.Security.ClientCertificate.FindType,
@@ -154,16 +155,16 @@ namespace OpenIZ.Core.Http
 
 						try
 						{
-							//requestStream = requestObj.GetRequestStream();
-							var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
-							{
-								if (r.IsFaulted)
-									requestException = r.Exception.InnerExceptions.First();
-								else
-									requestStream = r.Result;
-							});
+                            //requestStream = requestObj.GetRequestStream();
+                            var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
+                            {
+                                if (r.IsFaulted)
+                                    requestException = r.Exception.InnerExceptions.First();
+                                else
+                                    requestStream = r.Result;
+                            }, TaskContinuationOptions.LongRunning);
 
-							if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
+                            if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
 							{
 								throw new TimeoutException();
 							}
@@ -196,28 +197,31 @@ namespace OpenIZ.Core.Http
 
 					try
 					{
-						var responseTask = requestObj.GetResponseAsync().ContinueWith(r =>
-						{
-							if (r.IsFaulted)
-								responseError = r.Exception.InnerExceptions.First();
-							else
-								response = r.Result as HttpWebResponse;
-						});
-						if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
+                        var responseTask = requestObj.GetResponseAsync().ContinueWith(r =>
+                        {
+                            if (r.IsFaulted)
+                                responseError = r.Exception.InnerExceptions.First();
+                            else
+                                response = r.Result as HttpWebResponse;
+                        }, TaskContinuationOptions.LongRunning);
+
+                        if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
 							throw new TimeoutException();
 						else
 						{
-							responseHeaders = response.Headers;
 							if (responseError != null)
 							{
+                                responseHeaders = new WebHeaderCollection();
 								if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
 									return default(TResult);
 								else
 									throw responseError;
 							}
-						}
+                            responseHeaders = response.Headers;
 
-						var validationResult = this.ValidateResponse(response);
+                        }
+
+                        var validationResult = this.ValidateResponse(response);
 						if (validationResult != ServiceClientErrorType.Valid)
 						{
 							this.traceSource.TraceEvent(TraceEventType.Error, 0, "Response failed validation : {0}", validationResult);
@@ -279,10 +283,10 @@ namespace OpenIZ.Core.Http
 							var responseContentType = errorResponse.ContentType;
 							if (responseContentType.Contains(";"))
 								responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
-							var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
 							try
 							{
-								switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
+                                var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
+                                switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
 								{
 									case "deflate":
 										using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
@@ -302,6 +306,9 @@ namespace OpenIZ.Core.Http
 							catch (Exception dse)
 							{
 								this.traceSource.TraceEvent(TraceEventType.Error, 0, "Could not de-serialize error response! {0}", dse);
+
+                                using (StreamReader r = new StreamReader(errorResponse.GetResponseStream()))
+                                    this.traceSource.TraceEvent(TraceEventType.Error, 0, r.ReadToEnd());
 							}
 
 							switch (errorResponse.StatusCode)

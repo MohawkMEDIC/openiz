@@ -76,6 +76,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\100-Gs1ReferenceTerms.dataset" />
     <Content Include="Sample\SampleInventoryReportRequest.xml" />
   </ItemGroup>
   <ItemGroup>

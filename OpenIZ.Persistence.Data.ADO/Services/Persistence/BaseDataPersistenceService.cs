@@ -67,6 +67,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 nvd.UpdatedTime = DateTimeOffset.Now;
             }
 
+            if (data.CreationTime == DateTimeOffset.MinValue || data.CreationTime.Year < 100)
+                data.CreationTime = DateTimeOffset.Now;
+
             var domainObject = this.FromModelInstance(data, context, principal) as TDomain;
 
             // Ensure created by exists

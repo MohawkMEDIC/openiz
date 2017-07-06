@@ -314,7 +314,7 @@ namespace OpenIZ.Messaging.GS1.Model
                     ExpiryDate = additionalData.itemExpirationDate,
                     Names = new List<EntityName>()
                     {
-                        new EntityName(NameUseKeys.OfficialRecord, tradeItem.tradeItemDescription.Value)
+                        new EntityName(NameUseKeys.Assigned, tradeItem.tradeItemDescription.Value)
                     },
                     StatusConceptKey = StatusKeys.New,
                     QuantityConceptKey = Guid.Parse("a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76"),
@@ -340,10 +340,10 @@ namespace OpenIZ.Messaging.GS1.Model
 
                 // Find the type of material
                 Material materialReference = null;
-                if (tradeItem.additionalTradeItemIdentification != null)
-                    foreach (var id in tradeItem.additionalTradeItemIdentification)
+                if (tradeItem.tradeItemClassification != null)
+                    foreach (var id in tradeItem.tradeItemClassification.additionalTradeItemClassificationCode)
                     {
-                        materialReference = this.m_materialRepository.FindMaterial(o => o.Identifiers.Any(i => i.Value == id.Value && i.Authority.DomainName == id.additionalTradeItemIdentificationTypeCode) && o.ClassConceptKey == EntityClassKeys.Material && o.StatusConceptKey != StatusKeys.Obsolete, 0, 1, out tr).SingleOrDefault();
+                        materialReference = this.m_materialRepository.FindMaterial(o => o.Identifiers.Any(i => i.Value == id.Value && i.Authority.DomainName == id.codeListVersion) && o.ClassConceptKey == EntityClassKeys.Material && o.StatusConceptKey != StatusKeys.Obsolete, 0, 1, out tr).SingleOrDefault();
                         if (materialReference != null) break;
                     }
                 if(materialReference == null)

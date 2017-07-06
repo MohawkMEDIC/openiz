@@ -76,9 +76,21 @@ namespace OizDevTool
 			int tr = 0;
 			Console.WriteLine("Adding minimal loading places...");
 
-			var places = (ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, Int32.Parse(parameters.FacilityCount ?? "1000"), out tr, Guid.Empty);
-			places = places.Union((ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, Int32.Parse(parameters.FacilityCount ?? "1000"), out tr, Guid.Empty));
-			WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4);
+            IEnumerable<Place> places = null;
+
+            Guid facId = Guid.Empty;
+            if (!String.IsNullOrEmpty(parameters.Facility) && Guid.TryParse(parameters.Facility, out facId))
+            {
+                places = (ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.Key == facId, 0, 1, out tr, Guid.Empty);
+            }
+            else
+            {
+                places = (ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, 0, Int32.Parse(parameters.FacilityCount ?? "1000"), out tr, Guid.Empty);
+            };
+
+            places = places.Union((ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, Int32.Parse(parameters.FacilityCount ?? "1000"), out tr, Guid.Empty));
+
+            WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4);
 			Random r = new Random();
 
 			int npatients = 0;
@@ -270,6 +282,10 @@ namespace OizDevTool
             [Parameter("facilities")]
             [Description("Dictates the number of facilities to place the patients in")]
             public string FacilityCount { get; set; }
+
+            [Parameter("facility")]
+            [Description("Generates all the patients in the specified facility")]
+            public string Facility { get; set; }
         }
 
 		

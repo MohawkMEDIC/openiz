@@ -527,7 +527,6 @@
   <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>06922eac-0cae-49af-a33c-fc7096349e4a</id>
-      
       <previousVersion xsi:nil="true" />
       <version xsi:nil="true" />
       <sequence xsi:nil="true" />
@@ -573,8 +572,7 @@
       </name>
     </Concept>
   </update>
-
-    <update insertIfNotExists="true">
+  <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>67F64C78-91B6-42D8-96F6-9A2639112F6B</id>
       <previousVersion xsi:nil="true" />

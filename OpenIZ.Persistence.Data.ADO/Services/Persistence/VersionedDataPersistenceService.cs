@@ -95,6 +95,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             // Ensure created by exists
             data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? principal.GetUserKey(context).Value : domainObject.CreatedByKey;
+
+            if (data.CreationTime == DateTimeOffset.MinValue || data.CreationTime.Year < 100)
+                data.CreationTime = DateTimeOffset.Now;
+            domainObject.CreationTime = data.CreationTime;
             domainObject.VersionSequenceId = null;
             domainObject = context.Insert(domainObject);
             data.VersionSequence = domainObject.VersionSequenceId;

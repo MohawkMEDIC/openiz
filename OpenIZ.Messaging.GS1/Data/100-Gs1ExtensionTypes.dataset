@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<dataset xmlns="http://openiz.org/data" id="TIMR / BID Extensions">
+<dataset xmlns="http://openiz.org/data" id="GS1 Extensions">
   <update insertIfNotExists="true">
     <ExtensionType xmlns="http://openiz.org/model">
       <id>6b2ae7b5-158f-46d0-9ff9-0e3fa999dcaa</id>

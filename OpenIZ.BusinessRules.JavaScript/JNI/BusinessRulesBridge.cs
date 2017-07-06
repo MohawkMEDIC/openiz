@@ -216,10 +216,10 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 }
                 catch (Exception e)
                 {
-                    if (System.Diagnostics.Debugger.IsAttached)
-                        throw;
-                    else
-                        Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itms[i], e);
+                    //if (System.Diagnostics.Debugger.IsAttached)
+                    throw;
+                    //else
+                    //    Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itms[i], e);
                 }
             }
 
