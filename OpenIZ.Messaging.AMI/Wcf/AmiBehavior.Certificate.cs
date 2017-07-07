@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2016-11-30
  */
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.Util.CertificateTools;
@@ -83,8 +84,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public SubmissionResult DeleteCertificate(string rawId, String strReason)
 		{
-            // Revoke reason
-            var reason = (OpenIZ.Core.Model.AMI.Security.RevokeReason)Enum.Parse(typeof(OpenIZ.Core.Model.AMI.Security.RevokeReason), strReason);
+			// Revoke reason
+			var reason = (OpenIZ.Core.Model.AMI.Security.RevokeReason)Enum.Parse(typeof(OpenIZ.Core.Model.AMI.Security.RevokeReason), strReason);
 			int id = Int32.Parse(rawId);
 			var result = this.certTool.GetRequestStatus(id);
 

@@ -1,24 +1,25 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2017-1-16
  */
-using System.Xml.Serialization;
+
 using OpenIZ.OrmLite.Providers;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 {
@@ -42,10 +43,11 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 		public bool AutoUpdateExisting { get; set; }
 
 		/// <summary>
-		/// Gets or sets the connection string of the configuration.
+		/// Gets or sets the provider.
 		/// </summary>
-		[XmlAttribute("readWriteConnection")]
-		public string ReadWriteConnectionString { get; set; }
+		/// <value>The provider.</value>
+		[XmlAttribute("provider")]
+		public IDbProvider Provider { get; set; }
 
 		/// <summary>
 		/// Gets or sets the readonly connection string.
@@ -55,11 +57,10 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 		public string ReadonlyConnectionString { get; set; }
 
 		/// <summary>
-		/// Gets or sets the provider.
+		/// Gets or sets the connection string of the configuration.
 		/// </summary>
-		/// <value>The provider.</value>
-		[XmlAttribute("provider")]
-		public IDbProvider Provider { get; set; }
+		[XmlAttribute("readWriteConnection")]
+		public string ReadWriteConnectionString { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the application should trace SQL statements.

@@ -15,7 +15,7 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
+ - User: khannan
  - Date: 2016-11-30
  -->
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">

@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2016-8-2
  */
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
@@ -56,18 +57,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		// Trace source
 		private TraceSource traceSource = new TraceSource("OpenIZ.Messaging.AMI");
 
-        /// <summary>
-        /// Perform a ping
-        /// </summary>
-        public void Ping()
-        {
-            WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
-        }
-
-        /// <summary>
-        /// Create a diagnostic report
-        /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+		/// <summary>
+		/// Create a diagnostic report
+		/// </summary>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
 		public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
 		{
 			var persister = ApplicationContext.Current.GetService<IDataPersistenceService<DiagnosticReport>>();
@@ -165,19 +158,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				}
 			};
 
-            // Get endpoints 
-            serviceOptions.Endpoints = ApplicationContext.Current.GetServices().OfType<IApiEndpointProvider>().Select(o =>
-                new ServiceEndpointOptions()
-                {
-                    BaseUrl = o.Url,
-                    ServiceType = o.ApiType,
-                    Capabilities = o.Capabilities
-                }
-            ).ToList();
+			// Get endpoints
+			serviceOptions.Endpoints = ApplicationContext.Current.GetServices().OfType<IApiEndpointProvider>().Select(o =>
+				new ServiceEndpointOptions()
+				{
+					BaseUrl = o.Url,
+					ServiceType = o.ApiType,
+					Capabilities = o.Capabilities
+				}
+			).ToList();
 
-            var config = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
-            if(config != null  && config.Endpoints != null)
-                serviceOptions.Endpoints.AddRange(config.Endpoints);
+			var config = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
+			if (config != null && config.Endpoints != null)
+				serviceOptions.Endpoints.AddRange(config.Endpoints);
 			//foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))
 			//{
 			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
@@ -209,6 +202,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			//}
 
 			return serviceOptions;
+		}
+
+		/// <summary>
+		/// Perform a ping
+		/// </summary>
+		public void Ping()
+		{
+			WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
 		}
 
 		/// <summary>

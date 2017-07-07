@@ -1,23 +1,23 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2016-8-28
  */
-using MARC.HI.EHRS.SVC.Core;
+
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Wcf;
@@ -69,56 +69,54 @@ namespace OpenIZ.Messaging.RISI
 		public event EventHandler Stopping;
 
 		/// <summary>
+		/// Gets the API type
+		/// </summary>
+		public ServiceEndpointType ApiType
+		{
+			get
+			{
+				return ServiceEndpointType.ReportIntegrationService;
+			}
+		}
+
+		/// <summary>
+		/// Capabilities
+		/// </summary>
+		public ServiceEndpointCapabilities Capabilities
+		{
+			get
+			{
+				var caps = ServiceEndpointCapabilities.None;
+				if (this.webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication?.CustomUserNamePasswordValidator != null))
+					caps |= ServiceEndpointCapabilities.BasicAuth;
+				if (this.webHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
+					caps |= ServiceEndpointCapabilities.BearerAuth;
+
+				return caps;
+			}
+		}
+
+		/// <summary>
 		/// Gets the running state of the message handler.
 		/// </summary>
 		public bool IsRunning => this.webHost?.State == System.ServiceModel.CommunicationState.Opened;
 
+		/// <summary>
+		/// URL of the service
+		/// </summary>
+		public string[] Url
+		{
+			get
+			{
+				return this.webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
+			}
+		}
 
-        /// <summary>
-        /// Gets the API type
-        /// </summary>
-        public ServiceEndpointType ApiType
-        {
-            get
-            {
-                return ServiceEndpointType.ReportIntegrationService;
-            }
-        }
-
-        /// <summary>
-        /// URL of the service
-        /// </summary>
-        public string[] Url
-        {
-            get
-            {
-                return this.webHost.Description.Endpoints.OfType<ServiceEndpoint>().Select(o => o.Address.Uri.ToString()).ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Capabilities
-        /// </summary>
-        public ServiceEndpointCapabilities Capabilities
-        {
-            get
-            {
-                var caps = ServiceEndpointCapabilities.None;
-                if (this.webHost.Description.Behaviors.OfType<ServiceCredentials>().Any(o => o.UserNameAuthentication?.CustomUserNamePasswordValidator != null))
-                    caps |= ServiceEndpointCapabilities.BasicAuth;
-                if (this.webHost.Description.Behaviors.OfType<ServiceAuthorizationBehavior>().Any(o => o.ServiceAuthorizationManager is JwtTokenServiceAuthorizationManager))
-                    caps |= ServiceEndpointCapabilities.BearerAuth;
-
-                return caps;
-            }
-        }
-
-
-        /// <summary>
-        /// Starts the service. Returns true if the service started successfully.
-        /// </summary>
-        /// <returns>Returns true if the service started successfully.</returns>
-        public bool Start()
+		/// <summary>
+		/// Starts the service. Returns true if the service started successfully.
+		/// </summary>
+		/// <returns>Returns true if the service started successfully.</returns>
+		public bool Start()
 		{
 			try
 			{

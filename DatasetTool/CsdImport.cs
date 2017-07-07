@@ -1,25 +1,29 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2017-4-8
  */
+
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Core;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -29,19 +33,12 @@ using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Services.Impl;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Configuration;
-using System.Text;
 using System.Xml.Serialization;
-using MARC.HI.EHRS.SVC.Core.Data;
-using MARC.HI.EHRS.SVC.Core.Services;
-using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Collection;
 
 namespace OizDevTool
 {
@@ -51,32 +48,10 @@ namespace OizDevTool
 	[Description("Care Services Discovery (CSD) tooling")]
 	public partial class CsdImport
 	{
-
 		/// <summary>
-		/// Represents CSD options.
+		/// The address component code system.
 		/// </summary>
-		internal class CsdOptions
-		{
-			/// <summary>
-			/// Gets or sets the file.
-			/// </summary>
-			[Parameter("file")]
-			[Description("The path to the CSD file")]
-			public string File { get; set; }
-
-			/// <summary>
-			/// Gets or sets a value indicating whether this <see cref="CsdOptions"/> is live.
-			/// </summary>
-			/// <value><c>true</c> if true, data is directly imported into the database vs generating dataset files to be imported at a later date; otherwise, <c>false</c>.</value>
-			[Parameter("live")]
-			[Description("Directly import data into the database vs generating dataset files to import at a later date")]
-			public bool Live { get; set; }
-		}
-
-		/// <summary>
-		/// The emergency message.
-		/// </summary>
-		private static string emergencyMessage;
+		private const string AddressComponentCodeSystem = "urn:ihe:iti:csd:2013:address";
 
 		/// <summary>
 		/// The address type code system.
@@ -84,9 +59,9 @@ namespace OizDevTool
 		private const string AddressTypeCodeSystem = "urn:ihe:iti:csd:2013:addressType";
 
 		/// <summary>
-		/// The address component code system.
+		/// The imported data tag.
 		/// </summary>
-		private const string AddressComponentCodeSystem = "urn:ihe:iti:csd:2013:address";
+		private const string ImportedDataTag = "http://openiz.org/tags/contrib/importedData";
 
 		/// <summary>
 		/// The program exit message.
@@ -94,14 +69,14 @@ namespace OizDevTool
 		private const string ProgramExitMessage = "Unable to continue import CSD document, press any key to exit.";
 
 		/// <summary>
-		/// The imported data tag.
-		/// </summary>
-		private const string ImportedDataTag = "http://openiz.org/tags/contrib/importedData";
-
-		/// <summary>
 		/// The concept keys.
 		/// </summary>
 		private static readonly Dictionary<CompositeKey, Guid> conceptKeys = new Dictionary<CompositeKey, Guid>();
+
+		/// <summary>
+		/// The emergency message.
+		/// </summary>
+		private static string emergencyMessage;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CsdImport"/> class.
@@ -273,7 +248,6 @@ namespace OizDevTool
 
 				// add the places services to the list of items to import
 				csdDatasetInstall.Action.AddRange(services);
-
 
 				serializer = new XmlSerializer(typeof(DatasetInstall));
 
@@ -778,6 +752,27 @@ namespace OizDevTool
 			Console.WriteLine($"Defaulting to {defaultValueName} {defaultValue} {Environment.NewLine}");
 			Console.ResetColor();
 		}
+
+		/// <summary>
+		/// Represents CSD options.
+		/// </summary>
+		internal class CsdOptions
+		{
+			/// <summary>
+			/// Gets or sets the file.
+			/// </summary>
+			[Parameter("file")]
+			[Description("The path to the CSD file")]
+			public string File { get; set; }
+
+			/// <summary>
+			/// Gets or sets a value indicating whether this <see cref="CsdOptions"/> is live.
+			/// </summary>
+			/// <value><c>true</c> if true, data is directly imported into the database vs generating dataset files to be imported at a later date; otherwise, <c>false</c>.</value>
+			[Parameter("live")]
+			[Description("Directly import data into the database vs generating dataset files to import at a later date")]
+			public bool Live { get; set; }
+		}
 	}
 
 	/// <summary>
@@ -790,7 +785,6 @@ namespace OizDevTool
 		/// </summary>
 		public CompositeKey()
 		{
-
 		}
 
 		/// <summary>
@@ -817,29 +811,14 @@ namespace OizDevTool
 		public string SecondKey { get; set; }
 
 		/// <summary>
-		/// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
+		/// Implements the != operator.
 		/// </summary>
-		/// <param name="obj">The object to compare with the current object.</param>
-		/// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-		public override bool Equals(object obj)
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator !=(CompositeKey left, CompositeKey right)
 		{
-			var other = obj as CompositeKey;
-
-			if (other == null)
-			{
-				return false;
-			}
-
-			return this.FirstKey == other.FirstKey && this.SecondKey == other.SecondKey;
-		}
-
-		/// <summary>
-		/// Returns a hash code for this instance.
-		/// </summary>
-		/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
-		public override int GetHashCode()
-		{
-			return base.GetHashCode() ^ 17;
+			return !(left == right);
 		}
 
 		/// <summary>
@@ -864,14 +843,29 @@ namespace OizDevTool
 		}
 
 		/// <summary>
-		/// Implements the != operator.
+		/// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
 		/// </summary>
-		/// <param name="left">The left.</param>
-		/// <param name="right">The right.</param>
-		/// <returns>The result of the operator.</returns>
-		public static bool operator !=(CompositeKey left, CompositeKey right)
+		/// <param name="obj">The object to compare with the current object.</param>
+		/// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+		public override bool Equals(object obj)
 		{
-			return !(left == right);
+			var other = obj as CompositeKey;
+
+			if (other == null)
+			{
+				return false;
+			}
+
+			return this.FirstKey == other.FirstKey && this.SecondKey == other.SecondKey;
+		}
+
+		/// <summary>
+		/// Returns a hash code for this instance.
+		/// </summary>
+		/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
+		public override int GetHashCode()
+		{
+			return base.GetHashCode() ^ 17;
 		}
 	}
 
