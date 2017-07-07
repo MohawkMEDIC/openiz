@@ -28,6 +28,7 @@ using OpenIZ.Messaging.GS1.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -104,10 +105,10 @@ namespace OpenIZ.Messaging.GS1
         /// </summary>
         private void NotifyAct(IEnumerable<Act> createdActs)
         {
-            var acts = createdActs.Where(o => o.ClassConceptKey == ActClassKeys.Supply && o.Tags?.Any(t=>t.TagKey == "http://openiz.org/tags/contrib/importedData" && t.Value == "true") == false).ToList(); // Get all supply events
+            var acts = createdActs.Where(o => o.ClassConceptKey == ActClassKeys.Supply && o.Tags?.Any(t=>t.TagKey == "http://openiz.org/tags/contrib/importedData" && t.Value.ToLower(CultureInfo.InvariantCulture) == "true") == false).ToList(); // Get all supply events
 
             // Iterate over the supply acts and figure 
-            foreach(var act in acts)
+            foreach(var act in acts.Where(a => a != null))
             {
                 if (act.MoodConceptKey == ActMoodKeys.Request) // We have an order!
                     this.IssueOrder(act);
