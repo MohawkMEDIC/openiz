@@ -116,7 +116,7 @@ namespace OizDevTool
 
 			var parameters = new ParameterParser<CsdOptions>().Parse(args);
 
-			var csdDatasetInstall = new DatasetInstall { Id = "HFR via CSD, Organizations, Places, Providers, Services", Action = new List<DataInstallAction>() };
+			var csdDatasetInstall = new DatasetInstall("HFR via CSD, Organizations, Places, Providers, Services");
 
 			var actions = new List<DataInstallAction>();
 

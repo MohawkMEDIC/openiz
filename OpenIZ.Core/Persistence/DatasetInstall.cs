@@ -45,6 +45,15 @@ namespace OpenIZ.Core.Persistence
             this.Action = new List<DataInstallAction>();
         }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="DatasetInstall"/> class.
+		/// </summary>
+		/// <param name="id">The identifier.</param>
+		public DatasetInstall(string id) : this()
+	    {
+		    this.Id = id;
+	    }
+
         /// <summary>
         /// Gets or sets the identifier of the dataset
         /// </summary>
