@@ -66,7 +66,7 @@ namespace OizDevTool
 						Addresses = csdProvider.demographic?.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
 						CreationTime = csdProvider.record?.created ?? DateTimeOffset.Now,
 						DateOfBirth = csdProvider.demographic?.dateOfBirth,
-						Extensions = csdProvider.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
+						Extensions = csdProvider.extension?.Select(e => MapEntityExtension(e.urn, e.Any.InnerText)).ToList() ?? new List<EntityExtension>(),
 						Identifiers = csdProvider.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
 						Key = key,
 						LanguageCommunication = csdProvider.language?.Select(MapLanguageCommunication).ToList() ?? new List<PersonLanguageCommunication>(),

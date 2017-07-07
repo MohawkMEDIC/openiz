@@ -127,19 +127,19 @@ namespace OizDevTool
 
 			var stopwatch = new Stopwatch();
 
-			//stopwatch.Start();
+			stopwatch.Start();
 
-			//var organizations = MapOrganizations(csd.organizationDirectory).Select(o => new DataUpdate
-			//{
-			//	InsertIfNotExists = true,
-			//	Element = o
-			//});
+			var organizations = MapOrganizations(csd.organizationDirectory).Select(o => new DataUpdate
+			{
+				InsertIfNotExists = true,
+				Element = o
+			});
 
-			//stopwatch.Stop();
+			stopwatch.Stop();
 
-			//Console.ForegroundColor = ConsoleColor.Green;
-			//Console.WriteLine($"Mapped {organizations.Count()} organizations in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-			//Console.ResetColor();
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine($"Mapped {organizations.Count()} organizations in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
+			Console.ResetColor();
 
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -382,21 +382,23 @@ namespace OizDevTool
 				throw new ArgumentNullException(nameof(codingScheme), "Value cannot be null");
 			}
 
+			// since CSD coded types are oid based, we want to make sure that the coding scheme starts with "oid"
+			if (!codingScheme.StartsWith("oid:") && !codingScheme.StartsWith("http://") && !codingScheme.StartsWith("urn:"))
+			{
+				codingScheme = "oid:" + codingScheme;
+			}
+
+			var compositeKey = new CompositeKey(code, codingScheme);
+
 			Concept concept;
 
-			if (!conceptKeys.ContainsKey(new CompositeKey(code, codingScheme)))
+			if (conceptKeys.All(c => c.Key != compositeKey))
 			{
 				var conceptRepositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
 				if (conceptRepositoryService == null)
 				{
 					throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
-				}
-
-				// since CSD coded types are oid based, we want to make sure that the coding scheme starts with "oid"
-				if (!codingScheme.StartsWith("oid:") && !codingScheme.StartsWith("http://") && !codingScheme.StartsWith("urn:"))
-				{
-					codingScheme = "oid:" + codingScheme;
 				}
 
 				concept = conceptRepositoryService.FindConceptsByReferenceTerm(code, new Uri(codingScheme)).FirstOrDefault();
@@ -407,13 +409,13 @@ namespace OizDevTool
 				}
 				else
 				{
-					conceptKeys.Add(new CompositeKey(code, codingScheme), concept.Key.Value);
+					conceptKeys.Add(compositeKey, concept.Key.Value);
 				}
 			}
 			else
 			{
 				Guid key;
-				conceptKeys.TryGetValue(new CompositeKey(code, codingScheme), out key);
+				conceptKeys.TryGetValue(compositeKey, out key);
 				concept = new Concept
 				{
 					Key = key
@@ -834,12 +836,7 @@ namespace OizDevTool
 				return true;
 			}
 
-			if (left == null || right == null)
-			{
-				return false;
-			}
-
-			return left.FirstKey == right.FirstKey && left.SecondKey == right.SecondKey;
+			return left?.FirstKey == right?.FirstKey && left?.SecondKey == right?.SecondKey;
 		}
 
 		/// <summary>
@@ -865,7 +862,7 @@ namespace OizDevTool
 		/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
 		public override int GetHashCode()
 		{
-			return base.GetHashCode() ^ 17;
+			return this.FirstKey.GetHashCode() ^ this.SecondKey.GetHashCode();
 		}
 	}
 

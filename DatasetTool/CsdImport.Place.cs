@@ -64,7 +64,7 @@ namespace OizDevTool
 					{
 						Addresses = facility.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
 						CreationTime = facility.record?.created ?? DateTimeOffset.Now,
-						Extensions = facility.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
+						Extensions = facility.extension?.Select(e => MapEntityExtension(e.urn, e.Any.InnerText)).ToList() ?? new List<EntityExtension>(),
 						Identifiers = facility.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
 						Key = key,
 						StatusConceptKey = facility.record?.status != null ? MapStatusCode(facility.record?.status, "http://openiz.org/csd/CSD-FacilityStatusCode") : StatusKeys.Active,

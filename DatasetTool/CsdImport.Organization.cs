@@ -64,7 +64,7 @@ namespace OizDevTool
 					{
 						Addresses = csdOrganization.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
 						CreationTime = csdOrganization.record?.created ?? DateTimeOffset.Now,
-						Extensions = csdOrganization.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
+						Extensions = csdOrganization.extension?.Select(e => MapEntityExtension(e.urn, e.Any.InnerText)).ToList() ?? new List<EntityExtension>(),
 						Identifiers = csdOrganization.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
 						Key = key,
 						StatusConceptKey = csdOrganization.record?.status != null ? MapStatusCode(csdOrganization.record.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes") : StatusKeys.Active,
