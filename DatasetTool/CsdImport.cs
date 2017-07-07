@@ -22,7 +22,6 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Core;
-using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
@@ -39,6 +38,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model;
 
 namespace OizDevTool
 {
@@ -72,6 +72,11 @@ namespace OizDevTool
 		/// The concept keys.
 		/// </summary>
 		private static readonly Dictionary<CompositeKey, Guid> conceptKeys = new Dictionary<CompositeKey, Guid>();
+
+		/// <summary>
+		/// The related entities.
+		/// </summary>
+		private static readonly Dictionary<string, Entity> relatedEntities = new Dictionary<string, Entity>();
 
 		/// <summary>
 		/// The emergency message.
@@ -144,7 +149,7 @@ namespace OizDevTool
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
 
-			//actions.AddRange(organizations);
+			actions.AddRange(organizations);
 
 			var places = MapPlaces(csd.facilityDirectory).Select(p => new DataUpdate
 			{
@@ -194,7 +199,46 @@ namespace OizDevTool
 
 			actions.AddRange(services);
 
-			parameters.Live = true;
+			var entities = new List<Entity>();
+			var relationships = new List<EntityRelationship>();
+
+			foreach (var entity in actions.Where(a => a.Element is Entity).Select(c => c.Element as Entity))
+			{
+				relationships.AddRange(entity.Relationships);
+
+				// HACK: clear the entity relationships because we are going to import them separately
+				entity.Relationships.Clear();
+
+				entities.Add(entity);
+			}
+
+			// add entities to the list of items to import
+			csdDatasetInstall.Action.AddRange(entities.Select(e => new DataUpdate
+			{
+				InsertIfNotExists = true,
+				Element = e
+			}).ToList());
+
+			// add relationships to the list of items to import
+			csdDatasetInstall.Action.AddRange(relationships.Select(e => new DataUpdate
+			{
+				InsertIfNotExists = true,
+				Element = e
+			}).ToList());
+
+			// add the places services to the list of items to import
+			csdDatasetInstall.Action.AddRange(services);
+
+			serializer = new XmlSerializer(typeof(DatasetInstall));
+
+			var filename = $"999-CSD-import-{fileInfo.Name}.dataset";
+
+			using (var fileStream = File.Create(filename))
+			{
+				serializer.Serialize(fileStream, csdDatasetInstall);
+			}
+
+			Console.WriteLine($"Dataset file created: {filename}");
 
 			if (parameters.Live)
 			{
@@ -217,78 +261,27 @@ namespace OizDevTool
 
 				Console.WriteLine("The CSD live import is now complete");
 			}
-			else
-			{
-				var entities = new List<Entity>();
-				var relationships = new List<EntityRelationship>();
-
-				foreach (var entity in actions.Where(a => a.Element is Entity).Select(c => c.Element as Entity))
-				{
-					relationships.AddRange(entity.Relationships);
-
-					// HACK: clear the entity relationships because we are going to import them separately
-					entity.Relationships.Clear();
-
-					entities.Add(entity);
-				}
-
-				// add entities to the list of items to import
-				csdDatasetInstall.Action.AddRange(entities.Select(e => new DataUpdate
-				{
-					InsertIfNotExists = true,
-					Element = e
-				}).ToList());
-
-				// add relationships to the list of items to import
-				csdDatasetInstall.Action.AddRange(relationships.Select(e => new DataUpdate
-				{
-					InsertIfNotExists = true,
-					Element = e
-				}).ToList());
-
-				// add the places services to the list of items to import
-				csdDatasetInstall.Action.AddRange(services);
-
-				serializer = new XmlSerializer(typeof(DatasetInstall));
-
-				var filename = $"999-CSD-import-{fileInfo.Name}.dataset";
-
-				using (var fileStream = File.Create(filename))
-				{
-					serializer.Serialize(fileStream, csdDatasetInstall);
-				}
-
-				Console.WriteLine($"Dataset file created: {filename}");
-			}
 		}
 
 		/// <summary>
-		/// Exits the application, when an entity is not found.
-		/// </summary>
-		/// <param name="message">The message.</param>
-		private static void ExitOnNotFound(string message)
-		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine(message);
-			Console.WriteLine(ProgramExitMessage);
-			Console.ResetColor();
-			Console.ReadKey();
-			Environment.Exit(999);
-		}
-
-		/// <summary>
-		/// Lookups the by entity identifier.
+		/// Looks up the entity by entity identifier. This will also create a new entity if one is not found.
 		/// </summary>
 		/// <typeparam name="T">The type of entity to lookup.</typeparam>
 		/// <param name="entityId">The entity identifier.</param>
-		/// <param name="createNewIfNotFound">if set to <c>true</c> a new entity will be created if one is not found.</param>
-		/// <returns>Returns an entity or null if no entity is found and createNewIfNotFound is set to true.</returns>
-		private static T LookupByEntityId<T>(string entityId, bool createNewIfNotFound = true) where T : Entity, new()
+		/// <returns>Returns the entity instance.</returns>
+		private static T GetOrCreateEntity<T>(string entityId) where T : Entity, new()
 		{
+			Entity entity;
+
+			if (relatedEntities.TryGetValue(entityId, out entity))
+			{
+				return entity as T;
+			}
+
 			var entityService = ApplicationContext.Current.GetService<IDataPersistenceService<T>>();
 
 			int totalResults;
-			var entity = entityService.Query(c => c.Identifiers.Any(i => i.Value == entityId), 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
+			entity = entityService.Query(c => c.Identifiers.Any(i => i.Value == entityId) && c.ObsoletionTime == null, 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
 			if (totalResults > 1)
 			{
@@ -299,18 +292,30 @@ namespace OizDevTool
 			}
 
 			// if the entity wasn't found, we want to create a new entity
-			if (createNewIfNotFound && entity == null)
+			if (entity != null)
 			{
-				entity = new T
-				{
-					Tags = new List<EntityTag>
-					{
-						new EntityTag(ImportedDataTag, "true")
-					}
-				};
+				return (T)entity;
 			}
 
-			return entity;
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine("Warning, ENTITY NOT FOUND, will create one");
+			Console.ResetColor();
+
+			// setup basic properties of the entity instance
+			entity = new T
+			{
+				CreationTime = DateTimeOffset.Now,
+				Key = Guid.NewGuid(),
+				StatusConceptKey = StatusKeys.Active,
+				Tags = new List<EntityTag>
+				{
+					new EntityTag(ImportedDataTag, "true")
+				}
+			};
+
+			entity.Identifiers.Add(new EntityIdentifier("HIE_FRID", entityId));
+
+			return (T)entity;
 		}
 
 		/// <summary>
@@ -352,7 +357,7 @@ namespace OizDevTool
 
 			if (assigningAuthority == null)
 			{
-				ExitOnNotFound($"Error, {emergencyMessage} Unable to locate assigning authority using URL or OID. Has {otherId.assigningAuthorityName} been added to the OpenIZ assigning authority list?");
+				ShowExitOnNotFound($"Error, {emergencyMessage} Unable to locate assigning authority using URL or OID. Has {otherId.assigningAuthorityName} been added to the OpenIZ assigning authority list?");
 			}
 
 			return assigningAuthority;
@@ -405,7 +410,7 @@ namespace OizDevTool
 
 				if (concept == null)
 				{
-					ExitOnNotFound($"Error, {emergencyMessage} Unable to locate concept using code: {code} and coding scheme: {codingScheme}");
+					ShowExitOnNotFound($"Error, {emergencyMessage} Unable to locate concept using code: {code} and coding scheme: {codingScheme}");
 				}
 				else
 				{
@@ -439,7 +444,7 @@ namespace OizDevTool
 
 			if (concept == null)
 			{
-				WarningOnNotFound($"Warning, unable to map telecommunications use, no related concept found for code: {contactPoint.codedType.code} using scheme: {contactPoint.codedType.codingScheme}", nameof(TelecomAddressUseKeys.Public), TelecomAddressUseKeys.Public);
+				ShowWarningOnNotFound($"Warning, unable to map telecommunications use, no related concept found for code: {contactPoint.codedType.code} using scheme: {contactPoint.codedType.codingScheme}", nameof(TelecomAddressUseKeys.Public), TelecomAddressUseKeys.Public);
 			}
 			else
 			{
@@ -472,7 +477,7 @@ namespace OizDevTool
 
 				if (addressUseConcept == null)
 				{
-					WarningOnNotFound($"Warning, unable to map address use, no related concept found for code: {address.type}", nameof(AddressUseKeys.Public), AddressUseKeys.Public);
+					ShowWarningOnNotFound($"Warning, unable to map address use, no related concept found for code: {address.type}", nameof(AddressUseKeys.Public), AddressUseKeys.Public);
 					entityAddress.AddressUseKey = AddressUseKeys.Public;
 				}
 				else
@@ -514,7 +519,7 @@ namespace OizDevTool
 
 			if (addressComponentConcept == null)
 			{
-				WarningOnNotFound($"Warning, unable to map address component, no related concept found for code: {addressComponent.component}", nameof(AddressComponentKeys.CensusTract), AddressComponentKeys.CensusTract);
+				ShowWarningOnNotFound($"Warning, unable to map address component, no related concept found for code: {addressComponent.component}", nameof(AddressComponentKeys.CensusTract), AddressComponentKeys.CensusTract);
 				entityAddressComponent.ComponentTypeKey = AddressComponentKeys.CensusTract;
 			}
 			else
@@ -540,7 +545,7 @@ namespace OizDevTool
 
 			if (extensionType == null)
 			{
-				ExitOnNotFound($"Error, {emergencyMessage} Unable to locate extension type: {extensionUrl}, has this been added to the OpenIZ extension types list?");
+				ShowExitOnNotFound($"Error, {emergencyMessage} Unable to locate extension type: {extensionUrl}, has this been added to the OpenIZ extension types list?");
 			}
 
 			return new EntityExtension(extensionType.Key.Value, extensionType.ExtensionHandler, value);
@@ -603,7 +608,7 @@ namespace OizDevTool
 			{
 				var csdProvider = contact.Item as uniqueID;
 
-				var provider = LookupByEntityId<Provider>(csdProvider.entityID);
+				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID);
 
 				entityRelationship = new EntityRelationship(EntityRelationshipTypeKeys.Contact, provider);
 			}
@@ -645,7 +650,7 @@ namespace OizDevTool
 			}
 			else
 			{
-				ExitOnNotFound($"Error, {emergencyMessage} {nameof(organizationContact.Item)} is not of type: {nameof(person)} or {nameof(uniqueID)}");
+				ShowExitOnNotFound($"Error, {emergencyMessage} {nameof(organizationContact.Item)} is not of type: {nameof(person)} or {nameof(uniqueID)}");
 			}
 
 			return entityRelationship;
@@ -678,7 +683,7 @@ namespace OizDevTool
 			}
 			else
 			{
-				ExitOnNotFound($"Error, {emergencyMessage} language not found using code: {language.code} or using value: {language.Value}");
+				ShowExitOnNotFound($"Error, {emergencyMessage} language not found using code: {language.code} or using value: {language.Value}");
 			}
 
 			return personLanguageCommunication;
@@ -713,32 +718,45 @@ namespace OizDevTool
 			return conceptService.FindConceptsByReferenceTerm(code, new Uri(codeSystem)).FirstOrDefault()?.Key;
 		}
 
-		private static Bundle ReorganizeForInsert(Bundle bundle)
+		/// <summary>
+		/// Reconciles the versioned associations.
+		/// </summary>
+		/// <param name="existingAddresses">The existing addresses.</param>
+		/// <param name="newAddresses">The new addresses.</param>
+		/// <returns>System.Collections.Generic.IEnumerable&lt;OpenIZ.Core.Model.VersionedAssociation&lt;OpenIZ.Core.Model.Entities.Entity&gt;&gt;.</returns>
+		private static IEnumerable<VersionedAssociation<Entity>> ReconcileVersionedAssociations(IEnumerable<VersionedAssociation<Entity>> existingAddresses, IEnumerable<VersionedAssociation<Entity>> newAddresses)
 		{
-			var retVal = new Bundle() { Item = new List<IdentifiedData>() };
+			return (from address
+					in newAddresses
+					from organizationAddress
+					in existingAddresses
+					where !organizationAddress.SemanticEquals(address)
+					select address).ToList();
+		}
 
-			foreach (var itm in bundle.Item.Where(o => o != null))
-			{
-				// Are there any relationships
-				if (itm is Entity)
-				{
-					var ent = itm as Entity;
+		/// <summary>
+		/// Exits the application, when an entity is not found.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		private static void ShowExitOnNotFound(string message)
+		{
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine(message);
+			Console.WriteLine(ProgramExitMessage);
+			Console.ResetColor();
+			Console.ReadKey();
+			Environment.Exit(999);
+		}
 
-					foreach (var rel in ent.Relationships)
-					{
-						var bitm = bundle.Item.FirstOrDefault(o => o.Key == rel.TargetEntityKey);
-						if (bitm == null) continue;
-
-						if (retVal.Item.Any(o => o.Key == rel.TargetEntityKey))
-							continue;
-						retVal.Item.Add(bitm); // make sure it gets inserted first
-					}
-				}
-
-				retVal.Item.Add(itm);
-			}
-
-			return retVal;
+		/// <summary>
+		/// Prints an informational message.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		private static void ShowInfoMessage(string message)
+		{
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.WriteLine($"{message} {Environment.NewLine}");
+			Console.ResetColor();
 		}
 
 		/// <summary>
@@ -747,7 +765,7 @@ namespace OizDevTool
 		/// <param name="message">The message.</param>
 		/// <param name="defaultValueName">Default name of the value.</param>
 		/// <param name="defaultValue">The default value.</param>
-		private static void WarningOnNotFound(string message, string defaultValueName, Guid defaultValue)
+		private static void ShowWarningOnNotFound(string message, string defaultValueName, Guid defaultValue)
 		{
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.WriteLine(message);

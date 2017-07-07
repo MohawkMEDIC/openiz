@@ -40,56 +40,29 @@ namespace OizDevTool
 		/// </summary>
 		/// <param name="csdOrganizations">The CSD organizations.</param>
 		/// <returns>Returns a list of organizations.</returns>
-		private static IEnumerable<Organization> MapOrganizations(IEnumerable<organization> csdOrganizations)
+		private static IEnumerable<Entity> MapOrganizations(IEnumerable<organization> csdOrganizations)
 		{
-			var organizationService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>();
-			var organizations = new List<Organization>();
+			var organizations = new List<Entity>();
 
 			foreach (var csdOrganization in csdOrganizations)
 			{
-				var key = Guid.NewGuid();
+				var organization = GetOrCreateEntity<Organization>(csdOrganization.entityID);
 
-				int totalResults;
-
-				// try get existing
-				var organization = organizationService.Query(c => c.Identifiers.Any(i => i.Value == csdOrganization.entityID), 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
-
-				if (organization == null)
+				// addresses
+				if (csdOrganization.address?.Any() == true)
 				{
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"Organization not found using key: {csdOrganization.entityID}, will create one {Environment.NewLine}");
-					Console.ResetColor();
+					ShowInfoMessage("Mapping organization addresses...");
 
-					organization = new Organization
-					{
-						Addresses = csdOrganization.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
-						CreationTime = csdOrganization.record?.created ?? DateTimeOffset.Now,
-						Extensions = csdOrganization.extension?.Select(e => MapEntityExtension(e.urn, e.Any.InnerText)).ToList() ?? new List<EntityExtension>(),
-						Identifiers = csdOrganization.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
-						Key = key,
-						StatusConceptKey = csdOrganization.record?.status != null ? MapStatusCode(csdOrganization.record.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes") : StatusKeys.Active,
-						Tags = new List<EntityTag>
-						{
-							new EntityTag(ImportedDataTag, "true")
-						}
-					};
-				}
-				else
-				{
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"Organization found using key: {key}, will reset basic properties {Environment.NewLine}");
-					Console.ResetColor();
+					var addresses = ReconcileVersionedAssociations(organization.Addresses, csdOrganization.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem)))).Cast<EntityAddress>();
 
-					// reset basic properties
-					organization.CreationTime = DateTimeOffset.Now;
-					organization.PreviousVersion = null;
-					organization.VersionKey = null;
-					organization.VersionSequence = null;
+					organization.Addresses.AddRange(addresses);
 				}
 
 				// map type concept
 				if (csdOrganization.codedType?.Any() == true)
 				{
+					ShowInfoMessage("Mapping organization type concept...");
+
 					// we don't support multiple specialties for a organization at the moment, so we only take the first one
 					// TODO: cleanup
 					organization.TypeConceptKey = MapCodedType(csdOrganization.codedType[0].code, csdOrganization.codedType[0].codingScheme)?.Key;
@@ -98,42 +71,80 @@ namespace OizDevTool
 				// map specializations
 				if (csdOrganization.specialization?.Any() == true)
 				{
+					ShowInfoMessage("Mapping organization industry concept...");
+
 					// we don't support multiple industry values for a organization at the moment, so we only take the first one
 					// TODO: cleanup
 					organization.IndustryConceptKey = MapCodedType(csdOrganization.specialization[0].code, csdOrganization.specialization[0].codingScheme)?.Key;
 				}
 
+				// map extensions
+				if (csdOrganization.extension?.Any() == true)
+				{
+					ShowInfoMessage("Mapping organization extensions...");
+
+					var extensions = ReconcileVersionedAssociations(organization.Extensions, csdOrganization.extension.Select(e => MapEntityExtension(e.urn, e.Any.InnerText))).Cast<EntityExtension>();
+
+					organization.Extensions.AddRange(extensions);
+				}
+
+				// map identifiers
+				if (csdOrganization.otherID?.Any() == true)
+				{
+					ShowInfoMessage("Mapping organization identifiers...");
+
+					var identifiers = ReconcileVersionedAssociations(organization.Identifiers, csdOrganization.otherID.Select(MapEntityIdentifier)).Cast<EntityIdentifier>();
+
+					organization.Identifiers.AddRange(identifiers);
+				}
+
+				Entity parent = null;
+
 				// map parent relationships
 				if (csdOrganization.parent?.entityID != null)
 				{
+					ShowInfoMessage("Mapping organization parent relationships...");
+
 					organization.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
-					organization.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityId<Organization>(csdOrganization.parent.entityID)));
+
+					parent = GetOrCreateEntity<Organization>(csdOrganization.parent.entityID);
+
+					organization.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
 				}
 
 				// map primary name
 				if (csdOrganization.primaryName != null)
 				{
+					ShowInfoMessage("Mapping organization names...");
+
 					organization.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
 					organization.Names.Add(new EntityName(NameUseKeys.OfficialRecord, csdOrganization.primaryName));
-				}
-
-				// map tags
-				if (csdOrganization.record?.sourceDirectory != null)
-				{
-					organization.Tags.RemoveAll(t => t.TagKey == "sourceDirectory");
-					organization.Tags.Add(new EntityTag("sourceDirectory", csdOrganization.record.sourceDirectory));
 				}
 
 				// map names
 				if (csdOrganization.otherName?.Any() == true)
 				{
-					organization.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.Assigned);
-					organization.Names.AddRange(csdOrganization.otherName.Select(c => MapEntityNameOrganization(NameUseKeys.Assigned, c)));
+					ShowInfoMessage("Mapping organization additional names...");
+
+					var names = ReconcileVersionedAssociations(organization.Names, csdOrganization.otherName.Select(c => MapEntityNameOrganization(NameUseKeys.Assigned, c))).Cast<EntityName>();
+
+					organization.Names.AddRange(names);
+				}
+
+				// map tags
+				if (csdOrganization.record?.sourceDirectory != null)
+				{
+					ShowInfoMessage("Mapping organization tags...");
+
+					organization.Tags.RemoveAll(t => t.TagKey == "sourceDirectory");
+					organization.Tags.Add(new EntityTag("sourceDirectory", csdOrganization.record.sourceDirectory));
 				}
 
 				// map contacts
 				if (csdOrganization.contact?.Any() == true)
 				{
+					ShowInfoMessage("Mapping organization contact relationships...");
+
 					// HACK
 					organization.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Contact);
 					organization.Relationships.AddRange(csdOrganization.contact.Select(MapEntityRelationshipOrganizationContact));
@@ -142,10 +153,37 @@ namespace OizDevTool
 				// map contact points
 				if (csdOrganization.contactPoint?.Any() == true)
 				{
-					organization.Telecoms.AddRange(csdOrganization.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c)));
+					ShowInfoMessage("Mapping organization telecommunications...");
+
+					var telecoms = ReconcileVersionedAssociations(organization.Telecoms, csdOrganization.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c))).Cast<EntityTelecomAddress>();
+
+					organization.Telecoms.AddRange(telecoms);
+				}
+
+				// map status concept
+				if (csdOrganization.record?.status != null)
+				{
+					ShowInfoMessage("Mapping organization status...");
+
+					organization.StatusConceptKey = MapStatusCode(csdOrganization.record.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes");
 				}
 
 				organizations.Add(organization);
+
+				if (parent != null && organizations.Any(c => c.Identifiers.All(i => i.Value != csdOrganization.parent?.entityID)))
+				{
+					organizations.Add(parent);
+				}
+
+				if (!relatedEntities.ContainsKey(csdOrganization.entityID))
+				{
+					relatedEntities.Add(csdOrganization.entityID, organization);
+				}
+
+				if (parent != null && !relatedEntities.ContainsKey(csdOrganization.parent?.entityID))
+				{
+					relatedEntities.Add(csdOrganization.parent?.entityID, parent);
+				}
 
 				Console.WriteLine($"Mapped organization: {organization.Key.Value} {string.Join(" ", organization.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
 			}
