@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-11-8
+ * Date: 2016-11-30
  */
 using Jint.Native;
 using Jint.Runtime;
@@ -319,6 +319,19 @@ namespace OpenIZ.BusinessRules.JavaScript
 
                 return data;
             }
+            catch (JavaScriptException e)
+            {
+                this.m_tracer.TraceError("JAVASCRIPT ERROR RUNNING {0} OBJECT :::::> {3}@{2}\r\n{1}", action, this.ProduceLiteral(data),  e.LineNumber, e);
+                return new List<DetectedIssue>()
+                {
+                    new DetectedIssue()
+                    {
+                        Priority = DetectedIssuePriorityType.Error,
+                        Text = $"{e.Message} @ {e.LineNumber}"
+                    }
+                };
+
+            }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, this.ProduceLiteral(data), e);
@@ -393,7 +406,20 @@ namespace OpenIZ.BusinessRules.JavaScript
                 }
                 return retVal;
             }
-            catch(Exception e)
+            catch(JavaScriptException e)
+            {
+                this.m_tracer.TraceError("JAVASCRIPT ERROR VALIDATING OBJECT :::::> {1}@{0}", e.LineNumber, e);
+                return new List<DetectedIssue>()
+                {
+                    new DetectedIssue()
+                    {
+                        Priority = DetectedIssuePriorityType.Error,
+                        Text = $"{e.Message} @ {e.LineNumber}"
+                    }
+                };
+
+            }
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error validating {0} : {1}", data, e);
                 return new List<DetectedIssue>()

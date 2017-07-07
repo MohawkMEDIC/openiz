@@ -1,5 +1,4 @@
 ﻿/// <reference path="openiz.js"/>
-
 /*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
@@ -17,7 +16,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-11-3
+ * Date: 2016-11-30
  */
 
 /**

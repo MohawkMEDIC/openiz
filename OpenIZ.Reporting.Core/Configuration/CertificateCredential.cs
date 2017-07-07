@@ -14,10 +14,9 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: Nityan
- * Date: 2017-4-4
+ * User: justi
+ * Date: 2017-4-10
  */
-
 using System.Security.Cryptography.X509Certificates;
 using System.Xml.Serialization;
 

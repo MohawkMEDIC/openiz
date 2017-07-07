@@ -419,7 +419,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                             }
                         }
 
-						return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), parsedLean);
+                       
+                        return BundleUtil.CreateBundle(retVal, totalResults, Int32.Parse(offset ?? "0"), parsedLean);
                     }
                 }
                 else
@@ -594,6 +595,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                     throw new ArgumentNullException(nameof(body));
                 else
                 {
+                    // Force load all properties for existing
                     var applied = ApplicationContext.Current.GetService<IPatchService>().Patch(body, existing, force);
                     var data = handler.Update(applied);
                     WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;

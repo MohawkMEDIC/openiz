@@ -14,10 +14,9 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: Nityan
- * Date: 2017-4-15
+ * User: justi
+ * Date: 2017-4-16
  */
-
 namespace OpenIZ.Persistence.Reporting.PSQL
 {
 	/// <summary>

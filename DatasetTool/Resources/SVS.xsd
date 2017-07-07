@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: Nityan
- - Date: 2017-4-9
+ - User: justi
+ - Date: 2017-4-10
  -->
 <xs:schema xmlns="urn:ihe:iti:svs:2008" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:hl7="urn:hl7-org:v3"

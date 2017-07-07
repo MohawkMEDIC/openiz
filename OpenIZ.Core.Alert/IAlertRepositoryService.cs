@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-9-2
+ * Date: 2016-9-3
  */
 using OpenIZ.Core.Alert.Alerting;
 using System;

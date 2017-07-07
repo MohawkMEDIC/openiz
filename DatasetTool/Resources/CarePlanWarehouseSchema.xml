@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!--
  - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
- -
+ - 
  - 
  - Licensed under the Apache License, Version 2.0 (the "License"); you 
  - may not use this file except in compliance with the License. You may 
@@ -16,7 +16,7 @@
  - the License.
  - 
  - User: justi
- - Date: 2017-3-31
+ - Date: 2017-5-26
  -->
 <DatamartSchema xmlns="http://openiz.org/warehousing" name="oizcp" id="07BA63B4-50FA-41D5-9D24-7FB41606A961">
   <property name="creation_date" type="date" attributes="nonnull"/>

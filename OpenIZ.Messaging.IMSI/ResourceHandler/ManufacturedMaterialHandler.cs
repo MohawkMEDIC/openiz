@@ -18,8 +18,10 @@
  * Date: 2016-8-12
  */
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Security;
@@ -27,6 +29,7 @@ using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
@@ -81,7 +84,18 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
-            return base.Query(queryParameters, offset, count, out totalCount);
+            var retVal = base.Query(queryParameters, offset, count, out totalCount);
+
+            var erPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>() as IFastQueryDataPersistenceService<EntityRelationship>;
+            var authContext = AuthenticationContext.Current.Principal;
+
+            retVal.OfType<ManufacturedMaterial>().AsParallel().ForAll(o => {
+                int tr = 0;
+                if(!o.Relationships.Any(r=>r.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct))
+                    o.Relationships.AddRange(erPersistence.QueryFast(q => q.TargetEntityKey == o.Key && q.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct, Guid.Empty, 0, 100, authContext, out tr));
+            });
+
+            return retVal;
         }
 
 

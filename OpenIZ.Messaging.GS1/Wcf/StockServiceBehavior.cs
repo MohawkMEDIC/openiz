@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2017-3-24
+ * User: justi
+ * Date: 2016-11-30
  */
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -195,15 +195,16 @@ namespace OpenIZ.Messaging.GS1.Wcf
             }
 
             // insert transaction
-            try
-            {
-                ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(orderTransaction);
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error issuing despatch advice: {0}", e);
-                throw new Exception($"Error issuing despatch advice: {e.Message}", e);
-            }
+            if(orderTransaction.Item.Count > 0)
+                try
+                {
+                    ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(orderTransaction);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error issuing despatch advice: {0}", e);
+                    throw new Exception($"Error issuing despatch advice: {e.Message}", e);
+                }
         }
 
         /// <summary>

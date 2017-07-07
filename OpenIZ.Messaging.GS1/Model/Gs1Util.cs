@@ -1,4 +1,23 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2017-7-4
+ */
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
@@ -232,7 +251,7 @@ namespace OpenIZ.Messaging.GS1.Model
 
                 return new TransactionalTradeItemType()
                 {
-                    additionalTradeItemIdentification = material.LoadCollection<EntityIdentifier>("Identifiers").Where(o => o.Authority.Name != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
+                    additionalTradeItemIdentification = material.LoadCollection<EntityIdentifier>("Identifiers").Where(o => o.Authority.DomainName != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
                     {
                         Value = o.Value,
                         additionalTradeItemIdentificationTypeCode = o.LoadProperty<AssigningAuthority>("Authority").DomainName
@@ -245,7 +264,7 @@ namespace OpenIZ.Messaging.GS1.Model
                             codeListVersion = o.LoadProperty<AssigningAuthority>("Authority").DomainName
                         }).ToArray()
                     },
-                    gtin = material.Identifiers.FirstOrDefault(o => o.Authority.Name == "GTIN").Value,
+                    gtin = material.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GTIN").Value,
                     itemTypeCode = typeItemCode,
                     tradeItemDescription = material.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
                     transactionalItemData = new TransactionalItemDataType[]
@@ -298,10 +317,10 @@ namespace OpenIZ.Messaging.GS1.Model
             ManufacturedMaterial retVal = this.m_materialRepository.FindManufacturedMaterial(m => m.Identifiers.Any(o => o.Value == tradeItem.gtin && o.Authority.DomainName == "GTIN") && m.LotNumber == lotNumberString, 0, 1, out tr).FirstOrDefault();
             if (retVal == null && createIfNotFound)
             {
-                
                 var additionalData = tradeItem.transactionalItemData[0];
                 if (!additionalData.itemExpirationDateSpecified)
                     throw new InvalidOperationException("Cannot auto-create material, expiration date is missing");
+
                 // Material
                 retVal = new ManufacturedMaterial()
                 {
@@ -320,6 +339,15 @@ namespace OpenIZ.Messaging.GS1.Model
                     QuantityConceptKey = Guid.Parse("a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76"),
                     Quantity = 1
                 };
+
+                // Store additional identifiers
+                if(tradeItem.additionalTradeItemIdentification != null)
+                    foreach(var id in tradeItem.additionalTradeItemIdentification)
+                    {
+                        var oid = oidService.GetOid(id.additionalTradeItemIdentificationTypeCode);
+                        if (oid == null) continue;
+                        retVal.Identifiers.Add(new EntityIdentifier(new AssigningAuthority(oid.Mnemonic, oid.Name, oid.Oid), id.Value));
+                    }
 
                 if (String.IsNullOrEmpty(tradeItem.itemTypeCode?.Value))
                     throw new InvalidOperationException("Cannot auto-create material, type code must be specified");

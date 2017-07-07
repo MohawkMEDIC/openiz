@@ -17,7 +17,6 @@
  * User: justi
  * Date: 2016-7-7
  */
-
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
