@@ -39,9 +39,8 @@ namespace OizDevTool
 		/// <returns>Returns a list of place services.</returns>
 		private static IEnumerable<PlaceService> MapServices(IEnumerable<service> csdServices)
 		{
-			throw new NotImplementedException();
-
 			// TODO: implement
+			return new List<PlaceService>();
 
 			var placeServiceService = ApplicationContext.Current.GetService<IDataPersistenceService<PlaceService>>();
 			var services = new List<PlaceService>();
