@@ -18,12 +18,9 @@
  * Date: 2017-7-6
  */
 
-using MARC.HI.EHRS.SVC.Core;
-using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
-using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -175,17 +172,19 @@ namespace OizDevTool
 					organizations.Add(parent);
 				}
 
-				if (!relatedEntities.ContainsKey(csdOrganization.entityID))
+				if (!entityMap.ContainsKey(csdOrganization.entityID))
 				{
-					relatedEntities.Add(csdOrganization.entityID, organization);
+					entityMap.Add(csdOrganization.entityID, organization);
 				}
 
-				if (parent != null && !relatedEntities.ContainsKey(csdOrganization.parent?.entityID))
+				if (parent != null && !entityMap.ContainsKey(csdOrganization.parent?.entityID))
 				{
-					relatedEntities.Add(csdOrganization.parent?.entityID, parent);
+					entityMap.Add(csdOrganization.parent?.entityID, parent);
 				}
 
+				Console.ForegroundColor = ConsoleColor.Magenta;
 				Console.WriteLine($"Mapped organization: {organization.Key.Value} {string.Join(" ", organization.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+				Console.ResetColor();
 			}
 
 			return organizations;

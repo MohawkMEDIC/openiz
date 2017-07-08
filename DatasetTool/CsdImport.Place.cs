@@ -18,12 +18,9 @@
  * Date: 2017-7-6
  */
 
-using MARC.HI.EHRS.SVC.Core;
-using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
-using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,7 +109,7 @@ namespace OizDevTool
 				if (facility.codedType?.Any() == true)
 				{
 					ShowInfoMessage("Mapping place type concept...");
-					
+
 					// we don't support multiple types for a place at the moment, so we only take the first one
 					// TODO: cleanup
 					place.TypeConceptKey = MapCodedType(facility.codedType[0].code, facility.codedType[0].codingScheme)?.Key;
@@ -168,17 +165,19 @@ namespace OizDevTool
 					places.Add(parent);
 				}
 
-				if (!relatedEntities.ContainsKey(facility.entityID))
+				if (!entityMap.ContainsKey(facility.entityID))
 				{
-					relatedEntities.Add(facility.entityID, place);
+					entityMap.Add(facility.entityID, place);
 				}
 
-				if (parent != null && !relatedEntities.ContainsKey(facility.parent?.entityID))
+				if (parent != null && !entityMap.ContainsKey(facility.parent?.entityID))
 				{
-					relatedEntities.Add(facility.parent.entityID, parent);
+					entityMap.Add(facility.parent.entityID, parent);
 				}
 
+				Console.ForegroundColor = ConsoleColor.Magenta;
 				Console.WriteLine($"Mapped place: {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+				Console.ResetColor();
 			}
 
 			return places;

@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Core;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
@@ -29,7 +30,6 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Persistence;
 using OpenIZ.Core.Security;
-using OpenIZ.Core.Services;
 using OpenIZ.Core.Services.Impl;
 using System;
 using System.Collections.Generic;
@@ -38,7 +38,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using OpenIZ.Core.Model;
 
 namespace OizDevTool
 {
@@ -76,7 +75,7 @@ namespace OizDevTool
 		/// <summary>
 		/// The related entities.
 		/// </summary>
-		private static readonly Dictionary<string, Entity> relatedEntities = new Dictionary<string, Entity>();
+		private static readonly Dictionary<string, Entity> entityMap = new Dictionary<string, Entity>();
 
 		/// <summary>
 		/// The emergency message.
@@ -253,7 +252,7 @@ namespace OizDevTool
 		{
 			Entity entity;
 
-			if (relatedEntities.TryGetValue(entityId, out entity))
+			if (entityMap.TryGetValue(entityId, out entity))
 			{
 				return entity as T;
 			}
@@ -268,7 +267,6 @@ namespace OizDevTool
 				ShowWarningMessage($"Warning, found multiple entities with the same entityID: '{entityId}', will default to: '{entity.Key.Value}' {Environment.NewLine}");
 			}
 
-			// if the entity wasn't found, we want to create a new entity
 			if (entity != null)
 			{
 				return (T)entity;
@@ -294,406 +292,31 @@ namespace OizDevTool
 		}
 
 		/// <summary>
-		/// Maps the assigning authority.
-		/// </summary>
-		/// <param name="otherId">The other identifier.</param>
-		/// <returns>AssigningAuthority.</returns>
-		/// <exception cref="System.InvalidOperationException">If the assigning authority is not found.</exception>
-		private static AssigningAuthority MapAssigningAuthority(otherID otherId)
-		{
-			var metadataService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-
-			// lookup by NSID
-			var assigningAuthority = metadataService.FindAssigningAuthority(a => a.DomainName == otherId.assigningAuthorityName).FirstOrDefault();
-
-			if (assigningAuthority != null)
-			{
-				return assigningAuthority;
-			}
-
-			ShowWarningMessage($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
-
-			// lookup by URL
-			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == otherId.assigningAuthorityName).FirstOrDefault();
-
-			if (assigningAuthority != null)
-			{
-				return assigningAuthority;
-			}
-
-			ShowWarningMessage($"Warning, unable to locate assigning authority by URL using value: {otherId.assigningAuthorityName}, will attempt to lookup by OID");
-
-			// lookup by OID
-			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Oid == otherId.assigningAuthorityName).FirstOrDefault();
-
-			if (assigningAuthority == null)
-			{
-				ShowErrorOnNotFound($"Error, {emergencyMessage} Unable to locate assigning authority using NSID, URL, or OID. Has {otherId.assigningAuthorityName} been added to the OpenIZ assigning authority list?");
-			}
-
-			return assigningAuthority;
-		}
-
-		/// <summary>
-		/// Maps the coded type.
-		/// </summary>
-		/// <param name="code">The code.</param>
-		/// <param name="codingScheme">The coding scheme.</param>
-		/// <returns>Concept.</returns>
-		/// <exception cref="System.ArgumentNullException">
-		/// code - Value cannot be null
-		/// or
-		/// codingScheme - Value cannot be null
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">Unable to locate service</exception>
-		private static Concept MapCodedType(string code, string codingScheme)
-		{
-			if (code == null)
-			{
-				throw new ArgumentNullException(nameof(code), "Value cannot be null");
-			}
-
-			if (codingScheme == null)
-			{
-				throw new ArgumentNullException(nameof(codingScheme), "Value cannot be null");
-			}
-
-			// since CSD coded types are oid based, we want to make sure that the coding scheme starts with "oid"
-			if (!codingScheme.StartsWith("oid:") && !codingScheme.StartsWith("http://") && !codingScheme.StartsWith("urn:"))
-			{
-				codingScheme = "oid:" + codingScheme;
-			}
-
-			var compositeKey = new CompositeKey(code, codingScheme);
-
-			Concept concept;
-
-			if (conceptKeys.All(c => c.Key != compositeKey))
-			{
-				var conceptRepositoryService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
-
-				if (conceptRepositoryService == null)
-				{
-					throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
-				}
-
-				concept = conceptRepositoryService.FindConceptsByReferenceTerm(code, new Uri(codingScheme)).FirstOrDefault();
-
-				if (concept == null)
-				{
-					ShowErrorOnNotFound($"Error, {emergencyMessage} Unable to locate concept using code: {code} and coding scheme: {codingScheme}");
-				}
-				else
-				{
-					conceptKeys.Add(compositeKey, concept.Key.Value);
-				}
-			}
-			else
-			{
-				Guid key;
-				conceptKeys.TryGetValue(compositeKey, out key);
-				concept = new Concept
-				{
-					Key = key
-				};
-			}
-
-			return concept;
-		}
-
-		/// <summary>
-		/// Maps the contact point.
-		/// </summary>
-		/// <param name="addressUseKey">The address use key.</param>
-		/// <param name="contactPoint">The contact point.</param>
-		/// <returns>Returns an entity telecom address.</returns>
-		private static EntityTelecomAddress MapContactPoint(Guid addressUseKey, contactPoint contactPoint)
-		{
-			var concept = MapCodedType(contactPoint.codedType.code, contactPoint.codedType.codingScheme);
-
-			var entityTelecomAddress = new EntityTelecomAddress(addressUseKey, contactPoint.codedType.Value);
-
-			if (concept == null)
-			{
-				ShowWarningOnNotFound($"Warning, unable to map telecommunications use, no related concept found for code: {contactPoint.codedType.code} using scheme: {contactPoint.codedType.codingScheme}", nameof(TelecomAddressUseKeys.Public), TelecomAddressUseKeys.Public);
-			}
-			else
-			{
-				entityTelecomAddress.AddressUseKey = concept.Key;
-			}
-
-			return entityTelecomAddress;
-		}
-
-		/// <summary>
-		/// Maps the entity address.
-		/// </summary>
-		/// <param name="address">The address.</param>
-		/// <param name="codeSystem">The code system.</param>
-		/// <returns>Returns an entity address.</returns>
-		/// <exception cref="System.InvalidOperationException">
-		/// Unable to map address use
-		/// -or-
-		/// Unable to map address component</exception>
-		private static EntityAddress MapEntityAddress(address address, Uri codeSystem)
-		{
-			var entityAddress = new EntityAddress
-			{
-				AddressUseKey = AddressUseKeys.Public
-			};
-
-			if (address.type != null)
-			{
-				var addressUseConcept = MapCodedType(address.type, codeSystem.ToString());
-
-				if (addressUseConcept == null)
-				{
-					ShowWarningOnNotFound($"Warning, unable to map address use, no related concept found for code: {address.type}", nameof(AddressUseKeys.Public), AddressUseKeys.Public);
-					entityAddress.AddressUseKey = AddressUseKeys.Public;
-				}
-				else
-				{
-					entityAddress.AddressUseKey = addressUseConcept.Key;
-				}
-			}
-
-			if (address.addressLine?.Any() != true)
-			{
-				ShowWarningMessage("Warning, address has no address components, this may affect the import process");
-
-				return entityAddress;
-			}
-
-			entityAddress.Component = address.addressLine.Select(c => MapEntityAddressComponent(c, new Uri(AddressComponentCodeSystem))).ToList();
-
-			return entityAddress;
-		}
-
-		/// <summary>
-		/// Maps the entity address component.
-		/// </summary>
-		/// <param name="addressComponent">The address component.</param>
-		/// <param name="codeSystem">The code system.</param>
-		/// <returns>Returns the mapped entity address component.</returns>
-		private static EntityAddressComponent MapEntityAddressComponent(addressAddressLine addressComponent, Uri codeSystem)
-		{
-			var conceptService = ApplicationContext.Current.GetConceptService();
-
-			var entityAddressComponent = new EntityAddressComponent
-			{
-				Value = addressComponent.Value
-			};
-
-			var addressComponentConcept = conceptService.FindConceptsByReferenceTerm(addressComponent.component, codeSystem).FirstOrDefault();
-
-			if (addressComponentConcept == null)
-			{
-				ShowWarningOnNotFound($"Warning, unable to map address component, no related concept found for code: {addressComponent.component}", nameof(AddressComponentKeys.CensusTract), AddressComponentKeys.CensusTract);
-				entityAddressComponent.ComponentTypeKey = AddressComponentKeys.CensusTract;
-			}
-			else
-			{
-				entityAddressComponent.ComponentTypeKey = addressComponentConcept.Key;
-			}
-
-			return entityAddressComponent;
-		}
-
-		/// <summary>
-		/// Maps the entity extension.
-		/// </summary>
-		/// <param name="extensionUrl">The extension URL.</param>
-		/// <param name="value">The value.</param>
-		/// <returns>Returns an entity extension.</returns>
-		/// <exception cref="System.InvalidOperationException">Unable to locate extension type</exception>
-		private static EntityExtension MapEntityExtension(string extensionUrl, string value)
-		{
-			var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-
-			var extensionType = extensionTypeService.GetExtensionType(new Uri(extensionUrl));
-
-			if (extensionType == null)
-			{
-				ShowErrorOnNotFound($"Error, {emergencyMessage} Unable to locate extension type: {extensionUrl}, has this been added to the OpenIZ extension types list?");
-			}
-
-			return new EntityExtension(extensionType.Key.Value, extensionType.ExtensionHandler, value);
-		}
-
-		/// <summary>
-		/// Maps the entity identifier.
-		/// </summary>
-		/// <param name="otherId">The other identifier.</param>
-		/// <returns>Returns an entity identifier.</returns>
-		private static EntityIdentifier MapEntityIdentifier(otherID otherId)
-		{
-			return new EntityIdentifier(MapAssigningAuthority(otherId), otherId.Value);
-		}
-
-		/// <summary>
-		/// Maps the name of the entity.
-		/// </summary>
-		/// <param name="nameUseKey">The name use key.</param>
-		/// <param name="organizationName">Name of the organization.</param>
-		/// <returns>Returns an entity name.</returns>
-		private static EntityName MapEntityNameOrganization(Guid nameUseKey, organizationOtherName organizationName)
-		{
-			return new EntityName(nameUseKey, organizationName.Value);
-		}
-
-		/// <summary>
-		/// Maps the entity name person.
-		/// </summary>
-		/// <param name="nameUseKey">The name use key.</param>
-		/// <param name="personName">Name of the person.</param>
-		/// <returns>EntityName.</returns>
-		private static EntityName MapEntityNamePerson(Guid nameUseKey, personName personName)
-		{
-			var entityName = new EntityName(nameUseKey, personName.surname, personName.forename);
-
-			if (personName.honorific != null)
-			{
-				entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Title, personName.honorific));
-			}
-
-			if (personName.suffix != null)
-			{
-				entityName.Component.Add(new EntityNameComponent(NameComponentKeys.Suffix, personName.suffix));
-			}
-
-			return entityName;
-		}
-
-		/// <summary>
-		/// Maps the entity relationship organization contact.
-		/// </summary>
-		/// <param name="contact">The contact.</param>
-		/// <returns>Returns the mapped entity relationship from an organization contact instance.</returns>
-		private static EntityRelationship MapEntityRelationshipOrganizationContact(organizationContact contact)
-		{
-			EntityRelationship entityRelationship = null;
-
-			if (contact.Item.GetType() == typeof(uniqueID))
-			{
-				var csdProvider = contact.Item as uniqueID;
-
-				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID);
-
-				entityRelationship = new EntityRelationship(EntityRelationshipTypeKeys.Contact, provider);
-			}
-			else if (contact.Item.GetType() == typeof(person))
-			{
-				var csdPerson = contact.Item as person;
-
-				var personService = ApplicationContext.Current.GetService<IPersonRepositoryService>();
-
-				// TODO: fix to search the person by address, name, date of birth, and gender, to find an existing person before creating a new one
-				// we are creating a new person here, because the person class in CSD doesn't have an entityID
-				// property for us to use to lookup the person to see if they exist.
-				var person = new Person
-				{
-					Addresses = csdPerson.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
-					Key = Guid.NewGuid()
-				};
-
-				if (csdPerson.dateOfBirthSpecified)
-				{
-					person.DateOfBirth = csdPerson.dateOfBirth;
-				}
-
-				// map names
-				if (csdPerson.name?.Any() == true)
-				{
-					person.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
-					person.Names.AddRange(csdPerson.name.Select(c => MapEntityNamePerson(NameUseKeys.OfficialRecord, c)));
-				}
-
-				// map telecommunications
-				if (csdPerson.contactPoint?.Any() == true)
-				{
-					person.Telecoms.RemoveAll(c => c.AddressUseKey == TelecomAddressUseKeys.Public);
-					person.Telecoms.AddRange(csdPerson.contactPoint?.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c)));
-				}
-
-				entityRelationship = new EntityRelationship(EntityRelationshipTypeKeys.Contact, person);
-			}
-			else
-			{
-				ShowErrorOnNotFound($"Error, {emergencyMessage} {nameof(organizationContact.Item)} is not of type: {nameof(person)} or {nameof(uniqueID)}");
-			}
-
-			return entityRelationship;
-		}
-
-		/// <summary>
-		/// Maps the language communication.
-		/// </summary>
-		/// <param name="language">The language.</param>
-		/// <returns>Returns a person language communication.</returns>
-		private static PersonLanguageCommunication MapLanguageCommunication(codedtype language)
-		{
-			var concept = MapCodedType(language.code, "urn:ietf:bcp:47");
-
-			// if not found using code, attempt lookup by language value
-			if (concept == null)
-			{
-				ShowWarningMessage($"Warning, language not found using code: {language.code} will attempt lookup using: {language.Value}");
-
-				concept = MapCodedType(language.Value, "urn:ietf:bcp:47");
-			}
-
-			PersonLanguageCommunication personLanguageCommunication = null;
-
-			if (concept != null)
-			{
-				personLanguageCommunication = new PersonLanguageCommunication(concept.Mnemonic, false);
-			}
-			else
-			{
-				ShowErrorOnNotFound($"Error, {emergencyMessage} language not found using code: {language.code} or using value: {language.Value}");
-			}
-
-			return personLanguageCommunication;
-		}
-
-		/// <summary>
-		/// Maps the status code.
-		/// </summary>
-		/// <param name="code">The code.</param>
-		/// <param name="codeSystem">The code system.</param>
-		/// <returns>Returns a status key.</returns>
-		/// <exception cref="System.InvalidOperationException">IConceptRepositoryService</exception>
-		private static Guid? MapStatusCode(string code, string codeSystem)
-		{
-			if (code == null)
-			{
-				throw new ArgumentNullException(nameof(code), "Value cannot be null");
-			}
-
-			if (codeSystem == null)
-			{
-				throw new ArgumentNullException(nameof(codeSystem), "Value cannot be null");
-			}
-
-			var conceptService = ApplicationContext.Current.GetConceptService();
-
-			return conceptService.FindConceptsByReferenceTerm(code, new Uri(codeSystem)).FirstOrDefault()?.Key;
-		}
-
-		/// <summary>
 		/// Reconciles the versioned associations.
 		/// </summary>
-		/// <param name="existingAddresses">The existing addresses.</param>
-		/// <param name="newAddresses">The new addresses.</param>
-		/// <returns>System.Collections.Generic.IEnumerable&lt;OpenIZ.Core.Model.VersionedAssociation&lt;OpenIZ.Core.Model.Entities.Entity&gt;&gt;.</returns>
-		private static IEnumerable<VersionedAssociation<Entity>> ReconcileVersionedAssociations(IEnumerable<VersionedAssociation<Entity>> existingAddresses, IEnumerable<VersionedAssociation<Entity>> newAddresses)
+		/// <param name="existingAssociations">The existing associations.</param>
+		/// <param name="newAssociations">The new associations.</param>
+		/// <returns>Returns a list of version association items which are new, i.e. not a part of the existing associations.</returns>
+		private static IEnumerable<VersionedAssociation<Entity>> ReconcileVersionedAssociations(IEnumerable<VersionedAssociation<Entity>> existingAssociations, IEnumerable<VersionedAssociation<Entity>> newAssociations)
 		{
-			return (from address
-					in newAddresses
-					from organizationAddress
-					in existingAddresses
-					where !organizationAddress.SemanticEquals(address)
-					select address).ToList();
+			// if there are no existing associations, we can just return the new associations, as items to be added
+			if (!existingAssociations.Any())
+			{
+				return newAssociations;
+			}
+
+			// if there are no new associations, we can just return the empty list of new associations
+			if (!newAssociations.Any())
+			{
+				return newAssociations;
+			}
+
+			return (from newAssociation
+					in newAssociations
+					from existingAssociation
+					in existingAssociations
+					where !existingAssociation.SemanticEquals(newAssociation)
+					select newAssociation).ToList();
 		}
 
 		/// <summary>
@@ -761,7 +384,7 @@ namespace OizDevTool
 		/// <summary>
 		/// Represents CSD options.
 		/// </summary>
-		internal class CsdOptions
+		private class CsdOptions
 		{
 			/// <summary>
 			/// Gets or sets the file.
@@ -807,13 +430,13 @@ namespace OizDevTool
 		/// Gets or sets the first key.
 		/// </summary>
 		/// <value>The first key.</value>
-		public string FirstKey { get; set; }
+		public string FirstKey { get; }
 
 		/// <summary>
 		/// Gets or sets the second key.
 		/// </summary>
 		/// <value>The second key.</value>
-		public string SecondKey { get; set; }
+		public string SecondKey { get; }
 
 		/// <summary>
 		/// Implements the != operator.
@@ -866,46 +489,6 @@ namespace OizDevTool
 		public override int GetHashCode()
 		{
 			return this.FirstKey.GetHashCode() ^ this.SecondKey.GetHashCode();
-		}
-	}
-
-	/// <summary>
-	/// Represents an entity comparer to sort based on parent relationships, inorder to preserve the hierarchy is one exists.
-	/// </summary>
-	/// <seealso cref="Entity" />
-	internal class EntityComparer : IComparer<Entity>
-	{
-		/// <summary>
-		/// Compares the specified left.
-		/// </summary>
-		/// <param name="left">The left.</param>
-		/// <param name="right">The right.</param>
-		/// <returns>System.Int32.</returns>
-		public int Compare(Entity left, Entity right)
-		{
-			var result = 0;
-
-			Console.WriteLine($"Comparing: {left.Key} to {right.Key}");
-
-			// don't move position
-			if (left.Key == right.Key)
-			{
-				return result;
-			}
-
-			// if I have no relationships, or the next entries relationship of type parent's target is me, move up
-			if (left.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.Parent) ||
-				right.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent && r.TargetEntityKey == left.Key))
-			{
-				result = 1;
-			}
-			// if I am the next entries target, move down
-			else if (left.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent && r.TargetEntityKey == right.Key))
-			{
-				result = -1;
-			}
-
-			return result;
 		}
 	}
 }

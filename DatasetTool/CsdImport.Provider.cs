@@ -143,7 +143,9 @@ namespace OizDevTool
 
 				providers.Add(provider);
 
+				Console.ForegroundColor = ConsoleColor.Magenta;
 				Console.WriteLine($"Mapped provider: {provider.Key.Value} {string.Join(" ", provider.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+				Console.ResetColor();
 			}
 
 			return providers;
