@@ -234,7 +234,7 @@ namespace OizDevTool
 
 				Console.WriteLine("Importing data directly into the database...");
 
-				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Rollback);
+				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
 				Console.WriteLine("The CSD live import is now complete");
 			}
