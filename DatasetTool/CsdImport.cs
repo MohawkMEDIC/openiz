@@ -101,7 +101,7 @@ namespace OizDevTool
 		{
 			ApplicationContext.Current.Start();
 
-			Console.WriteLine("Adding service providers...");
+			ShowInfoMessage("Adding service providers...");
 
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalEntityRepositoryService));
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalMetadataRepositoryService));
@@ -124,11 +124,11 @@ namespace OizDevTool
 
 			var fileInfo = new FileInfo(parameters.File);
 
-			Console.WriteLine($"Loading file: {fileInfo.Name}...");
+			ShowInfoMessage($"Loading file: {fileInfo.Name}...");
 
 			var csd = (CSD)serializer.Deserialize(new StreamReader(parameters.File));
 
-			Console.WriteLine($"File: {fileInfo.Name} loaded successfully, starting mapping process...");
+			ShowInfoMessage($"File: {fileInfo.Name} loaded successfully, starting mapping process...");
 
 			var stopwatch = new Stopwatch();
 
@@ -172,9 +172,7 @@ namespace OizDevTool
 
 			stopwatch.Stop();
 
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"Mapped {places.Count()} Places, {providers.Count()} Providers, {organizations.Count()} Organizations, and {services.Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-			Console.ResetColor();
+			ShowPerformanceMessage($"Mapped {places.Count()} Places, {providers.Count()} Providers, {organizations.Count()} Organizations, and {services.Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
 
 			var entities = new List<Entity>();
 			var relationships = new List<EntityRelationship>();
@@ -215,15 +213,13 @@ namespace OizDevTool
 				serializer.Serialize(fileStream, csdDatasetInstall);
 			}
 
-			Console.WriteLine($"Dataset file created: {filename}");
+			ShowInfoMessage($"Dataset file created: {filename}");
 
 			if (parameters.Live)
 			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("Warning, the live flag is set to true, data will be imported directly into the database");
-				Console.ResetColor();
+				ShowWarningMessage("Warning, the live flag is set to true, data will be imported directly into the database");
 
-				Console.WriteLine("Starting live import");
+				ShowInfoMessage("Starting live import");
 
 				stopwatch = new Stopwatch();
 				stopwatch.Start();
@@ -235,17 +231,15 @@ namespace OizDevTool
 
 				var bundlePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 
-				Console.WriteLine("Importing data directly into the database...");
+				ShowInfoMessage("Importing data directly into the database...");
 
 				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
-				Console.WriteLine("The CSD live import is now complete");
+				ShowInfoMessage("The CSD live import is now complete");
 
 				stopwatch.Stop();
 
-				Console.ForegroundColor = ConsoleColor.Green;
-				Console.WriteLine($"Imported {bundle.Item.OfType<Place>().Count()} Places, {bundle.Item.OfType<Provider>().Count()} Providers, {bundle.Item.OfType<Organization>().Count()} Organizations, and {bundle.Item.OfType<PlaceService>().Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-				Console.ResetColor();
+				ShowPerformanceMessage($"Imported {bundle.Item.OfType<Place>().Count()} Places, {bundle.Item.OfType<Provider>().Count()} Providers, {bundle.Item.OfType<Organization>().Count()} Organizations, and {bundle.Item.OfType<PlaceService>().Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
 			}
 		}
 
@@ -271,10 +265,7 @@ namespace OizDevTool
 
 			if (totalResults > 1)
 			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine($"Warning, found multiple entities with the same entityID: '{entityId}'");
-				Console.WriteLine($"Will default to: '{entity.Key.Value}' {Environment.NewLine}");
-				Console.ResetColor();
+				ShowWarningMessage($"Warning, found multiple entities with the same entityID: '{entityId}', will default to: '{entity.Key.Value}' {Environment.NewLine}");
 			}
 
 			// if the entity wasn't found, we want to create a new entity
@@ -283,9 +274,7 @@ namespace OizDevTool
 				return (T)entity;
 			}
 
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine("Warning, ENTITY NOT FOUND, will create one");
-			Console.ResetColor();
+			ShowWarningMessage("Warning, ENTITY NOT FOUND, will create one");
 
 			// setup basic properties of the entity instance
 			entity = new T
@@ -322,9 +311,7 @@ namespace OizDevTool
 				return assigningAuthority;
 			}
 
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
-			Console.ResetColor();
+			ShowWarningMessage($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
 
 			// lookup by URL
 			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == otherId.assigningAuthorityName).FirstOrDefault();
@@ -334,16 +321,14 @@ namespace OizDevTool
 				return assigningAuthority;
 			}
 
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine($"Warning, unable to locate assigning authority by URL using value: {otherId.assigningAuthorityName}, will attempt to lookup by OID");
-			Console.ResetColor();
+			ShowWarningMessage($"Warning, unable to locate assigning authority by URL using value: {otherId.assigningAuthorityName}, will attempt to lookup by OID");
 
 			// lookup by OID
 			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Oid == otherId.assigningAuthorityName).FirstOrDefault();
 
 			if (assigningAuthority == null)
 			{
-				ShowExitOnNotFound($"Error, {emergencyMessage} Unable to locate assigning authority using URL or OID. Has {otherId.assigningAuthorityName} been added to the OpenIZ assigning authority list?");
+				ShowErrorOnNotFound($"Error, {emergencyMessage} Unable to locate assigning authority using NSID, URL, or OID. Has {otherId.assigningAuthorityName} been added to the OpenIZ assigning authority list?");
 			}
 
 			return assigningAuthority;
@@ -396,7 +381,7 @@ namespace OizDevTool
 
 				if (concept == null)
 				{
-					ShowExitOnNotFound($"Error, {emergencyMessage} Unable to locate concept using code: {code} and coding scheme: {codingScheme}");
+					ShowErrorOnNotFound($"Error, {emergencyMessage} Unable to locate concept using code: {code} and coding scheme: {codingScheme}");
 				}
 				else
 				{
@@ -474,9 +459,7 @@ namespace OizDevTool
 
 			if (address.addressLine?.Any() != true)
 			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine("Warning, address has no address components, this may affect the import process");
-				Console.ResetColor();
+				ShowWarningMessage("Warning, address has no address components, this may affect the import process");
 
 				return entityAddress;
 			}
@@ -531,7 +514,7 @@ namespace OizDevTool
 
 			if (extensionType == null)
 			{
-				ShowExitOnNotFound($"Error, {emergencyMessage} Unable to locate extension type: {extensionUrl}, has this been added to the OpenIZ extension types list?");
+				ShowErrorOnNotFound($"Error, {emergencyMessage} Unable to locate extension type: {extensionUrl}, has this been added to the OpenIZ extension types list?");
 			}
 
 			return new EntityExtension(extensionType.Key.Value, extensionType.ExtensionHandler, value);
@@ -636,7 +619,7 @@ namespace OizDevTool
 			}
 			else
 			{
-				ShowExitOnNotFound($"Error, {emergencyMessage} {nameof(organizationContact.Item)} is not of type: {nameof(person)} or {nameof(uniqueID)}");
+				ShowErrorOnNotFound($"Error, {emergencyMessage} {nameof(organizationContact.Item)} is not of type: {nameof(person)} or {nameof(uniqueID)}");
 			}
 
 			return entityRelationship;
@@ -654,9 +637,7 @@ namespace OizDevTool
 			// if not found using code, attempt lookup by language value
 			if (concept == null)
 			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.WriteLine($"Warning, language not found using code: {language.code} will attempt lookup using: {language.Value}");
-				Console.ResetColor();
+				ShowWarningMessage($"Warning, language not found using code: {language.code} will attempt lookup using: {language.Value}");
 
 				concept = MapCodedType(language.Value, "urn:ietf:bcp:47");
 			}
@@ -669,7 +650,7 @@ namespace OizDevTool
 			}
 			else
 			{
-				ShowExitOnNotFound($"Error, {emergencyMessage} language not found using code: {language.code} or using value: {language.Value}");
+				ShowErrorOnNotFound($"Error, {emergencyMessage} language not found using code: {language.code} or using value: {language.Value}");
 			}
 
 			return personLanguageCommunication;
@@ -696,11 +677,6 @@ namespace OizDevTool
 
 			var conceptService = ApplicationContext.Current.GetConceptService();
 
-			if (conceptService == null)
-			{
-				throw new InvalidOperationException($"Unable to locate service: {nameof(IConceptRepositoryService)}");
-			}
-
 			return conceptService.FindConceptsByReferenceTerm(code, new Uri(codeSystem)).FirstOrDefault()?.Key;
 		}
 
@@ -724,7 +700,7 @@ namespace OizDevTool
 		/// Exits the application, when an entity is not found.
 		/// </summary>
 		/// <param name="message">The message.</param>
-		private static void ShowExitOnNotFound(string message)
+		private static void ShowErrorOnNotFound(string message)
 		{
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.WriteLine(message);
@@ -741,6 +717,29 @@ namespace OizDevTool
 		private static void ShowInfoMessage(string message)
 		{
 			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.WriteLine($"{message} {Environment.NewLine}");
+			Console.ResetColor();
+		}
+
+		/// <summary>
+		/// Prints a performance message.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		private static void ShowPerformanceMessage(string message)
+		{
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine($"{message} {Environment.NewLine}");
+			Console.ResetColor();
+		}
+
+		/// <summary>
+		/// Prints a warning message.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		private static void ShowWarningMessage(string message)
+		{
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine(message);
 			Console.WriteLine($"{message} {Environment.NewLine}");
 			Console.ResetColor();
 		}
