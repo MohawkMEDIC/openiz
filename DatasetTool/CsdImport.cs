@@ -134,70 +134,47 @@ namespace OizDevTool
 
 			stopwatch.Start();
 
+			// map organizations
 			var organizations = MapOrganizations(csd.organizationDirectory).Select(o => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = o
 			});
 
-			stopwatch.Stop();
-
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"Mapped {organizations.Count()} organizations in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-			Console.ResetColor();
-
-			stopwatch = new Stopwatch();
-			stopwatch.Start();
-
 			actions.AddRange(organizations);
 
+			// map places
 			var places = MapPlaces(csd.facilityDirectory).Select(p => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = p
 			});
 
-			stopwatch.Stop();
-
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"Mapped {places.Count()} places in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-			Console.ResetColor();
-
 			actions.AddRange(places);
 
-			stopwatch = new Stopwatch();
-			stopwatch.Start();
-
+			// map providers
 			var providers = MapProviders(csd.providerDirectory).Select(p => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = p
 			});
 
-			stopwatch.Stop();
-
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"Mapped {providers.Count()} providers in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-			Console.ResetColor();
-
 			actions.AddRange(providers);
 
-			stopwatch = new Stopwatch();
-			stopwatch.Start();
-
+			// map services
 			var services = MapServices(csd.serviceDirectory).Select(s => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = s
 			});
 
+			actions.AddRange(services);
+
 			stopwatch.Stop();
 
 			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"Mapped {services.Count()} services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
+			Console.WriteLine($"Mapped {places.Count()} Places, {providers.Count()} Providers, {organizations.Count()} Organizations, and {services.Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
 			Console.ResetColor();
-
-			actions.AddRange(services);
 
 			var entities = new List<Entity>();
 			var relationships = new List<EntityRelationship>();
