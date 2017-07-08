@@ -223,12 +223,15 @@ namespace OizDevTool
 				Console.WriteLine("Warning, the live flag is set to true, data will be imported directly into the database");
 				Console.ResetColor();
 
+				Console.WriteLine("Starting live import");
+
+				stopwatch = new Stopwatch();
+				stopwatch.Start();
+
 				var bundle = new Bundle
 				{
 					Item = actions.Select(a => a.Element).ToList()
 				};
-
-				Console.WriteLine("Starting live import");
 
 				var bundlePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 
@@ -237,6 +240,12 @@ namespace OizDevTool
 				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
 				Console.WriteLine("The CSD live import is now complete");
+
+				stopwatch.Stop();
+
+				Console.ForegroundColor = ConsoleColor.Green;
+				Console.WriteLine($"Imported {bundle.Item.OfType<Place>().Count()} Places, {bundle.Item.OfType<Provider>().Count()} Providers, {bundle.Item.OfType<Organization>().Count()} Organizations, and {bundle.Item.OfType<PlaceService>().Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
+				Console.ResetColor();
 			}
 		}
 
