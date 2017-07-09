@@ -100,16 +100,20 @@ namespace OizDevTool
 				AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 
 				var patient = GeneratePatient(maxAge, parameters.BarcodeAuth, places, r);
+
+				if (patient == null)
+					return;
+
 				var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
 				// Insert
 				int pPatient = Interlocked.Increment(ref npatients);
 				patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-				Console.WriteLine("Generated Patient #{2:#,###,###}: {0} ({1} mo) [{3}]", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient, places.FirstOrDefault(p=>p.Key == patient.Relationships.FirstOrDefault(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey).Names.FirstOrDefault().ToString());
+				Console.WriteLine("Generated Patient #{2:#,###,###}: {0} ({1} mo) [{3}]", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient, places.FirstOrDefault(p => p.Key == patient.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey).Names.FirstOrDefault().ToString());
 
 				// Schedule
 				if (!parameters.PatientOnly)
 				{
-					var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now).Select(o=>o.Copy() as Act);
+					var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now).Select(o => o.Copy() as Act);
 
 					Bundle bundle = new Bundle();
 
@@ -119,20 +123,20 @@ namespace OizDevTool
 						act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
 						act.StatusConceptKey = StatusKeys.Completed;
 						act.ActTime = act.ActTime.AddDays(r.Next(0, 5));
-                        act.StartTime = null;
-                        act.StopTime = null;
+						act.StartTime = null;
+						act.StopTime = null;
 						if (act is QuantityObservation)
 							(act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
-                        else
-                        {
-                            act.Tags.AddRange(new ActTag[]
-                            {
-                                new ActTag("catchmentIndicator", "True"),
-                                new ActTag("hasRunAdjustment", "True")
-                            });
-                            act.Participations.Add(new ActParticipation(ActParticipationKey.Location, patient.Relationships.First(l => l.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey));
-                        }
-                        
+						else
+						{
+							act.Tags.AddRange(new ActTag[]
+							{
+								new ActTag("catchmentIndicator", "True"),
+								new ActTag("hasRunAdjustment", "True")
+							});
+							act.Participations.Add(new ActParticipation(ActParticipationKey.Location, patient.Relationships.First(l => l.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey));
+						}
+
 						// Persist the act
 						bundle.Item.Add(act);
 					}
@@ -213,7 +217,7 @@ namespace OizDevTool
 		/// </summary>
 		internal static Patient GeneratePatient(int maxAge, string barcodeAuth, IEnumerable<Place> places, Random r)
 		{
-			Person mother = new Person()
+			var mother = new Person()
 			{
 				Key = Guid.NewGuid(),
 				Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, SeedData.SeedData.Current.PickRandomFamilyName(), SeedData.SeedData.Current.PickRandomGivenName("Female").Name) },
@@ -221,21 +225,37 @@ namespace OizDevTool
 				Identifiers = new List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>() { new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("NID", "National Identifier", "1.2.3.4.5.6"), BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0).ToString()) }
 			};
 
-			String gender = BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 1) % 2 == 0 ? "Male" : "Female";
+			var gender = BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 1) % 2 == 0 ? "Male" : "Female";
 
-			var villageId = places.Where(o => o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation).OrderBy(o => r.Next()).FirstOrDefault().Addresses.First();
-			var addr = new EntityAddress();
-			addr.AddressUseKey = AddressUseKeys.HomeAddress;
-			addr.Component = new List<EntityAddressComponent>(villageId.Component.Select(o => new EntityAddressComponent(o.ComponentTypeKey.Value, o.Value)));
+			EntityAddress address = null;
+
+			try
+			{
+				var villageId = places.Where(o => o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation).OrderBy(o => r.Next()).FirstOrDefault().Addresses.First();
+				address = new EntityAddress
+				{
+					AddressUseKey = AddressUseKeys.HomeAddress,
+					Component = new List<EntityAddressComponent>(villageId.Component.Select(o => new EntityAddressComponent(o.ComponentTypeKey.Value, o.Value)))
+				};
+			}
+			catch
+			{
+				Console.WriteLine("Unable to determine address for patient");
+			}
+
+
 			// Child
 			Patient child = new Patient()
 			{
 				Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, mother.Names[0].Component[0].Value, SeedData.SeedData.Current.PickRandomGivenName(gender).Name, SeedData.SeedData.Current.PickRandomGivenName(gender).Name) },
 				DateOfBirth = DateTime.Now.AddDays(-Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0) % maxAge)),
-				Addresses = new List<EntityAddress>() { addr },
 				GenderConcept = new Concept() { Mnemonic = gender },
 				Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").Substring(0, 10)) }
 			};
+
+			if (address != null)
+				child.Addresses.Add(address);
+
 			// Associate
 			child.Relationships = new List<EntityRelationship>() {
 				new EntityRelationship(EntityRelationshipTypeKeys.Mother, mother),

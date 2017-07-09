@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2016-8-2
  */
+
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Interop;
@@ -96,13 +97,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	public interface IAmiContract
 	{
-
-        /// <summary>
-        /// Ping the service to determine up/down
-        /// </summary>
-        [WebInvoke(UriTemplate = "/", Method = "PING")]
-        void Ping();
-
 		/// <summary>
 		/// Accepts a certificate signing request.
 		/// </summary>
@@ -251,20 +245,20 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		CodeSystem DeleteCodeSystem(string codeSystemId);
 
 		/// <summary>
-		/// Deletes the type of the extension.
-		/// </summary>
-		/// <param name="extensionTypeId">The extension type identifier.</param>
-		/// <returns>Returns the deleted extension type.</returns>
-		[WebInvoke(UriTemplate = "/extensionType/{extensionTypeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
-		ExtensionType DeleteExtensionType(string extensionTypeId);
-
-		/// <summary>
 		/// Deletes a device.
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be deleted.</param>
 		/// <returns>Returns the deleted device.</returns>
 		[WebInvoke(UriTemplate = "/device/{deviceId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
 		SecurityDeviceInfo DeleteDevice(string deviceId);
+
+		/// <summary>
+		/// Deletes the type of the extension.
+		/// </summary>
+		/// <param name="extensionTypeId">The extension type identifier.</param>
+		/// <returns>Returns the deleted extension type.</returns>
+		[WebInvoke(UriTemplate = "/extensionType/{extensionTypeId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "DELETE")]
+		ExtensionType DeleteExtensionType(string extensionTypeId);
 
 		/// <summary>
 		/// Deletes a security policy.
@@ -514,6 +508,12 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		IdentifiedData Options();
 
 		/// <summary>
+		/// Ping the service to determine up/down
+		/// </summary>
+		[WebInvoke(UriTemplate = "/", Method = "PING")]
+		void Ping();
+
+		/// <summary>
 		/// Rejects a specified certificate signing request.
 		/// </summary>
 		/// <param name="certId">The id of the certificate signing request to be rejected.</param>
@@ -626,14 +626,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
 
-        #region Auditing
+		#region Auditing
 
-        /// <summary>
-        /// Create audit in the IMS' audit repository
-        /// </summary>
-        [WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-        void CreateAudit(AuditInfo audit);
-        
-        #endregion
-    }
+		/// <summary>
+		/// Create audit in the IMS' audit repository
+		/// </summary>
+		[WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		void CreateAudit(AuditInfo audit);
+
+		#endregion Auditing
+	}
 }

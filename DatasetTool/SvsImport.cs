@@ -1,71 +1,55 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2017-4-10
  */
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+
 using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Persistence;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace OizDevTool
 {
 	/// <summary>
 	/// Represents a shared value set import.
 	/// </summary>
-    [Description("Tooling for import IHE Shared Value Sets (SVS) files")]
+	[Description("Tooling for import IHE Shared Value Sets (SVS) files")]
 	public class SvsImport
 	{
 		/// <summary>
-		/// Represents SVS import options.
+		/// Initializes a new instance of the <see cref="SvsImport"/> class.
 		/// </summary>
-		internal class SvsOptions
-        {
-            /// <summary>
-            /// Gets or sets the file.
-            /// </summary>
-            [Parameter("file")]
-            [Description("The SVS file to be imported")]
-            public string File { get; set; }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SvsImport"/> class.
-        /// </summary>
-        public SvsImport()
+		public SvsImport()
 		{
-			
 		}
 
 		/// <summary>
 		/// Imports the SVS.
 		/// </summary>
 		/// <param name="args">The arguments.</param>
-        [Description("Imports an SVS file and generates the related DataSet file")]
-        [ParameterClass(typeof(SvsOptions))]
-        public static void ImportSvs(string[] args)
+		[Description("Imports an SVS file and generates the related DataSet file")]
+		[ParameterClass(typeof(SvsOptions))]
+		public static void ImportSvs(string[] args)
 		{
 			var parameters = new ParameterParser<SvsOptions>().Parse(args);
 
@@ -92,9 +76,10 @@ namespace OizDevTool
 					VersionText = svs.ValueSet.version
 				};
 
-				svsDatasetInstall.Action.Add(new DataInsert
+				svsDatasetInstall.Action.Add(new DataUpdate
 				{
-					Element = codeSystem
+					Element = codeSystem,
+					InsertIfNotExists = true
 				});
 
 				foreach (var cpt in conceptListType.Concept)
@@ -110,9 +95,10 @@ namespace OizDevTool
 						Mnemonic = cpt.code
 					};
 
-					svsDatasetInstall.Action.Add(new DataInsert
+					svsDatasetInstall.Action.Add(new DataUpdate
 					{
-						Element = referenceTerm
+						Element = referenceTerm,
+						InsertIfNotExists = true
 					});
 
 					var concept = new Concept
@@ -132,9 +118,10 @@ namespace OizDevTool
 						StatusConceptKey = StatusKeys.Active
 					};
 
-					svsDatasetInstall.Action.Add(new DataInsert
+					svsDatasetInstall.Action.Add(new DataUpdate
 					{
-						Element = concept
+						Element = concept,
+						InsertIfNotExists = true
 					});
 				}
 			}
@@ -146,6 +133,18 @@ namespace OizDevTool
 				serializer.Serialize(fileStream, svsDatasetInstall);
 			}
 		}
-	}
 
+		/// <summary>
+		/// Represents SVS import options.
+		/// </summary>
+		internal class SvsOptions
+		{
+			/// <summary>
+			/// Gets or sets the file.
+			/// </summary>
+			[Parameter("file")]
+			[Description("The SVS file to be imported")]
+			public string File { get; set; }
+		}
+	}
 }

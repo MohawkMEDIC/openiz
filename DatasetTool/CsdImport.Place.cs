@@ -1,32 +1,29 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2017-7-6
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using MARC.HI.EHRS.SVC.Core;
-using MARC.HI.EHRS.SVC.Core.Data;
-using MARC.HI.EHRS.SVC.Core.Services;
+
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
-using OpenIZ.Core.Security;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace OizDevTool
 {
@@ -40,75 +37,79 @@ namespace OizDevTool
 		/// </summary>
 		/// <param name="csdFacilities">The CSD facilities.</param>
 		/// <returns>Returns a list of places.</returns>
-		private static IEnumerable<Place> MapPlaces(IEnumerable<facility> csdFacilities)
+		private static IEnumerable<Entity> MapPlaces(IEnumerable<facility> csdFacilities)
 		{
-			var placeService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
-			var places = new List<Place>();
+			var places = new List<Entity>();
 
 			foreach (var facility in csdFacilities)
 			{
-				var key = Guid.NewGuid();
+				var place = GetOrCreateEntity<Place>(facility.entityID);
 
-				int totalResults;
-
-				// try get existing
-				var place = placeService.Query(c => c.Identifiers.Any(i => i.Value == facility.entityID), 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
-
-				if (place == null)
+				// map addresses
+				if (facility.address?.Any() == true)
 				{
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"Place not found using key: {key}, will create one {Environment.NewLine}");
-					Console.ResetColor();
+					ShowInfoMessage("Mapping place addresses...");
 
-					place = new Place
-					{
-						Addresses = facility.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem))).ToList() ?? new List<EntityAddress>(),
-						CreationTime = facility.record?.created ?? DateTimeOffset.Now,
-						Extensions = facility.extension?.Select(e => MapEntityExtension(e.urn, e.type)).ToList() ?? new List<EntityExtension>(),
-						Identifiers = facility.otherID?.Select(MapEntityIdentifier).ToList() ?? new List<EntityIdentifier>(),
-						Key = key,
-						StatusConceptKey = facility.record?.status != null ? MapStatusCode(facility.record?.status, "http://openiz.org/csd/CSD-FacilityStatusCode") : StatusKeys.Active,
-						Tags = new List<EntityTag>
-						{
-							new EntityTag(ImportedDataTag, "true")
-						}
-					};
-				}
-				else
-				{
-					Console.ForegroundColor = ConsoleColor.Cyan;
-					Console.WriteLine($"Place found using key: {key}, will reset basic properties {Environment.NewLine}");
-					Console.ResetColor();
+					var addresses = ReconcileVersionedAssociations(place.Addresses, facility.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem)))).Cast<EntityAddress>();
 
-					// reset basic properties
-					place.CreationTime = DateTimeOffset.Now;
-					place.PreviousVersion = null;
-					place.VersionKey = null;
-					place.VersionSequence = null;
+					place.Addresses.AddRange(addresses);
 				}
 
 				// map latitude
 				if (facility.geocode?.latitude != null)
 				{
+					ShowInfoMessage("Mapping place latitude...");
+
 					place.Lat = Convert.ToDouble(facility.geocode.latitude);
 				}
 
 				// map longitude
 				if (facility.geocode?.longitude != null)
 				{
+					ShowInfoMessage("Mapping place longitude...");
+
 					place.Lng = Convert.ToDouble(facility.geocode.longitude);
 				}
+
+				// map extensions
+				if (facility.extension?.Any() == true)
+				{
+					ShowInfoMessage("Mapping place extensions...");
+
+					var extensions = ReconcileVersionedAssociations(place.Extensions, facility.extension.Select(e => MapEntityExtension(e.urn, e.Any.InnerText))).Cast<EntityExtension>();
+
+					place.Extensions.AddRange(extensions);
+				}
+
+				// map identifiers
+				if (facility.otherID?.Any() == true)
+				{
+					ShowInfoMessage("Mapping place identifiers...");
+
+					var identifiers = ReconcileVersionedAssociations(place.Identifiers, facility.otherID.Select(MapEntityIdentifier)).Cast<EntityIdentifier>();
+
+					place.Identifiers.AddRange(identifiers);
+				}
+
+				Entity parent = null;
 
 				// map parent relationships
 				if (facility.parent?.entityID != null)
 				{
+					ShowInfoMessage("Mapping place parent relationships...");
+
 					place.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
-					place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, LookupByEntityId<Place>(facility.parent.entityID)));
+
+					parent = GetOrCreateEntity<Place>(facility.parent.entityID);
+
+					place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
 				}
 
 				// map coded type
 				if (facility.codedType?.Any() == true)
 				{
+					ShowInfoMessage("Mapping place type concept...");
+
 					// we don't support multiple types for a place at the moment, so we only take the first one
 					// TODO: cleanup
 					place.TypeConceptKey = MapCodedType(facility.codedType[0].code, facility.codedType[0].codingScheme)?.Key;
@@ -117,6 +118,8 @@ namespace OizDevTool
 				// map primary name
 				if (facility.primaryName != null)
 				{
+					ShowInfoMessage("Mapping place names...");
+
 					place.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
 					place.Names.Add(new EntityName(NameUseKeys.OfficialRecord, facility.primaryName));
 				}
@@ -124,8 +127,11 @@ namespace OizDevTool
 				// map other names
 				if (facility.otherName?.Any() == true)
 				{
-					place.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.Assigned);
-					place.Names.AddRange(facility.otherName.Select(f => new EntityName(NameUseKeys.Assigned, f.Value)));
+					ShowInfoMessage("Mapping place additional names...");
+
+					var names = ReconcileVersionedAssociations(place.Names, facility.otherName.Select(c => new EntityName(NameUseKeys.Assigned, c.Value))).Cast<EntityName>();
+
+					place.Names.AddRange(names);
 				}
 
 				// map organization relationships
@@ -137,13 +143,41 @@ namespace OizDevTool
 				// map contact points
 				if (facility.contactPoint?.Any() == true)
 				{
-					place.Telecoms.RemoveAll(c => c.AddressUseKey == TelecomAddressUseKeys.Public);
-					place.Telecoms.AddRange(facility.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c)));
+					ShowInfoMessage("Mapping place telecommunications...");
+
+					var telecoms = ReconcileVersionedAssociations(place.Telecoms, facility.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c))).Cast<EntityTelecomAddress>();
+
+					place.Telecoms.AddRange(telecoms);
+				}
+
+				// map status concept
+				if (facility.record?.status != null)
+				{
+					ShowInfoMessage("Mapping place status...");
+
+					place.StatusConceptKey = MapStatusCode(facility.record.status, "http://openiz.org/csd/CSD-FacilityStatusCode");
 				}
 
 				places.Add(place);
 
+				if (parent != null && places.Any(c => c.Identifiers.All(i => i.Value != facility.parent?.entityID)))
+				{
+					places.Add(parent);
+				}
+
+				if (!entityMap.ContainsKey(facility.entityID))
+				{
+					entityMap.Add(facility.entityID, place);
+				}
+
+				if (parent != null && !entityMap.ContainsKey(facility.parent?.entityID))
+				{
+					entityMap.Add(facility.parent.entityID, parent);
+				}
+
+				Console.ForegroundColor = ConsoleColor.Magenta;
 				Console.WriteLine($"Mapped place: {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+				Console.ResetColor();
 			}
 
 			return places;
