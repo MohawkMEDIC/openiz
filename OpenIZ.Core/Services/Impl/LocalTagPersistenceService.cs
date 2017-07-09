@@ -40,6 +40,7 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public void Save(Guid sourceKey, ITag tag)
         {
+            var cache = ApplicationContext.Current.GetService<IDataCachingService>();
 
             if (tag is EntityTag)
             {
@@ -71,6 +72,9 @@ namespace OpenIZ.Core.Services.Impl
                 else
                     idp.Insert(tag as ActTag, AuthenticationContext.Current.Principal, TransactionMode.Commit);
             }
+
+            cache.Remove(sourceKey);
+            
         }
     }
 

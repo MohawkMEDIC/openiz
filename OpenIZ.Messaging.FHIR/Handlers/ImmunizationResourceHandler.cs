@@ -42,43 +42,8 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 	/// <summary>
 	/// Resource handler for immunization classes.
 	/// </summary>
-	public class ImmunizationResourceHandler : ResourceHandlerBase<Immunization, SubstanceAdministration>
+	public class ImmunizationResourceHandler : RepositoryResourceHandlerBase<Immunization, SubstanceAdministration>
 	{
-		/// <summary>
-		/// The repository.
-		/// </summary>
-		private IActRepositoryService repository;
-
-		/// <summary>
-		/// Place resource handler subscription
-		/// </summary>
-		public ImmunizationResourceHandler()
-		{
-			ApplicationContext.Current.Started += (o, e) => this.repository = ApplicationContext.Current.GetService<IActRepositoryService>();
-		}
-
-		/// <summary>
-		/// Create the specified substance administration.
-		/// </summary>
-		/// <param name="modelInstance">The model instance.</param>
-		/// <param name="issues">The issues.</param>
-		/// <param name="mode">The mode.</param>
-		/// <returns>Returns the created model.</returns>
-		protected override SubstanceAdministration Create(SubstanceAdministration modelInstance, List<IResultDetail> issues, MARC.HI.EHRS.SVC.Core.Services.TransactionMode mode)
-		{
-			return this.repository.Insert(modelInstance);
-		}
-
-		/// <summary>
-		/// Delete a substance administration.
-		/// </summary>
-		/// <param name="modelId">The model identifier.</param>
-		/// <param name="details">The details.</param>
-		/// <returns>Returns the deleted model.</returns>
-		protected override SubstanceAdministration Delete(Guid modelId, List<IResultDetail> details)
-		{
-			return this.repository.Obsolete<SubstanceAdministration>(modelId);
-		}
 
 		/// <summary>
 		/// Maps the substance administration to FHIR.
@@ -124,7 +89,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Performer
 			var prf = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Performer);
 			if (prf != null)
-				retVal.Performer = Reference.CreateResourceReference(new Practictioner() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
+				retVal.Performer = Reference.CreateResourceReference(new Practitioner() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
 
 			// Protocol
 			foreach (var itm in model.Protocols)
@@ -141,7 +106,6 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			if (retVal.VaccinationProtocol.Count == 0)
 				retVal.VaccinationProtocol.Add(new ImmunizationProtocol() { DoseSequence = (int)model.SequenceId });
 
-            retVal.Extension = model.Extensions.Select(o => DataTypeConverter.ToExtension(o)).ToList();
 
             var loc = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
             if (loc != null)
@@ -151,18 +115,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                     Value = new FhirString(loc.PlayerEntityKey.ToString())
                 });
 
-            // metadata
-            retVal.Meta = new ResourceMetadata()
-            {
-                LastUpdated = model.ModifiedOn.DateTime,
-                VersionId = model.VersionKey?.ToString(),
-                Profile = new Uri("http://openiz.org/fhir")
-            };
-            retVal.Meta.Tags = model.Tags.Select(o => new FhirCoding(new Uri("http://openiz.org/tags/fhir/" + o.TagKey), o.Value)).ToList();
-            // TODO: Configure this namespace / coding scheme
-            retVal.Meta.Security = model.Policies.Where(o => o.GrantType == Core.Model.Security.PolicyGrantType.Grant).Select(o => new FhirCoding(new Uri("http://openiz.org/security/policy"), o.Policy.Oid)).ToList();
-            retVal.Meta.Security.Add(new FhirCoding(new Uri("http://openiz.org/security/policy"), PermissionPolicyIdentifiers.ReadClinicalData));
-
+           
             return retVal;
 		}
 
@@ -212,7 +165,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <returns>Returns the list of models which match the given parameters.</returns>
 		protected override IEnumerable<SubstanceAdministration> Query(Expression<Func<SubstanceAdministration, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
 		{
-
+            
             Guid initialImmunization = Guid.Parse("f3be6b88-bc8f-4263-a779-86f21ea10a47"),
                 immunization = Guid.Parse("6e7a3521-2967-4c0a-80ec-6c5c197b2178"),
                 boosterImmunization = Guid.Parse("0331e13f-f471-4fbd-92dc-66e0a46239d5");
@@ -229,32 +182,9 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(Expression.AndAlso(obsoletionReference, query.Body), typeReference), query.Parameters);
 
             if (queryId == Guid.Empty)
-                return this.repository.Find(query, offset, count, out totalResults);
+                return this.m_repository.Find(query, offset, count, out totalResults);
             else
-                return (this.repository as IPersistableQueryRepositoryService).Find<SubstanceAdministration>(query, offset, count, out totalResults, queryId);
-		}
-
-		/// <summary>
-		/// Return a substance administration.
-		/// </summary>
-		/// <param name="id">The identifier.</param>
-		/// <param name="details">The details.</param>
-		/// <returns>Returns the model which matches the given id.</returns>
-		protected override SubstanceAdministration Read(Identifier<Guid> id, List<IResultDetail> details)
-		{
-			return this.repository.Get<SubstanceAdministration>(id.Id, id.VersionId);
-		}
-
-		/// <summary>
-		/// Update the specified substance administration.
-		/// </summary>
-		/// <param name="model">The model.</param>
-		/// <param name="details">The details.</param>
-		/// <param name="mode">The mode.</param>
-		/// <returns>Returns the updated model.</returns>
-		protected override SubstanceAdministration Update(SubstanceAdministration model, List<IResultDetail> details, MARC.HI.EHRS.SVC.Core.Services.TransactionMode mode)
-		{
-			return this.repository.Save(model);
+                return (this.m_repository as IPersistableQueryRepositoryService).Find<SubstanceAdministration>(query, offset, count, out totalResults, queryId);
 		}
 	}
 }

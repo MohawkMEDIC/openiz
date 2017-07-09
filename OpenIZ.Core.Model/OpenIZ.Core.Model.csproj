@@ -63,6 +63,7 @@
     <Compile Include="Constants\ActParticipationKey.cs" />
     <Compile Include="Constants\ActReasonKeys.cs" />
     <Compile Include="Constants\ActRelationshipTypeKeys.cs" />
+    <Compile Include="Constants\ObservationTypeKeys.cs" />
     <Compile Include="Constants\AddressKeys.cs" />
     <Compile Include="Constants\CodeSystemKeys.cs" />
     <Compile Include="Constants\ConceptClassKeys.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Constants\DeterminerConceptKeys.cs" />
     <Compile Include="Constants\EntityClassConceptKeys.cs" />
     <Compile Include="Constants\EntityRelationshipTypeKeys.cs" />
+    <Compile Include="Constants\ExtensionTypeKeys.cs" />
     <Compile Include="Constants\NameKeys.cs" />
     <Compile Include="Constants\NullReasonKeys.cs" />
     <Compile Include="Constants\PhoneticAlgorithmKeys.cs" />
@@ -123,6 +125,7 @@
     <Compile Include="Entities\PlaceService.cs" />
     <Compile Include="Exceptions\ModelMapValidationException.cs" />
     <Compile Include="Exceptions\ModelValidationException.cs" />
+    <Compile Include="Extensions\BinaryExtensionHandler.cs" />
     <Compile Include="Extensions\BooleanExtensionHandler.cs" />
     <Compile Include="Extensions\DateExtensionHandler.cs" />
     <Compile Include="Extensions\DecimalExtensionHandler.cs" />
@@ -130,8 +133,10 @@
     <Compile Include="Extensions\StringExtensionHandler.cs" />
     <Compile Include="IdentifiedData.cs" />
     <Compile Include="Interfaces\IBaseEntityData.cs" />
+    <Compile Include="Interfaces\IExtendable.cs" />
     <Compile Include="Interfaces\IExtensionHandler.cs" />
     <Compile Include="Interfaces\IIdentifiedEntity.cs" />
+    <Compile Include="Interfaces\IModelExtension.cs" />
     <Compile Include="Interfaces\ISimpleAssociation.cs" />
     <Compile Include="Interfaces\ISecurable.cs" />
     <Compile Include="Interfaces\ITaggable.cs" />

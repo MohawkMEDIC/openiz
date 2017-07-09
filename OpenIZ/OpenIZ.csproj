@@ -132,6 +132,7 @@
     <None Include="Data\000-AdministrableDrugForm.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\000-CoreExtensionTypes.dataset" />
     <None Include="Data\000-DiagnosisCodes.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>

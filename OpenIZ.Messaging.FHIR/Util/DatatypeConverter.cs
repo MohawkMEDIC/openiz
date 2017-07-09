@@ -34,6 +34,8 @@ using System.ServiceModel.Web;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 using OpenIZ.Core.Model.Acts;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Extensions;
+using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
@@ -69,16 +71,43 @@ namespace OpenIZ.Messaging.FHIR.Util
 			var retVal = new TResource();
 			retVal.Id = resource.Key.ToString();
 			retVal.VersionId = resource.VersionKey.ToString();
-			return retVal;
+
+            // metadata
+            retVal.Meta = new ResourceMetadata()
+            {
+                LastUpdated = (resource as IdentifiedData).ModifiedOn.DateTime,
+                VersionId = resource.VersionKey?.ToString(),
+                Profile = new Uri("http://openiz.org/fhir")
+            };
+            retVal.Meta.Tags = (resource as ITaggable)?.Tags.Select(o => DataTypeConverter.ToFhirTag(o)).ToList();
+            // TODO: Configure this namespace / coding scheme
+            retVal.Meta.Security = (resource as ISecurable)?.Policies.Where(o => o.GrantType == Core.Model.Security.PolicyGrantType.Grant).Select(o => new FhirCoding(new Uri("http://openiz.org/security/policy"), o.Policy.Oid)).ToList();
+            retVal.Meta.Security.Add(new FhirCoding(new Uri("http://openiz.org/security/policy"), PermissionPolicyIdentifiers.ReadClinicalData));
+            retVal.Extension = (resource as IExtendable)?.Extensions.Where(o=>o.ExtensionTypeKey != ExtensionTypeKeys.JpegPhotoExtension).Select(o => DataTypeConverter.ToExtension(o)).ToList();
+            return retVal;
 		}
 
-		/// <summary>
-		/// Converts an <see cref="Extension"/> instance to an <see cref="ActExtension"/> instance.
-		/// </summary>
-		/// <param name="fhirExtension">The FHIR extension.</param>
-		/// <returns>Returns the converted act extension instance.</returns>
-		/// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
-		public static ActExtension ToActExtension(Extension fhirExtension)
+        /// <summary>
+        /// Creates a FHIR tag
+        /// </summary>
+        private static FhirCoding ToFhirTag(ITag o)
+        {
+
+            Uri tagUri = null;
+            if (!Uri.TryCreate(o.TagKey, UriKind.Absolute, out tagUri))
+                return new FhirCoding(new Uri("http://openiz.org/tags/fhir/" + o.TagKey), o.Value);
+            else
+                return new FhirCoding(tagUri, o.Value);
+
+        }
+
+        /// <summary>
+        /// Converts an <see cref="Extension"/> instance to an <see cref="ActExtension"/> instance.
+        /// </summary>
+        /// <param name="fhirExtension">The FHIR extension.</param>
+        /// <returns>Returns the converted act extension instance.</returns>
+        /// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
+        public static ActExtension ToActExtension(Extension fhirExtension)
 		{
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR extension");
 
@@ -92,17 +121,60 @@ namespace OpenIZ.Messaging.FHIR.Util
 			var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
 
 			extension.ExtensionType = extensionTypeService.FindExtensionType(e => e.Name == fhirExtension.Url).FirstOrDefault();
-			//extension.ExtensionValue = fhirExtension.Value;
+            //extension.ExtensionValue = fhirExtension.Value;
+            if (extension.ExtensionType.ExtensionHandler == typeof(DecimalExtensionHandler))
+                extension.ExtensionValue = (fhirExtension.Value as FhirDecimal).Value;
+            else if (extension.ExtensionType.ExtensionHandler == typeof(StringExtensionHandler))
+                extension.ExtensionValue = (fhirExtension.Value as FhirString).Value;
+            else if (extension.ExtensionType.ExtensionHandler == typeof(DateExtensionHandler))
+                extension.ExtensionValue = (fhirExtension.Value as FhirDateTime).Value;
+            else
+                extension.ExtensionValueXml = (fhirExtension.Value as FhirBase64Binary).Value;
 
-			return extension;
+            // Now will 
+            return extension;
 		}
 
-		/// <summary>
-		/// Converts a <see cref="FhirIdentifier"/> instance to an <see cref="ActIdentifier"/> instance.
-		/// </summary>
-		/// <param name="fhirIdentifier">The FHIR identifier.</param>
-		/// <returns>Returns the converted act identifier instance.</returns>
-		public static ActIdentifier ToActIdentifier(FhirIdentifier fhirIdentifier)
+        /// <summary>
+        /// Converts an <see cref="Extension"/> instance to an <see cref="ActExtension"/> instance.
+        /// </summary>
+        /// <param name="fhirExtension">The FHIR extension.</param>
+        /// <returns>Returns the converted act extension instance.</returns>
+        /// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
+        public static EntityExtension ToEntityExtension(Extension fhirExtension)
+        {
+            traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR extension");
+
+            var extension = new EntityExtension();
+
+            if (fhirExtension == null)
+            {
+                throw new ArgumentNullException(nameof(fhirExtension), "Value cannot be null");
+            }
+
+            var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+
+            extension.ExtensionType = extensionTypeService.FindExtensionType(e => e.Name == fhirExtension.Url).FirstOrDefault();
+            //extension.ExtensionValue = fhirExtension.Value;
+            if (extension.ExtensionType.ExtensionHandler == typeof(DecimalExtensionHandler))
+                extension.ExtensionValue = (fhirExtension.Value as FhirDecimal).Value;
+            else if (extension.ExtensionType.ExtensionHandler == typeof(StringExtensionHandler))
+                extension.ExtensionValue = (fhirExtension.Value as FhirString).Value;
+            else if (extension.ExtensionType.ExtensionHandler == typeof(DateExtensionHandler))
+                extension.ExtensionValue = (fhirExtension.Value as FhirDateTime).Value;
+            else
+                extension.ExtensionValueXml = (fhirExtension.Value as FhirBase64Binary).Value;
+
+            // Now will 
+            return extension;
+        }
+
+        /// <summary>
+        /// Converts a <see cref="FhirIdentifier"/> instance to an <see cref="ActIdentifier"/> instance.
+        /// </summary>
+        /// <param name="fhirIdentifier">The FHIR identifier.</param>
+        /// <returns>Returns the converted act identifier instance.</returns>
+        public static ActIdentifier ToActIdentifier(FhirIdentifier fhirIdentifier)
 		{
 			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR identifier");
 
@@ -169,24 +241,28 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// <summary>
         /// Act Extension to Fhir Extension
         /// </summary>
-        public static Extension ToExtension(ActExtension ext)
+        public static Extension ToExtension(IModelExtension ext)
         {
+
+            var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
+            var eType = extensionTypeService.GetExtensionType(ext.ExtensionTypeKey);
+
             var retVal = new Extension()
             {
-                Url = ext.LoadProperty<ExtensionType>(nameof(ActExtension.ExtensionType)).Name
+                Url = eType.Name
             };
 
-            if (ext.ExtensionValue is Decimal)
-                retVal.Value = new FhirDecimal((Decimal)ext.ExtensionValue);
-            else if (ext.ExtensionValue is String)
-                retVal.Value = new FhirString((String)ext.ExtensionValue);
-            else if (ext.ExtensionValue is Boolean)
-                retVal.Value = new FhirBoolean((bool)ext.ExtensionValue);
+            if (ext.Value is Decimal)
+                retVal.Value = new FhirDecimal((Decimal)ext.Value);
+            else if (ext.Value is String)
+                retVal.Value = new FhirString((String)ext.Value);
+            else if (ext.Value is Boolean)
+                retVal.Value = new FhirBoolean((bool)ext.Value);
             else
-                retVal.Value = new FhirBase64Binary(ext.ExtensionValueXml);
+                retVal.Value = new FhirBase64Binary(ext.Data);
             return retVal;
         }
-
+        
         /// <summary>
         /// Gets the concept via the codeable concept
         /// </summary>
@@ -301,31 +377,6 @@ namespace OpenIZ.Messaging.FHIR.Util
 			}
 
 			return address;
-		}
-
-		/// <summary>
-		/// Converts an <see cref="Extension"/> instance to an <see cref="EntityExtension"/> instance.
-		/// </summary>
-		/// <param name="fhirExtension">The FHIR extension.</param>
-		/// <returns>Returns the converted entity extension instance.</returns>
-		/// <exception cref="System.ArgumentNullException">fhirExtension - Value cannot be null</exception>
-		public static EntityExtension ToEntityExtension(Extension fhirExtension)
-		{
-			traceSource.TraceEvent(TraceEventType.Verbose, 0, "Mapping FHIR extension");
-
-			var extension = new EntityExtension();
-
-			if (fhirExtension == null)
-			{
-				throw new ArgumentNullException(nameof(fhirExtension), "Value cannot be null");
-			}
-
-			var extensionTypeService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
-
-			extension.ExtensionType = extensionTypeService.FindExtensionType(e => e.Name == fhirExtension.Url).FirstOrDefault();
-			//extension.ExtensionValue = fhirExtension.Value;
-
-			return extension;
 		}
 
 		/// <summary>

@@ -24,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Core.Model.Extensions
+namespace OpenIZ.Core.Extensions
 {
     /// <summary>
     /// Date extension handler

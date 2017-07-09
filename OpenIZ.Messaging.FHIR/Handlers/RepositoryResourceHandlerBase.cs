@@ -30,6 +30,10 @@ using OpenIZ.Core.Services;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Acts;
+using System.Reflection;
+using System.Linq;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
@@ -42,7 +46,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
     {
 
         // Repository service model
-        private IRepositoryService<TModel> m_repository;
+        protected IRepositoryService<TModel> m_repository;
 
         /// <summary>
         /// CTOR
@@ -105,6 +109,19 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                 return this.m_repository.Find(query, offset, count, out totalResults);
             else
                 return (this.m_repository as IPersistableQueryRepositoryService).Find<TModel>(query, offset, count, out totalResults, queryId);
+
+        }
+
+        /// <summary>
+        /// Create concept set filter based on act type
+        /// </summary>
+        protected Expression CreateConceptSetFilter(Guid vitalSigns, ParameterExpression queryParameter)
+        {
+            var conceptSetRef = Expression.MakeMemberAccess(Expression.MakeMemberAccess(queryParameter, typeof(Act).GetProperty(nameof(Act))), typeof(Concept).GetProperty(nameof(Concept.ConceptSets)));
+            var lParam = Expression.Parameter(typeof(ConceptSet));
+            var conceptSetFilter = Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(lParam, typeof(ConceptSet).GetProperty(nameof(ConceptSet.Key))), Expression.Constant(ConceptSetKeys.VitalSigns));
+            return Expression.Call((MethodInfo)typeof(Enumerable).GetGenericMethod("Any", new Type[] { typeof(ConceptSet) }, new Type[] { typeof(IEnumerable<ConceptSet>), typeof(Func<ConceptSet, bool>) }), conceptSetRef, Expression.Lambda(conceptSetFilter, lParam));
+
 
         }
     }

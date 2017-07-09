@@ -35,8 +35,8 @@ using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Messaging.GS1.Configuration;
-using OpenIZ.Core.Model.Extensions;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Extensions;
 
 namespace OpenIZ.Messaging.GS1.Wcf
 {

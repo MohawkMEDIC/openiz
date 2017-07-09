@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenIZ.Core.Interfaces;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Model.DataTypes
 {
@@ -38,7 +39,8 @@ namespace OpenIZ.Core.Model.DataTypes
     /// </summary>
     [Classifier(nameof(ExtensionType)), SimpleValue(nameof(ExtensionValueString))]
     [XmlType(Namespace = "http://openiz.org/model"), JsonObject("Extension")]
-    public abstract class Extension<TBoundModel> : VersionedAssociation<TBoundModel> where TBoundModel : VersionedEntityData<TBoundModel>, new()
+    public abstract class Extension<TBoundModel> : 
+        VersionedAssociation<TBoundModel>, IModelExtension where TBoundModel : VersionedEntityData<TBoundModel>, new()
     {
 
 
@@ -156,6 +158,50 @@ namespace OpenIZ.Core.Model.DataTypes
             {
                 this.m_extensionType = value;
                 this.m_extensionTypeKey = value?.Key;
+            }
+        }
+
+        /// <summary>
+        /// Get the type key
+        /// </summary>
+        Guid IModelExtension.ExtensionTypeKey
+        {
+            get
+            {
+                return this.ExtensionTypeKey.Value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the data
+        /// </summary>
+        byte[] IModelExtension.Data
+        {
+            get
+            {
+                return this.ExtensionValueXml;
+            }
+        }
+
+        /// <summary>
+        /// Get the display
+        /// </summary>
+        string IModelExtension.Display
+        {
+            get
+            {
+                return this.ExtensionDisplay;
+            }
+        }
+        
+        /// <summary>
+        /// Get the value of the extension
+        /// </summary>
+        object IModelExtension.Value
+        {
+            get
+            {
+                return this.ExtensionValue;
             }
         }
 

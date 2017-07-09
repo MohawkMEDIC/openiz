@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +33,8 @@ namespace OpenIZ.Core.Model.Interfaces
     {
 
         /// <summary>
-        /// True if the object is masked
+        /// Policies
         /// </summary>
-        void Mask();
+        List<SecurityPolicyInstance> Policies { get; }
     }
 }

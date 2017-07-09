@@ -125,5 +125,31 @@ namespace OpenIZ.Core.Model.Constants
 		/// Telecom address use
 		/// </summary>
 		public static readonly Guid TelecomAddressUse = Guid.Parse("1DABE3E2-44B8-4C45-9102-25EA147E5710");
-	}
+
+        /// <summary>
+        /// Vaccine type codes
+        /// </summary>
+        public static readonly Guid VaccineTypeCodes = Guid.Parse("ab16722f-dcf5-4f5a-9957-8f87dbb390d5");
+
+        /// <summary>
+        /// Vital signs
+        /// </summary>
+        public static readonly Guid VitalSigns = Guid.Parse("c9791a94-7a04-4276-804d-82589b6d0be1");
+
+        /// <summary>
+        /// Problem observations
+        /// </summary>
+        public static readonly Guid ProblemObservations = Guid.Parse("952D89FA-9324-4008-9452-3EB6780B6EA0");
+
+        /// <summary>
+        /// Acts which represent adverse events such as diagnosis of intolerances, etc.
+        /// </summary>
+        public static readonly Guid AdverseEventActs = Guid.Parse("C182B380-2D77-48AA-A128-DFF0231080B6");
+
+        /// <summary>
+        /// Allergy and intolerance types
+        /// </summary>
+        public static readonly Guid AllergyIntoleranceTypes = Guid.Parse("4a3952e0-8998-4020-9da2-6d78b292da69");
+
+    }
 }

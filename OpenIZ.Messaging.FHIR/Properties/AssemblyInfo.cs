@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-8-14
  */
-using MARC.HI.EHRS.SVC.Core.Plugins;
+using MARC.HI.EHRS.SVC.Core.Attributes;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;

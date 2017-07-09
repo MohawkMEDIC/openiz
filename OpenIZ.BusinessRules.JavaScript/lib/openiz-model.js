@@ -9155,6 +9155,10 @@ var OpenIZModel = OpenIZModel || {
          *             There was a cold-storage failure which resulted in the material being unusable.            
          */
         ColdStorageFailure: '06922eac-0cae-49af-a33c-fc7096349e4a',
+        /** 
+        *             Adjustment is the result of a physical count
+        */
+        PhysicalCount: '5edb55a1-723c-46e4-9fee-2c94db20b7ab'
     },  // ActReasonKeys 
     // OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
     /**

@@ -173,7 +173,7 @@ namespace OpenIZ.Messaging.GS1.Model
                     {
                         quantityDespatched = new QuantityType()
                         {
-                            Value = (decimal)orderSentPtcpt.Quantity,
+                            Value = Math.Abs((decimal)orderSentPtcpt.Quantity),
                             measurementUnitCode = quantityCode.Mnemonic ?? "dose", codeListVersion = "UCUM"
                         },
                         quantityAccepted = new QuantityType()
@@ -189,7 +189,7 @@ namespace OpenIZ.Messaging.GS1.Model
                                 receivingConditionCode = new ReceivingConditionCodeType() { Value = "DAMAGED_PRODUCT_OR_CONTAINER" },
                                 receivingConditionQuantity = new QuantityType()
                                 {
-                                    Value = (decimal)(orderSentPtcpt.Quantity - orderReceivePtcpt.Quantity),
+                                    Value = (decimal)(Math.Abs(orderSentPtcpt.Quantity.Value) - orderReceivePtcpt.Quantity),
                                     measurementUnitCode = quantityCode.Mnemonic ?? "dose", codeListVersion = "UCUM"
                                 }
                             },
@@ -305,8 +305,7 @@ namespace OpenIZ.Messaging.GS1.Model
                 throw new ArgumentNullException("tradeItem", "Trade item must have a value");
             else if (String.IsNullOrEmpty(tradeItem.gtin))
                 throw new ArgumentException("Trade item is missing GTIN", "tradeItem");
-            else if (tradeItem.transactionalItemData.Length == 0 || String.IsNullOrEmpty(tradeItem.transactionalItemData[0].lotNumber))
-                throw new ArgumentException("Trade item is missing transactionalItemData for lot number");
+
 
             var oidService = ApplicationContext.Current.GetService<IOidRegistrarService>();
             var gtin = oidService.GetOid("GTIN");

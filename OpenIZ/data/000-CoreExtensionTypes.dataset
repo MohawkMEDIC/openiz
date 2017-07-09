@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dataset xmlns="http://openiz.org/data" id="Core Extension Types">
+  <update insertIfNotExists="true">
+    <ExtensionType xmlns="http://openiz.org/model">
+      <id>77B53CBA-C32F-442B-B7A7-ED08184A0FA5</id>
+      <handlerClass>OpenIZ.Core.Model.Extensions.BinaryExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <name>http://openiz.org/extensions/core/photo</name>
+    </ExtensionType>
+  </update>
+</dataset>

@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Model.Entities
 	[XmlType("Entity", Namespace = "http://openiz.org/model"), JsonObject("Entity")]
 	[XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Entity")]
 	[Classifier(nameof(ClassConcept))]
-	public class Entity : VersionedEntityData<Entity>, ITaggable
+	public class Entity : VersionedEntityData<Entity>, ITaggable, IExtendable
 	{
 
         private TemplateDefinition m_template;
@@ -506,6 +506,9 @@ namespace OpenIZ.Core.Model.Entities
 
         [XmlIgnore, JsonIgnore]
         IEnumerable<ITag> ITaggable.Tags { get { return this.Tags.OfType<ITag>(); } }
+
+        [XmlIgnore, JsonIgnore]
+        IEnumerable<IModelExtension> IExtendable.Extensions { get { return this.Extensions.OfType<IModelExtension>(); } }
 
         /// <summary>
         /// Copies the entity

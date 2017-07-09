@@ -33,13 +33,17 @@ using OpenIZ.Messaging.FHIR.Util;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model;
+using System.Reflection;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
     /// <summary>
     /// Observation handler
     /// </summary>
-    public class ObservationHandler : RepositoryResourceHandlerBase<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, Core.Model.Acts.Observation>
+    public class ObservationResourceHandler : RepositoryResourceHandlerBase<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, Core.Model.Acts.Observation>
     {
         /// <summary>
         /// Map to FHIR
@@ -70,14 +74,12 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             // Performer
             var prf = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Performer);
             if (prf != null)
-                retVal.Performer = Reference.CreateResourceReference(new Practictioner() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
+                retVal.Performer = Reference.CreateResourceReference(new Practitioner() { Id = rct.PlayerEntityKey.ToString() }, webOperationContext.IncomingRequest.UriTemplateMatch.BaseUri);
 
             retVal.Issued = (FhirInstant)model.CreationTime.DateTime;
 
             // Value
             
-            retVal.Extension = model.Extensions.Select(o => DataTypeConverter.ToExtension(o)).ToList();
-
             var loc = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
             if (loc != null)
                 retVal.Extension.Add(new Extension()
@@ -85,19 +87,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                     Url = "http://openiz.org/extensions/act/fhir/location",
                     Value = new FhirString(loc.PlayerEntityKey.ToString())
                 });
-
-            // metadata
-            retVal.Meta = new ResourceMetadata()
-            {
-                LastUpdated = model.ModifiedOn.DateTime,
-                VersionId = model.VersionKey?.ToString(),
-                Profile = new Uri("http://openiz.org/fhir")
-            };
-            retVal.Meta.Tags = model.Tags.Select(o => new FhirCoding(new Uri("http://openiz.org/tags/fhir/" + o.TagKey), o.Value)).ToList();
-            // TODO: Configure this namespace / coding scheme
-            retVal.Meta.Security = model.Policies.Where(o => o.GrantType == Core.Model.Security.PolicyGrantType.Grant).Select(o => new FhirCoding(new Uri("http://openiz.org/security/policy"), o.Policy.Oid)).ToList();
-            retVal.Meta.Security.Add(new FhirCoding(new Uri("http://openiz.org/security/policy"), PermissionPolicyIdentifiers.ReadClinicalData));
-
+            
             return retVal;
         }
 
@@ -107,6 +97,17 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         protected override Core.Model.Acts.Observation MapToModel(MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation resource, WebOperationContext webOperationContext)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Query
+        /// </summary>
+        protected override IEnumerable<Core.Model.Acts.Observation> Query(Expression<Func<Core.Model.Acts.Observation, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
+        {
+            var anyRef = base.CreateConceptSetFilter(ConceptSetKeys.VitalSigns, query.Parameters[0]);
+            query = Expression.Lambda<Func<Core.Model.Acts.Observation, bool>>(Expression.AndAlso(query.Body, anyRef), query.Parameters);
+
+            return base.Query(query, issues, queryId, offset, count, out totalResults);
         }
     }
 }

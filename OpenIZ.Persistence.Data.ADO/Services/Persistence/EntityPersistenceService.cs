@@ -342,7 +342,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 			}
 
             // Relationships
-            if (data.Relationships != null)
+            if (data.Relationships != null) 
                 base.UpdateVersionedAssociatedItems<Core.Model.Entities.EntityRelationship, DbEntityRelationship>(
                    data.Relationships.Where(o => o != null && !o.InversionIndicator && !o.IsEmpty()).ToList(),
                     retVal,
@@ -582,5 +582,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             }
         }
+        
     }
 }

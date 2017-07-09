@@ -85,5 +85,6 @@ namespace OpenIZ.Core.Model.Constants
 		/// The administrative gender code system key.
 		/// </summary>
 		public static readonly Guid AdministrativeGender = Guid.Parse("7a3a7139-b93e-4a99-bd54-749e30fe712a");
-	}
+        
+    }
 }

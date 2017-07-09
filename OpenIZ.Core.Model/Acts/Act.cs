@@ -43,7 +43,7 @@ namespace OpenIZ.Core.Model.Acts
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "Act")]
     [JsonObject("Act")]
     [Classifier(nameof(ClassConcept))]
-    public class Act : VersionedEntityData<Act>, ITaggable
+    public class Act : VersionedEntityData<Act>, ITaggable, ISecurable, IExtendable
     {
 
         private Guid? m_classConceptKey;
@@ -535,6 +535,9 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         [XmlIgnore, JsonIgnore]
         IEnumerable<ITag> ITaggable.Tags { get { return this.Tags.OfType<ITag>(); } }
+
+        [XmlIgnore, JsonIgnore]
+        IEnumerable<IModelExtension> IExtendable.Extensions { get { return this.Extensions.OfType<IModelExtension>(); } }
 
         /// <summary>
         /// Copies the entity

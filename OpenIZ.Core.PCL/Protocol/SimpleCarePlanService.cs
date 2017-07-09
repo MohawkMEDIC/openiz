@@ -286,7 +286,7 @@ namespace OpenIZ.Core.Protocol
                     foreach (var act in new List<Act>(protocolActs).Where(o => o.StartTime.HasValue && o.StopTime.HasValue).OrderBy(o => o.StartTime).OrderBy(o=>o.StopTime - o.StartTime))
                     {
 
-                        act.StopTime = act.StopTime ?? act.ActTime;
+                        //act.StopTime = act.StopTime ?? act.ActTime;
                         // Is there a candidate encounter which is bound by start/end
                         var candidate = encounters.FirstOrDefault(e => (act.StartTime ?? DateTimeOffset.MinValue) <= (e.StopTime ?? DateTimeOffset.MaxValue) 
                             && (act.StopTime ?? DateTimeOffset.MaxValue) >= (e.StartTime ?? DateTimeOffset.MinValue)

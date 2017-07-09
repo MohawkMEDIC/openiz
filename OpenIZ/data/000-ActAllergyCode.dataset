@@ -19,7 +19,7 @@
       <name>
         
         <language>en</language>
-        <value>Allergy To</value>
+        <value>Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -47,7 +47,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Allergy To</value>
+        <value>Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -61,7 +61,7 @@
       <name>
         
         <language>en</language>
-        <value>Other Intolerance To</value>
+        <value>Other Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -89,7 +89,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Other Intolerance To</value>
+        <value>Other Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -103,7 +103,7 @@
       <name>
         
         <language>en</language>
-        <value>Drug Allergy To</value>
+        <value>Drug Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -131,7 +131,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Drug Allergy To</value>
+        <value>Drug Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -145,7 +145,7 @@
       <name>
         
         <language>en</language>
-        <value>Environmental Allergy To</value>
+        <value>Environmental Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -173,7 +173,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Environmental Allergy To</value>
+        <value>Environmental Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -187,7 +187,7 @@
       <name>
         
         <language>en</language>
-        <value>Food Allergy To</value>
+        <value>Food Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -215,7 +215,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Food Allergy To</value>
+        <value>Food Allergy</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -229,7 +229,7 @@
       <name>
         
         <language>en</language>
-        <value>Drug Intolerance To</value>
+        <value>Drug Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -257,7 +257,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Drug Intolerance To</value>
+        <value>Drug Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -271,7 +271,7 @@
       <name>
         
         <language>en</language>
-        <value>Environmental Intolerance To</value>
+        <value>Environmental Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -299,7 +299,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Environmental Intolerance To</value>
+        <value>Environmental Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -313,7 +313,7 @@
       <name>
         
         <language>en</language>
-        <value>Food Intolerance To</value>
+        <value>Food Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -341,7 +341,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Food Intolerance To</value>
+        <value>Food Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -355,7 +355,7 @@
       <name>
         
         <language>en</language>
-        <value>Drug Non-Allergy Intolerance To</value>
+        <value>Drug Non-Allergy Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -383,7 +383,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Drug Non-Allergy Intolerance To</value>
+        <value>Drug Non-Allergy Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -397,7 +397,7 @@
       <name>
         
         <language>en</language>
-        <value>Environmental Non-Allergy Intolerance To</value>
+        <value>Environmental Non-Allergy Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -425,7 +425,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Environmental Non-Allergy Intolerance To</value>
+        <value>Environmental Non-Allergy Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>
@@ -439,7 +439,7 @@
       <name>
         
         <language>en</language>
-        <value>Food Non-Allergy Intolerance To</value>
+        <value>Food Non-Allergy Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </ReferenceTerm>
@@ -467,7 +467,7 @@
         <effectiveVersionSequence xsi:nil="true" />
         <obsoleteVersionSequence xsi:nil="true" />
         <language>en</language>
-        <value>Food Non-Allergy Intolerance To</value>
+        <value>Food Non-Allergy Intolerance</value>
         <phoneticAlgorithm xsi:nil="true" />
       </name>
     </Concept>

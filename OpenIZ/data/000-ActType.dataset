@@ -1,6 +1,60 @@
 <?xml version="1.0"?>
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data" id="Act Types">
   <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>ED9742E5-FA5B-4644-9FB5-2F935ED08B1E</id>
+
+      <name>ICD10CM</name>
+      <oid>2.16.840.1.113883.6.90</oid>
+      <authority>I10CM</authority>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>920A7BF3-2A9D-4219-B803-4CE523BA33D4</id>
+      <mnemonic>Y84.8</mnemonic>
+      <codeSystem>ED9742E5-FA5B-4644-9FB5-2F935ED08B1E</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>A1F8DA31-8F0D-40D4-9361-8E38FC64547C</id>
+      <mnemonic>391103005</mnemonic>
+      <codeSystem>b3030751-d4db-420b-b765-e837607820cd</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Adverse event following complementary therapy</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>0744B6AD-BE39-4A08-B64D-F61CB8282267</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>ActType-AdverseEventFollowingImmunization</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>920A7BF3-2A9D-4219-B803-4CE523BA33D4</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <referenceTerm>
+        <term>A1F8DA31-8F0D-40D4-9361-8E38FC64547C</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Adverse event following immunization AEFI</value>
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
     <Concept xmlns="http://openiz.org/model">
       <id>14d69b32-f6c4-4a49-a527-a74893dbcf4a</id>
       
@@ -24,12 +78,23 @@
   <update insertIfNotExists="true">
     <ConceptSet xmlns="http://openiz.org/model">
       <id>4BE73176-2531-41B8-8A68-2F9D41226A96</id>
-      
       <name>Act Types</name>
       <mnemonic>ActTypeCode</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.1.41</oid>
       <url>http://openiz.org/conceptsets/contrib/ActTypeCode</url>
       <concept>14d69b32-f6c4-4a49-a527-a74893dbcf4a</concept>
+      <concept>0744B6AD-BE39-4A08-B64D-F61CB8282267</concept>
     </ConceptSet>
   </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>C182B380-2D77-48AA-A128-DFF0231080B6</id>
+      <name>Adverse Event Types</name>
+      <mnemonic>AdverseEventTypes</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.1.53</oid>
+      <url>http://openiz.org/conceptsets/contrib/AdverseEventCodes</url>
+      <concept>0744B6AD-BE39-4A08-B64D-F61CB8282267</concept>
+    </ConceptSet>
+  </update>
+
 </dataset>
