@@ -1,25 +1,24 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-14
  */
+
 using MARC.Everest.Connectors;
-using MARC.HI.EHRS.SVC.Core;
-using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
@@ -28,7 +27,6 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
-using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.FHIR.Util;
 using System;
@@ -44,7 +42,6 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 	/// </summary>
 	public class ImmunizationResourceHandler : RepositoryResourceHandlerBase<Immunization, SubstanceAdministration>
 	{
-
 		/// <summary>
 		/// Maps the substance administration to FHIR.
 		/// </summary>
@@ -68,16 +65,16 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 
 			// Material
 			var matPtcpt = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable) ??
-                model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Product);
-            if (matPtcpt != null)
-            {
-                var matl = matPtcpt.LoadProperty<Material>(nameof(ActParticipation.PlayerEntity));
-                retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.LoadProperty<Concept>(nameof(Act.TypeConcept)));
-                retVal.ExpirationDate = matl.ExpiryDate.HasValue ? (FhirDate)matl.ExpiryDate : null;
-                retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
-            }
-            else
-                retVal.ExpirationDate = null;
+				model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Product);
+			if (matPtcpt != null)
+			{
+				var matl = matPtcpt.LoadProperty<Material>(nameof(ActParticipation.PlayerEntity));
+				retVal.VaccineCode = DataTypeConverter.ToFhirCodeableConcept(matl.LoadProperty<Concept>(nameof(Act.TypeConcept)));
+				retVal.ExpirationDate = matl.ExpiryDate.HasValue ? (FhirDate)matl.ExpiryDate : null;
+				retVal.LotNumber = (matl as ManufacturedMaterial)?.LotNumber;
+			}
+			else
+				retVal.ExpirationDate = null;
 
 			// RCT
 			var rct = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
@@ -94,29 +91,26 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Protocol
 			foreach (var itm in model.Protocols)
 			{
-
 				ImmunizationProtocol protocol = new ImmunizationProtocol();
-                var dbProtocol = itm.LoadProperty<Protocol>(nameof(ActProtocol.Protocol));
+				var dbProtocol = itm.LoadProperty<Protocol>(nameof(ActProtocol.Protocol));
 				protocol.DoseSequence = new FhirInt((int)model.SequenceId);
 
-                // Protocol lookup 
-                protocol.Series = dbProtocol?.Name;
+				// Protocol lookup
+				protocol.Series = dbProtocol?.Name;
 				retVal.VaccinationProtocol.Add(protocol);
 			}
 			if (retVal.VaccinationProtocol.Count == 0)
 				retVal.VaccinationProtocol.Add(new ImmunizationProtocol() { DoseSequence = (int)model.SequenceId });
 
+			var loc = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
+			if (loc != null)
+				retVal.Extension.Add(new Extension()
+				{
+					Url = "http://openiz.org/extensions/act/fhir/location",
+					Value = new FhirString(loc.PlayerEntityKey.ToString())
+				});
 
-            var loc = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
-            if (loc != null)
-                retVal.Extension.Add(new Extension()
-                {
-                    Url = "http://openiz.org/extensions/act/fhir/location",
-                    Value = new FhirString(loc.PlayerEntityKey.ToString())
-                });
-
-           
-            return retVal;
+			return retVal;
 		}
 
 		/// <summary>
@@ -165,26 +159,25 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <returns>Returns the list of models which match the given parameters.</returns>
 		protected override IEnumerable<SubstanceAdministration> Query(Expression<Func<SubstanceAdministration, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
 		{
-            
-            Guid initialImmunization = Guid.Parse("f3be6b88-bc8f-4263-a779-86f21ea10a47"),
-                immunization = Guid.Parse("6e7a3521-2967-4c0a-80ec-6c5c197b2178"),
-                boosterImmunization = Guid.Parse("0331e13f-f471-4fbd-92dc-66e0a46239d5");
+			Guid initialImmunization = Guid.Parse("f3be6b88-bc8f-4263-a779-86f21ea10a47"),
+				immunization = Guid.Parse("6e7a3521-2967-4c0a-80ec-6c5c197b2178"),
+				boosterImmunization = Guid.Parse("0331e13f-f471-4fbd-92dc-66e0a46239d5");
 
-            var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
-            var typeReference = Expression.MakeBinary(ExpressionType.Or,
-                Expression.MakeBinary(ExpressionType.Or,
-                    Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.TypeConceptKey))), typeof(Guid)), Expression.Constant(initialImmunization)),
-                    Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.TypeConceptKey))), typeof(Guid)), Expression.Constant(immunization))
-                ),
-                Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.TypeConceptKey))), typeof(Guid)), Expression.Constant(boosterImmunization))
-            );
+			var obsoletionReference = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Completed));
+			var typeReference = Expression.MakeBinary(ExpressionType.Or,
+				Expression.MakeBinary(ExpressionType.Or,
+					Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.TypeConceptKey))), typeof(Guid)), Expression.Constant(initialImmunization)),
+					Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.TypeConceptKey))), typeof(Guid)), Expression.Constant(immunization))
+				),
+				Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(SubstanceAdministration).GetProperty(nameof(SubstanceAdministration.TypeConceptKey))), typeof(Guid)), Expression.Constant(boosterImmunization))
+			);
 
-            query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(Expression.AndAlso(obsoletionReference, query.Body), typeReference), query.Parameters);
+			query = Expression.Lambda<Func<SubstanceAdministration, bool>>(Expression.AndAlso(Expression.AndAlso(obsoletionReference, query.Body), typeReference), query.Parameters);
 
-            if (queryId == Guid.Empty)
-                return this.m_repository.Find(query, offset, count, out totalResults);
-            else
-                return (this.m_repository as IPersistableQueryRepositoryService).Find<SubstanceAdministration>(query, offset, count, out totalResults, queryId);
+			if (queryId == Guid.Empty)
+				return this.m_repository.Find(query, offset, count, out totalResults);
+			else
+				return (this.m_repository as IPersistableQueryRepositoryService).Find<SubstanceAdministration>(query, offset, count, out totalResults, queryId);
 		}
 	}
 }
