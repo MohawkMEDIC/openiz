@@ -217,7 +217,7 @@ namespace OizDevTool
 		/// </summary>
 		internal static Patient GeneratePatient(int maxAge, string barcodeAuth, IEnumerable<Place> places, Random r)
 		{
-			Person mother = new Person()
+			var mother = new Person()
 			{
 				Key = Guid.NewGuid(),
 				Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, SeedData.SeedData.Current.PickRandomFamilyName(), SeedData.SeedData.Current.PickRandomGivenName("Female").Name) },
@@ -225,35 +225,44 @@ namespace OizDevTool
 				Identifiers = new List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>() { new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority("NID", "National Identifier", "1.2.3.4.5.6"), BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0).ToString()) }
 			};
 
-			String gender = BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 1) % 2 == 0 ? "Male" : "Female";
+			var gender = BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 1) % 2 == 0 ? "Male" : "Female";
+
+			EntityAddress address = null;
 
 			try
 			{
 				var villageId = places.Where(o => o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation).OrderBy(o => r.Next()).FirstOrDefault().Addresses.First();
-				var addr = new EntityAddress();
-				addr.AddressUseKey = AddressUseKeys.HomeAddress;
-				addr.Component = new List<EntityAddressComponent>(villageId.Component.Select(o => new EntityAddressComponent(o.ComponentTypeKey.Value, o.Value)));
-				// Child
-				Patient child = new Patient()
+				address = new EntityAddress
 				{
-					Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, mother.Names[0].Component[0].Value, SeedData.SeedData.Current.PickRandomGivenName(gender).Name, SeedData.SeedData.Current.PickRandomGivenName(gender).Name) },
-					DateOfBirth = DateTime.Now.AddDays(-Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0) % maxAge)),
-					Addresses = new List<EntityAddress>() { addr },
-					GenderConcept = new Concept() { Mnemonic = gender },
-					Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").Substring(0, 10)) }
-				};
-				// Associate
-				child.Relationships = new List<EntityRelationship>() {
-					new EntityRelationship(EntityRelationshipTypeKeys.Mother, mother),
-					new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, places.Where(o=>o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation).OrderBy(o=>r.Next()).FirstOrDefault().Key)
+					AddressUseKey = AddressUseKeys.HomeAddress,
+					Component = new List<EntityAddressComponent>(villageId.Component.Select(o => new EntityAddressComponent(o.ComponentTypeKey.Value, o.Value)))
 				};
 			}
 			catch
 			{
-				Console.WriteLine("Unable to generate patient due to missing address");
+				Console.WriteLine("Unable to determine address for patient");
 			}
 
-			return null;
+
+			// Child
+			Patient child = new Patient()
+			{
+				Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, mother.Names[0].Component[0].Value, SeedData.SeedData.Current.PickRandomGivenName(gender).Name, SeedData.SeedData.Current.PickRandomGivenName(gender).Name) },
+				DateOfBirth = DateTime.Now.AddDays(-Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0) % maxAge)),
+				GenderConcept = new Concept() { Mnemonic = gender },
+				Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").Substring(0, 10)) }
+			};
+
+			if (address != null)
+				child.Addresses.Add(address);
+
+			// Associate
+			child.Relationships = new List<EntityRelationship>() {
+				new EntityRelationship(EntityRelationshipTypeKeys.Mother, mother),
+				new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, places.Where(o=>o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation).OrderBy(o=>r.Next()).FirstOrDefault().Key)
+			};
+
+			return child;
 		}
 
 		/// <summary>
