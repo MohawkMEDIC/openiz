@@ -30,6 +30,11 @@ namespace OpenIZ.Core.Diagnostics
 		// Filter
 		private EventLevel m_filter;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="TraceWriter"/> class.
+		/// </summary>
+		/// <param name="filter">The filter.</param>
+		/// <param name="initializationData">The initialization data.</param>
 		public TraceWriter(EventLevel filter, String initializationData)
 		{
 			this.m_filter = filter;

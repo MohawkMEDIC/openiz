@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Model.Acts
         }
 
 		/// <summary>
-		/// Act participation relationship between <paramref name="source" /> and <paramref name="player" />
+		/// Act participation relationship between <paramref name="roleType" /> and <paramref name="player" />
 		/// </summary>
 		/// <param name="roleType">Type of the role.</param>
 		/// <param name="player">The player.</param>

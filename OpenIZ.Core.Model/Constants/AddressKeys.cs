@@ -1,4 +1,17 @@
-﻿/*
+﻿// ***********************************************************************
+// Assembly         : OpenIZ.Core.Model
+// Author           : khannan
+// Created          : 04-04-2017
+//
+// Last Modified By : khannan
+// Last Modified On : 07-04-2017
+// ***********************************************************************
+// <copyright file="AddressKeys.cs" company="Mohawk College of Applied Arts and Technology">
+//     Copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 
@@ -26,33 +39,117 @@ namespace OpenIZ.Core.Model.Constants
 	/// </summary>
 	public static class AddressComponentKeys
 	{
+		/// <summary>
+		/// The additional locator.
+		/// </summary>
 		public static readonly Guid AdditionalLocator = Guid.Parse("D2312B8E-BDFB-4012-9397-F14336F8D206");
+		/// <summary>
+		/// The address line.
+		/// </summary>
 		public static readonly Guid AddressLine = Guid.Parse("4F342D28-8850-4DAF-8BCA-0B44A255F7ED");
+		/// <summary>
+		/// The building number.
+		/// </summary>
 		public static readonly Guid BuildingNumber = Guid.Parse("F3C86E99-8AFC-4947-9DD8-86412A34B1C7");
+		/// <summary>
+		/// The building number numeric.
+		/// </summary>
 		public static readonly Guid BuildingNumberNumeric = Guid.Parse("3258B4D6-E4DC-43E6-9F29-FD8423A2AE12");
+		/// <summary>
+		/// The building number suffix.
+		/// </summary>
 		public static readonly Guid BuildingNumberSuffix = Guid.Parse("B2DBF05C-584D-46DB-8CBF-026A6EA30D81");
+		/// <summary>
+		/// The care of.
+		/// </summary>
 		public static readonly Guid CareOf = Guid.Parse("8C89A89E-08C5-4374-87F9-ADB3C9261DF6");
+		/// <summary>
+		/// The census tract.
+		/// </summary>
 		public static readonly Guid CensusTract = Guid.Parse("4B3A347C-28FA-4560-A1A9-3795C9DB3D3B");
+		/// <summary>
+		/// The city.
+		/// </summary>
 		public static readonly Guid City = Guid.Parse("05B85461-578B-4988-BCA6-E3E94BE9DB76");
+		/// <summary>
+		/// The country.
+		/// </summary>
 		public static readonly Guid Country = Guid.Parse("48B2FFB3-07DB-47BA-AD73-FC8FB8502471");
+		/// <summary>
+		/// The county.
+		/// </summary>
 		public static readonly Guid County = Guid.Parse("D9489D56-DDAC-4596-B5C6-8F41D73D8DC5");
+		/// <summary>
+		/// The delimiter.
+		/// </summary>
 		public static readonly Guid Delimiter = Guid.Parse("4C6B9519-A493-44A9-80E6-32D85109B04B");
+		/// <summary>
+		/// The delivery address line.
+		/// </summary>
 		public static readonly Guid DeliveryAddressLine = Guid.Parse("F6139B21-3A36-4A3F-B498-0C661F06DF59");
+		/// <summary>
+		/// The delivery installation area.
+		/// </summary>
 		public static readonly Guid DeliveryInstallationArea = Guid.Parse("EC9D5AB8-3BE1-448F-9346-6A08253F9DEA");
+		/// <summary>
+		/// The delivery installation qualifier.
+		/// </summary>
 		public static readonly Guid DeliveryInstallationQualifier = Guid.Parse("78FB6EED-6549-4F22-AB3E-F3696DA050BC");
+		/// <summary>
+		/// The delivery installation type.
+		/// </summary>
 		public static readonly Guid DeliveryInstallationType = Guid.Parse("684FB800-145C-47C5-98C5-E7AA53802B69");
+		/// <summary>
+		/// The delivery mode.
+		/// </summary>
 		public static readonly Guid DeliveryMode = Guid.Parse("12608636-910D-4BAC-B849-7F999DE20332");
+		/// <summary>
+		/// The delivery mode identifier.
+		/// </summary>
 		public static readonly Guid DeliveryModeIdentifier = Guid.Parse("08BD6027-47EB-43DE-8454-59B7A5D00A3E");
+		/// <summary>
+		/// The direction.
+		/// </summary>
 		public static readonly Guid Direction = Guid.Parse("1F678716-AB8F-4856-9F76-D82FE3165C22");
+		/// <summary>
+		/// The postal code.
+		/// </summary>
 		public static readonly Guid PostalCode = Guid.Parse("78A47122-F9BF-450F-A93F-90A103C5F1E8");
+		/// <summary>
+		/// The post box.
+		/// </summary>
 		public static readonly Guid PostBox = Guid.Parse("2047F216-F41E-4CFB-A024-05D4D3DE52F5");
+		/// <summary>
+		/// The precinct.
+		/// </summary>
 		public static readonly Guid Precinct = Guid.Parse("ACAFE0F2-E209-43BB-8633-3665FD7C90BA");
+		/// <summary>
+		/// The state.
+		/// </summary>
 		public static readonly Guid State = Guid.Parse("8CF4B0B0-84E5-4122-85FE-6AFA8240C218");
+		/// <summary>
+		/// The street address line.
+		/// </summary>
 		public static readonly Guid StreetAddressLine = Guid.Parse("F69DCFA8-DF18-403B-9217-C59680BAD99E");
+		/// <summary>
+		/// The street name.
+		/// </summary>
 		public static readonly Guid StreetName = Guid.Parse("0432D671-ABC3-4249-872C-AFD5274C2298");
+		/// <summary>
+		/// The street name base.
+		/// </summary>
 		public static readonly Guid StreetNameBase = Guid.Parse("37C7DBC8-4AC6-464A-AF65-D65FCBA60238");
+		/// <summary>
+		/// The street type.
+		/// </summary>
 		public static readonly Guid StreetType = Guid.Parse("121953F6-0465-41DE-8F7A-B0E08204C771");
+		/// <summary>
+		/// The unit designator.
+		/// </summary>
 		public static readonly Guid UnitDesignator = Guid.Parse("B18E71CB-203C-4640-83F0-CC86DEBBBBC0");
+		/// <summary>
+		/// The unit identifier.
+		/// </summary>
 		public static readonly Guid UnitIdentifier = Guid.Parse("908C09DF-81FE-45AC-9233-0881A278A401");
 	}
 

@@ -42,7 +42,7 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Broadcasts an alert.
 		/// </summary>
-		/// <param name="msg">The alert message to be broadcast.</param>
+		/// <param name="message">The message.</param>
 		void BroadcastAlert(AlertMessage message);
 
 		/// <summary>
