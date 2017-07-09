@@ -52,10 +52,10 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 			}
 		}
 
-        /// <summary>
-        /// Get the current handlers
-        /// </summary>
-        public IEnumerable<IResourceHandler> Handlers => this.m_handlers.Values;
+		/// <summary>
+		/// Get the current handlers
+		/// </summary>
+		public IEnumerable<IResourceHandler> Handlers => this.m_handlers.Values;
 
 		/// <summary>
 		/// Resource handler utility ctor
@@ -63,12 +63,21 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 		private ResourceHandlerUtil()
 		{
 			foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
-				foreach (var t in asm.GetTypes().Where(o => typeof(IResourceHandler).IsAssignableFrom(o) && o.IsClass && !o.IsAbstract))
+			{
+				try
 				{
-					ConstructorInfo ci = t.GetConstructor(Type.EmptyTypes);
-					IResourceHandler rh = ci.Invoke(null) as IResourceHandler;
-					m_handlers.Add(rh.ResourceName, rh);
+					foreach (var t in asm.GetTypes().Where(o => typeof(IResourceHandler).IsAssignableFrom(o) && o.IsClass && !o.IsAbstract))
+					{
+						ConstructorInfo ci = t.GetConstructor(Type.EmptyTypes);
+						IResourceHandler rh = ci.Invoke(null) as IResourceHandler;
+						m_handlers.Add(rh.ResourceName, rh);
+					}
 				}
+				catch (ReflectionTypeLoadException)
+				{
+					// ignored
+				}
+			}
 		}
 
 		/// <summary>
