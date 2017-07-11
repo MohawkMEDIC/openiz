@@ -1,17 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : OpenIZ.Core.Model
-// Author           : khannan
-// Created          : 07-09-2017
-//
-// Last Modified By : khannan
-// Last Modified On : 07-09-2017
-// ***********************************************************************
-// <copyright file="ObservationTypeKeys.cs" company="Mohawk College of Applied Arts and Technology">
-//     Copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-/*
+﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 
@@ -39,53 +26,53 @@ using System.Threading.Tasks;
 namespace OpenIZ.Core.Model.Constants
 {
 	/// <summary>
-	/// Represents act type keys
+	/// Represents act type keys related to types of observations that can be made about a patient
 	/// </summary>
 	public static class ObservationTypeKeys
     {
 
 		/// <summary>
-		/// The condition.
+		/// The observation is a condition which the patient has
 		/// </summary>
 		public static readonly Guid Condition = Guid.Parse("236b5641-61d2-4d12-91f7-5dddbd7f8931");
 		/// <summary>
-		/// The symptom.
+		/// The observation is a symptom which the patient is presenting
 		/// </summary>
 		public static readonly Guid Symptom = Guid.Parse("10a0fb51-687d-41ec-8d50-ad6549e2ae58");
 		/// <summary>
-		/// The finding.
+		/// The observtion represents a concrete clinical finding (after performing tests for example)
 		/// </summary>
 		public static readonly Guid Finding = Guid.Parse("5dbd3949-fda0-4c5d-a849-a673fd5565f6");
 		/// <summary>
-		/// The complaint.
+		/// The observation represents a complaint that the patient has (example: back pain)
 		/// </summary>
 		public static readonly Guid Complaint = Guid.Parse("402051ae-fa84-45b7-ac3b-586d1323ebe7");
 		/// <summary>
-		/// The functionallimitation.
+		/// The observation represents a functional limitation of the patient (example: paraplegia)
 		/// </summary>
 		public static readonly Guid Functionallimitation = Guid.Parse("bfc26b1f-af4c-4d50-a084-eb0d9eabd519");
 		/// <summary>
-		/// The problem.
+		/// The observation represents a known problem that the patient has reported
 		/// </summary>
 		public static readonly Guid Problem = Guid.Parse("260ffe90-7882-4b38-a7af-d2110e91e752");
 		/// <summary>
-		/// The diagnosis.
+		/// The observation represents a concrete clinical diagnosis of the patient
 		/// </summary>
 		public static readonly Guid Diagnosis = Guid.Parse("d5e0a5be-d227-413a-a752-b7d79d7d4ef3");
 		/// <summary>
-		/// The severity.
+		/// The observation represents a severity 
 		/// </summary>
 		public static readonly Guid Severity = Guid.Parse("05012084-3351-4045-8390-fbcbd7ec1d19");
 		/// <summary>
-		/// The cause of death.
+		/// The observation represents a cause of death
 		/// </summary>
 		public static readonly Guid CauseOfDeath = Guid.Parse("d5e0a5be-d227-413a-a752-b7d79d7d4ede");
 		/// <summary>
-		/// The clinical state.
+		/// The observation represents the current clinical state about an entity (example: Clinical State is the patient is Dead)
 		/// </summary>
 		public static readonly Guid ClinicalState = Guid.Parse("6fb8487c-cd6f-44f1-ab63-27dc65405792");
 		/// <summary>
-		/// The finding site.
+		/// The observation represents a finding site where a problem or other observtion was made
 		/// </summary>
 		public static readonly Guid FindingSite = Guid.Parse("25D9F855-F0C8-4718-884D-04D3B6439E5C");
     }

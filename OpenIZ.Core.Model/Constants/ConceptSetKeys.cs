@@ -22,52 +22,52 @@ using System;
 namespace OpenIZ.Core.Model.Constants
 {
 	/// <summary>
-	/// Represents concept set identifiers
+	/// Represents identifiers for the built-in concept sets for OpenIZ
 	/// </summary>
 	public static class ConceptSetKeys
 	{
 		/// <summary>
-		/// Act Classiciation
+		/// Represents codes which are used to classify acts
 		/// </summary>
 		public static readonly Guid ActClass = Guid.Parse("62C5FDE0-A3AA-45DF-94E9-242F4451644A");
 
 		/// <summary>
-		/// Act interpretation
+		/// Represents codes which are used to represent clinical interpretations 
 		/// </summary>
 		public static readonly Guid ActInterpretation = Guid.Parse("404BF87C-E7A6-4A5A-89CF-02E6804555A0");
 
 		/// <summary>
-		/// Act mood
+		/// Represents codes which are used to dictate the mood (mode) of an act
 		/// </summary>
 		public static readonly Guid ActMood = Guid.Parse("E6A8E44F-0A57-4EBD-80A9-5C53B7A03D76");
 
 		/// <summary>
-		/// Act relationship type
+		/// Represents codes which are used to relate two acts together
 		/// </summary>
 		public static readonly Guid ActRelationshipType = Guid.Parse("CF686A21-86E5-41E7-AF07-0016A054227A");
 
 		/// <summary>
-		/// Act status
+		/// Represents codes which are used to dictate the status of an act
 		/// </summary>
 		public static readonly Guid ActStatus = Guid.Parse("93A48F6A-6808-4C70-83A2-D02178C2A883");
 
 		/// <summary>
-		/// Address component type
+		/// Represents codes which are used qualify the components of an address
 		/// </summary>
 		public static readonly Guid AddressComponentType = Guid.Parse("5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA");
 
 		/// <summary>
-		/// Address use id
+		/// Represents codes which are used to dictate the intentded use of an address
 		/// </summary>
 		public static readonly Guid AddressUse = Guid.Parse("C68A7690-D78D-4AFC-8A36-1EBDFB86F15F");
 
 		/// <summary>
-		/// Administrative gender code
+		/// Represents codes which are used to classify the gender of an entity
 		/// </summary>
 		public static readonly Guid AdministrativeGenderCode = Guid.Parse("E9EECD3C-7B80-47F9-9CB6-55C8D3110FB0");
 
 		/// <summary>
-		/// Concept status
+		/// Represents codes which are used to classify the current state of a concept
 		/// </summary>
 		public static readonly Guid ConceptStatus = Guid.Parse("AAE906AA-27B3-4CDB-AFF1-F08B0FD31E59");
 
@@ -82,62 +82,62 @@ namespace OpenIZ.Core.Model.Constants
 		public static readonly Guid ContainerSeparatorTypeKeys = Guid.Parse("B9AC7826-5D19-421E-A848-61C3C8F563A2");
 
 		/// <summary>
-		/// Entity classifications
+		/// Represents concepts which are used to classify entities
 		/// </summary>
 		public static readonly Guid EntityClass = Guid.Parse("4E6DA567-0094-4F23-8555-11DA499593AF");
 
 		/// <summary>
-		/// Entity relationships
+		/// Represents concepts which are used to classify the manner in which entities are related to ne another.
 		/// </summary>
 		public static readonly Guid EntityRelationshipType = Guid.Parse("EE16A667-2085-440A-B1E7-4032D10B9F40");
 
 		/// <summary>
-		/// Entity status identifiers
+		/// Represents concepts which are used to classify the current status of an entity
 		/// </summary>
 		public static readonly Guid EntityStatus = Guid.Parse("C7578340-A8FF-4D7D-8105-581016324E68");
 
 		/// <summary>
-		/// Family members
+		/// Represents concepts which are entity relationships used by family members of entities
 		/// </summary>
 		public static readonly Guid FamilyMember = Guid.Parse("d3692f40-1033-48ea-94cb-31fc0f352a4e");
 
 		/// <summary>
-		/// Entity industry codes
+		/// Represents concepts which dictate a partcular industry in which an oganization operates
 		/// </summary>
 		public static readonly Guid IndustryCode = Guid.Parse("D1597E50-845A-46E1-B9AE-6F99FF93D9DB");
 
 		/// <summary>
-		/// Entity user identifiers
+		/// Represents concepts which classify the intended use of a name
 		/// </summary>
 		public static readonly Guid NameUse = Guid.Parse("8DF14280-3D05-45A6-BFAE-15B63DFC379F");
 
 		/// <summary>
-		/// Entity service codes
+		/// Represents concepts which define services provided by organizations
 		/// </summary>
 		public static readonly Guid ServiceCode = Guid.Parse("95F9A19A-FA85-4AF7-9342-4BA3AF0DE72A");
 
 		/// <summary>
-		/// Telecom address type
+		/// Represents concepts which identify the type of telecommunications equipment used
 		/// </summary>
 		public static readonly Guid TelecomAddressType = Guid.Parse("0D79B02C-6444-40B5-ACA4-4009FB03AD54");
 
-		/// <summary>
-		/// Telecom address use
-		/// </summary>
-		public static readonly Guid TelecomAddressUse = Guid.Parse("1DABE3E2-44B8-4C45-9102-25EA147E5710");
+        /// <summary>
+        /// Represents concept which classify the intended use of a telecommunications address
+        /// </summary>
+        public static readonly Guid TelecomAddressUse = Guid.Parse("1DABE3E2-44B8-4C45-9102-25EA147E5710");
 
         /// <summary>
-        /// Vaccine type codes
+        /// Represents concepts which classify vaccination types
         /// </summary>
         public static readonly Guid VaccineTypeCodes = Guid.Parse("ab16722f-dcf5-4f5a-9957-8f87dbb390d5");
 
         /// <summary>
-        /// Vital signs
+        /// Represents concepts which distinguish observations as vital signs measurements
         /// </summary>
         public static readonly Guid VitalSigns = Guid.Parse("c9791a94-7a04-4276-804d-82589b6d0be1");
 
         /// <summary>
-        /// Problem observations
+        /// Reprsents concept which distinguish observations of problems or conditions
         /// </summary>
         public static readonly Guid ProblemObservations = Guid.Parse("952D89FA-9324-4008-9452-3EB6780B6EA0");
 

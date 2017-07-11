@@ -1,17 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : OpenIZ.Core.Model
-// Author           : khannan
-// Created          : 07-05-2017
-//
-// Last Modified By : khannan
-// Last Modified On : 07-05-2017
-// ***********************************************************************
-// <copyright file="EntityRelationshipTypeKeys.cs" company="Mohawk College of Applied Arts and Technology">
-//     Copyright (C) 2015-2017, Mohawk College of Applied Arts and Technology
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-/*
+﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
  * 

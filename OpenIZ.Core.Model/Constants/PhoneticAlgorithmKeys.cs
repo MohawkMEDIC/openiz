@@ -22,22 +22,22 @@ using System;
 namespace OpenIZ.Core.Model.Constants
 {
 	/// <summary>
-	/// Phonetic algorithm keys
+	/// Phonetic algorithm keys for built in phonetic algorithms in OpenIZ
 	/// </summary>
 	public static class PhoneticAlgorithmKeys
 	{
 		/// <summary>
-		/// "METAPHONE"
+		/// Represents the metaphone phonetic algorithm
 		/// </summary>
 		public static readonly Guid Metaphone = Guid.Parse("d79a4dc6-66a6-4602-8fcb-7dc09a895793");
 
 		/// <summary>
-		/// "NONE"
+		/// Represents the null phonetic algorithm
 		/// </summary>
 		public static readonly Guid None = Guid.Parse("402CD339-D0E4-46CE-8FC2-12A4B0E17226");
 
 		/// <summary>
-		/// "SOUNDEX"
+		/// Represents the soundex algorithm
 		/// </summary>
 		public static readonly Guid Soundex = Guid.Parse("3352a79a-d2e0-4e0c-9b48-6fd2a202c681");
 	}

@@ -27,47 +27,47 @@ namespace OpenIZ.Core.Model.Constants
 	public static class CodeSystemKeys
 	{
 		/// <summary>
-		/// Parse CVX
+		/// Commonn Vaccination Codes (CDC)
 		/// </summary>
 		public static readonly Guid CVX = Guid.Parse("eba4f94a-2cad-4bb3-aca7-f4e54eaac4bd");
 
 		/// <summary>
-		/// ICD10
+		/// International Classification of Diseases Version 10
 		/// </summary>
 		public static readonly Guid ICD10 = Guid.Parse("F7A5CBD8-5425-415E-8308-D14B94F56917");
 
 		/// <summary>
-		/// ICD-10 CM
+		/// International Classification of Diseases Version 10 - Clinical Management 
 		/// </summary>
 		public static readonly Guid ICD10CM = Guid.Parse("ED9742E5-FA5B-4644-9FB5-2F935ED08B1E");
 
 		/// <summary>
-		/// ICD9
+		/// International Classification of Diseases Version 9
 		/// </summary>
 		public static readonly Guid ICD9 = Guid.Parse("51EA1E1B-EDC0-455A-A72B-9076860E284D");
 
 		/// <summary>
-		/// ISO-639-1
+		/// ISO-639-1 (Language Codes)
 		/// </summary>
 		public static readonly Guid ISO6391 = Guid.Parse("EB04FE20-BBBC-4C70-9EEF-045BC4F70982");
 
 		/// <summary>
-		/// ISO639-2
+		/// ISO639-2 (3 letter Language Codes)
 		/// </summary>
 		public static readonly Guid ISO6392 = Guid.Parse("089044EA-DD41-4258-A497-E6247DD364F6");
 
 		/// <summary>
-		/// LOINC
+		/// Logical Observations Identifiers Names and Codes (maintained by Regenstrief Institute)
 		/// </summary>
 		public static readonly Guid LOINC = Guid.Parse("08C59397-706B-456A-AEB1-9E7D5A2ADC94");
 
-		/// <summary>
-		/// SNOMED-CT
-		/// </summary>
-		public static readonly Guid SNOMEDCT = Guid.Parse("B3030751-D4DB-420B-B765-E837607820CD");
+        /// <summary>
+        /// Systematized Nomenclature of Medicine-Clinical Terms (maintained by IHTSDO)
+        /// </summary>
+        public static readonly Guid SNOMEDCT = Guid.Parse("B3030751-D4DB-420B-B765-E837607820CD");
 
 		/// <summary>
-		/// UCUM
+		/// Universal Codes for the Unit Of Measure
 		/// </summary>
 		public static readonly Guid UCUM = Guid.Parse("4853A702-FFF3-4EFB-8DD7-54AACCA53664");
 
