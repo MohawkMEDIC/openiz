@@ -168,7 +168,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             //return base.Update(context, data, principal);
         }
 
-       
+
+        /// <summary>
+        /// Order by
+        /// </summary>
+        /// <param name="rawQuery"></param>
+        /// <returns></returns>
+        protected override SqlStatement AppendOrderBy(SqlStatement rawQuery)
+        {
+            return rawQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
+        }
         /// <summary>
         /// Query internal
         /// </summary>
@@ -202,7 +211,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, e.HResult, "Will use slow query construction due to {0}", e.Message);
                 domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query).Build();
             }
-            domainQuery.OrderBy<TDomain>(o => o.VersionSequenceId, Core.Model.Map.SortOrderType.OrderByDescending);
+
+            domainQuery = this.AppendOrderBy(domainQuery);
+                
 
             // Query id just get the UUIDs in the db
             if (queryId != Guid.Empty)

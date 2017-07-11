@@ -105,6 +105,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// </summary>
     public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<Core.Model.Entities.EntityNameComponent, DbEntityNameComponent, CompositeResult<DbEntityNameComponent, DbPhoneticValue>>, IAdoAssociativePersistenceService
     {
+
+        protected override SqlStatement AppendOrderBy(SqlStatement rawQuery)
+        {
+            return rawQuery.OrderBy<DbEntityNameComponent>(o => o.Sequence);
+        }
         /// <summary>
         /// From model instance
         /// </summary>

@@ -97,7 +97,7 @@ namespace OpenIZ.Core.Http
 			// Compress?
 			if (this.Description.Binding.Optimize)
 				retVal.Headers.Add(HttpRequestHeader.AcceptEncoding, "deflate,gzip");
-			retVal.Proxy = null;
+
 
 			return retVal;
 		}
@@ -211,7 +211,7 @@ namespace OpenIZ.Core.Http
 							if (responseError != null)
 							{
                                 responseHeaders = new WebHeaderCollection();
-								if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
+								if (((responseError as WebException)?.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotModified)
 									return default(TResult);
 								else
 									throw responseError;
@@ -231,7 +231,9 @@ namespace OpenIZ.Core.Http
 						if (responseContentType.Contains(";"))
 							responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
 
-						if (response.StatusCode == HttpStatusCode.NotModified)
+						if (response.StatusCode == HttpStatusCode.NotModified ||
+                            response.StatusCode == HttpStatusCode.NoContent ||
+                            typeof(TResult) == typeof(object))
 							return default(TResult);
 						serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
 

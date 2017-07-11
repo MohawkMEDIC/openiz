@@ -258,7 +258,9 @@ namespace OizDevTool
                     {
                         new EntityName(NameUseKeys.OfficialRecord, item.ItemObject.Name)
                     },
-                    StatusConceptKey = item.ItemObject.IsActive ? StatusKeys.Active : StatusKeys.Obsolete
+                    StatusConceptKey = item.ItemObject.IsActive ? StatusKeys.Active : StatusKeys.Obsolete,
+                    QuantityConceptKey = Guid.Parse("a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76"),
+                    Quantity = 1
                 };
                 context.Action.Add(new DataUpdate() { InsertIfNotExists = true, Element = material });
                 materialMap.Add(item.ItemObject.Code, materialId);
@@ -315,7 +317,9 @@ namespace OizDevTool
                     new EntityIdentifier(new AssigningAuthority("GIIS_ITEM_LOT", "GIIS ItemLot Identifiers", "1.3.6.1.4.1.<<YOUR.PEN>>.4"), item.Id.ToString())
                 },
                 IsAdministrative = false,
-                StatusConceptKey = StatusKeys.Active
+                StatusConceptKey = StatusKeys.Active,
+                QuantityConceptKey = Guid.Parse("a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76"),
+                Quantity = 1
             };
             if (organizationId != Guid.Empty)
                 retVal.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.WarrantedProduct, id) { SourceEntityKey = organizationId });

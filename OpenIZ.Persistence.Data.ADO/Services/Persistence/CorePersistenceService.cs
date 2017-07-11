@@ -52,6 +52,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         protected MARC.HI.EHRS.SVC.Core.Services.IQueryPersistenceService m_queryPersistence = ApplicationContext.Current.GetService<MARC.HI.EHRS.SVC.Core.Services.IQueryPersistenceService>();
 
         /// <summary>
+        /// Get the order by function
+        /// </summary>
+        protected virtual SqlStatement AppendOrderBy(SqlStatement rawQuery)
+        {
+            return rawQuery;
+        }
+
+        /// <summary>
         /// Maps the data to a model instance
         /// </summary>
         /// <returns>The model instance.</returns>
@@ -199,6 +207,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, 0, "Will use slow query construction due to complex mapped fields");
                     domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
                 }
+
+                domainQuery = this.AppendOrderBy(domainQuery);
 
                 // Build and see if the query already exists on the stack???
                 domainQuery = domainQuery.Build();

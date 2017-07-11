@@ -82,7 +82,7 @@ Name: db\mssql; Description: MS-SQL Server Persistence Services; Types: full
 Name: cache; Description: Memory Caching Services; Types: full
 Name: cache\redis; Description: REDIS Shared Memory Caching; Types: full
 Name: tools; Description: Management Tooling; Types: full 
-Name: tools\dev; Description: Development Tools & APIs; Types: full tools
+Name: tools\dev; Description: OpenIZ Server SDK; Types: full tools
 Name: tools\migration; Description: GIIS Migration Tooling; Types: full 
 
 
@@ -184,26 +184,26 @@ Source: ..\Solution Items\System.IdentityModel.Tokens.Jwt.dll; DestDir: {app}; C
 Source: ..\bin\release\OpenIZ.Authentication.OAUTH2.dll; DestDir: {app}; Components: msg\auth
 
 ; APIs
-Source: ..\bin\Release\OpenIZ.Core.Model.ViewModelSerializers.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Applets.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Model.AMI.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Messaging.AMI.Client.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.PCL.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Messaging.IMSI.Client.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Messaging.RISI.Client.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Model.dll; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Applets.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Model.AMI.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Messaging.AMI.Client.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.PCL.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Messaging.IMSI.Client.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Model.RISI.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Messaging.RISI.Client.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\OpenIZ.Core.Model.xml; DestDir: {app}\dev\api; Components: tools\dev
-Source: ..\bin\Release\Schema\*.xsd; DestDir: {app}\dev\schema; Components: tools\dev
-Source: ..\bin\Release\*.pdb; DestDir: {app}\dev\pdb; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.ViewModelSerializers.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Applets.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.AMI.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Messaging.AMI.Client.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.PCL.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Messaging.IMSI.Client.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Messaging.RISI.Client.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.dll; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Applets.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.AMI.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Messaging.AMI.Client.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.PCL.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Messaging.IMSI.Client.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.RISI.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Messaging.RISI.Client.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\OpenIZ.Core.Model.xml; DestDir: {app}\sdk\api; Components: tools\dev
+Source: ..\bin\Release\Schema\*.xsd; DestDir: {app}\sdk\schema; Components: tools\dev
+Source: ..\bin\Release\*.pdb; DestDir: {app}\sdk\pdb; Components: tools\dev
 Source: ..\bin\Release\SeedData.xml; DestDir: {app}; Components: tools\dev
 
 ; Data Stuff

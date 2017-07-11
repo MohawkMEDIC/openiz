@@ -328,7 +328,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
 		        foreach (var entityIdentifier in uniqueIds)
 		        {
-			        if (context.Query<DbEntityIdentifier>(c => c.SourceKey != data.Key && c.AuthorityKey == entityIdentifier.AuthorityKey && c.Value == entityIdentifier.Value).Any())
+			        if (context.Query<DbEntityIdentifier>(c => c.SourceKey != data.Key && c.AuthorityKey == entityIdentifier.AuthorityKey && c.Value == entityIdentifier.Value && !c.ObsoleteVersionSequenceId.HasValue).Any())
 			        {
 						throw new DuplicateNameException(entityIdentifier.Value);
 					}
@@ -429,7 +429,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
 		        foreach (var entityIdentifier in uniqueIds)
 		        {
-			        if (context.Query<DbEntityIdentifier>(c => c.SourceKey != data.Key && c.AuthorityKey == entityIdentifier.AuthorityKey && c.Value == entityIdentifier.Value).Any())
+			        if (context.Query<DbEntityIdentifier>(c => c.SourceKey != data.Key && c.AuthorityKey == entityIdentifier.AuthorityKey && c.Value == entityIdentifier.Value && !c.ObsoleteVersionSequenceId.HasValue).Any())
 			        {
 				        throw new DuplicateNameException(entityIdentifier.Value);
 			        }

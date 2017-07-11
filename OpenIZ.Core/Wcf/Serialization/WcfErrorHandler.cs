@@ -21,6 +21,7 @@ using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Configuration;
+using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
@@ -91,12 +92,14 @@ namespace OpenIZ.Core.Wcf.Serialization
             else if (error is Newtonsoft.Json.JsonException ||
                 error is System.Xml.XmlException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
-            else if(error is DuplicateKeyException)
+            else if (error is DuplicateKeyException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Conflict;
-            else if(error is FileNotFoundException || error is KeyNotFoundException)
+            else if (error is FileNotFoundException || error is KeyNotFoundException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
-            else if(error is DomainStateException)
+            else if (error is DomainStateException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
+            else if (error is DetectedIssueException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = (System.Net.HttpStatusCode)422;
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
            

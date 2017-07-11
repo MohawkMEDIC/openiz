@@ -160,9 +160,16 @@ namespace OpenIZ.Messaging.GS1.Model
         /// </summary>
         public ReceivingAdviceLogisticUnitType CreateReceiveLineItem(ActParticipation orderReceivePtcpt, ActParticipation orderSentPtcpt)
         {
+            if (orderSentPtcpt == null)
+                throw new ArgumentNullException(nameof(orderSentPtcpt), "Missing sending order participation");
+            else if (orderReceivePtcpt == null)
+                throw new ArgumentNullException(nameof(orderReceivePtcpt), "Missing receiving order participation");
 
             // Quantity code
             var quantityCode = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(orderReceivePtcpt.LoadProperty<Material>("PlayerEntity").QuantityConceptKey.Value, "UCUM");
+
+            if (quantityCode == null)
+                throw new InvalidOperationException($"Missing quantity code for {orderReceivePtcpt.LoadProperty<Material>("PlayerEntity").QuantityConceptKey.Value}");
 
             // Receiving logistic unit type
             return new ReceivingAdviceLogisticUnitType()
@@ -233,6 +240,8 @@ namespace OpenIZ.Messaging.GS1.Model
         /// </summary>
         public TransactionalTradeItemType CreateTradeItem(Material material)
         {
+            if (material == null)
+                throw new ArgumentNullException(nameof(material), "Missing material instance");
 
             ReferenceTerm cvx = null;
             if(material.TypeConceptKey.HasValue)
@@ -340,8 +349,8 @@ namespace OpenIZ.Messaging.GS1.Model
                 };
 
                 // Store additional identifiers
-                if(tradeItem.additionalTradeItemIdentification != null)
-                    foreach(var id in tradeItem.additionalTradeItemIdentification)
+                if (tradeItem.additionalTradeItemIdentification != null)
+                    foreach (var id in tradeItem.additionalTradeItemIdentification)
                     {
                         var oid = oidService.GetOid(id.additionalTradeItemIdentificationTypeCode);
                         if (oid == null) continue;
@@ -373,7 +382,7 @@ namespace OpenIZ.Messaging.GS1.Model
                         materialReference = this.m_materialRepository.FindMaterial(o => o.Identifiers.Any(i => i.Value == id.Value && i.Authority.DomainName == id.codeListVersion) && o.ClassConceptKey == EntityClassKeys.Material && o.StatusConceptKey != StatusKeys.Obsolete, 0, 1, out tr).SingleOrDefault();
                         if (materialReference != null) break;
                     }
-                if(materialReference == null)
+                if (materialReference == null)
                     materialReference = this.m_materialRepository.FindMaterial(o => o.TypeConceptKey == retVal.TypeConceptKey && o.ClassConceptKey == EntityClassKeys.Material && o.StatusConceptKey != StatusKeys.Obsolete, 0, 1, out tr).SingleOrDefault();
                 if (materialReference == null)
                     throw new InvalidOperationException("Cannot find the base Material from trade item type code");
@@ -399,6 +408,24 @@ namespace OpenIZ.Messaging.GS1.Model
                         materialRelationship
                     }
                 });
+
+            }
+            else if (tradeItem.additionalTradeItemIdentification != null) // We may want to keep track of other identifiers this software knows as
+            {
+                bool shouldSave = false;
+                foreach (var id in tradeItem.additionalTradeItemIdentification)
+                {
+                    var oid = oidService.GetOid(id.additionalTradeItemIdentificationTypeCode);
+                    if (oid == null) continue;
+                    if (!retVal.Identifiers.Any(o => o.LoadProperty<AssigningAuthority>("Authority").DomainName == oid.Mnemonic))
+                    {
+                        retVal.Identifiers.Add(new EntityIdentifier(new AssigningAuthority(oid.Mnemonic, oid.Name, oid.Oid), id.Value));
+                        shouldSave = true;
+                    }
+                }
+
+                if (shouldSave)
+                    this.m_materialRepository.Save(retVal);
 
             }
 

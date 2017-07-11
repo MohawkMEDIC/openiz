@@ -114,9 +114,13 @@ namespace OpenIZ.Core.Http
 
             Uri baseUrl = new Uri(this.Description.Endpoint[0].Address);
             UriBuilder uriBuilder = new UriBuilder(baseUrl);
+
             if (!String.IsNullOrEmpty(resourceName))
                 uriBuilder.Path += "/" + resourceName;
 
+            // HACK:
+            uriBuilder.Path = uriBuilder.Path.Replace("//", "/");
+            
             // Add query string
             if (query != null)
                 uriBuilder.Query = CreateQueryString(query);
