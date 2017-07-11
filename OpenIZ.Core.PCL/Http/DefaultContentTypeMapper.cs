@@ -31,8 +31,10 @@ namespace OpenIZ.Core.Http
 		/// <summary>
 		/// Gets the body serializer based on the content type
 		/// </summary>
-		/// <returns>The serializer.</returns>
 		/// <param name="contentType">Content type.</param>
+		/// <param name="typeHint">The type hint.</param>
+		/// <returns>The serializer.</returns>
+		/// <exception cref="System.ArgumentOutOfRangeException">contentType - Not supported</exception>
 		public IBodySerializer GetSerializer(string contentType, Type typeHint)
 		{
 			switch (contentType)

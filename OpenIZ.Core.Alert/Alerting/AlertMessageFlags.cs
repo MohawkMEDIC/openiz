@@ -54,6 +54,9 @@ namespace OpenIZ.Core.Alert.Alerting
 		/// </summary>
 		Transient = 0x10,
 
+		/// <summary>
+		/// Idicates a high priority alert.
+		/// </summary>
 		HighPriorityAlert = HighPriority | Alert
 	}
 }

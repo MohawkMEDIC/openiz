@@ -29,6 +29,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Core.Model
 {
@@ -256,6 +258,26 @@ namespace OpenIZ.Core.Model
 		}
 
 		/// <summary>
+		/// Gets the full name of the user entity.
+		/// </summary>
+		/// <param name="entity">The user entity.</param>
+		/// <param name="nameUseKey">The name use key.</param>
+		/// <returns>Returns the full name of the user entity.</returns>
+		/// <exception cref="System.ArgumentNullException">If the entity is null.</exception>
+		public static string GetFullName(this UserEntity entity, Guid nameUseKey)
+		{
+			if (entity == null)
+			{
+				throw new ArgumentNullException(nameof(entity), "Value cannot be null");
+			}
+
+			var given = entity.Names.Where(n => n.NameUseKey == nameUseKey).SelectMany(n => n.Component).Where(c => c.ComponentTypeKey == NameComponentKeys.Given).Select(c => c.Value).ToList();
+			var family = entity.Names.Where(n => n.NameUseKey == nameUseKey).SelectMany(n => n.Component).Where(c => c.ComponentTypeKey == NameComponentKeys.Family).Select(c => c.Value).ToList();
+
+			return string.Join(" ", given) + " " + string.Join(" ", family);
+		}
+
+		/// <summary>
 		/// Create a version filter
 		/// </summary>
 		/// <param name="me">Me.</param>
@@ -327,9 +349,14 @@ namespace OpenIZ.Core.Model
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="source">The source.</param>
-		/// <returns>Returns a list of the versioned entity data which contains only the latest version of the entity.</returns>
-		public static IEnumerable<T> LatestVersionOnly<T>(this IEnumerable<T> source) where T : VersionedEntityData<Entity>
+		/// <returns>Returns the latest version only of the versioned entity data.</returns>
+		public static IEnumerable<T> LatestVersionOnly<T>(this IEnumerable<T> source) where T : IVersionedEntity
 		{
+			if (source == null)
+			{
+				throw new ArgumentNullException(nameof(source), "Value cannot be null");
+			}
+
 			var latestVersions = new List<T>();
 
 			var keys = source.Select(e => e.Key.Value).Distinct();

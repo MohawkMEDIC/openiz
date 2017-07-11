@@ -57,66 +57,84 @@ namespace OpenIZ.Core.Model.Constants
 	/// </summary>
 	public static class NameUseKeys
 	{
-        /// <summary>
-        /// The name used is an alphabetic representation of the name (ex: romaji in Japanese)
-        /// </summary>
+		/// <summary>
+		/// The name used is an alphabetic representation of the name (ex: romaji in Japanese)
+		/// </summary>
 		public static readonly Guid Alphabetic = Guid.Parse("71D1C07C-6EE6-4240-8A95-19F96583512E");
-        /// <summary>
-        /// The name is an anonymous name for the object (not the real name but a name used for care delivery)
-        /// </summary>
+
+		/// <summary>
+		/// The name is an anonymous name for the object (not the real name but a name used for care delivery)
+		/// </summary>
 		public static readonly Guid Anonymous = Guid.Parse("95E6843A-26FF-4046-B6F4-EB440D4B85F7");
-        /// <summary>
-        /// The name represents an artist name or stage name
-        /// </summary>
+
+		/// <summary>
+		/// The name represents an artist name or stage name
+		/// </summary>
 		public static readonly Guid Artist = Guid.Parse("4A7BF199-F33B-42F9-8B99-32433EA67BD7");
-        /// <summary>
-        /// The name represents an assigned name (given or bestowed by an authority)
-        /// </summary>
+
+		/// <summary>
+		/// The name represents an assigned name (given or bestowed by an authority)
+		/// </summary>
 		public static readonly Guid Assigned = Guid.Parse("A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1");
-        /// <summary>
-        /// THe name represents an ideographic representation of the name
-        /// </summary>
+
+		/// <summary>
+		/// THe name represents an ideographic representation of the name
+		/// </summary>
 		public static readonly Guid Ideographic = Guid.Parse("09000479-4672-44F8-BB4A-72FB25F7356A");
-        /// <summary>
-        /// The name is an indigenous name or tribal name for the patient
-        /// </summary>
+
+		/// <summary>
+		/// The name is an indigenous name or tribal name for the patient
+		/// </summary>
 		public static readonly Guid Indigenous = Guid.Parse("A3FB2A05-5EBE-47AE-AFD0-4C1B22336090");
-        /// <summary>
-        /// The name represents the current legal name of an object (such as a corporate name)
-        /// </summary>
+
+		/// <summary>
+		/// The name represents the current legal name of an object (such as a corporate name)
+		/// </summary>
 		public static readonly Guid Legal = Guid.Parse("EFFE122D-8D30-491D-805D-ADDCB4466C35");
-        /// <summary>
-        /// The name represents a name as displayed on a license or known to a license authority
-        /// </summary>
+
+		/// <summary>
+		/// The name represents a name as displayed on a license or known to a license authority
+		/// </summary>
 		public static readonly Guid License = Guid.Parse("48075D19-7B29-4CA5-9C73-0CBD31248446");
-        /// <summary>
-        /// THe name is a maiden name (name of a patient before marriage)
-        /// </summary>
+
+		/// <summary>
+		/// THe name is a maiden name (name of a patient before marriage)
+		/// </summary>
 		public static readonly Guid MaidenName = Guid.Parse("0674C1C8-963A-4658-AFF9-8CDCD308FA68");
-        /// <summary>
-        /// The name as it appears on an official record
-        /// </summary>
+
+		/// <summary>
+		/// The name as it appears on an official record
+		/// </summary>
 		public static readonly Guid OfficialRecord = Guid.Parse("1EC9583A-B019-4BAA-B856-B99CAF368656");
-        /// <summary>
-        /// The name represents a phonetic representation of a name such as a SOUNDEX code
-        /// </summary>
+
+		/// <summary>
+		/// The name represents a phonetic representation of a name such as a SOUNDEX code
+		/// </summary>
 		public static readonly Guid Phonetic = Guid.Parse("2B085D38-3308-4664-9F89-48D8EF4DABA7");
-        /// <summary>
-        /// The name is a pseudonym for the object or an synonym name
-        /// </summary>
+
+		/// <summary>
+		/// The name is a pseudonym for the object or an synonym name
+		/// </summary>
 		public static readonly Guid Pseudonym = Guid.Parse("C31564EF-CA8D-4528-85A8-88245FCEF344");
+
         /// <summary>
         /// The name is to be used for religious purposes (such as baptismal name)
         /// </summary>
 		public static readonly Guid Religious = Guid.Parse("15207687-5290-4672-A7DF-2880A23DCBB5");
+
         /// <summary>
         /// The name is to be used in the performing of matches only
         /// </summary>
 		public static readonly Guid Search = Guid.Parse("87964BFF-E442-481D-9749-69B2A84A1FBE");
+
         /// <summary>
         /// The name represents the computed soundex code of a name
         /// </summary>
 		public static readonly Guid Soundex = Guid.Parse("E5794E3B-3025-436F-9417-5886FEEAD55A");
+
+		/// <summary>
+		/// The name represents a syllabic name.
+		/// </summary>
 		public static readonly Guid Syllabic = Guid.Parse("B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF");
 	}
 }

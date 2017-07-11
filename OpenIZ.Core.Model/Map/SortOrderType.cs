@@ -21,15 +21,22 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Map
 {
-    /// <summary>
-    /// Represents sort order
-    /// </summary>
-    [XmlType(nameof(SortOrderType), Namespace = "http://openiz.org/model/map")]
+	/// <summary>
+	/// Represents sort order
+	/// </summary>
+	[XmlType(nameof(SortOrderType), Namespace = "http://openiz.org/model/map")]
     public enum SortOrderType
     {
-        [XmlEnum("asc")]
+		/// <summary>
+		/// Order by ascending.
+		/// </summary>
+		[XmlEnum("asc")]
         OrderBy,
-        [XmlEnum("desc")]
+
+		/// <summary>
+		/// Order by descending.
+		/// </summary>
+		[XmlEnum("desc")]
         OrderByDescending
     }
 }

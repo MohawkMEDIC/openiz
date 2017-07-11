@@ -37,13 +37,9 @@ namespace OpenIZ.Core.Http.Description
 		IRestClientSecurityDescription Security { get; }
 
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="OpenIZ.Mobile.Core.Configuration.ServiceClientBinding"/>
-		/// is optimized
+		/// Gets a value indicating whether this <see cref="IRestClientBindingDescription"/> is optimize.
 		/// </summary>
 		/// <value><c>true</c> if optimize; otherwise, <c>false</c>.</value>
-		bool Optimize
-		{
-			get;
-		}
+		bool Optimize { get; }
 	}
 }

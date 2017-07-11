@@ -31,10 +31,21 @@ namespace OpenIZ.Core.Model.Map
     /// </summary>
     public enum ResultDetailType
     {
-        Error,
-        Warning,
-        Information
-    }
+		/// <summary>
+		/// Represents an error.
+		/// </summary>
+		Error,
+
+		/// <summary>
+		/// Represents a warning.
+		/// </summary>
+		Warning,
+
+		/// <summary>
+		/// Represents information.
+		/// </summary>
+		Information
+	}
 
     /// <summary>
     /// Represents a result detail which is a validation result
