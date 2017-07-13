@@ -200,7 +200,7 @@ namespace OpenIZ.Core.Protocol
                             if (p.Participations.Count == 0 && p.VersionKey.HasValue)
                             {
                                 p.Participations = EntitySource.Current.Provider.Query<Act>(o => o.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.PlayerEntityKey == currentProcessing.Key) &&
-                                    o.StatusConceptKey != StatusKeys.Nullified && o.StatusConceptKey != StatusKeys.Obsolete).OfType<Act>()
+                                    o.StatusConceptKey != StatusKeys.Nullified && o.StatusConceptKey != StatusKeys.Obsolete && o.StatusConceptKey != StatusKeys.Cancelled).OfType<Act>()
                                     .Select(a =>
                                     new ActParticipation()
                                     {
@@ -262,7 +262,7 @@ namespace OpenIZ.Core.Protocol
                 lock (currentProcessing)
                 {
                     var thdPatient = currentProcessing.Copy() as Patient;
-                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.ToList().Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose && o.Act?.StatusConceptKey != StatusKeys.Nullified && o.Act?.StatusConceptKey != StatusKeys.Obsolete));
+                    thdPatient.Participations = new List<ActParticipation>(currentProcessing.Participations.ToList().Where(o=>o.Act?.MoodConceptKey != ActMoodKeys.Propose && o.Act?.StatusConceptKey != StatusKeys.Nullified && o.Act?.StatusConceptKey != StatusKeys.Obsolete && o.Act?.StatusConceptKey != StatusKeys.Cancelled));
 
                     // Let's ensure that there are some properties loaded eh?
                     if(this.IgnoreViewModelInitializer)

@@ -7645,6 +7645,7 @@ var OpenIZModel = OpenIZModel || {
          *             Status - Obsolete            
          */
         Obsolete: 'bdef5f90-5497-4f26-956c-8f818cce2bd2',
+        Cancelled: '3efd3b6e-02d5-4cc9-9088-ef8f31e321c5'
     },  // StatusKeys 
     // OpenIZ.Core.Model.Constants.EntityRelationshipTypeKeys, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
     /**

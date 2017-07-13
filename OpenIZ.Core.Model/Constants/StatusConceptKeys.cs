@@ -46,6 +46,11 @@ namespace OpenIZ.Core.Model.Constants
 		/// </summary>
 		public static readonly Guid Nullified = Guid.Parse("CD4AA3C4-02D5-4CC9-9088-EF8F31E321C5");
 
+        /// <summary>
+        /// Indicates that the act was cancelled before being completed
+        /// </summary>
+        public static readonly Guid Cancelled = Guid.Parse("3EFD3B6E-02D5-4CC9-9088-EF8F31E321C5");
+
 		/// <summary>
 		/// Indicates that the entity or act did exist at one point, however it no longer exists
 		/// </summary>

@@ -253,6 +253,31 @@ namespace OpenIZ.Core.Services.Impl
 
         }
 
+        /// <summary>
+        /// Insert or update the specified act
+        /// </summary>
+        public TAct Cancel<TAct>(TAct act) where TAct : Act
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+
+            if (persistenceService == null)
+            {
+                throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
+            }
+
+            var businessRulesService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
+            act = businessRulesService != null ? businessRulesService.BeforeUpdate(act) : act;
+
+            act.StatusConceptKey = StatusKeys.Cancelled;
+            act = persistenceService.Update(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(act));
+
+            businessRulesService?.AfterUpdate(act);
+            return act;
+
+        }
 
         /// <summary>
         /// Obsoletes the specified data.
@@ -294,7 +319,7 @@ namespace OpenIZ.Core.Services.Impl
 
 				act = persistenceService.Update(act, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
-                businessRulesService.AfterUpdate(act);
+                businessRulesService?.AfterUpdate(act);
 
                 this.DataUpdated?.Invoke(this, new AuditDataEventArgs(act));
                 return act;
