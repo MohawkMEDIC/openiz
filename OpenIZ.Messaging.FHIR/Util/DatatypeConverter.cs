@@ -62,13 +62,26 @@ namespace OpenIZ.Messaging.FHIR.Util
             return refer;
 		}
 
-		/// <summary>
-		/// Creates the resource.
-		/// </summary>
-		/// <typeparam name="TResource">The type of the t resource.</typeparam>
-		/// <param name="resource">The resource.</param>
-		/// <returns>TResource.</returns>
-		public static TResource CreateResource<TResource>(IVersionedEntity resource) where TResource : ResourceBase, new()
+        /// <summary>
+        /// Creates a FHIR reference.
+        /// </summary>
+        /// <typeparam name="TResource">The type of the t resource.</typeparam>
+        /// <param name="targetEntity">The target entity.</param>
+        /// <returns>Returns a reference instance.</returns>
+        public static Reference CreatePlainReference<TResource>(IVersionedEntity targetEntity, WebOperationContext context) where TResource : DomainResourceBase, new()
+        {
+            var refer = Reference.CreateResourceReference((DomainResourceBase)DataTypeConverter.CreateResource<TResource>(targetEntity), context.IncomingRequest.UriTemplateMatch.BaseUri);
+            refer.Display = (targetEntity as Entity)?.Names?.FirstOrDefault()?.ToString();
+            return refer;
+
+        }
+        /// <summary>
+        /// Creates the resource.
+        /// </summary>
+        /// <typeparam name="TResource">The type of the t resource.</typeparam>
+        /// <param name="resource">The resource.</param>
+        /// <returns>TResource.</returns>
+        public static TResource CreateResource<TResource>(IVersionedEntity resource) where TResource : ResourceBase, new()
 		{
 			var retVal = new TResource();
 			retVal.Id = resource.Key.ToString();

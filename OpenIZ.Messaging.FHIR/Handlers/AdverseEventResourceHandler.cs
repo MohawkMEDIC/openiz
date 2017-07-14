@@ -84,7 +84,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 
 			var author = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator);
 			if (author != null)
-				retVal.Recorder = DataTypeConverter.CreateReference<Practitioner>(author.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
+				retVal.Recorder = DataTypeConverter.CreatePlainReference<Practitioner>(author.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
 
 			// Suspect entities
 			var refersTo = model.LoadCollection<ActRelationship>("Relationships").Where(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.RefersTo);
@@ -93,11 +93,11 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				var consumable = o.LoadCollection<ActParticipation>("Participations").FirstOrDefault(x => x.ParticipationRoleKey == ActParticipationKey.Consumable)?.LoadProperty<ManufacturedMaterial>("PlayerEntity");
 				if (consumable == null)
 				{
-					var product = o.LoadCollection<ActParticipation>("Participations").FirstOrDefault(x => x.ParticipationRoleKey == ActParticipationKey.Product)?.LoadProperty<ManufacturedMaterial>("PlayerEntity");
-					return new AdverseEventSuspectEntity() { Instance = DataTypeConverter.CreateReference<Substance>(product, webOperationContext) };
+					var product = o.LoadCollection<ActParticipation>("Participations").FirstOrDefault(x => x.ParticipationRoleKey == ActParticipationKey.Product)?.LoadProperty<Material>("PlayerEntity");
+					return new AdverseEventSuspectEntity() { Instance = DataTypeConverter.CreatePlainReference<Substance>(product, webOperationContext) };
 				}
 				else
-					return new AdverseEventSuspectEntity() { Instance = DataTypeConverter.CreateReference<Medication>(consumable, webOperationContext) };
+					return new AdverseEventSuspectEntity() { Instance = DataTypeConverter.CreatePlainReference<Medication>(consumable, webOperationContext) };
 			}).ToList();
 
 			return retVal;

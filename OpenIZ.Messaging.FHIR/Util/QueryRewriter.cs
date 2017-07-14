@@ -35,6 +35,8 @@ using MARC.HI.EHRS.SVC.Messaging.FHIR;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Query;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
+using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
@@ -206,7 +208,12 @@ namespace OpenIZ.Messaging.FHIR.Util
                             if (itm.Contains("|"))
                             {
                                 var segs = itm.Split('|');
-                                imsiQuery.Add(String.Format("{0}.referenceTerm[{1}].term.mnemonic", parmMap.ModelName, segs[0]), segs[1]);
+
+                                var refTerm = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindConceptsByReferenceTerm(segs[1], segs[0]).FirstOrDefault();
+                                if(refTerm != null)
+                                    imsiQuery.Add(String.Format("{0}.referenceTerm[{1}].term.mnemonic", parmMap.ModelName, refTerm.LoadProperty<CodeSystem>("CodeSystem").Authority), refTerm.Mnemonic);
+                                else
+                                    imsiQuery.Add(String.Format("{0}.mnemonic", parmMap.ModelName), segs[1]);
                             }
                             else
                                 imsiQuery.Add(parmMap.ModelName + ".referenceTerm.term.mnemonic", itm);

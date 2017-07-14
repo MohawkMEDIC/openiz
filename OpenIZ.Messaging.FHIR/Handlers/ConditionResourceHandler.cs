@@ -104,7 +104,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			retVal.AssertionDate = model.CreationTime.LocalDateTime;
 			var author = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator);
 			if (author != null)
-				retVal.Asserter = DataTypeConverter.CreateReference<Practitioner>(author.LoadProperty<Entity>("PlayerModel"), webOperationContext);
+				retVal.Asserter = DataTypeConverter.CreatePlainReference<Practitioner>(author.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
 
 			return retVal;
 		}
