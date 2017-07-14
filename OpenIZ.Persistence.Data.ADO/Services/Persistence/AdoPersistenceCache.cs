@@ -60,7 +60,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public TReturn GetCacheItem<TReturn>(Guid key)
         {
             return (TReturn)(this.m_context.GetCacheCommit(key) ??
-                this.m_cache.GetCacheItem(key));
+                this.m_cache?.GetCacheItem(key));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IdentifiedData GetCacheItem(Guid key)
         {
             return (this.m_context.GetCacheCommit(key) ??
-                this.m_cache.GetCacheItem(key)) as IdentifiedData;
+                this.m_cache?.GetCacheItem(key)) as IdentifiedData;
         }
     }
 }

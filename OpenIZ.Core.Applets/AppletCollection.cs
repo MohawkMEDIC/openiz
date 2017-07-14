@@ -901,7 +901,13 @@ namespace OpenIZ.Core.Applets
             foreach (var itm in applet.Dependencies)
             {
                 var depItm = this.m_appletManifest.FirstOrDefault(o => o.Info.Id == itm.Id && (o.Info.PublicKeyToken == itm.PublicKeyToken || String.IsNullOrEmpty(itm.PublicKeyToken)));
-                verified &= depItm != null && new Version(depItm?.Info.Version) >= new Version(itm.Version);
+                if(depItm == null)
+                {
+                    var asm = System.Reflection.Assembly.Load(new AssemblyName($"{itm.Id}, Version={itm.Version}"));
+                    verified &= asm != null;
+                }
+                else
+                    verified &= depItm != null && new Version(depItm?.Info.Version) >= new Version(itm.Version);
             }
             return verified;
         }

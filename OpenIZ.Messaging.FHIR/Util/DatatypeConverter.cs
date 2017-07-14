@@ -55,9 +55,11 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// <typeparam name="TResource">The type of the t resource.</typeparam>
 		/// <param name="targetEntity">The target entity.</param>
 		/// <returns>Returns a reference instance.</returns>
-		public static Reference<TResource> CreateReference<TResource>(IVersionedEntity targetEntity) where TResource : DomainResourceBase, new()
+		public static Reference<TResource> CreateReference<TResource>(IVersionedEntity targetEntity, WebOperationContext context) where TResource : DomainResourceBase, new()
 		{
-			return Reference.CreateResourceReference(DataTypeConverter.CreateResource<TResource>(targetEntity), WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri);
+			var refer =  Reference.CreateResourceReference(DataTypeConverter.CreateResource<TResource>(targetEntity), context.IncomingRequest.UriTemplateMatch.BaseUri);
+            refer.Display = (targetEntity as Entity)?.Names?.FirstOrDefault()?.ToString();
+            return refer;
 		}
 
 		/// <summary>
@@ -81,7 +83,7 @@ namespace OpenIZ.Messaging.FHIR.Util
             };
             retVal.Meta.Tags = (resource as ITaggable)?.Tags.Select(o => DataTypeConverter.ToFhirTag(o)).ToList();
             // TODO: Configure this namespace / coding scheme
-            retVal.Meta.Security = (resource as ISecurable)?.Policies.Where(o => o.GrantType == Core.Model.Security.PolicyGrantType.Grant).Select(o => new FhirCoding(new Uri("http://openiz.org/security/policy"), o.Policy.Oid)).ToList();
+            retVal.Meta.Security = (resource as ISecurable)?.Policies.Where(o => o.GrantType == Core.Model.Security.PolicyGrantType.Grant).Select(o => new FhirCoding(new Uri("http://openiz.org/security/policy"), o.Policy.Oid)).ToList() ?? new List<FhirCoding>();
             retVal.Meta.Security.Add(new FhirCoding(new Uri("http://openiz.org/security/policy"), PermissionPolicyIdentifiers.ReadClinicalData));
             retVal.Extension = (resource as IExtendable)?.Extensions.Where(o=>o.ExtensionTypeKey != ExtensionTypeKeys.JpegPhotoExtension).Select(o => DataTypeConverter.ToExtension(o)).ToList();
             return retVal;
@@ -525,8 +527,12 @@ namespace OpenIZ.Messaging.FHIR.Util
             else {
                 var codeSystemService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
                 var refTerm = codeSystemService.GetConceptReferenceTerm(concept.Key.Value, preferredCodeSystem);
-                if (refTerm == null)
-                    return null;
+                if (refTerm == null) // No code in the preferred system, ergo, we will instead use our own
+                    return new FhirCodeableConcept
+                    {
+                        Coding = concept.LoadCollection<ConceptReferenceTerm>(nameof(Concept.ReferenceTerms)).Select(o => DataTypeConverter.ToCoding(o.LoadProperty<ReferenceTerm>(nameof(ConceptReferenceTerm.ReferenceTerm)))).ToList(),
+                        Text = concept.LoadCollection<ConceptName>(nameof(Concept.ConceptNames)).FirstOrDefault()?.Name
+                    };
                 else
                     return new FhirCodeableConcept
                     {

@@ -430,6 +430,42 @@
       </name>
     </Concept>
   </update>
+
+
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>86F3893C-CC89-4905-8929-388D4EE164EB</id>
+      <mnemonic>each</mnemonic>
+      <codeSystem>4853A702-FFF3-4EFB-8DD7-54AACCA53664</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Each</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>B9424B4A-36F2-4376-B374-1C086C5EBF52</id>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Each</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+      <referenceTerm>
+        <term>86F3893C-CC89-4905-8929-388D4EE164EB</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Each/Unit</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  
   <update insertIfNotExists="true">
     <ConceptSet xmlns="http://openiz.org/model">
       <id>329535eb-d6cf-4a62-aeb8-43e959f1ad09</id>
@@ -438,6 +474,7 @@
       <mnemonic>UnitOfMeasure</mnemonic>
       <oid>1.3.6.1.4.1.33349.3.1.5.9.3.35</oid>
       <url>http://openiz.org/conceptsets/contrib/UnitOfMeasure</url>
+      <concept>B9424B4A-36F2-4376-B374-1C086C5EBF52</concept>
       <concept>bb1d639d-aea8-4750-a24c-b2548d2b6fe4</concept>
       <concept>564ebc64-1b56-48cd-907d-41bb47b7834f</concept>
       <concept>7bea593b-454a-4de4-bad9-4866fd14fe09</concept>

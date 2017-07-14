@@ -87,7 +87,15 @@ namespace OpenIZ.Authentication.OAuth2.Wcf
             foreach (var p in parms)
             {
                 var kvp = p.Split('=');
-                tokenRequest.Add(kvp[0], kvp[1]);
+                tokenRequest.Add(kvp[0], kvp[1].Replace('+', ' ').
+                    Replace("%3A", ":").
+                    Replace("%2F", "/").
+                    Replace("%3C", "<").
+                    Replace("%3E", ">").
+                    Replace("%21", "!").
+                    Replace("%3D", "=").
+                    Replace("%5B", "[").
+                    Replace("%5D", "]").Trim());
             }
 
             // Get the client application 

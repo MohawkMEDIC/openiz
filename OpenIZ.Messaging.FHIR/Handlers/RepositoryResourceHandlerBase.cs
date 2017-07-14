@@ -66,11 +66,11 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <summary>
 		/// Create concept set filter based on act type
 		/// </summary>
-		protected Expression CreateConceptSetFilter(Guid vitalSigns, ParameterExpression queryParameter)
+		protected Expression CreateConceptSetFilter(Guid conceptSetKey, ParameterExpression queryParameter)
 		{
-			var conceptSetRef = Expression.MakeMemberAccess(Expression.MakeMemberAccess(queryParameter, typeof(Act).GetProperty(nameof(Act))), typeof(Concept).GetProperty(nameof(Concept.ConceptSets)));
+			var conceptSetRef = Expression.MakeMemberAccess(Expression.MakeMemberAccess(queryParameter, typeof(Act).GetProperty(nameof(Act.TypeConcept))), typeof(Concept).GetProperty(nameof(Concept.ConceptSets)));
 			var lParam = Expression.Parameter(typeof(ConceptSet));
-			var conceptSetFilter = Expression.MakeBinary(ExpressionType.Equal, Expression.MakeMemberAccess(lParam, typeof(ConceptSet).GetProperty(nameof(ConceptSet.Key))), Expression.Constant(ConceptSetKeys.VitalSigns));
+			var conceptSetFilter = Expression.MakeBinary(ExpressionType.Equal, Expression.Convert(Expression.MakeMemberAccess(lParam, typeof(ConceptSet).GetProperty(nameof(ConceptSet.Key))), typeof(Guid)), Expression.Constant(conceptSetKey));
 			return Expression.Call((MethodInfo)typeof(Enumerable).GetGenericMethod("Any", new Type[] { typeof(ConceptSet) }, new Type[] { typeof(IEnumerable<ConceptSet>), typeof(Func<ConceptSet, bool>) }), conceptSetRef, Expression.Lambda(conceptSetFilter, lParam));
 		}
 
