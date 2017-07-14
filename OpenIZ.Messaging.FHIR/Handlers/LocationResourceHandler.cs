@@ -52,8 +52,8 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			else
 				retVal.Status = LocationStatus.Suspended;
 
-			retVal.Name = model.LoadCollection<EntityName>("Names").FirstOrDefault(o => o.NameUseKey == NameUseKeys.OfficialRecord)?.LoadCollection<EntityNameComponent>("Components")?.FirstOrDefault()?.Value;
-			retVal.Alias = model.LoadCollection<EntityName>("Names").Where(o => o.NameUseKey != NameUseKeys.OfficialRecord)?.Select(n => (FhirString)n.LoadCollection<EntityNameComponent>("Components")?.FirstOrDefault()?.Value).ToList();
+			retVal.Name = model.LoadCollection<EntityName>("Names").FirstOrDefault(o => o.NameUseKey == NameUseKeys.OfficialRecord)?.LoadCollection<EntityNameComponent>("Component")?.FirstOrDefault()?.Value;
+			retVal.Alias = model.LoadCollection<EntityName>("Names").Where(o => o.NameUseKey != NameUseKeys.OfficialRecord)?.Select(n => (FhirString)n.LoadCollection<EntityNameComponent>("Component")?.FirstOrDefault()?.Value).ToList();
 
 			// Convert the determiner code
 			if (model.DeterminerConceptKey == DeterminerKeys.Described)
@@ -76,7 +76,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Part of?
 			var parent = model.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
 			if (parent != null)
-				retVal.PartOf = DataTypeConverter.CreateReference<Location>(parent.LoadProperty<Entity>("TargetEntity"));
+				retVal.PartOf = DataTypeConverter.CreateReference<Location>(parent.LoadProperty<Entity>("TargetEntity"), webOperationContext);
 
 			return retVal;
 		}

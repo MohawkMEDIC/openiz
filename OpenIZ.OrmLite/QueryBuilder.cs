@@ -33,6 +33,7 @@ using System.Text.RegularExpressions;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using OpenIZ.OrmLite.Providers;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.OrmLite
 {
@@ -298,7 +299,11 @@ namespace OpenIZ.OrmLite
                     }
                     else // this table points at other
                     {
-                        var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(this.m_extractionRegex.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value));
+                        var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(this.m_extractionRegex.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value)).ToList();
+
+                        if (!subQuery.Any(o => o.Key == "obsoletionTime") && typeof(IBaseEntityData).IsAssignableFrom(subProp.PropertyType))
+                            subQuery.Add(new KeyValuePair<string, object>("obsoletionTime", "null"));
+
                         TableMapping tableMapping = null;
                         var subPropKey = typeof(TModel).GetXmlProperty(propertyPath);
 

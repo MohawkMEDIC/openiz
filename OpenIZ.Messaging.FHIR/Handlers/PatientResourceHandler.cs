@@ -86,7 +86,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 					relative.Identifier = rel.TargetEntity.LoadCollection<EntityIdentifier>(nameof(Entity.Identifiers)).Select(o => DataTypeConverter.ToFhirIdentifier(o)).ToList();
 					relative.Name = DataTypeConverter.ToFhirHumanName(rel.TargetEntity.LoadCollection<EntityName>(nameof(Entity.Names)).FirstOrDefault());
 					if (rel.TargetEntity is Core.Model.Roles.Patient)
-						relative.Patient = DataTypeConverter.CreateReference<Patient>(rel.TargetEntity);
+						relative.Patient = DataTypeConverter.CreateReference<Patient>(rel.TargetEntity, webOperationContext);
 					relative.Telecom = rel.TargetEntity.LoadCollection<EntityTelecomAddress>(nameof(Entity.Telecoms)).Select(o => DataTypeConverter.ToFhirTelecom(o)).ToList();
 					retVal.Contained.Add(new ContainedResource()
 					{
@@ -94,7 +94,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 					});
 				}
 				else if (rel.RelationshipTypeKey == EntityRelationshipTypeKeys.HealthcareProvider)
-					retVal.Provider = DataTypeConverter.CreateReference<Practitioner>(rel.LoadProperty<Entity>(nameof(EntityRelationship.TargetEntity)));
+					retVal.Provider = DataTypeConverter.CreateReference<Practitioner>(rel.LoadProperty<Entity>(nameof(EntityRelationship.TargetEntity)), webOperationContext);
 			}
 
 			var photo = model.LoadCollection<EntityExtension>("Extensions").FirstOrDefault(o => o.ExtensionTypeKey == ExtensionTypeKeys.JpegPhotoExtension);

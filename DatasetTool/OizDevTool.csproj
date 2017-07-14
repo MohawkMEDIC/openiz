@@ -78,6 +78,7 @@
     <Compile Include="Debugger\Debug.cs" />
     <Compile Include="Debugger\DebuggerBase.cs" />
     <Compile Include="CommandAttribute.cs" />
+    <Compile Include="DocGen.cs" />
     <Compile Include="InteractiveBase.cs" />
     <Compile Include="Warehouse.cs" />
     <Compile Include="ExampleAttribute.cs" />

@@ -76,7 +76,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\100-Gs1ReferenceTerms.dataset" />
+    <None Include="Data\100-Gs1ReferenceTerms.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Sample\SampleInventoryReportRequest.xml" />
   </ItemGroup>
   <ItemGroup>

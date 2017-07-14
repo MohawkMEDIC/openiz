@@ -748,5 +748,14 @@ namespace OpenIZ.Core.Services.Impl
 
 			return term;
 		}
+
+        /// <summary>
+        /// Find all code systems
+        /// </summary>
+        public IEnumerable<CodeSystem> FindCodeSystems(Expression<Func<CodeSystem, bool>> query)
+        {
+            int t = 0;
+            return this.Find<CodeSystem>(query, 0, null, out t, Guid.Empty);
+        }
     }
 }

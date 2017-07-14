@@ -80,12 +80,15 @@ namespace OpenIZ.Core.Model.Query
                 expr[0] = Uri.UnescapeDataString(expr[0]);
                 expr[1] = Uri.UnescapeDataString(expr[1]);
                 var value = expr[1].Replace('+', ' ').
+                    Replace("%3A", ":").
+                    Replace("%2F", "/").
                     Replace("%3C", "<").
                     Replace("%3E", ">").
                     Replace("%21", "!").
                     Replace("%3D", "=").
                     Replace("%5B", "[").
-                    Replace("%5D", "]").Trim();
+                    Replace("%5D", "]").
+                    Replace("%7C", "|").Trim();
                 // HACK: Replace this later
                 if(!String.IsNullOrEmpty(value))
                     retVal.Add(expr[0].Trim(), value);

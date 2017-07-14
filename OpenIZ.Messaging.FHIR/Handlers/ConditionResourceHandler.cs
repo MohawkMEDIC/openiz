@@ -89,7 +89,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			// Subject
 			var recordTarget = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
 			if (recordTarget != null)
-				retVal.Subject = DataTypeConverter.CreateReference<Patient>(recordTarget.LoadProperty<Entity>("PlayerEntity"));
+				retVal.Subject = DataTypeConverter.CreateReference<Patient>(recordTarget.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
 
 			// Onset
 			if (model.StartTime.HasValue || model.StopTime.HasValue)
@@ -104,7 +104,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			retVal.AssertionDate = model.CreationTime.LocalDateTime;
 			var author = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator);
 			if (author != null)
-				retVal.Asserter = DataTypeConverter.CreateReference<Practitioner>(author.LoadProperty<Entity>("PlayerModel"));
+				retVal.Asserter = DataTypeConverter.CreateReference<Practitioner>(author.LoadProperty<Entity>("PlayerModel"), webOperationContext);
 
 			return retVal;
 		}

@@ -88,15 +88,20 @@ namespace OpenIZ.Core.Services
 		/// <returns>Returns a list of concepts who match the specified query.</returns>
 		IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query);
 
-		/// <summary>
-		/// Searches for a concept using a given query.
-		/// </summary>
-		/// <param name="query">The query to use for searching for the concept.</param>
-		/// <param name="count">The count of the concepts to return.</param>
-		/// <param name="offset">The offset for the search results.</param>
-		/// <param name="totalCount">The total count of the search results.</param>
-		/// <returns>Returns a list of concepts who match the specified query.</returns>
-		IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int? count, out int totalCount);
+        /// <summary>
+        /// Find code systems
+        /// </summary>
+        IEnumerable<CodeSystem> FindCodeSystems(Expression<Func<CodeSystem, bool>> query);
+
+        /// <summary>
+        /// Searches for a concept using a given query.
+        /// </summary>
+        /// <param name="query">The query to use for searching for the concept.</param>
+        /// <param name="count">The count of the concepts to return.</param>
+        /// <param name="offset">The offset for the search results.</param>
+        /// <param name="totalCount">The total count of the search results.</param>
+        /// <returns>Returns a list of concepts who match the specified query.</returns>
+        IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query, int offset, int? count, out int totalCount);
 
 		/// <summary>
 		/// Searches for a concept by name and language.
