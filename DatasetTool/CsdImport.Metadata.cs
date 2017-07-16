@@ -44,18 +44,29 @@ namespace OizDevTool
 		{
 			var metadataService = ApplicationContext.Current.GetService<IMetadataRepositoryService>();
 
+            String assigningAuthorityName = otherId.assigningAuthorityName;
+            // sometimes codes are used underneath the authority name we have to differentiate between these as they are different identifiers
+            if(!String.IsNullOrEmpty(otherId.code))
+            {
+                Uri r = null;
+                if (Uri.TryCreate(assigningAuthorityName, UriKind.Absolute, out r))
+                    assigningAuthorityName += "/" + otherId.code;
+                else
+                    assigningAuthorityName += "." + otherId.code;
+            }
+
 			// lookup by NSID
-			var assigningAuthority = metadataService.FindAssigningAuthority(a => a.DomainName == otherId.assigningAuthorityName).FirstOrDefault();
+			var assigningAuthority = metadataService.FindAssigningAuthority(a => a.DomainName == assigningAuthorityName).FirstOrDefault();
 
 			if (assigningAuthority != null)
 			{
 				return assigningAuthority;
 			}
 
-			ShowWarningMessage($"Warning, unable to locate assigning authority by NSID using value: {otherId.assigningAuthorityName}, will attempt to lookup by URL");
+			ShowWarningMessage($"Warning, unable to locate assigning authority by NSID using value: {assigningAuthorityName}, will attempt to lookup by URL");
 
 			// lookup by URL
-			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == otherId.assigningAuthorityName).FirstOrDefault();
+			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Url == assigningAuthorityName).FirstOrDefault();
 
 			if (assigningAuthority != null)
 			{
@@ -65,7 +76,7 @@ namespace OizDevTool
 			ShowWarningMessage($"Warning, unable to locate assigning authority by URL using value: {otherId.assigningAuthorityName}, will attempt to lookup by OID");
 
 			// lookup by OID
-			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Oid == otherId.assigningAuthorityName).FirstOrDefault();
+			assigningAuthority = metadataService.FindAssigningAuthority(a => a.Oid == assigningAuthorityName).FirstOrDefault();
 
 			if (assigningAuthority == null)
 			{

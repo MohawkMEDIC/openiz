@@ -37,13 +37,14 @@ namespace OizDevTool
 		/// </summary>
 		/// <param name="csdFacilities">The CSD facilities.</param>
 		/// <returns>Returns a list of places.</returns>
-		private static IEnumerable<Entity> MapPlaces(IEnumerable<facility> csdFacilities)
+		private static IEnumerable<Entity> MapPlaces(IEnumerable<facility> csdFacilities, CsdOptions options)
 		{
 			var places = new List<Entity>();
 
+            int idx = 0;
 			foreach (var facility in csdFacilities)
 			{
-				var place = GetOrCreateEntity<Place>(facility.entityID);
+				var place = GetOrCreateEntity<Place>(facility.entityID, options.EntityUidAuthority);
 
 				// map addresses
 				if (facility.address?.Any() == true)
@@ -100,7 +101,7 @@ namespace OizDevTool
 
 					place.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
 
-					parent = GetOrCreateEntity<Place>(facility.parent.entityID);
+					parent = GetOrCreateEntity<Place>(facility.parent.entityID, options.EntityUidAuthority);
 
 					place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
 				}
@@ -134,14 +135,22 @@ namespace OizDevTool
 					place.Names.AddRange(names);
 				}
 
-				// map organization relationships
+				// map organization relationships - These are the villages which the place supports
 				if (facility.organizations?.Any() == true)
 				{
-					//place.Relationships.RemoveAll(r => r.)
-				}
+                    ShowInfoMessage("Mapping serviced organizations relationships...");
 
-				// map contact points
-				if (facility.contactPoint?.Any() == true)
+                    foreach (var org in facility.organizations)
+                    {
+                        if (String.IsNullOrEmpty(org.entityID))
+                            continue;
+                        var villageServiced = GetOrCreateEntity<Place>(org.entityID, options.EntityUidAuthority);
+                        place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, villageServiced.Key.Value));
+                    }
+                }
+
+                // map contact points
+                if (facility.contactPoint?.Any() == true)
 				{
 					ShowInfoMessage("Mapping place telecommunications...");
 
@@ -176,7 +185,7 @@ namespace OizDevTool
 				}
 
 				Console.ForegroundColor = ConsoleColor.Magenta;
-				Console.WriteLine($"Mapped place: {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+				Console.WriteLine($"Mapped place: ({idx++}/{csdFacilities.Count()}) {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
 				Console.ResetColor();
 			}
 

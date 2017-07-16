@@ -63,7 +63,7 @@ namespace OizDevTool
         /// </summary>
         protected void Prompt()
         {
-            Console.ForegroundColor = this.m_promptColor;
+            Console.ResetColor();
             Console.Write(this.m_prompt);
         }
 

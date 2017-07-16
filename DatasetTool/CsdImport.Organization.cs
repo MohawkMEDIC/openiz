@@ -24,6 +24,9 @@ using OpenIZ.Core.Model.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Services;
+using MARC.HI.EHRS.SVC.Core;
 
 namespace OizDevTool
 {
@@ -37,42 +40,59 @@ namespace OizDevTool
 		/// </summary>
 		/// <param name="csdOrganizations">The CSD organizations.</param>
 		/// <returns>Returns a list of organizations.</returns>
-		private static IEnumerable<Entity> MapOrganizations(IEnumerable<organization> csdOrganizations)
+		private static IEnumerable<Entity> MapOrganizations(IEnumerable<organization> csdOrganizations, CsdOptions options)
 		{
+
 			var organizations = new List<Entity>();
 
+            var idx = 0;
 			foreach (var csdOrganization in csdOrganizations)
 			{
-				var organization = GetOrCreateEntity<Organization>(csdOrganization.entityID);
 
-				// addresses
-				if (csdOrganization.address?.Any() == true)
+                Entity importItem = null;
+                if (!options.OrganizationsAsPlaces)
+                    importItem = GetOrCreateEntity<Organization>(csdOrganization.entityID, options.EntityUidAuthority);
+                else
+                    importItem = GetOrCreateEntity<Place>(csdOrganization.entityID, options.EntityUidAuthority);
+
+                // addresses
+                if (csdOrganization.address?.Any() == true)
 				{
 					ShowInfoMessage("Mapping organization addresses...");
 
-					var addresses = ReconcileVersionedAssociations(organization.Addresses, csdOrganization.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem)))).Cast<EntityAddress>();
+					var addresses = ReconcileVersionedAssociations(importItem.Addresses, csdOrganization.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem)))).Cast<EntityAddress>();
 
-					organization.Addresses.AddRange(addresses);
+                    importItem.Addresses.AddRange(addresses);
 				}
+
+                // If organization as place
+                if (options.OrganizationsAsPlaces)  // Import village hiearchy as address
+                {
+                    importItem.Addresses = new List<EntityAddress>()
+                    {
+                        TraversePlaceHeirarchyAsAddress(csdOrganization, csdOrganizations)
+                    };
+                }
 
 				// map type concept
 				if (csdOrganization.codedType?.Any() == true)
 				{
 					ShowInfoMessage("Mapping organization type concept...");
 
-					// we don't support multiple specialties for a organization at the moment, so we only take the first one
-					// TODO: cleanup
-					organization.TypeConceptKey = MapCodedType(csdOrganization.codedType[0].code, csdOrganization.codedType[0].codingScheme)?.Key;
+                    // we don't support multiple specialties for a organization at the moment, so we only take the first one
+                    // TODO: cleanup
+                    importItem.TypeConceptKey = MapCodedType(csdOrganization.codedType[0].code, csdOrganization.codedType[0].codingScheme)?.Key;
 				}
 
 				// map specializations
-				if (csdOrganization.specialization?.Any() == true)
+                
+				if (csdOrganization.specialization?.Any() == true && importItem is Organization)
 				{
 					ShowInfoMessage("Mapping organization industry concept...");
 
 					// we don't support multiple industry values for a organization at the moment, so we only take the first one
 					// TODO: cleanup
-					organization.IndustryConceptKey = MapCodedType(csdOrganization.specialization[0].code, csdOrganization.specialization[0].codingScheme)?.Key;
+					(importItem as Organization).IndustryConceptKey = MapCodedType(csdOrganization.specialization[0].code, csdOrganization.specialization[0].codingScheme)?.Key;
 				}
 
 				// map extensions
@@ -80,9 +100,9 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization extensions...");
 
-					var extensions = ReconcileVersionedAssociations(organization.Extensions, csdOrganization.extension.Select(e => MapEntityExtension(e.urn, e.Any.InnerText))).Cast<EntityExtension>();
+					var extensions = ReconcileVersionedAssociations(importItem.Extensions, csdOrganization.extension.Select(e => MapEntityExtension(e.urn, e.Any.InnerText))).Cast<EntityExtension>();
 
-					organization.Extensions.AddRange(extensions);
+					importItem.Extensions.AddRange(extensions);
 				}
 
 				// map identifiers
@@ -90,9 +110,9 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization identifiers...");
 
-					var identifiers = ReconcileVersionedAssociations(organization.Identifiers, csdOrganization.otherID.Select(MapEntityIdentifier)).Cast<EntityIdentifier>();
+					var identifiers = ReconcileVersionedAssociations(importItem.Identifiers, csdOrganization.otherID.Select(MapEntityIdentifier)).Cast<EntityIdentifier>();
 
-					organization.Identifiers.AddRange(identifiers);
+                    importItem.Identifiers.AddRange(identifiers);
 				}
 
 				Entity parent = null;
@@ -102,11 +122,14 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization parent relationships...");
 
-					organization.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
+                    importItem.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
 
-					parent = GetOrCreateEntity<Organization>(csdOrganization.parent.entityID);
+                    if(!options.OrganizationsAsPlaces)
+					    parent = GetOrCreateEntity<Organization>(csdOrganization.parent.entityID, options.EntityUidAuthority);
+                    else
+                        parent = GetOrCreateEntity<Place>(csdOrganization.parent.entityID, options.EntityUidAuthority);
 
-					organization.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
+                    importItem.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
 				}
 
 				// map primary name
@@ -114,8 +137,8 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization names...");
 
-					organization.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
-					organization.Names.Add(new EntityName(NameUseKeys.OfficialRecord, csdOrganization.primaryName));
+                    importItem.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
+                    importItem.Names.Add(new EntityName(NameUseKeys.OfficialRecord, csdOrganization.primaryName));
 				}
 
 				// map names
@@ -123,9 +146,9 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization additional names...");
 
-					var names = ReconcileVersionedAssociations(organization.Names, csdOrganization.otherName.Select(c => MapEntityNameOrganization(NameUseKeys.Assigned, c))).Cast<EntityName>();
+					var names = ReconcileVersionedAssociations(importItem.Names, csdOrganization.otherName.Select(c => MapEntityNameOrganization(NameUseKeys.Assigned, c))).Cast<EntityName>();
 
-					organization.Names.AddRange(names);
+                    importItem.Names.AddRange(names);
 				}
 
 				// map tags
@@ -133,8 +156,8 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization tags...");
 
-					organization.Tags.RemoveAll(t => t.TagKey == "sourceDirectory");
-					organization.Tags.Add(new EntityTag("sourceDirectory", csdOrganization.record.sourceDirectory));
+                    importItem.Tags.RemoveAll(t => t.TagKey == "sourceDirectory");
+                    importItem.Tags.Add(new EntityTag("sourceDirectory", csdOrganization.record.sourceDirectory));
 				}
 
 				// map contacts
@@ -142,9 +165,9 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization contact relationships...");
 
-					// HACK
-					organization.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Contact);
-					organization.Relationships.AddRange(csdOrganization.contact.Select(MapEntityRelationshipOrganizationContact));
+                    // HACK
+                    importItem.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Contact);
+                    importItem.Relationships.AddRange(csdOrganization.contact.Select(o=>MapEntityRelationshipOrganizationContact(o, options)));
 				}
 
 				// map contact points
@@ -152,9 +175,9 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization telecommunications...");
 
-					var telecoms = ReconcileVersionedAssociations(organization.Telecoms, csdOrganization.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c))).Cast<EntityTelecomAddress>();
+					var telecoms = ReconcileVersionedAssociations(importItem.Telecoms, csdOrganization.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c))).Cast<EntityTelecomAddress>();
 
-					organization.Telecoms.AddRange(telecoms);
+                    importItem.Telecoms.AddRange(telecoms);
 				}
 
 				// map status concept
@@ -162,10 +185,10 @@ namespace OizDevTool
 				{
 					ShowInfoMessage("Mapping organization status...");
 
-					organization.StatusConceptKey = MapStatusCode(csdOrganization.record.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes");
+                    importItem.StatusConceptKey = MapStatusCode(csdOrganization.record.status, "http://openiz.org/csd/CSD-OrganizationStatusCodes");
 				}
 
-				organizations.Add(organization);
+				organizations.Add(importItem);
 
 				if (parent != null && organizations.Any(c => c.Identifiers.All(i => i.Value != csdOrganization.parent?.entityID)))
 				{
@@ -174,7 +197,7 @@ namespace OizDevTool
 
 				if (!entityMap.ContainsKey(csdOrganization.entityID))
 				{
-					entityMap.Add(csdOrganization.entityID, organization);
+					entityMap.Add(csdOrganization.entityID, importItem);
 				}
 
 				if (parent != null && !entityMap.ContainsKey(csdOrganization.parent?.entityID))
@@ -183,11 +206,84 @@ namespace OizDevTool
 				}
 
 				Console.ForegroundColor = ConsoleColor.Magenta;
-				Console.WriteLine($"Mapped organization: {organization.Key.Value} {string.Join(" ", organization.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+				Console.WriteLine($"Mapped organization {(options.OrganizationsAsPlaces ? "as place" : "")} ({idx++}/{csdOrganizations.Count()}): {importItem.Key.Value} {string.Join(" ", importItem.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
 				Console.ResetColor();
 			}
 
 			return organizations;
 		}
-	}
+
+        // Code type maps
+        private static Dictionary<Guid, Guid> m_codeTypeMaps = new Dictionary<Guid, Guid>();
+
+        /// <summary>
+        /// Traverses a place hierarchy as an address structure
+        /// </summary>
+        private static EntityAddress TraversePlaceHeirarchyAsAddress(organization importItem, IEnumerable<organization> context)
+        {
+
+            EntityAddress retVal = new EntityAddress()
+            {
+                AddressUseKey = AddressUseKeys.Direct
+            };
+
+            // First Census tract?
+            var codeID = importItem.otherID.FirstOrDefault(o => o.code == "code");
+            if(codeID != null)
+                retVal.Component.Add(new EntityAddressComponent(AddressComponentKeys.CensusTract, codeID.Value));
+            
+            // Process components
+            var parent = importItem;
+
+            IConceptRepositoryService icpr = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
+            while(parent != null)
+            {
+
+                EntityAddressComponent comp = new EntityAddressComponent();
+                comp.Value = parent.primaryName;
+                // Get the component type from CSD
+                Concept codeType = null;
+                foreach (var ct in parent.codedType) {
+                    codeType = MapCodedType(ct.code, ct.codingScheme);
+                    if (codeType != null)
+                        break;
+                }
+
+                Guid addressCompKey = Guid.Empty;
+                if(codeType != null && !m_codeTypeMaps.TryGetValue(codeType.Key.Value, out addressCompKey))
+                {
+                    if (codeType != null)
+                    {
+                        // Look for a relationship in the AddressPartType 
+                        var adptConcept = icpr.FindConcepts(o => o.Relationship.Any(r => r.SourceEntityKey == codeType.Key) && o.ConceptSets.Any(s => s.Mnemonic == "AddressComponentType")).FirstOrDefault();
+                        if (adptConcept != null)
+                            comp.ComponentTypeKey = adptConcept.Key;
+                    }
+                    if (!comp.ComponentTypeKey.HasValue && codeType.ConceptSetsXml.Contains(ConceptSetKeys.AddressComponentType) ||
+                        icpr.FindConcepts(o => o.ConceptSets.Any(c => c.Key == ConceptSetKeys.AddressComponentType) && o.Key == codeType.Key).Any())
+                        comp.ComponentTypeKey = codeType.Key;
+
+                    if (comp.ComponentTypeKey.HasValue)
+                        m_codeTypeMaps.Add(codeType.Key.Value, comp.ComponentTypeKey.Value);
+                    else
+                        m_codeTypeMaps.Add(codeType.Key.Value, Guid.Empty);
+                    addressCompKey = comp.ComponentTypeKey.GetValueOrDefault();
+
+                }
+
+                if (addressCompKey != Guid.Empty)
+                    comp.ComponentTypeKey = addressCompKey;
+                // Add
+                if (comp.ComponentTypeKey.HasValue)
+                    retVal.Component.Add(comp);
+
+                // Get parent
+                parent = context.FirstOrDefault(o=>o.entityID == parent.parent?.entityID);
+            }
+
+            return retVal;
+
+        }
+    }
 }

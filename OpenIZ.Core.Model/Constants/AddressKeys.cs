@@ -27,7 +27,7 @@ namespace OpenIZ.Core.Model.Constants
 	public static class AddressComponentKeys
 	{
 		/// <summary>
-		/// An additional locator (example: Beside the red barn, or Ward).
+		/// An additional locator (example: Beside the red barn).
 		/// </summary>
 		public static readonly Guid AdditionalLocator = Guid.Parse("D2312B8E-BDFB-4012-9397-F14336F8D206");
 		/// <summary>

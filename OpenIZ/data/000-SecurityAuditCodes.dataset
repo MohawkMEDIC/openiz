@@ -902,6 +902,24 @@
       </name>
     </Concept>
   </update>
+
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>b25f9223-0fd1-440c-8362-aec1c07bbdf8</id>
+      <creationTime>2017-04-10T08:57:25.0000000-04:00</creationTime>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>SecurityAuditCode-SecurityObjectChanged</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <name>
+        <language>en</language>
+        <value>Security Resource Changed</value>
+      </name>
+    </Concept>
+  </update>
+  
   <update insertIfNotExists="true">
     <ConceptSet xmlns="http://openiz.org/model">
       <id>043974d5-5032-452e-8ba9-b3a022f592eb</id>
@@ -937,6 +955,8 @@
       <concept>d06e36ff-2fc3-445b-a497-1ae9f1624387</concept>
       <concept>cea9df32-2012-4ca0-9b0d-4fc69b837c1b</concept>
       <concept>b25f9223-0da1-440c-8362-aec1c07bbdf8</concept>
+      <concept>b25f9223-0fd1-440c-8362-aec1c07bbdf8</concept>
+
     </ConceptSet>
   </update>
 </dataset>

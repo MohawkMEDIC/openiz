@@ -98,6 +98,8 @@ namespace OpenIZ.Core.Security.Tfa.Email
 				var securityService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 				var userEntity = securityService?.FindUserEntity(o => o.SecurityUserKey == user.Key).FirstOrDefault();
 
+                this.m_tracer.TraceEvent(TraceEventType.Information, 0, "Password reset has been requested for {0}", userEntity.Key);
+
 				// We want to send the data
 				var templateConfiguration = this.m_configuration.Templates.FirstOrDefault(o => o.Language == (userEntity?.LanguageCommunication?.FirstOrDefault(l => l.IsPreferred)?.LanguageCode ?? CultureInfo.CurrentCulture.TwoLetterISOLanguageName));
 				EmailTemplate template = null;
@@ -125,11 +127,13 @@ namespace OpenIZ.Core.Security.Tfa.Email
 						smtpClient.Credentials = new NetworkCredential(this.m_configuration.Smtp.Username, this.m_configuration.Smtp.Password);
 					smtpClient.SendCompleted += (o, e) =>
 					{
+                        this.m_tracer.TraceInformation("Successfully sent message to {0}", resetMessage.To);
 						if (e.Error != null)
 							this.m_tracer.TraceEvent(TraceEventType.Error, 0, e.Error.ToString());
 						(o as IDisposable).Dispose();
 					};
-					smtpClient.SendAsync(resetMessage, null);
+                    this.m_tracer.TraceInformation("Sending password reset email message to {0}", resetMessage.To);
+                    smtpClient.Send(resetMessage);
 				}
 				catch (Exception e)
 				{
