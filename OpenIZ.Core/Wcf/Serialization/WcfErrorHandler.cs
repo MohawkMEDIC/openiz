@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Configuration;
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Security.Audit;
 using OpenIZ.Core.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
@@ -70,20 +71,32 @@ namespace OpenIZ.Core.Wcf.Serialization
             FaultReason reason = new FaultReason(error.Message);
             this.m_traceSource.TraceEvent(TraceEventType.Error, error.HResult, "Error on WCF pipeline: {0}", error);
 
+            bool isSecurityViolation = false;
+
             // Formulate appropriate response
             if (error is DomainStateException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
-            else if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
+            else if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication") {
+                AuditUtil.AuditRestrictedFunction(error, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri);
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
+            }
             else if (error is SecurityTokenException)
             {
+                isSecurityViolation = true;
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", "Bearer");
             }
             else if (error is UnauthorizedRequestException)
             {
+                isSecurityViolation = true;
+                AuditUtil.AuditRestrictedFunction(error as UnauthorizedRequestException, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri);
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", (error as UnauthorizedRequestException).AuthenticateChallenge);
+            }
+            else if (error is UnauthorizedAccessException)
+            {
+                AuditUtil.AuditRestrictedFunction(error, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri);
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
             }
             else if (error is WebFaultException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = (error as WebFaultException).StatusCode;
@@ -103,6 +116,8 @@ namespace OpenIZ.Core.Wcf.Serialization
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
            
+       
+
             fault = Message.CreateMessage(version, MessageFault.CreateFault(code, reason), String.Empty);
             
         }

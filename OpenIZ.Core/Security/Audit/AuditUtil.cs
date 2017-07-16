@@ -20,9 +20,12 @@
 using MARC.HI.EHRS.SVC.Auditing.Data;
 using MARC.HI.EHRS.SVC.Auditing.Services;
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Exceptions;
 using MARC.HI.EHRS.SVC.Core.Services.Security;
+using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Roles;
@@ -30,9 +33,11 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Security;
 using System.Security.Principal;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -92,8 +97,9 @@ namespace OpenIZ.Core.Security.Audit
         SecurityAttributesChanged,
         [XmlEnum("SecurityAuditCode-Securityroleschanged")]
         SecurityRolesChanged,
-        [XmlEnum("SecurityAuditCode-Usersecurityattributechanged")]
-        UserSecurityChanged
+        [XmlEnum("SecurityAuditCode-SecurityObjectChanged")]
+        SecurityObjectChanged,
+
     }
 
     /// <summary>
@@ -101,6 +107,8 @@ namespace OpenIZ.Core.Security.Audit
     /// </summary>
     public static class AuditUtil
     {
+
+        private static TraceSource traceSource = new TraceSource(OpenIzConstants.SecurityTraceSourceName);
 
         /// <summary>
         /// Audit that the audit log was used
@@ -111,6 +119,7 @@ namespace OpenIZ.Core.Security.Audit
         /// <param name="auditIds"></param>
         public static void AuditAuditLogUsed(ActionType action, OutcomeIndicator outcome, String query, params Guid[] auditIds)
         {
+            traceSource.TraceVerbose("Create AuditLogUsed audit");
             AuditData audit = new AuditData(DateTime.Now, action, outcome, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.AuditLogUsed));
 
             // User actors
@@ -144,10 +153,36 @@ namespace OpenIZ.Core.Security.Audit
         }
 
         /// <summary>
+        /// Audit that security objects were created
+        /// </summary>
+        public static void AuditSecurityCreationAction(IEnumerable<object> objects, bool success, IEnumerable<string> changedProperties)
+        {
+            traceSource.TraceVerbose("Create SecurityCreationAction audit");
+
+            var audit = new AuditData(DateTime.Now, ActionType.Create, success ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.SecurityObjectChanged));
+            AddDeviceActor(audit);
+            AddUserActor(audit);
+            AddSenderDeviceActor(audit);
+
+            audit.AuditableObjects = objects.Select(obj => new AuditableObject()
+            {
+                IDTypeCode = AuditableObjectIdType.Custom,
+                CustomIdTypeCode = new AuditCode(obj.GetType().Name, "OpenIZTable"),
+                ObjectId = ((obj as IIdentifiedEntity)?.Key ?? Guid.Empty).ToString(),
+                LifecycleType = AuditableObjectLifecycle.Creation,
+                Role = AuditableObjectRole.SecurityResource,
+                Type = AuditableObjectType.SystemObject
+            }).ToList();
+            SendAudit(audit);
+        }
+
+        /// <summary>
         /// Autility utility which can be used to send a data audit 
         /// </summary>
         public static void AuditDataAction<TData>(EventTypeCodes typeCode, ActionType action, AuditableObjectLifecycle lifecycle, EventIdentifierType eventType, OutcomeIndicator outcome, String queryPerformed, params TData[] data) where TData : IdentifiedData
         {
+            traceSource.TraceVerbose("Create AuditDataAction audit");
+
             AuditCode eventTypeId = CreateAuditActionCode(typeCode);
             AuditData audit = new AuditData(DateTime.Now, action, outcome, eventType, eventTypeId);
 
@@ -219,8 +254,34 @@ namespace OpenIZ.Core.Security.Audit
         /// <summary>
         /// Create a security attribute action audit
         /// </summary>
+        public static void AuditSecurityDeletionAction(IEnumerable<Object> objects, bool success, IEnumerable<string> changedProperties)
+        {
+            traceSource.TraceVerbose("Create SecurityDeletionAction audit");
+
+            var audit = new AuditData(DateTime.Now, ActionType.Delete, success ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.SecurityObjectChanged));
+            AddDeviceActor(audit);
+            AddUserActor(audit);
+            AddSenderDeviceActor(audit);
+
+            audit.AuditableObjects = objects.Select(obj => new AuditableObject()
+            {
+                IDTypeCode = AuditableObjectIdType.Custom,
+                CustomIdTypeCode = new AuditCode(obj.GetType().Name, "OpenIZTable"),
+                ObjectId = ((obj as IIdentifiedEntity)?.Key ?? Guid.Empty).ToString(),
+                LifecycleType = AuditableObjectLifecycle.LogicalDeletion,
+                Role = AuditableObjectRole.SecurityResource,
+                Type = AuditableObjectType.SystemObject
+            }).ToList();
+            SendAudit(audit);
+        }
+
+        /// <summary>
+        /// Create a security attribute action audit
+        /// </summary>
         public static void AuditSecurityAttributeAction(IEnumerable<Object> objects, bool success, IEnumerable<string> changedProperties)
         {
+            traceSource.TraceVerbose("Create SecurityAttributeAction audit");
+
             var audit = new AuditData(DateTime.Now, ActionType.Update, success ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.SecurityAttributesChanged));
             AddDeviceActor(audit);
             AddUserActor(audit);
@@ -232,7 +293,7 @@ namespace OpenIZ.Core.Security.Audit
                 CustomIdTypeCode = new AuditCode(obj.GetType().Name, "OpenIZTable"),
                 ObjectId = ((obj as IIdentifiedEntity)?.Key ?? Guid.Empty).ToString(),
                 LifecycleType = AuditableObjectLifecycle.Amendment,
-                ObjectData = changedProperties.Select(
+                ObjectData = changedProperties.Where(o=>!String.IsNullOrEmpty(o)).Select(
                     kv => new ObjectDataExtension(
                         kv.Contains("=") ? kv.Substring(0, kv.IndexOf("=")) : kv,
                         kv.Contains("=") ? Encoding.UTF8.GetBytes(kv.Substring(kv.IndexOf("=") + 1)) : new byte[0]
@@ -244,12 +305,37 @@ namespace OpenIZ.Core.Security.Audit
             SendAudit(audit);
         }
 
+
         /// <summary>
         /// Send specified audit
         /// </summary>
-        internal static void SendAudit(AuditData audit)
+        public static void SendAudit(AuditData audit)
         {
-            ApplicationContext.Current.GetService<IAuditorService>()?.SendAudit(audit);
+            traceSource.TraceVerbose("Sending Audit - {0}", audit.CorrelationToken);
+
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o =>
+            {
+                AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+                // Translate codes to DICOM
+                if (audit.EventTypeCode != null)
+                {
+                    IConceptRepositoryService icpcr = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+                    var concept = icpcr.GetConcept(audit.EventTypeCode.Code);
+                    if (concept != null)
+                    {
+                        var refTerm = icpcr.GetConceptReferenceTerm(concept.Key.Value, "DCM");
+                        if (refTerm != null)
+                            audit.EventTypeCode = new AuditCode(refTerm.Mnemonic, "DCM") { DisplayName = refTerm.LoadCollection<ReferenceTermName>("DisplayNames").FirstOrDefault()?.Name };
+                        else
+                            audit.EventTypeCode.DisplayName = concept.LoadCollection<ConceptName>("ConceptNames").FirstOrDefault()?.Name;
+                    }
+                    traceSource.TraceVerbose("Mapped Audit Type Code - {0}-{1}-{2}", audit.EventTypeCode.CodeSystem, audit.EventTypeCode.Code, audit.EventTypeCode.DisplayName);
+
+                }
+
+                ApplicationContext.Current.GetService<IAuditorService>()?.SendAudit(audit);
+            });
+
         }
 
         /// <summary>
@@ -323,6 +409,8 @@ namespace OpenIZ.Core.Security.Audit
         /// </summary>
         public static void AuditApplicationStartStop(EventTypeCodes eventType)
         {
+            traceSource.TraceVerbose("Create ApplicationStart audit");
+
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.Success, EventIdentifierType.ApplicationActivity, CreateAuditActionCode(eventType));
             AddDeviceActor(audit);
             SendAudit(audit);
@@ -333,6 +421,9 @@ namespace OpenIZ.Core.Security.Audit
         /// </summary>
         public static void AuditLogin(IPrincipal principal, String identityName, IIdentityProviderService identityProvider, bool successfulLogin = true)
         {
+
+            traceSource.TraceVerbose("Create Login audit");
+
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, successfulLogin ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.UserAuthentication, CreateAuditActionCode(EventTypeCodes.Login));
             audit.Actors.Add(new AuditActorData()
             {
@@ -340,7 +431,7 @@ namespace OpenIZ.Core.Security.Audit
                 NetworkAccessPointId = Dns.GetHostName(),
                 UserName = principal?.Identity?.Name ?? identityName,
                 UserIsRequestor = true,
-                ActorRoleCode = principal == null ? null : ApplicationContext.Current.GetService<IRoleProviderService>()?.GetAllRoles(principal.Identity.Name).Select(o =>
+                ActorRoleCode = principal == null ? new List<AuditCode>() : ApplicationContext.Current.GetService<IRoleProviderService>()?.GetAllRoles(principal.Identity.Name).Select(o =>
                     new AuditCode(o, null)
                 ).ToList()
             });
@@ -367,6 +458,8 @@ namespace OpenIZ.Core.Security.Audit
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
+            traceSource.TraceVerbose("Create Logout audit");
+
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.Success, EventIdentifierType.UserAuthentication, CreateAuditActionCode(EventTypeCodes.Logout));
             audit.Actors.Add(new AuditActorData()
             {
@@ -384,8 +477,10 @@ namespace OpenIZ.Core.Security.Audit
         /// <summary>
         /// Audit the use of a restricted function
         /// </summary>
-        public static void AuditRestrictedFunction(UnauthorizedAccessException ex, Uri url)
+        public static void AuditRestrictedFunction(Exception ex, Uri url)
         {
+            traceSource.TraceVerbose("Create RestrictedFunction audit");
+
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.UseOfARestrictedFunction));
             AddUserActor(audit);
             AddDeviceActor(audit);
@@ -398,6 +493,35 @@ namespace OpenIZ.Core.Security.Audit
                 Role = AuditableObjectRole.Resource,
                 Type = AuditableObjectType.SystemObject
             });
+
+            if(ex is PolicyViolationException)
+                audit.AuditableObjects.Add(new AuditableObject()
+                {
+                    IDTypeCode = AuditableObjectIdType.Uri,
+                    LifecycleType = AuditableObjectLifecycle.Report,
+                    ObjectId = $"http://openiz.org/policy/{(ex as PolicyViolationException).PolicyId}",
+                    Role = AuditableObjectRole.SecurityResource,
+                    Type = AuditableObjectType.SystemObject,
+                    ObjectData = new List<ObjectDataExtension>()
+                    {
+                        new ObjectDataExtension("decision", new byte[] { (byte)(ex as PolicyViolationException).PolicyDecision }),
+                        new ObjectDataExtension("policyId", Encoding.UTF8.GetBytes((ex as PolicyViolationException).PolicyId)),
+                        new ObjectDataExtension("policyName", Encoding.UTF8.GetBytes((ex as PolicyViolationException).Policy?.Name)),
+                    }
+                });
+            else
+                audit.AuditableObjects.Add(new AuditableObject()
+                {
+                    IDTypeCode = AuditableObjectIdType.Uri,
+                    LifecycleType = AuditableObjectLifecycle.Report,
+                    ObjectId = $"http://openiz.org/error/{ex.GetType().Name}",
+                    Role= AuditableObjectRole.SecurityResource,
+                    Type = AuditableObjectType.SystemObject,
+                    ObjectData = new List<ObjectDataExtension>()
+                    {
+                        new ObjectDataExtension("exception", Encoding.UTF8.GetBytes(ex.ToString()))
+                    }
+                });
             SendAudit(audit);
         }
     }

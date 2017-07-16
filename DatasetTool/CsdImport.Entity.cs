@@ -204,7 +204,7 @@ namespace OizDevTool
 		/// </summary>
 		/// <param name="contact">The contact.</param>
 		/// <returns>Returns the mapped entity relationship from an organization contact instance.</returns>
-		private static EntityRelationship MapEntityRelationshipOrganizationContact(organizationContact contact)
+		private static EntityRelationship MapEntityRelationshipOrganizationContact(organizationContact contact, CsdOptions options)
 		{
 			EntityRelationship entityRelationship = null;
 
@@ -212,7 +212,7 @@ namespace OizDevTool
 			{
 				var csdProvider = contact.Item as uniqueID;
 
-				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID);
+				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID, options.EntityUidAuthority);
 
 				entityRelationship = new EntityRelationship(EntityRelationshipTypeKeys.Contact, provider);
 			}

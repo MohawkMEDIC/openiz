@@ -225,6 +225,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			// this is to make sure that people cannot guess users
 			if (securityUser == null)
 			{
+                this.traceSource.TraceEvent(TraceEventType.Warning, 0, "Attempt to get TFA reset code for {0} which is not a valid user", resetInfo.UserName);
 				WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
 				return;
 			}

@@ -190,3 +190,4 @@ ModelManifest.xml
 *.nupkg
 OpenIZ.sln.GhostDoc.xml
 *.exe
+/Solution Items/Solution Items.zip

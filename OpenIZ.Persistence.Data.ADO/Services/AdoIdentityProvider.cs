@@ -91,7 +91,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(userName, principal, true));
                 return principal;
             }
-            catch (SecurityException e)
+            catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Verbose, e.HResult, "Invalid credentials : {0}/{1}", userName, password);
 

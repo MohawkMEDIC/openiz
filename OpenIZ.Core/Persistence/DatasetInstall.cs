@@ -90,6 +90,7 @@ namespace OpenIZ.Core.Persistence
 		[XmlElement("EntityRelationship", typeof(EntityRelationship), Namespace = "http://openiz.org/model")]
 		[XmlElement("Concept", typeof(Concept), Namespace = "http://openiz.org/model")]
         [XmlElement("ConceptSet", typeof(ConceptSet), Namespace = "http://openiz.org/model")]
+        [XmlElement("ConceptRelationship", typeof(ConceptRelationship), Namespace = "http://openiz.org/model")]
         [XmlElement("AssigningAuthority", typeof(AssigningAuthority), Namespace = "http://openiz.org/model")]
         [XmlElement("ConceptClass", typeof(ConceptClass), Namespace = "http://openiz.org/model")]
         [XmlElement("SecurityPolicy", typeof(SecurityPolicy), Namespace = "http://openiz.org/model")]

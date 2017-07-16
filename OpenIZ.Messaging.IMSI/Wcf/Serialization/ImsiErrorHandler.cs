@@ -19,6 +19,7 @@
  */
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Security.Audit;
 using OpenIZ.Core.Wcf.Serialization;
 using OpenIZ.Messaging.IMSI.Model;
 using System;
@@ -67,7 +68,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
 
             // Formulate appropriate response
             if (error is PolicyViolationException || error is SecurityException || (error as FaultException)?.Code.SubCode?.Name == "FailedAuthentication")
+            {
+                AuditUtil.AuditRestrictedFunction(error, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri);
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
+            }
             else if (error is SecurityTokenException)
             {
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
@@ -85,6 +89,11 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;
                 WebOperationContext.Current.OutgoingResponse.Headers.Add("WWW-Authenticate", (error as UnauthorizedRequestException).AuthenticateChallenge);
             }
+            else if (error is UnauthorizedAccessException)
+            {
+                AuditUtil.AuditRestrictedFunction(error as UnauthorizedAccessException, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri);
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Forbidden;
+            }
             else if (error is DomainStateException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
             else if (error is DetectedIssueException)
@@ -99,7 +108,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
             }
             else if (error is PatchAssertionException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Conflict;
-            else if(error is PatchException)
+            else if (error is PatchException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotAcceptable;
 
             else

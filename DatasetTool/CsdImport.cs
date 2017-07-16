@@ -134,7 +134,7 @@ namespace OizDevTool
 			stopwatch.Start();
 
 			// map organizations
-			var organizations = MapOrganizations(csd.organizationDirectory).Select(o => new DataUpdate
+			var organizations = MapOrganizations(csd.organizationDirectory, parameters).Select(o => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = o
@@ -143,7 +143,7 @@ namespace OizDevTool
 			actions.AddRange(organizations);
 
 			// map places
-			var places = MapPlaces(csd.facilityDirectory).Select(p => new DataUpdate
+			var places = MapPlaces(csd.facilityDirectory, parameters).Select(p => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = p
@@ -152,7 +152,7 @@ namespace OizDevTool
 			actions.AddRange(places);
 
 			// map providers
-			var providers = MapProviders(csd.providerDirectory).Select(p => new DataUpdate
+			var providers = MapProviders(csd.providerDirectory, parameters).Select(p => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = p
@@ -203,6 +203,7 @@ namespace OizDevTool
 			// add the places services to the list of items to import
 			csdDatasetInstall.Action.AddRange(services);
 
+            csdDatasetInstall.Action = csdDatasetInstall.Action.Distinct(new EntityComparison()).ToList();
 			serializer = new XmlSerializer(typeof(DatasetInstall));
 
 			var filename = $"999-CSD-import-{fileInfo.Name}.dataset";
@@ -248,7 +249,7 @@ namespace OizDevTool
 		/// <typeparam name="T">The type of entity to lookup.</typeparam>
 		/// <param name="entityId">The entity identifier.</param>
 		/// <returns>Returns the entity instance.</returns>
-		private static T GetOrCreateEntity<T>(string entityId) where T : Entity, new()
+		private static T GetOrCreateEntity<T>(string entityId, String authorityName) where T : Entity, new()
 		{
 			Entity entity;
 
@@ -260,7 +261,7 @@ namespace OizDevTool
 			var entityService = ApplicationContext.Current.GetService<IDataPersistenceService<T>>();
 
 			int totalResults;
-			entity = entityService.Query(c => c.Identifiers.Any(i => i.Value == entityId) && c.ObsoletionTime == null, 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
+			entity = entityService.Query(c => c.Identifiers.Any(i => i.Authority.DomainName == authorityName && i.Value == entityId) && c.ObsoletionTime == null, 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
 			if (totalResults > 1)
 			{
@@ -286,7 +287,7 @@ namespace OizDevTool
 				}
 			};
 
-			entity.Identifiers.Add(new EntityIdentifier("HIE_FRID", entityId));
+			entity.Identifiers.Add(new EntityIdentifier(authorityName, entityId));
 
 			return (T)entity;
 		}
@@ -339,9 +340,9 @@ namespace OizDevTool
 		/// <param name="message">The message.</param>
 		private static void ShowInfoMessage(string message)
 		{
-			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.WriteLine($"{message} {Environment.NewLine}");
-			Console.ResetColor();
+			//Console.ForegroundColor = ConsoleColor.Cyan;
+			//Console.WriteLine($"{message} {Environment.NewLine}");
+			//Console.ResetColor();
 		}
 
 		/// <summary>
@@ -350,9 +351,9 @@ namespace OizDevTool
 		/// <param name="message">The message.</param>
 		private static void ShowPerformanceMessage(string message)
 		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"{message} {Environment.NewLine}");
-			Console.ResetColor();
+			//Console.ForegroundColor = ConsoleColor.Green;
+			//Console.WriteLine($"{message} {Environment.NewLine}");
+			//Console.ResetColor();
 		}
 
 		/// <summary>
@@ -361,10 +362,10 @@ namespace OizDevTool
 		/// <param name="message">The message.</param>
 		private static void ShowWarningMessage(string message)
 		{
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine(message);
-			Console.WriteLine($"{message} {Environment.NewLine}");
-			Console.ResetColor();
+			//Console.ForegroundColor = ConsoleColor.Yellow;
+			//Console.WriteLine(message);
+			//Console.WriteLine($"{message} {Environment.NewLine}");
+			//Console.ResetColor();
 		}
 
 		/// <summary>
@@ -400,13 +401,46 @@ namespace OizDevTool
 			[Parameter("live")]
 			[Description("Directly import data into the database vs generating dataset files to import at a later date")]
 			public bool Live { get; set; }
-		}
+
+            /// <summary>
+            /// Gets or sets the entity UID authority
+            /// </summary>
+			[Description("Sets the authority of the entity UUID")]
+            [Parameter("entityAuthority")]
+            public String EntityUidAuthority { get; set; }
+
+            /// <summary>
+            /// Organizations as places
+            /// </summary>
+            [Description("When true, interprets organizations as places")]
+            [Parameter("orgsAsPlaces")]
+            public bool OrganizationsAsPlaces { get; set; }
+        }
 	}
 
-	/// <summary>
-	/// Represents a composite key.
-	/// </summary>
-	internal class CompositeKey
+    /// <summary>
+    /// Compares entities
+    /// </summary>
+    internal class EntityComparison : IEqualityComparer<DataInstallAction>
+    {
+        public bool Equals(DataInstallAction x, DataInstallAction y)
+        {
+            return x.Element?.Key == y.Element?.Key;
+        }
+
+        public int GetHashCode(DataInstallAction obj)
+        {
+            if (obj.Element?.Key.HasValue == true)
+                return (int)obj.Element?.Key.GetHashCode();
+            else
+                return obj.GetHashCode();
+        }
+    }
+
+    /// <summary>
+    /// Represents a composite key.
+    /// </summary>
+    internal class CompositeKey
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CompositeKey" /> class.

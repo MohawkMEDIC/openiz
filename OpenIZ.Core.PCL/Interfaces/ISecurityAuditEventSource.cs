@@ -41,6 +41,7 @@ namespace OpenIZ.Core.Interfaces
         public SecurityAuditDataEventArgs(Object obj, params string[] properties) : base(obj)
         {
             this.ChangedProperties = properties;
+            this.Success = true;
         }
     }
     /// <summary>
@@ -54,5 +55,15 @@ namespace OpenIZ.Core.Interfaces
         /// </summary>
         event EventHandler<SecurityAuditDataEventArgs> SecurityAttributesChanged;
 
+        /// <summary>
+        /// Fired when security attributes related to an object change
+        /// </summary>
+        event EventHandler<SecurityAuditDataEventArgs> SecurityResourceCreated;
+
+
+        /// <summary>
+        /// Fired when security attributes related to an object change
+        /// </summary>
+        event EventHandler<SecurityAuditDataEventArgs> SecurityResourceDeleted;
     }
 }

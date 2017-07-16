@@ -201,7 +201,7 @@
     <Content Include="Data\SQL\PSQL\openiz-fn.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SQL\PSQL\openiz-test.sql">
+    <Content Include="Data\SQL\PSQL\openiz-init.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />

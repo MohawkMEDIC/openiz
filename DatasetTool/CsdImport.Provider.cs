@@ -38,13 +38,13 @@ namespace OizDevTool
 		/// </summary>
 		/// <param name="csdProviders">The CSD providers.</param>
 		/// <returns>Returns a list of providers.</returns>
-		private static IEnumerable<Provider> MapProviders(IEnumerable<provider> csdProviders)
+		private static IEnumerable<Provider> MapProviders(IEnumerable<provider> csdProviders, CsdOptions options)
 		{
 			var providers = new List<Provider>();
 
 			foreach (var csdProvider in csdProviders)
 			{
-				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID);
+				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID, options.EntityUidAuthority);
 
 				// map addresses
 				if (csdProvider.demographic?.address?.Any() == true)
