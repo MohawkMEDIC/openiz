@@ -170,13 +170,11 @@ namespace OpenIZ.Core.Services.Impl
 			if ((codeSystem.Scheme == "urn" || codeSystem.Scheme == "oid"))
 			{
 				var csOid = codeSystem.LocalPath;
-
-				if (codeSystem.LocalPath.StartsWith("oid"))
-				{
-					csOid = codeSystem.LocalPath.Substring(4);
-				}
-
-				return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == csOid && r.ReferenceTerm.Mnemonic == code));
+                if (csOid.StartsWith("oid"))
+                {
+                    csOid = codeSystem.LocalPath.Substring(4);
+                    return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == csOid && r.ReferenceTerm.Mnemonic == code));
+                }
 			}
 
 			return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Url == codeSystem.OriginalString && r.ReferenceTerm.Mnemonic == code));

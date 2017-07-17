@@ -37,7 +37,7 @@ namespace OizDevTool
 		/// </summary>
 		/// <param name="csdFacilities">The CSD facilities.</param>
 		/// <returns>Returns a list of places.</returns>
-		private static IEnumerable<Entity> MapPlaces(IEnumerable<facility> csdFacilities, CsdOptions options)
+		private static IEnumerable<Entity> MapPlaces(IEnumerable<facility> csdFacilities, IEnumerable<organization> csdOrgaizations, CsdOptions options)
 		{
 			var places = new List<Entity>();
 
@@ -45,6 +45,7 @@ namespace OizDevTool
 			foreach (var facility in csdFacilities)
 			{
 				var place = GetOrCreateEntity<Place>(facility.entityID, options.EntityUidAuthority);
+                place.ClassConceptKey = EntityClassKeys.ServiceDeliveryLocation;
 
 				// map addresses
 				if (facility.address?.Any() == true)
@@ -82,8 +83,27 @@ namespace OizDevTool
 					place.Extensions.AddRange(extensions);
 				}
 
-				// map identifiers
-				if (facility.otherID?.Any() == true)
+                if(facility.extension.Any(o=>o.type == "facility_type") && !place.TypeConceptKey.HasValue)
+                {
+                    var typeExtension = facility.extension.FirstOrDefault(o => o.type == "facility_type");
+                    place.TypeConceptKey = MapCodedType(typeExtension.Any.InnerText, typeExtension.urn + ":facility_type")?.Key;
+                }
+
+                if(facility.extension.Any(o=>o.type == "DVS")) // DVS extension
+                {
+                    var dvsExtension = facility.extension.FirstOrDefault(o => o.type == "DVS");
+
+                    var dvsPlace = GetOrCreateEntity<Place>(dvsExtension.Any.Attributes["entityID"]?.Value, options.EntityUidAuthority);
+                    if (dvsPlace != null)
+                        place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, dvsPlace.Key));
+
+                    if(!entityMap.ContainsKey(dvsExtension.Any.Attributes["entityID"]?.Value))
+                        entityMap.Add(dvsExtension.Any.Attributes["entityID"]?.Value, dvsPlace);
+
+                }
+
+                // map identifiers
+                if (facility.otherID?.Any() == true)
 				{
 					ShowInfoMessage("Mapping place identifiers...");
 
@@ -140,12 +160,26 @@ namespace OizDevTool
 				{
                     ShowInfoMessage("Mapping serviced organizations relationships...");
 
+                    // Cascade organizations
                     foreach (var org in facility.organizations)
                     {
                         if (String.IsNullOrEmpty(org.entityID))
                             continue;
-                        var villageServiced = GetOrCreateEntity<Place>(org.entityID, options.EntityUidAuthority);
-                        place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, villageServiced.Key.Value));
+
+                        var linkedOrgs = new List<String>() { org.entityID };
+                        
+                        if(options.CascadeAssignedFacilities)
+                            linkedOrgs = linkedOrgs.Union(csdOrgaizations.Where(o => o.parent.entityID == org.entityID).Select(o=>o.entityID)).ToList();
+
+                        foreach (var lo in linkedOrgs)
+                        {
+                            var villageServiced = GetOrCreateEntity<Place>(lo, options.EntityUidAuthority);
+                            villageServiced.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, place.Key.Value));
+                            if (!entityMap.ContainsKey(lo))
+                            {
+                                entityMap.Add(lo, villageServiced);
+                            }
+                        }
                     }
                 }
 

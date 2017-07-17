@@ -113,7 +113,7 @@ namespace OizDevTool
 			// since CSD coded types are oid based, we want to make sure that the coding scheme starts with "oid"
 			if (!codingScheme.StartsWith("oid:") && !codingScheme.StartsWith("http://") && !codingScheme.StartsWith("urn:"))
 			{
-				codingScheme = "oid:" + codingScheme;
+				codingScheme = "urn:oid:" + codingScheme;
 			}
 
 			var compositeKey = new CompositeKey(code, codingScheme);

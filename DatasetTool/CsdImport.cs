@@ -143,7 +143,7 @@ namespace OizDevTool
 			actions.AddRange(organizations);
 
 			// map places
-			var places = MapPlaces(csd.facilityDirectory, parameters).Select(p => new DataUpdate
+			var places = MapPlaces(csd.facilityDirectory, csd.organizationDirectory, parameters).Select(p => new DataUpdate
 			{
 				InsertIfNotExists = true,
 				Element = p
@@ -178,6 +178,7 @@ namespace OizDevTool
 
 			foreach (var entity in actions.Where(a => a.Element is Entity).Select(c => c.Element as Entity))
 			{
+                entity.Relationships.ForEach(o => o.SourceEntityKey = entity.Key);
 				relationships.AddRange(entity.Relationships);
 
 				// HACK: clear the entity relationships because we are going to import them separately
@@ -415,6 +416,13 @@ namespace OizDevTool
             [Description("When true, interprets organizations as places")]
             [Parameter("orgsAsPlaces")]
             public bool OrganizationsAsPlaces { get; set; }
+
+            /// <summary>
+            /// Cascade assigned facilities
+            /// </summary>
+            [Description("Cascade assigned facilities to children")]
+            [Parameter("cascadeAssignedFacilities")]
+            public bool CascadeAssignedFacilities { get; internal set; }
         }
 	}
 
