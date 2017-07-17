@@ -44,6 +44,7 @@ namespace OizDevTool
 		{
 
 			var organizations = new List<Entity>();
+            IConceptRepositoryService icpr = ApplicationContext.Current.GetService<IConceptRepositoryService>();
 
             var idx = 0;
 			foreach (var csdOrganization in csdOrganizations)
@@ -53,7 +54,11 @@ namespace OizDevTool
                 if (!options.OrganizationsAsPlaces)
                     importItem = GetOrCreateEntity<Organization>(csdOrganization.entityID, options.EntityUidAuthority);
                 else
+                {
                     importItem = GetOrCreateEntity<Place>(csdOrganization.entityID, options.EntityUidAuthority);
+                    // Set proper class code for the place
+                    importItem.ClassConceptKey = EntityClassKeys.Place;
+                }
 
                 // addresses
                 if (csdOrganization.address?.Any() == true)
@@ -81,8 +86,30 @@ namespace OizDevTool
 
                     // we don't support multiple specialties for a organization at the moment, so we only take the first one
                     // TODO: cleanup
-                    importItem.TypeConceptKey = MapCodedType(csdOrganization.codedType[0].code, csdOrganization.codedType[0].codingScheme)?.Key;
-				}
+                    var typeConcept = MapCodedType(csdOrganization.codedType[0].code, csdOrganization.codedType[0].codingScheme);
+                    importItem.TypeConceptKey = typeConcept?.Key;
+
+                    // We now need to create the proper class concept key
+                    Guid classKey = Guid.Empty;
+                    if (typeConcept != null && !m_classCodeTypeMaps.TryGetValue(typeConcept.Key.Value, out classKey))
+                    {
+                        // Look for a relationship in the EntityClass
+                        var adptConcept = icpr.FindConcepts(o => o.Relationship.Any(r => r.SourceEntityKey == typeConcept.Key) && o.ConceptSets.Any(s => s.Key == ConceptSetKeys.EntityClass)).FirstOrDefault();
+                        if (adptConcept != null)
+                            importItem.ClassConceptKey = adptConcept.Key;
+                        else if (adptConcept  == null && typeConcept.ConceptSetsXml.Contains(ConceptSetKeys.EntityClass) ||
+                            icpr.FindConcepts(o => o.ConceptSets.Any(c => c.Key == ConceptSetKeys.EntityClass) && o.Key == typeConcept.Key).Any())
+                            importItem.ClassConceptKey = typeConcept.Key;
+
+                        if (importItem.ClassConceptKey.HasValue)
+                            m_classCodeTypeMaps.Add(typeConcept.Key.Value, importItem.ClassConceptKey.Value);
+                        else
+                            m_classCodeTypeMaps.Add(importItem.ClassConceptKey.Value, Guid.Empty);
+                        classKey = importItem.ClassConceptKey ?? EntityClassKeys.Place;
+                    }
+
+                    importItem.ClassConceptKey = classKey;
+                }
 
 				// map specializations
                 
@@ -214,7 +241,10 @@ namespace OizDevTool
 		}
 
         // Code type maps
-        private static Dictionary<Guid, Guid> m_codeTypeMaps = new Dictionary<Guid, Guid>();
+        private static Dictionary<Guid, Guid> m_addressCodeTypeMaps = new Dictionary<Guid, Guid>();
+
+        // Class code maps
+        private static Dictionary<Guid, Guid> m_classCodeTypeMaps = new Dictionary<Guid, Guid>();
 
         /// <summary>
         /// Traverses a place hierarchy as an address structure
@@ -251,7 +281,7 @@ namespace OizDevTool
                 }
 
                 Guid addressCompKey = Guid.Empty;
-                if(codeType != null && !m_codeTypeMaps.TryGetValue(codeType.Key.Value, out addressCompKey))
+                if(codeType != null && !m_addressCodeTypeMaps.TryGetValue(codeType.Key.Value, out addressCompKey))
                 {
                     if (codeType != null)
                     {
@@ -265,9 +295,9 @@ namespace OizDevTool
                         comp.ComponentTypeKey = codeType.Key;
 
                     if (comp.ComponentTypeKey.HasValue)
-                        m_codeTypeMaps.Add(codeType.Key.Value, comp.ComponentTypeKey.Value);
+                        m_addressCodeTypeMaps.Add(codeType.Key.Value, comp.ComponentTypeKey.Value);
                     else
-                        m_codeTypeMaps.Add(codeType.Key.Value, Guid.Empty);
+                        m_addressCodeTypeMaps.Add(codeType.Key.Value, Guid.Empty);
                     addressCompKey = comp.ComponentTypeKey.GetValueOrDefault();
 
                 }
