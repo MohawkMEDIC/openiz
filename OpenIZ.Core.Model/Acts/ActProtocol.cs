@@ -27,6 +27,10 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents information related to the clinical protocol to which an act is a member of
     /// </summary>
+    /// <remarks>
+    /// The <see cref="ActProtocol"/> class is used to link an act instance (<see cref="Act"/>) with the clinical 
+    /// protocol (<see cref="Protocol"/>) to which the act belongs.
+    /// </remarks>
     [XmlType(nameof(ActProtocol), Namespace = "http://openiz.org/model"), JsonObject(nameof(ActProtocol))]
     public class ActProtocol : Association<Act>
     {

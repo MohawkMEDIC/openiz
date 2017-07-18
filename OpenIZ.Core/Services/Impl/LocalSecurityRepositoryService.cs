@@ -526,7 +526,9 @@ namespace OpenIZ.Core.Services.Impl
                 throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<SecurityUser>)));
             }
 
-            return persistenceService.Query(u => u.UserName == userName, AuthenticationContext.Current.Principal).FirstOrDefault();
+            var identity = ApplicationContext.Current.GetService<IIdentityProviderService>().GetIdentity(userName);
+
+            return persistenceService.Query(u => u.UserName == identity.Name, AuthenticationContext.Current.Principal).FirstOrDefault();
         }
 
         /// <summary>

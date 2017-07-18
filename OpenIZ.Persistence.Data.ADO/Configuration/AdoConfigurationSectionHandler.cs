@@ -17,6 +17,8 @@
  * User: justi
  * Date: 2017-1-15
  */
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.OrmLite.Providers;
 using System;
 using System.Collections.Generic;
@@ -67,8 +69,8 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                     var dbp = Activator.CreateInstance(providerType) as IDbProvider;
                     if (dbp == null) throw new ConfigurationErrorsException($"Type {providerType} does not implement IDbProvider");
                     retVal.Provider = dbp;
-                    retVal.Provider.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[retVal.ReadonlyConnectionString]?.ConnectionString;
-                    retVal.Provider.ConnectionString = ConfigurationManager.ConnectionStrings[retVal.ReadWriteConnectionString]?.ConnectionString;
+                    retVal.Provider.ReadonlyConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[retVal.ReadonlyConnectionString]?.ConnectionString;
+                    retVal.Provider.ConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[retVal.ReadWriteConnectionString]?.ConnectionString;
                     retVal.Provider.TraceSql = retVal.TraceSql;
                 }
                 else

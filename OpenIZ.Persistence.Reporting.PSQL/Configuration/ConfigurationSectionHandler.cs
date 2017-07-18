@@ -18,6 +18,8 @@
  * Date: 2017-1-16
  */
 
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.OrmLite.Providers;
 using System;
 using System.Configuration;
@@ -80,8 +82,8 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Configuration
 				throw new ConfigurationErrorsException($"Type {provider} does not implement {nameof(IDbProvider)}");
 			}
 
-			databaseProviderInstance.ConnectionString = ConfigurationManager.ConnectionStrings[configuration.ReadWriteConnectionString]?.ConnectionString;
-			databaseProviderInstance.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[configuration.ReadonlyConnectionString]?.ConnectionString;
+			databaseProviderInstance.ConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[configuration.ReadWriteConnectionString]?.ConnectionString;
+			databaseProviderInstance.ReadonlyConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[configuration.ReadonlyConnectionString]?.ConnectionString;
 			databaseProviderInstance.TraceSql = configuration.TraceSql;
 
 			configuration.Provider = databaseProviderInstance;

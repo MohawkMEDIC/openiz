@@ -18,6 +18,7 @@
  * Date: 2017-6-23
  */
 using OizDevTool.Debugger;
+using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,6 +46,7 @@ namespace OizDevTool
         /// </summary>
         public InteractiveBase()
         {
+            AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.AnonymousPrincipal);
         }
 
         /// <summary>
@@ -53,9 +55,9 @@ namespace OizDevTool
         protected ConsoleColor GetResponseColor()
         {
             if(Console.BackgroundColor == ConsoleColor.Black)
-                return this.m_promptColor != ConsoleColor.Cyan ? ConsoleColor.Cyan : ConsoleColor.Magenta;
+                return Console.ForegroundColor != ConsoleColor.Cyan ? ConsoleColor.Cyan : ConsoleColor.Magenta;
             else
-                return this.m_promptColor != ConsoleColor.Blue ? ConsoleColor.Blue : ConsoleColor.Red;
+                return Console.ForegroundColor != ConsoleColor.Blue ? ConsoleColor.Blue : ConsoleColor.Red;
         }
 
         /// <summary>
@@ -176,11 +178,20 @@ namespace OizDevTool
                 var itm = mi.GetCustomAttribute<CommandAttribute>();
                 if (itm == null || String.IsNullOrEmpty(itm.Description)) continue;
                 Console.Write("{0:2} {1}", itm.Command, String.Join(" ", mi.GetParameters().Select(o => $"[{o.Name}]")));
-                Console.WriteLine("{0}{1}", new String(' ', 40 - Console.CursorLeft), itm.Description);
+                Console.WriteLine("{0}{1}", new String(' ', 50 - Console.CursorLeft), itm.Description);
 
             }
         }
 
+        /// <summary>
+        /// Identifies current authentication principal
+        /// </summary>
+        [Command("whoami", "Identifies the current authentication principal")]
+        public void Whoami()
+        {
+            Console.WriteLine(AuthenticationContext.Current.Principal.Identity.Name);
+        }
+        
         /// <summary>
         /// Exit the debugger
         /// </summary>
@@ -188,7 +199,7 @@ namespace OizDevTool
         public virtual void Exit()
         {
             this.m_exitRequested = true;
-            Environment.Exit(0);
+            //Environment.Exit(0);
         }
 
 

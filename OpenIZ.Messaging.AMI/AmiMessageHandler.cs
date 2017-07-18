@@ -30,6 +30,7 @@ using OpenIZ.Messaging.AMI.Wcf.Behavior;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
@@ -129,8 +130,12 @@ namespace OpenIZ.Messaging.AMI
 		/// </summary>
 		public bool Start()
 		{
-			try
-			{
+            // Don't startup unless in OpenIZ
+            if (Assembly.GetEntryAssembly().GetName().Name != "OpenIZ")
+                return true;
+
+            try
+            {
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
 				this.m_webHost = new WebServiceHost(typeof(AmiBehavior));

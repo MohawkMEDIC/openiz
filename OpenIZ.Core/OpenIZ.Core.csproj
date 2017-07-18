@@ -135,6 +135,7 @@
     <Compile Include="Services\Impl\LocalServiceManager.cs" />
     <Compile Include="Services\Impl\LocalStockManagementRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
+    <Compile Include="Services\Impl\FileConfigurationService.cs" />
     <Compile Include="Services\Impl\ThreadPoolService.cs" />
     <Compile Include="Services\IPersistentQueueService.cs" />
     <Compile Include="Services\IStoredQueryDataPersistenceService.cs" />

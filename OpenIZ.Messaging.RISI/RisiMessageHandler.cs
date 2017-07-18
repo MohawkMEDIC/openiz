@@ -27,7 +27,9 @@ using OpenIZ.Messaging.RISI.Wcf;
 using OpenIZ.Messaging.RISI.Wcf.Behavior;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 
@@ -118,7 +120,12 @@ namespace OpenIZ.Messaging.RISI
 		/// <returns>Returns true if the service started successfully.</returns>
 		public bool Start()
 		{
-			try
+
+            // Don't startup unless in OpenIZ
+            if (Assembly.GetEntryAssembly().GetName().Name != "OpenIZ")
+                return true;
+
+            try
 			{
 				this.Starting?.Invoke(this, EventArgs.Empty);
 
@@ -142,7 +149,7 @@ namespace OpenIZ.Messaging.RISI
 			{
 				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Unable to start RISI message handler");
 				this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-				throw;
+
 			}
 
 			return true;

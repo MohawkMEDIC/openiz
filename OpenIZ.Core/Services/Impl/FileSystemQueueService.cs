@@ -151,6 +151,7 @@ namespace OpenIZ.Core.Services.Impl
             var queueFile = Directory.GetFiles(queueDirectory).FirstOrDefault();
             this.m_tracer.TraceInformation("Will dequeue {0}", Path.GetFileNameWithoutExtension(queueFile));
 
+            if (queueFile == null) return null;
             object retVal = null;
             using (var fs = File.OpenRead(queueFile))
             {

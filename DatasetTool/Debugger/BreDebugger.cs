@@ -44,6 +44,7 @@ using Jint.Runtime.Interop;
 using Newtonsoft.Json.Converters;
 using System.Dynamic;
 using OpenIZ.Core.Applets.ViewModel.Json;
+using OpenIZ.Core.Services.Impl;
 
 namespace OizDevTool.Debugger
 {
@@ -164,6 +165,8 @@ namespace OizDevTool.Debugger
         /// <param name="sources"></param>
         public BreDebugger(StringCollection sources, String rootPath) : base(rootPath)
         {
+
+            ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
 
 
             ApplicationServiceContext.Current = ApplicationContext.Current;

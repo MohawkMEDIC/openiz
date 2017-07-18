@@ -48,6 +48,7 @@ using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Model.Roles;
 using System.Diagnostics;
 using OpenIZ.Core.Protocol;
+using OpenIZ.Core.Services.Impl;
 
 namespace OizDevTool.Debugger
 {
@@ -176,12 +177,14 @@ namespace OizDevTool.Debugger
         public ProtoDebugger(StringCollection sources, String rootPath) : base(rootPath)
         {
 
+            ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
             ApplicationServiceContext.Current = ApplicationContext.Current;
             try
             {
                 ApplicationContext.Current.RemoveServiceProvider(typeof(IClinicalProtocolRepositoryService));
             }
             catch { }
+
             ApplicationContext.Current.AddServiceProvider(typeof(FileSystemResolver));
             ApplicationContext.Current.AddServiceProvider(typeof(ServiceManager));
             ApplicationContext.Current.AddServiceProvider(typeof(DebugProtocolRepository));

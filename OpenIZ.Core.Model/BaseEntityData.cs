@@ -37,6 +37,11 @@ namespace OpenIZ.Core.Model
     /// <summary>
     /// Represents the root of all model classes in the OpenIZ Core
     /// </summary>
+    /// <remarks>
+    /// This abstract class is used to encapsulate the key properties of base data elements in the OpenIZ
+    /// model, namely it keeps track of which entities created and obsoleted a particular resource and when those
+    /// events occurred.
+    /// </remarks>
     
     [XmlType("BaseEntityData",  Namespace = "http://openiz.org/model"), JsonObject("BaseEntityData")]
     public abstract class BaseEntityData : IdentifiedData, IBaseEntityData
@@ -59,7 +64,7 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Creation Time
+        /// Gets or sets the time at which the data was created
         /// </summary>
         [XmlIgnore, JsonIgnore, SerializationReference(nameof(CreationTimeXml))]
         public DateTimeOffset CreationTime { get; set; }
@@ -84,7 +89,7 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Obsoletion time
+        /// Gets or sets the time when the data is or will become invalid
         /// </summary>
         [XmlIgnore, JsonIgnore, SerializationReference(nameof(ObsoletionTimeXml))]
         public DateTimeOffset? ObsoletionTime { get; set; }
@@ -123,7 +128,7 @@ namespace OpenIZ.Core.Model
          }
 
         /// <summary>
-        /// Get the modified on time
+        /// Gets the time that the object was last modified (from base data, default to CreationTime)
         /// </summary>
         [JsonIgnore, XmlIgnore]
 
@@ -178,7 +183,7 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Gets or sets the created by identifier
+        /// Gets or sets the identifier of the user which created the data
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -195,7 +200,7 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// Gets or sets the obsoleted by identifier
+        /// Gets or sets the identifier of the user which obsoleted the data
         /// </summary>
         
         [EditorBrowsable(EditorBrowsableState.Never)]

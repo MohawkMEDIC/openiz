@@ -31,6 +31,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core;
+using OpenIZ.Core.Services.Impl;
 
 namespace OpenIZ
 {
@@ -93,6 +94,7 @@ namespace OpenIZ
                     Console.WriteLine("Complete Copyright information available at http://openiz.codeplex.com/wikipage?title=Contributions");
                     ServiceUtil.Start(typeof(Program).GUID);
                     ApplicationServiceContext.Current = ApplicationContext.Current;
+                    ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
                     ApplicationServiceContext.HostType = OpenIZHostType.Server;
                     if (!parameters.StartupTest)
                     {

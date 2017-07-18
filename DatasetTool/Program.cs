@@ -17,7 +17,9 @@
  * User: justi
  * Date: 2016-8-2
  */
+using MARC.HI.EHRS.SVC.Core;
 using MohawkCollege.Util.Console.Parameters;
+using OpenIZ.Core.Services.Impl;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,8 +34,12 @@ namespace OizDevTool
 {
     class Program
     {
+
         static void Main(string[] args)
         {
+
+            ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
+
             AppDomain.CurrentDomain.SetData(
                "DataDirectory",
                Path.GetDirectoryName(typeof(Program).Assembly.Location));

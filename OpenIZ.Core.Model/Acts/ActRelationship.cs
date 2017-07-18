@@ -32,8 +32,15 @@ using OpenIZ.Core.Model.Constants;
 namespace OpenIZ.Core.Model.Acts
 {
     /// <summary>
-    /// Act relationships
+    /// Used to link two or more acts together
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// An act relationship is used to link a source act with a target act (<see cref="TargetActKey"/>) in a particular type of 
+    /// relationship (<see cref="RelationshipTypeKey"/>). This structure is often used to link together sub-components of an 
+    /// encounter with the encounter, but can also be used to link together chronic care episodes.
+    /// </para>
+    /// </remarks>
     [Classifier(nameof(RelationshipType))]
     [XmlType("ActRelationship", Namespace = "http://openiz.org/model"), JsonObject("ActRelationship")]
     public class ActRelationship : VersionedAssociation<Act>

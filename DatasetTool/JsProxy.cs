@@ -245,7 +245,7 @@ namespace OizDevTool
                 if (typeDoc.SelectSingleNode(".//*[local-name() = 'summary']") != null)
                     writer.WriteLine(" * @summary {0}", typeDoc.SelectSingleNode(".//*[local-name() = 'summary']").InnerText.Replace("\r\n", ""));
                 if (typeDoc.SelectSingleNode(".//*[local-name() = 'remarks']") != null)
-                    writer.WriteLine(" * @description {0}", typeDoc.SelectSingleNode(".//*[local-name() = 'remarks']").InnerText.Replace("\r\n", ""));
+                    writer.WriteLine(" * @description {0}", typeDoc.SelectSingleNode(".//*[local-name() = 'remarks']").InnerText.Replace("\r\n", "\r\n * ").Replace("()",""));
                 if (typeDoc.SelectSingleNode(".//*[local-name() = 'example']") != null)
                     writer.WriteLine(" * @example {0}", typeDoc.SelectSingleNode(".//*[local-name() = 'example']").InnerText.Replace("\r\n", ""));
             }

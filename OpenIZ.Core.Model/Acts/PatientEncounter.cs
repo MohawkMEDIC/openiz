@@ -34,7 +34,11 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an encounter a patient has with the health system
     /// </summary>
-    
+    ///<remarks>
+    ///<para>An encounter is a special type of act which represents an episode of care which a patient experiences with the health system. 
+    ///An encounter is used to document things like hospital visits, inpatient care encounters, or any longer running series of actions which 
+    ///are linked by the admit -&gt; discharge workflow.</para>
+    /// </remarks>
     [XmlType("PatientEncounter",  Namespace = "http://openiz.org/model"), JsonObject("PatientEncounter")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "PatientEncounter")]
     public class PatientEncounter : Act
