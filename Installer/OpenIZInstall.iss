@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Open Immunize"
-#define MyAppVersion "0.9.6.0"
+#define MyAppVersion "0.9.7.0"
 #define MyAppPublisher "Mohawk College mHealth & eHealth Development and Innovation Centre"
 #define MyAppURL "http://openiz.org"
-
+#define DEBUG
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
@@ -43,7 +43,7 @@ WizardImageFile=.\install.bmp
 #ifdef DEBUG
 Compression = none
 #else
-Compression = lzma2 
+Compression = lzma2/ultra 
 #endif
 AppCopyright = Copyright (C) 2015-2017 Mohawk College of Applied Arts and Technology
 
@@ -133,7 +133,7 @@ Source: ..\bin\Release\OpenIZ.Core.Model.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.dll; DestDir: {app}; Components: core
 Source: ..\bin\release\OpenIZ.exe; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}; Components: core
-
+Source: ..\bin\Release\MARC.HI.EHRS.SVC.Configuration.dll; DestDir: {app}; Components: core
 ; AMI
 Source: ..\Solution Items\MARC.Util.CertificateTools.dll; DestDir: {app}; Components: msg\ami
 Source: ..\Solution Items\CERTADMINLib.dll; DestDir: {app}; Components: msg\ami
@@ -150,7 +150,9 @@ Source: ..\Solution Items\GIIS.DataLayer.dll; DestDir: {app}; Components: tools\
 ; HL7 FHIR
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Messaging.FHIR.dll; DestDir: {app}; Components: interop\fhir
 Source: ..\bin\release\OpenIZ.Messaging.FHIR.dll; DestDir: {app}; Components: interop\fhir
-Source: ..\Solution Items\Hl7.Fhir.DSTU21.Core.dll; DestDir: {app}; Components: interop\fhir
+Source: ..\Solution Items\Hl7.FhirPath.dll; DestDir: {app}; Components: interop\fhir
+Source: ..\Solution Items\Hl7.Fhir.STU3.Core.dll; DestDir: {app}; Components: interop\fhir
+Source: ..\Solution Items\Hl7.Fhir.Support.dll; DestDir: {app}; Components: interop\fhir
 
 ; HL7 IHE PIX
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Messaging.HAPI.dll; DestDir: {app}; Components: interop\pix
@@ -238,6 +240,7 @@ Source: ..\bin\release\OpenIZ.Persistence.Diagnostics.Jira.dll; DestDir: {app}; 
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Run]
+#ifndef DEBUG
 ; ADO.NET 
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\Npgsql.dll"" /nologo /silent"; Components: tools\migration db\ado; StatusMsg: "Optimizing Assembly:Npgsql.dll"; flags: runhidden
 ; XClinical Protocol 
@@ -281,7 +284,7 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\GIIS.DataLayer.dl
 ; HL7 FHIR
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\MARC.HI.EHRS.SVC.Messaging.FHIR.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Messaging.FHIR.dll"; flags: runhidden
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Messaging.FHIR.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.FHIR.dll"; flags: runhidden
-Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\Hl7.Fhir.DSTU21.Core.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:Hl7.Fhir.DSTU21.Core.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\Hl7.Fhir.STU3.Core.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:Hl7.Fhir.DSTU21.Core.dll"; flags: runhidden
 ; HL7 IHE PIX
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\MARC.HI.EHRS.SVC.Messaging.HAPI.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Messaging.HAPI.dll"; flags: runhidden
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\NHapi.Base.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:NHapi.Base.dll"; flags: runhidden
@@ -324,8 +327,10 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Messaging.
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Messaging.IMSI.dll"" /nologo /silent"; Components: msg\imsi; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.IMSI.dll"; flags: runhidden
 ; JIRA Stuff
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Persistence.Diagnostics.Jira.dll"" /nologo /silent"; Components: interop\jira; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Diagnostics.Jira.dll"; flags: runhidden
+#endif
 
 [UninstallRun]
+#ifndef DEBUG
 ; ADO.NET 
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Npgsql.dll"" /nologo /silent"; Components: tools\migration db\ado; StatusMsg: "Optimizing Assembly:Npgsql.dll"; flags: runhidden
 ; XClinical Protocol 
@@ -369,7 +374,7 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\GIIS.DataLayer.
 ; HL7 FHIR
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Messaging.FHIR.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Messaging.FHIR.dll"; flags: runhidden
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.FHIR.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.FHIR.dll"; flags: runhidden
-Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Hl7.Fhir.DSTU21.Core.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:Hl7.Fhir.DSTU21.Core.dll"; flags: runhidden
+Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Hl7.Fhir.STU3.Core.dll"" /nologo /silent"; Components: interop\fhir; StatusMsg: "Optimizing Assembly:Hl7.Fhir.DSTU21.Core.dll"; flags: runhidden
 ; HL7 IHE PIX
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\MARC.HI.EHRS.SVC.Messaging.HAPI.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:MARC.HI.EHRS.SVC.Messaging.HAPI.dll"; flags: runhidden
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\NHapi.Base.dll"" /nologo /silent"; Components: interop\pix; StatusMsg: "Optimizing Assembly:NHapi.Base.dll"; flags: runhidden
@@ -412,7 +417,7 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messagin
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messaging.IMSI.dll"" /nologo /silent"; Components: msg\imsi; StatusMsg: "Optimizing Assembly:OpenIZ.Messaging.IMSI.dll"; flags: runhidden
 ; JIRA Stuff
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Persistence.Diagnostics.Jira.dll"" /nologo /silent"; Components: interop\jira; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Diagnostics.Jira.dll"; flags: runhidden
-
+#endif
 
 ; Components
 [Code]

@@ -325,7 +325,7 @@ namespace OpenIZ.Core.Security.Audit
                     {
                         var refTerm = icpcr.GetConceptReferenceTerm(concept.Key.Value, "DCM");
                         if (refTerm != null)
-                            audit.EventTypeCode = new AuditCode(refTerm.Mnemonic, "DCM") { DisplayName = refTerm.LoadCollection<ReferenceTermName>("DisplayNames").FirstOrDefault()?.Name };
+                            audit.EventTypeCode = new AuditCode(refTerm.Mnemonic, "DCM") { DisplayName = refTerm.LoadCollection<ReferenceTermName>("DisplayNames")?.FirstOrDefault()?.Name };
                         else
                             audit.EventTypeCode.DisplayName = concept.LoadCollection<ConceptName>("ConceptNames").FirstOrDefault()?.Name;
                     }

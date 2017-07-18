@@ -17,6 +17,8 @@
  * User: justi
  * Date: 2016-6-14
  */
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -47,9 +49,9 @@ namespace OpenIZ.Persistence.Data.MSSQL.Configuration
                 if (connectionNode.Attributes["readWriteConnection"] == null)
                     throw new ConfigurationErrorsException("Connection manager must have a read/write connection", connectionNode);
                 else
-                    retVal.ReadWriteConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readWriteConnection"].Value]?.ConnectionString;
+                    retVal.ReadWriteConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[connectionNode.Attributes["readWriteConnection"].Value]?.ConnectionString;
                 if (connectionNode.Attributes["readonlyConnection"] != null)
-                    retVal.ReadonlyConnectionString = ConfigurationManager.ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value]?.ConnectionString;
+                    retVal.ReadonlyConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[connectionNode.Attributes["readonlyConnection"].Value]?.ConnectionString;
                 else
                     retVal.ReadonlyConnectionString = retVal.ReadWriteConnectionString;
                 if (connectionNode.Attributes["maxCacheSize"] != null)

@@ -18,6 +18,7 @@
  * Date: 2016-7-16
  */
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.EntityLoader;
@@ -209,10 +210,17 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
-        /// 
+        /// Determines the semantic equality of this object an <paramref name="obj"/>
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">The object to which the semantic equality should be evaluated</param>
+        /// <returns>True if this object is semantically the same as <paramref name="obj"/></returns>
+        /// <remarks>
+        /// In OpenIZ's data model, an object is semantically equal when the two objects clinically mean the
+        /// same thing. This differs from reference equality (when two objects are the same instance) and value equality 
+        /// (when two objects carry all the same values). For example, two <see cref="ActParticipation"/> instances may
+        /// be semantically equal when they both represent the same entity playing the same role in the same act as one another, 
+        /// even though their keys and effective / obsolete version properties may be different.
+        /// </remarks>
         public virtual bool SemanticEquals(object obj)
         {
             var other = obj as IdentifiedData;

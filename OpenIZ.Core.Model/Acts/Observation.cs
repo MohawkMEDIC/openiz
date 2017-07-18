@@ -32,8 +32,24 @@ using Newtonsoft.Json;
 namespace OpenIZ.Core.Model.Acts
 {
     /// <summary>
-    /// Represents a class which is an observation
+    /// Represents a act (<see cref="Act"/>) which is an observation
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The observation class itself is an abstract class which is generically used to represent something that is observed about a patient.
+    /// </para>
+    /// <para>
+    /// It is not recommended to use this class directly, rather one of its sub classes based on the type of observation being made such as:
+    /// </para>
+    /// <list type="bullet">
+    ///     <item>Coded observation (<see cref="CodedObservation"/>) for observations whose values are codified (example: blood type, presentation, etc.), </item>
+    ///     <item>Quantity observations (<see cref="QuantityObservation"/>) for observations whose values are quantified values (example: weight, height, etc.), </item>
+    ///     <item>Text observations (<see cref="TextObservation"/>) for observations whose values are textual in nature.</item>
+    /// </list>
+    /// <para>
+    /// No matter what type of value an observation carries (coded, quantity, text) it is always classified by the type concept (<see cref="Act.TypeConceptKey"/>).
+    /// </para>
+    /// </remarks>
     [XmlType("Observation",  Namespace = "http://openiz.org/model"), JsonObject("Observation")]
     
     public class Observation : Act
@@ -124,6 +140,10 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an observation that contains a quantity
     /// </summary>
+    /// <remarks>
+    /// The quantity observation class should be used whenever you wish to store an observation which carries a numerical value 
+    /// and an optional unit of measure (example: length = 3.2 ft, weight = 1.2 kg, etc.)
+    /// </remarks>
     [XmlType("QuantityObservation",  Namespace = "http://openiz.org/model"), JsonObject("QuantityObservation")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "QuantityObservation" )]
     public class QuantityObservation : Observation
@@ -214,6 +234,11 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an observation with a text value
     /// </summary>
+    /// <remarks>
+    /// The text observation type represents an observation made with a textual value. This is done whenever an observation type 
+    /// cannot be quantified or classified using either a coded or observed value. Please note that this type should not be used
+    /// for taking notes, rather it is a specific type of thing observed about a patient. For example: Interpretation of patient's mood
+    /// </remarks>
     [XmlType("TextObservation",  Namespace = "http://openiz.org/model"), JsonObject("TextObservation")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "TextObservation")]
     public class TextObservation : Observation
@@ -252,6 +277,10 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents an observation with a concept value
     /// </summary>
+    /// <remarks>
+    /// A coded observation represents an observation whose value is classified using a coded concept. For example: fetal presentation, 
+    /// stage of pregnancy, etc.
+    /// </remarks>
     [XmlType("CodedObservation",  Namespace = "http://openiz.org/model"), JsonObject("CodedObservation")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "CodedObservation")]
     public class CodedObservation : Observation

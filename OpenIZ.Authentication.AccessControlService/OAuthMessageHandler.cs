@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.ServiceModel.Description;
 using System.ServiceModel.Web;
 using System.Text;
@@ -119,6 +120,10 @@ namespace OpenIZ.Authentication.OAuth2
         /// </summary>
         public bool Start()
         {
+            // Don't startup unless in OpenIZ
+            if (Assembly.GetEntryAssembly().GetName().Name != "OpenIZ")
+                return true;
+
             try
             {
                 this.Starting?.Invoke(this, EventArgs.Empty);

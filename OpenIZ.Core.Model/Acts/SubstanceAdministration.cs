@@ -28,13 +28,23 @@ using System.Xml.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Core.Model.Acts
 {
     /// <summary>
     /// Represents an act whereby a substance is administered to the patient
     /// </summary>
-    
+    /// <remarks>
+    /// <para>The substance administration act is used whenever a clinician administers, plans to administer or should administer to a patient, a substance. 
+    /// The substance that is administered is open but should be represented as either a Consumable (something that was consumed in the act of administration 
+    /// like a manufactured material (<see cref="ManufacturedMaterial"/>) or a product (if proposing or planning)).</para>
+    /// <para>
+    /// The type of administration (immunization, drug therapy, treatment, etc.) is classified by the substance administration's type concept (<see cref="Act.TypeConceptKey"/>). In some cases
+    /// the dose quantity or dose measure are not required (when giving just "a dose") however it is recommended that implementations accurately track
+    /// how much of the substance was administered.
+    /// </para>
+    /// </remarks>
     [XmlType("SubstanceAdministration",  Namespace = "http://openiz.org/model"), JsonObject("SubstanceAdministration")]
     [XmlRoot(Namespace = "http://openiz.org/model", ElementName = "SubstanceAdministration")]
     public class SubstanceAdministration : Act

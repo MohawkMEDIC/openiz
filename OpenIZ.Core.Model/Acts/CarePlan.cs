@@ -32,6 +32,10 @@ namespace OpenIZ.Core.Model.Acts
     /// <summary>
     /// Represents a care plan
     /// </summary>
+    /// <remarks>
+    /// The care plan object is used to represent a collection of clinical protocols which the care planning
+    /// engine proposes should be done as part of the patient's course of care.
+    /// </remarks>
     [XmlType(nameof(CarePlan), Namespace = "http://openiz.org/model")]
     [XmlRoot(nameof(CarePlan), Namespace = "http://openiz.org/model")]
     [JsonObject(nameof(CarePlan))]

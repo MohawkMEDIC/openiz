@@ -332,52 +332,63 @@ namespace OpenIZ.Caching.Redis
         /// </summary>
         public bool Start()
         {
-            this.Starting?.Invoke(this, EventArgs.Empty);
-
-            this.m_tracer.TraceInfo("Starting REDIS cache service to hosts {0}...", String.Join(";", this.m_configuration.Servers));
-
-            var configuration = new ConfigurationOptions()
+            try
             {
-                Password = this.m_configuration.Password
-            };
-            foreach (var itm in this.m_configuration.Servers)
-                configuration.EndPoints.Add(itm);
-            this.m_connection = ConnectionMultiplexer.Connect(configuration);
-            this.m_subscriber = this.m_connection.GetSubscriber();
+                this.Starting?.Invoke(this, EventArgs.Empty);
 
-            // Look for non-cached types
-            foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null))
-                this.m_nonCached.Add(itm);
+                this.m_tracer.TraceInfo("Starting REDIS cache service to hosts {0}...", String.Join(";", this.m_configuration.Servers));
 
-            // Subscribe to OpenIZ events
-            m_subscriber.Subscribe("oiz.events", (channel, message) =>
-            {
-
-                this.m_tracer.TraceVerbose("Received event {0} on {1}", message, channel);
-
-                var messageParts = ((string)message).Split(' ');
-                var verb = messageParts[0];
-                var uri = new Uri(messageParts[1]);
-
-                string resource = uri.AbsolutePath.Replace("imsi/", ""),
-                    id = uri.AbsolutePath.Substring(uri.AbsolutePath.LastIndexOf("/") + 1);
-
-                switch (verb.ToLower())
+                var configuration = new ConfigurationOptions()
                 {
-                    case "post":
-                        this.Added?.Invoke(this, new DataCacheEventArgs(this.GetCacheItem(Guid.Parse(id))));
-                        break;
-                    case "put":
-                        this.Updated?.Invoke(this, new DataCacheEventArgs(this.GetCacheItem(Guid.Parse(id))));
-                        break;
-                    case "delete":
-                        this.Removed?.Invoke(this, new DataCacheEventArgs(id));
-                        break;
-                }
-            });
+                    Password = this.m_configuration.Password
+                };
+                foreach (var itm in this.m_configuration.Servers)
+                    configuration.EndPoints.Add(itm);
 
-            this.Started?.Invoke(this, EventArgs.Empty);
-            return true;
+                this.m_connection = ConnectionMultiplexer.Connect(configuration);
+                this.m_subscriber = this.m_connection.GetSubscriber();
+
+                // Look for non-cached types
+                foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null))
+                    this.m_nonCached.Add(itm);
+
+                // Subscribe to OpenIZ events
+                m_subscriber.Subscribe("oiz.events", (channel, message) =>
+                {
+
+                    this.m_tracer.TraceVerbose("Received event {0} on {1}", message, channel);
+
+                    var messageParts = ((string)message).Split(' ');
+                    var verb = messageParts[0];
+                    var uri = new Uri(messageParts[1]);
+
+                    string resource = uri.AbsolutePath.Replace("imsi/", ""),
+                        id = uri.AbsolutePath.Substring(uri.AbsolutePath.LastIndexOf("/") + 1);
+
+                    switch (verb.ToLower())
+                    {
+                        case "post":
+                            this.Added?.Invoke(this, new DataCacheEventArgs(this.GetCacheItem(Guid.Parse(id))));
+                            break;
+                        case "put":
+                            this.Updated?.Invoke(this, new DataCacheEventArgs(this.GetCacheItem(Guid.Parse(id))));
+                            break;
+                        case "delete":
+                            this.Removed?.Invoke(this, new DataCacheEventArgs(id));
+                            break;
+                    }
+                });
+
+                this.Started?.Invoke(this, EventArgs.Empty);
+                return true;
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error starting REDIS caching, will switch to no-caching : {0}", e);
+                ApplicationContext.Current.RemoveServiceProvider(typeof(RedisCacheService));
+                ApplicationContext.Current.RemoveServiceProvider(typeof(IDataCachingService));
+                return false;
+            }
         }
 
         /// <summary>

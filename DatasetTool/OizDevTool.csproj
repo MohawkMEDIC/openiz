@@ -79,7 +79,9 @@
     <Compile Include="Debugger\DebuggerBase.cs" />
     <Compile Include="CommandAttribute.cs" />
     <Compile Include="DocGen.cs" />
+    <Compile Include="ImsiServiceClient.cs" />
     <Compile Include="InteractiveBase.cs" />
+    <Compile Include="ServiceManager.cs" />
     <Compile Include="Warehouse.cs" />
     <Compile Include="ExampleAttribute.cs" />
     <Compile Include="InteractiveAttribute.cs" />
@@ -153,6 +155,10 @@
     <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
       <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
       <Name>OpenIZ.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Messaging.AMI.Client\OpenIZ.Messaging.AMI.Client.csproj">
+      <Project>{0FDBD4DB-30AE-4E1D-AAE1-5FE1370DCE3F}</Project>
+      <Name>OpenIZ.Messaging.AMI.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Protocol.Xml\OpenIZ.Protocol.Xml.csproj">
       <Project>{cad6bcb7-758b-4aa4-a5fe-a9fab8a4cf2f}</Project>
