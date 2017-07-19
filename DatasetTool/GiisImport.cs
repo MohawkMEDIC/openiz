@@ -197,7 +197,7 @@ namespace OizDevTool
             var retVal = new EntityAddress();
             retVal.AddressUseKey = typeKey;
             if (!String.IsNullOrEmpty(place.Code))
-                retVal.Component.Add(new EntityAddressComponent(AddressComponentKeys.CensusTract, place.Code));
+                retVal.Component.Add(new EntityAddressComponent(AddressComponentKeys.CensusTract, placeEntityMap[place.Id].ToString()));
 
             Queue<Guid> addressParts = new Queue<Guid>(new Guid[] {
                 AddressComponentKeys.AdditionalLocator,
