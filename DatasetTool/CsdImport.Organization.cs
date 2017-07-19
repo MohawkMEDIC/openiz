@@ -52,10 +52,10 @@ namespace OizDevTool
 
                 Entity importItem = null;
                 if (!options.OrganizationsAsPlaces)
-                    importItem = GetOrCreateEntity<Organization>(csdOrganization.entityID, options.EntityUidAuthority);
+                    importItem = GetOrCreateEntity<Organization>(csdOrganization.entityID, options.EntityUidAuthority, options);
                 else
                 {
-                    importItem = GetOrCreateEntity<Place>(csdOrganization.entityID, options.EntityUidAuthority);
+                    importItem = GetOrCreateEntity<Place>(csdOrganization.entityID, options.EntityUidAuthority, options);
                     // Set proper class code for the place
                     importItem.ClassConceptKey = EntityClassKeys.Place;
                 }
@@ -152,9 +152,9 @@ namespace OizDevTool
                     importItem.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
 
                     if(!options.OrganizationsAsPlaces)
-					    parent = GetOrCreateEntity<Organization>(csdOrganization.parent.entityID, options.EntityUidAuthority);
+					    parent = GetOrCreateEntity<Organization>(csdOrganization.parent.entityID, options.EntityUidAuthority, options);
                     else
-                        parent = GetOrCreateEntity<Place>(csdOrganization.parent.entityID, options.EntityUidAuthority);
+                        parent = GetOrCreateEntity<Place>(csdOrganization.parent.entityID, options.EntityUidAuthority, options);
 
                     importItem.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
 				}

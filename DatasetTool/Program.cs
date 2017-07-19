@@ -38,8 +38,6 @@ namespace OizDevTool
         static void Main(string[] args)
         {
 
-            ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
-
             AppDomain.CurrentDomain.SetData(
                "DataDirectory",
                Path.GetDirectoryName(typeof(Program).Assembly.Location));
@@ -52,6 +50,16 @@ namespace OizDevTool
             {
                 var consoleParms = new ParameterParser<ConsoleParameters>().Parse(args);
 
+                if (!consoleParms.CustomConfig)
+                {
+                    Console.WriteLine("Using openiz config");
+
+                    ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
+                }
+                else
+                {
+                    Console.WriteLine("Using oizdt config");
+                }
                 if (consoleParms.Help)
                     PrintHelp(consoleParms.ToolName);
                 else

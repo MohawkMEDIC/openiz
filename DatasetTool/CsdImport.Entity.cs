@@ -212,7 +212,7 @@ namespace OizDevTool
 			{
 				var csdProvider = contact.Item as uniqueID;
 
-				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID, options.EntityUidAuthority);
+				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID, options.EntityUidAuthority, options);
 
 				entityRelationship = new EntityRelationship(EntityRelationshipTypeKeys.Contact, provider);
 			}

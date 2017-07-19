@@ -54,5 +54,13 @@ namespace OizDevTool
         [Parameter("?")]
         [Description("Shows this help and exits")]
         public bool Help { get; set; }
+
+        /// <summary>
+        /// Override config
+        /// </summary>
+        [Description("Instructs the tool to use oizdt.exe.config rather than openiz.config")]
+        [Parameter("c")]
+        [Parameter("selfconfig")]
+        public bool CustomConfig { get; set; }
     }
 }

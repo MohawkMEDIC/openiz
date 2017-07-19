@@ -33,6 +33,7 @@ using OpenIZ.Core.Security;
 using OpenIZ.Core.Services.Impl;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -81,6 +82,7 @@ namespace OizDevTool
 		/// The emergency message.
 		/// </summary>
 		private static string emergencyMessage;
+
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CsdImport"/> class.
@@ -250,7 +252,7 @@ namespace OizDevTool
 		/// <typeparam name="T">The type of entity to lookup.</typeparam>
 		/// <param name="entityId">The entity identifier.</param>
 		/// <returns>Returns the entity instance.</returns>
-		private static T GetOrCreateEntity<T>(string entityId, String authorityName) where T : Entity, new()
+		private static T GetOrCreateEntity<T>(string entityId, String authorityName, CsdOptions options) where T : Entity, new()
 		{
 			Entity entity;
 
@@ -261,8 +263,10 @@ namespace OizDevTool
 
 			var entityService = ApplicationContext.Current.GetService<IDataPersistenceService<T>>();
 
-			int totalResults;
-			entity = entityService.Query(c => c.Identifiers.Any(i => i.Authority.DomainName == authorityName && i.Value == entityId) && c.ObsoletionTime == null, 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
+			int totalResults = 0;
+
+            if(!options.NoDbCheck)
+			    entity = entityService.Query(c => c.Identifiers.Any(i => i.Authority.DomainName == authorityName && i.Value == entityId) && c.ObsoletionTime == null, 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
 			if (totalResults > 1)
 			{
@@ -423,6 +427,35 @@ namespace OizDevTool
             [Description("Cascade assigned facilities to children")]
             [Parameter("cascadeAssignedFacilities")]
             public bool CascadeAssignedFacilities { get; internal set; }
+
+            /// <summary>
+            /// Use hacked facility parent locatio nalgorithm
+            /// </summary>
+            [Description("Used hacked facility parent location algorithm")]
+            [Parameter("hack-parentFind")]
+            public bool HackParentFind { get; set; }
+
+            /// <summary>
+            /// Parent org code
+            /// </summary>
+            [Description("Parent Code Levels for the hacked parent")]
+            [Parameter("parent-orgCode")]
+            public string ParentOrgCode { get; set; }
+
+            /// <summary>
+            /// Parent org code
+            /// </summary>
+            [Description("Code of parent facility object which classifies as parent")]
+            [Parameter("parent-facType")]
+            public StringCollection ParentCodeType { get; set; }
+
+            [Description("Sets the type of the facility type extension")]
+            [Parameter("facilityType-extension")]
+            public string FacilityTypeExtension { get; set; }
+
+            [Description("Does not check the db for existing items")]
+            [Parameter("nodb")]
+            public bool NoDbCheck { get; internal set; }
         }
 	}
 
