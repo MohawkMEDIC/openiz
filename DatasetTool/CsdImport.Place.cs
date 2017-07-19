@@ -46,7 +46,7 @@ namespace OizDevTool
             {
                 var place = GetOrCreateEntity<Place>(facility.entityID, options.EntityUidAuthority, options);
                 place.ClassConceptKey = EntityClassKeys.ServiceDeliveryLocation;
-
+                place.StatusConceptKey = StatusKeys.Active;
                 // map addresses
                 if (facility.address?.Any() == true)
                 {

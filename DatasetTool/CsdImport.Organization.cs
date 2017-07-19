@@ -259,8 +259,6 @@ namespace OizDevTool
 
             // First Census tract?
             var codeID = importItem.otherID.FirstOrDefault(o => o.code == "code");
-            if(codeID != null)
-                retVal.Component.Add(new EntityAddressComponent(AddressComponentKeys.CensusTract, codeID.Value));
             
             // Process components
             var parent = importItem;
