@@ -27,137 +27,165 @@ using System.Linq;
 
 namespace OizDevTool
 {
-	/// <summary>
-	/// Represents a CSD import utility.
-	/// </summary>
-	public partial class CsdImport
-	{
-		/// <summary>
-		/// Maps the places.
-		/// </summary>
-		/// <param name="csdFacilities">The CSD facilities.</param>
-		/// <returns>Returns a list of places.</returns>
-		private static IEnumerable<Entity> MapPlaces(IEnumerable<facility> csdFacilities, IEnumerable<organization> csdOrgaizations, CsdOptions options)
-		{
-			var places = new List<Entity>();
+    /// <summary>
+    /// Represents a CSD import utility.
+    /// </summary>
+    public partial class CsdImport
+    {
+        /// <summary>
+        /// Maps the places.
+        /// </summary>
+        /// <param name="csdFacilities">The CSD facilities.</param>
+        /// <returns>Returns a list of places.</returns>
+        private static IEnumerable<Entity> MapPlaces(IEnumerable<facility> csdFacilities, IEnumerable<organization> csdOrgaizations, CsdOptions options)
+        {
+            var places = new List<Entity>();
 
             int idx = 0;
-			foreach (var facility in csdFacilities)
-			{
-				var place = GetOrCreateEntity<Place>(facility.entityID, options.EntityUidAuthority);
+            foreach (var facility in csdFacilities)
+            {
+                var place = GetOrCreateEntity<Place>(facility.entityID, options.EntityUidAuthority, options);
                 place.ClassConceptKey = EntityClassKeys.ServiceDeliveryLocation;
 
-				// map addresses
-				if (facility.address?.Any() == true)
-				{
-					ShowInfoMessage("Mapping place addresses...");
-
-					var addresses = ReconcileVersionedAssociations(place.Addresses, facility.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem)))).Cast<EntityAddress>();
-
-					place.Addresses.AddRange(addresses);
-				}
-
-				// map latitude
-				if (facility.geocode?.latitude != null)
-				{
-					ShowInfoMessage("Mapping place latitude...");
-
-					place.Lat = Convert.ToDouble(facility.geocode.latitude);
-				}
-
-				// map longitude
-				if (facility.geocode?.longitude != null)
-				{
-					ShowInfoMessage("Mapping place longitude...");
-
-					place.Lng = Convert.ToDouble(facility.geocode.longitude);
-				}
-
-				// map extensions
-				if (facility.extension?.Any() == true)
-				{
-					ShowInfoMessage("Mapping place extensions...");
-
-					var extensions = ReconcileVersionedAssociations(place.Extensions, facility.extension.Select(e => MapEntityExtension(e.urn, e.Any.InnerText))).Cast<EntityExtension>();
-
-					place.Extensions.AddRange(extensions);
-				}
-
-                if(facility.extension.Any(o=>o.type == "facility_type") && !place.TypeConceptKey.HasValue)
+                // map addresses
+                if (facility.address?.Any() == true)
                 {
-                    var typeExtension = facility.extension.FirstOrDefault(o => o.type == "facility_type");
-                    place.TypeConceptKey = MapCodedType(typeExtension.Any.InnerText, typeExtension.urn + ":facility_type")?.Key;
+                    ShowInfoMessage("Mapping place addresses...");
+
+                    var addresses = ReconcileVersionedAssociations(place.Addresses, facility.address?.Select(a => MapEntityAddress(a, new Uri(AddressTypeCodeSystem)))).Cast<EntityAddress>();
+
+                    place.Addresses.AddRange(addresses);
                 }
 
-                if(facility.extension.Any(o=>o.type == "DVS")) // DVS extension
+                // map latitude
+                if (facility.geocode?.latitude != null)
                 {
-                    var dvsExtension = facility.extension.FirstOrDefault(o => o.type == "DVS");
+                    ShowInfoMessage("Mapping place latitude...");
 
-                    var dvsPlace = GetOrCreateEntity<Place>(dvsExtension.Any.Attributes["entityID"]?.Value, options.EntityUidAuthority);
-                    if (dvsPlace != null)
-                        place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, dvsPlace.Key));
+                    place.Lat = Convert.ToDouble(facility.geocode.latitude);
+                }
 
-                    if(!entityMap.ContainsKey(dvsExtension.Any.Attributes["entityID"]?.Value))
-                        entityMap.Add(dvsExtension.Any.Attributes["entityID"]?.Value, dvsPlace);
+                // map longitude
+                if (facility.geocode?.longitude != null)
+                {
+                    ShowInfoMessage("Mapping place longitude...");
 
+                    place.Lng = Convert.ToDouble(facility.geocode.longitude);
+                }
+
+                // map extensions
+                if (facility.extension?.Any(o=>o.type != options.FacilityTypeExtension) == true)
+                {
+                    ShowInfoMessage("Mapping place extensions...");
+
+                    var extensions = ReconcileVersionedAssociations(place.Extensions, facility.extension.Select(e => MapEntityExtension(e.urn, e.Any.InnerText))).Cast<EntityExtension>();
+
+                    place.Extensions.AddRange(extensions);
+                }
+
+                if (facility.extension.Any(o => o.type == options.FacilityTypeExtension) && !place.TypeConceptKey.HasValue)
+                {
+                    var typeExtension = facility.extension.FirstOrDefault(o => o.type == options.FacilityTypeExtension);
+                    place.TypeConceptKey = MapCodedType(typeExtension.Any.InnerText, typeExtension.urn + ":facility_type")?.Key;
                 }
 
                 // map identifiers
                 if (facility.otherID?.Any() == true)
-				{
-					ShowInfoMessage("Mapping place identifiers...");
+                {
+                    ShowInfoMessage("Mapping place identifiers...");
 
-					var identifiers = ReconcileVersionedAssociations(place.Identifiers, facility.otherID.Select(MapEntityIdentifier)).Cast<EntityIdentifier>();
+                    var identifiers = ReconcileVersionedAssociations(place.Identifiers, facility.otherID.Select(MapEntityIdentifier)).Cast<EntityIdentifier>();
 
-					place.Identifiers.AddRange(identifiers);
-				}
+                    place.Identifiers.AddRange(identifiers);
+                }
 
-				Entity parent = null;
+                Entity parent = null;
 
-				// map parent relationships
-				if (facility.parent?.entityID != null)
-				{
-					ShowInfoMessage("Mapping place parent relationships...");
+                // map parent relationships
+                if (facility.parent?.entityID != null)
+                {
+                    ShowInfoMessage("Mapping place parent relationships...");
 
-					place.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
+                    place.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
 
-					parent = GetOrCreateEntity<Place>(facility.parent.entityID, options.EntityUidAuthority);
+                    parent = GetOrCreateEntity<Place>(facility.parent.entityID, options.EntityUidAuthority, options);
 
-					place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
-				}
+                    place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
+                }
+                else if (options.HackParentFind) // HACK: for Tanzania
+                {
+                    string hackParentCode = options.ParentOrgCode;
 
-				// map coded type
-				if (facility.codedType?.Any() == true)
-				{
-					ShowInfoMessage("Mapping place type concept...");
+                    // We go to the org
+                    var serviceOrg = csdOrgaizations.FirstOrDefault(o => o.entityID == facility.organizations?.FirstOrDefault()?.entityID);
+                    var parentFacility = facility;
+                    // Then we use the parent until we hit the parent code
+                    while (serviceOrg != null)
+                    {
+                        serviceOrg = csdOrgaizations.FirstOrDefault(o => o.entityID == serviceOrg.parent?.entityID);
+                        if (serviceOrg == null) break;
+                        parentFacility = csdFacilities.FirstOrDefault(f => f.organizations.Any(o => o.entityID == serviceOrg?.entityID) && 
+                            (f.codedType?.Any(c => options.ParentCodeType.Contains(c.code)) == true || 
+                            !String.IsNullOrEmpty(options.FacilityTypeExtension) && options.ParentCodeType.Contains(f.extension.FirstOrDefault(o=>o.type == options.FacilityTypeExtension)?.Any.InnerText)));
+                        // Find the facility which services that
+                        if (string.IsNullOrEmpty(hackParentCode) || serviceOrg.codedType.Any(o => o.code == hackParentCode))
+                            break;
+                    }
 
-					// we don't support multiple types for a place at the moment, so we only take the first one
-					// TODO: cleanup
-					place.TypeConceptKey = MapCodedType(facility.codedType[0].code, facility.codedType[0].codingScheme)?.Key;
-				}
+                    // Now we want to assign the parent
+                    if (parentFacility != null)
+                    {
+                        place.Relationships.RemoveAll(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
+                        parent = GetOrCreateEntity<Place>(parentFacility.entityID, options.EntityUidAuthority, options);
+                        place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, parent));
+                        facility.parent = new uniqueID() { entityID = parentFacility.entityID };
+                    }
 
-				// map primary name
-				if (facility.primaryName != null)
-				{
-					ShowInfoMessage("Mapping place names...");
+                }
+                else if (facility.extension.Any(o => o.type == "DistrictVaccinationStore")) // DVS extension
+                {
+                    var dvsExtension = facility.extension.FirstOrDefault(o => o.type == "DVS");
 
-					place.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
-					place.Names.Add(new EntityName(NameUseKeys.OfficialRecord, facility.primaryName));
-				}
+                    var dvsPlace = GetOrCreateEntity<Place>(dvsExtension.Any.Attributes["entityID"]?.Value, options.EntityUidAuthority, options);
+                    if (dvsPlace != null)
+                        place.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.Parent, dvsPlace.Key));
 
-				// map other names
-				if (facility.otherName?.Any() == true)
-				{
-					ShowInfoMessage("Mapping place additional names...");
+                    if (!entityMap.ContainsKey(dvsExtension.Any.Attributes["entityID"]?.Value))
+                        entityMap.Add(dvsExtension.Any.Attributes["entityID"]?.Value, dvsPlace);
 
-					var names = ReconcileVersionedAssociations(place.Names, facility.otherName.Select(c => new EntityName(NameUseKeys.Assigned, c.Value))).Cast<EntityName>();
+                }
+                // map coded type
+                if (facility.codedType?.Any() == true)
+                {
+                    ShowInfoMessage("Mapping place type concept...");
 
-					place.Names.AddRange(names);
-				}
+                    // we don't support multiple types for a place at the moment, so we only take the first one
+                    // TODO: cleanup
+                    place.TypeConceptKey = MapCodedType(facility.codedType[0].code, facility.codedType[0].codingScheme)?.Key;
+                }
 
-				// map organization relationships - These are the villages which the place supports
-				if (facility.organizations?.Any() == true)
-				{
+                // map primary name
+                if (facility.primaryName != null)
+                {
+                    ShowInfoMessage("Mapping place names...");
+
+                    place.Names.RemoveAll(c => c.NameUseKey == NameUseKeys.OfficialRecord);
+                    place.Names.Add(new EntityName(NameUseKeys.OfficialRecord, facility.primaryName));
+                }
+
+                // map other names
+                if (facility.otherName?.Any() == true)
+                {
+                    ShowInfoMessage("Mapping place additional names...");
+
+                    var names = ReconcileVersionedAssociations(place.Names, facility.otherName.Select(c => new EntityName(NameUseKeys.Assigned, c.Value))).Cast<EntityName>();
+
+                    place.Names.AddRange(names);
+                }
+
+                // map organization relationships - These are the villages which the place supports
+                if (facility.organizations?.Any() == true)
+                {
                     ShowInfoMessage("Mapping serviced organizations relationships...");
 
                     // Cascade organizations
@@ -167,63 +195,69 @@ namespace OizDevTool
                             continue;
 
                         var linkedOrgs = new List<String>() { org.entityID };
-                        
-                        if(options.CascadeAssignedFacilities)
-                            linkedOrgs = linkedOrgs.Union(csdOrgaizations.Where(o => o.parent.entityID == org.entityID).Select(o=>o.entityID)).ToList();
 
-                        foreach (var lo in linkedOrgs)
-                        {
-                            var villageServiced = GetOrCreateEntity<Place>(lo, options.EntityUidAuthority);
-                            villageServiced.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, place.Key.Value));
-                            if (!entityMap.ContainsKey(lo))
+                        if (options.CascadeAssignedFacilities)
+                            linkedOrgs = linkedOrgs.Union(csdOrgaizations.Where(o => o.parent?.entityID == org.entityID).Select(o => o.entityID)).ToList();
+
+                        if(linkedOrgs.Count <= 15)
+                            foreach (var lo in linkedOrgs)
                             {
-                                entityMap.Add(lo, villageServiced);
+                                var villageServiced = GetOrCreateEntity<Place>(lo, options.EntityUidAuthority, options);
+                                villageServiced.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, place.Key.Value));
+                                if (!entityMap.ContainsKey(lo))
+                                {
+                                    entityMap.Add(lo, villageServiced);
+                                }
                             }
-                        }
                     }
                 }
 
                 // map contact points
                 if (facility.contactPoint?.Any() == true)
-				{
-					ShowInfoMessage("Mapping place telecommunications...");
+                {
+                    ShowInfoMessage("Mapping place telecommunications...");
 
-					var telecoms = ReconcileVersionedAssociations(place.Telecoms, facility.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c))).Cast<EntityTelecomAddress>();
+                    var telecoms = ReconcileVersionedAssociations(place.Telecoms, facility.contactPoint.Select(c => MapContactPoint(TelecomAddressUseKeys.Public, c))).Cast<EntityTelecomAddress>();
 
-					place.Telecoms.AddRange(telecoms);
-				}
+                    place.Telecoms.AddRange(telecoms);
+                }
 
-				// map status concept
-				if (facility.record?.status != null)
-				{
-					ShowInfoMessage("Mapping place status...");
+                // map status concept
+                if (facility.record?.status != null)
+                {
+                    ShowInfoMessage("Mapping place status...");
 
-					place.StatusConceptKey = MapStatusCode(facility.record.status, "http://openiz.org/csd/CSD-FacilityStatusCode");
-				}
+                    place.StatusConceptKey = MapStatusCode(facility.record.status, "http://openiz.org/csd/CSD-FacilityStatusCode");
+                }
 
-				places.Add(place);
+                if (facility?.record.created != null)
+                {
+                    place.CreationTime = facility.record.created;
+                }
 
-				if (parent != null && places.Any(c => c.Identifiers.All(i => i.Value != facility.parent?.entityID)))
-				{
-					places.Add(parent);
-				}
+                places.Add(place);
 
-				if (!entityMap.ContainsKey(facility.entityID))
-				{
-					entityMap.Add(facility.entityID, place);
-				}
+                if (parent != null && places.Any(c => c.Identifiers.All(i => i.Value != facility.parent?.entityID)))
+                {
+                    places.Add(parent);
+                }
 
-				if (parent != null && !entityMap.ContainsKey(facility.parent?.entityID))
-				{
-					entityMap.Add(facility.parent.entityID, parent);
-				}
+                if (!entityMap.ContainsKey(facility.entityID))
+                {
+                    entityMap.Add(facility.entityID, place);
+                }
 
-				Console.ForegroundColor = ConsoleColor.Magenta;
-				Console.WriteLine($"Mapped place: ({idx++}/{csdFacilities.Count()}) {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
-				Console.ResetColor();
-			}
+                if (parent != null && !entityMap.ContainsKey(facility.parent?.entityID))
+                {
+                    entityMap.Add(facility.parent.entityID, parent);
+                }
 
-			return places;
-		}
-	}
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine($"Mapped place: ({idx++}/{csdFacilities.Count()}) {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+                Console.ResetColor();
+            }
+
+            return places;
+        }
+    }
 }

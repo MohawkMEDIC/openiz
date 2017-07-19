@@ -44,7 +44,7 @@ namespace OizDevTool
 
 			foreach (var csdProvider in csdProviders)
 			{
-				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID, options.EntityUidAuthority);
+				var provider = GetOrCreateEntity<Provider>(csdProvider.entityID, options.EntityUidAuthority, options);
 
 				// map addresses
 				if (csdProvider.demographic?.address?.Any() == true)

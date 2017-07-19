@@ -82,8 +82,12 @@ namespace OpenIZ.Core.Services.Impl
                 if (handler == null)
                     throw new ConfigurationErrorsException($"Configuration handler {configSection.SectionInformation.Type} does not implement IConfigurationSectionHandler");
 
+                var xml = configSection.SectionInformation.GetRawXml();
+                if (String.IsNullOrEmpty(xml))
+                    return null;
+
                 XmlDocument xdoc = new XmlDocument();
-                xdoc.LoadXml(configSection.SectionInformation.GetRawXml());
+                xdoc.LoadXml(xml);
                 return handler.Create(configSection.ElementInformation, configSection.CurrentConfiguration, xdoc.DocumentElement);
 
                 //return this.m_configuration.GetSection(sectionName);
