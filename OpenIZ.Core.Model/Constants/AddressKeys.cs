@@ -166,7 +166,7 @@ namespace OpenIZ.Core.Model.Constants
 		public static readonly Guid HomeAddress = Guid.Parse("493C3E9D-4F65-4E4D-9582-C9008F4F2EB4");
 
 		/// <summary>
-		/// Represents an address expressed in an ideographic manner (example: Kaji)
+		/// Represents an address expressed in an ideographic manner (example: Kanji)
 		/// </summary>
 		public static readonly Guid Ideographic = Guid.Parse("09000479-4672-44F8-BB4A-72FB25F7356A");
 

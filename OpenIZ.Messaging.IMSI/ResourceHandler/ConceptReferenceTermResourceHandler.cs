@@ -68,7 +68,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <param name="data">The resource data to be created.</param>
         /// <param name="updateIfExists">Updates the resource if the resource exists.</param>
         /// <returns>Returns the created resource.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Create(IdentifiedData data, bool updateIfExists)
 		{
 			var bundleData = data as Bundle;
@@ -106,7 +106,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <param name="id">The id of the resource.</param>
         /// <param name="versionId">The version id of the resource.</param>
         /// <returns>Returns the resource.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Get(Guid id, Guid versionId)
 		{
 			return this.repository.GetConceptReferenceTerm(id);
@@ -117,7 +117,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         /// <param name="key">The key of the resource to obsolete.</param>
         /// <returns>Returns the obsoleted resource.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Obsolete(Guid key)
 		{
 			return this.repository.GetConceptReferenceTerm(key);
@@ -159,7 +159,7 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// </summary>
         /// <param name="data">The resource data to be updated.</param>
         /// <returns>Returns the updated resource.</returns>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
         public IdentifiedData Update(IdentifiedData data)
 		{
 			var bundleData = data as Bundle;

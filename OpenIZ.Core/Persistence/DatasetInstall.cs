@@ -26,6 +26,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Persistence
@@ -67,7 +68,18 @@ namespace OpenIZ.Core.Persistence
         [XmlElement("obsolete", Type = typeof(DataObsolete))]
         [XmlElement("update", Type = typeof(DataUpdate))]
         public List<DataInstallAction> Action { get; set; }
-        
+
+        /// <summary>
+        /// Loads the specified file to dataset
+        /// </summary>
+        public static DatasetInstall Load(string datasetFile)
+        {
+            using (var fs = File.OpenRead(datasetFile))
+            {
+                XmlSerializer xs = new XmlSerializer(typeof(DatasetInstall));
+                return xs.Deserialize(fs) as DatasetInstall;
+            }
+        }
     }
 
     /// <summary>
