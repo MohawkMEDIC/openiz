@@ -583,7 +583,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="applicationId">The id of the application to be obsoleted.</param>
 		/// <returns>Returns the obsoleted application.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateApplication)]
 		public SecurityApplication ObsoleteApplication(Guid applicationId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
@@ -606,7 +606,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="deviceId">The id of the device to be obsoleted.</param>
 		/// <returns>Returns the obsoleted device.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateDevice)]
 		public SecurityDevice ObsoleteDevice(Guid deviceId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
@@ -700,7 +700,8 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="application">The security application containing the updated information.</param>
 		/// <returns>Returns the updated application.</returns>
-		public SecurityApplication SaveApplication(SecurityApplication application)
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateApplication)]
+        public SecurityApplication SaveApplication(SecurityApplication application)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
 
@@ -718,7 +719,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="device">The security device containing the updated information.</param>
 		/// <returns>Returns the updated device.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateDevice)]
 		public SecurityDevice SaveDevice(SecurityDevice device)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
@@ -737,7 +738,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="policy">The security policy containing the updated information.</param>
 		/// <returns>Returns the updated policy.</returns>
-		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
+		[PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterPolicy)]
 		public SecurityPolicy SavePolicy(SecurityPolicy policy)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
@@ -775,7 +776,7 @@ namespace OpenIZ.Core.Services.Impl
 		/// </summary>
 		/// <param name="user">The security user containing the updated information.</param>
 		/// <returns>Returns the updated user.</returns>
-		public SecurityUser SaveUser(SecurityUser user)
+        public SecurityUser SaveUser(SecurityUser user)
 		{
             // Only the current user can update themselves or an administrator
             if (AuthenticationContext.Current.Principal.Identity.Name != user.UserName)
