@@ -151,5 +151,14 @@ namespace OpenIZ.Core.Model.Constants
         /// </summary>
         public static readonly Guid AllergyIntoleranceTypes = Guid.Parse("4a3952e0-8998-4020-9da2-6d78b292da69");
 
+        /// <summary>
+        /// Orgnaiztaion types
+        /// </summary>
+        public static readonly Guid PlaceTypes = Guid.Parse("C65719EC-0795-47EC-8AAF-DCB867C5CA56");
+
+        /// <summary>
+        /// Orgnaiztaion types
+        /// </summary>
+        public static readonly Guid OrganizationTypes = Guid.Parse("485BC177-3E84-4A5A-9F25-466BA30E987E");
     }
 }

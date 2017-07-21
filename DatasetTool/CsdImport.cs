@@ -456,6 +456,20 @@ namespace OizDevTool
             [Description("Does not check the db for existing items")]
             [Parameter("nodb")]
             public bool NoDbCheck { get; internal set; }
+
+            /// <summary>
+            /// Skip import of organizations
+            /// </summary>
+            [Parameter("skip-orgs")]
+            public bool SkipOrganizations { get; set; }
+
+            /// <summary>
+            /// True if the import should ignore facilities
+            /// </summary>
+            [Parameter("skip-facilities")]
+            [Description("Skip import of facilities")]
+            public bool SkipFacilties { get; set; }
+
         }
 	}
 

@@ -1230,12 +1230,6 @@ namespace OizDevTool
             (placeTypes.Element as ConceptSet).ConceptsXml = placeTypes.Association.Select(o => o.Element.Key.Value).ToList();
             conceptDataset.Action.AddRange(healthFacilityTypes.Association.Select(o => new DataUpdate() { InsertIfNotExists = true, Element = o.Element }));
             conceptDataset.Action.AddRange(placeTypes.Association.Select(o => new DataUpdate() { InsertIfNotExists = true,  Element = o.Element }));
-            conceptDataset.Action.AddRange(new DataInstallAction[]
-            {
-                new DataUpdate() { InsertIfNotExists= true, Element = new Concept() { Key = industryManufacturer, Mnemonic = "Industry-Manufacturing", ClassKey = ConceptClassKeys.Other, IsSystemConcept = false, StatusConceptKey = StatusKeys.Active, ConceptNames = new List<ConceptName>() { new ConceptName() { Language = "en", Name = "Manufacturing"  } }, ConceptSetsXml = new List<Guid>() { Guid.Parse("d1597e50-845a-46e1-b9ae-6f99ff93d9db") } } },
-                new DataUpdate() { InsertIfNotExists= true,Element = new Concept() { Key = industryOther, Mnemonic = "Industry-OtherUnknown", ClassKey = ConceptClassKeys.Other, IsSystemConcept = false, StatusConceptKey = StatusKeys.Active, ConceptNames = new List<ConceptName>() { new ConceptName() { Language = "en", Name = "Other/Unknown"  } } , ConceptSetsXml = new List<Guid>() { Guid.Parse("d1597e50-845a-46e1-b9ae-6f99ff93d9db") } } },
-                new DataUpdate() { InsertIfNotExists= true,Element = new Concept() { Key = industryHealthDelivery, Mnemonic = "Industry-HealthDelivery", ClassKey = ConceptClassKeys.Other, IsSystemConcept = false, StatusConceptKey = StatusKeys.Active , ConceptNames = new List<ConceptName>() { new ConceptName() { Language = "en", Name = "Healthcare"  } } , ConceptSetsXml = new List<Guid>() { Guid.Parse("d1597e50-845a-46e1-b9ae-6f99ff93d9db") } } }
-            });
             healthFacilityTypes.Association.Clear();
             placeTypes.Association.Clear();
             conceptDataset.Action.Add(healthFacilityTypes);

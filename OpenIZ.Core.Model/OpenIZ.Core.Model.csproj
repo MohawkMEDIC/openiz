@@ -63,6 +63,7 @@
     <Compile Include="Constants\ActParticipationKey.cs" />
     <Compile Include="Constants\ActReasonKeys.cs" />
     <Compile Include="Constants\ActRelationshipTypeKeys.cs" />
+    <Compile Include="Constants\IndustryTypeKeys.cs" />
     <Compile Include="Constants\ObservationTypeKeys.cs" />
     <Compile Include="Constants\AddressKeys.cs" />
     <Compile Include="Constants\CodeSystemKeys.cs" />

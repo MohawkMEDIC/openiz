@@ -283,7 +283,7 @@ namespace OpenIZ.Core.Protocol
                 if (asEncounters)
                 {
                     List<PatientEncounter> encounters = new List<PatientEncounter>();
-                    foreach (var act in new List<Act>(protocolActs).Where(o => o.StartTime.HasValue && o.StopTime.HasValue).OrderBy(o => o.StartTime).OrderBy(o=>o.StopTime - o.StartTime))
+                    foreach (var act in new List<Act>(protocolActs).Where(o => o.StartTime.HasValue && o.StopTime.HasValue).OrderBy(o => o.StartTime).OrderBy(o=>(o.StopTime ?? o.ActTime.AddDays(7)) - o.StartTime))
                     {
 
                         act.StopTime = act.StopTime ?? act.ActTime;

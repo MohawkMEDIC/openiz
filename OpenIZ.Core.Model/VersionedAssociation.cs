@@ -73,11 +73,17 @@ namespace OpenIZ.Core.Model
         }
 
         /// <summary>
+        /// When true, instructs that the sequences be serialized
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public bool VersionSeqeuncesSpecified { get; set; }
+
+        /// <summary>
         /// Should serialize obsolete
         /// </summary>
         public bool ShouldSerializeObsoleteVersionSequenceId()
         {
-            return this.m_obsoleteVersionSequenceId.HasValue;
+            return this.VersionSeqeuncesSpecified || this.m_obsoleteVersionSequenceId.HasValue;
         }
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace OpenIZ.Core.Model
         /// </summary>
         public bool ShouldSerializeEffectiveVersionSequenceId()
         {
-            return this.m_effectiveVersionSequenceId.HasValue &&
+            return this.VersionSeqeuncesSpecified || this.m_effectiveVersionSequenceId.HasValue &&
                 this.m_obsoleteVersionSequenceId.HasValue;
         }
 
