@@ -204,6 +204,7 @@
     <Content Include="Data\SQL\PSQL\openiz-init.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\SQL\PSQL\Updates\20170721-01.sql" />
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
     <Content Include="Data\SQL\PSQL\openiz-codes.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -214,7 +215,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Interfaces\" />
-    <Folder Include="Data\SQL\PSQL\Updates\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

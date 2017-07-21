@@ -66,6 +66,11 @@ namespace OpenIZ.Core.Model.Entities
 		/// <summary>
 		/// Gets or sets the industry in which the organization operates
 		/// </summary>
+        /// <remarks>
+        /// The industry concept is used to classify the industrial sector to which an organization belongs. For example,
+        /// an organization may be of type NGO, but the industry in which that organization operates is Healthcare
+        /// </remarks>
+        /// <see cref="IndustryConceptKey"/>
 		[SerializationReference(nameof(IndustryConceptKey))]
 		[XmlIgnore, JsonIgnore]
 		public Concept IndustryConcept
@@ -82,7 +87,15 @@ namespace OpenIZ.Core.Model.Entities
 			}
 		}
 
-		[EditorBrowsable(EditorBrowsableState.Never)]
+        /// <summary>
+        /// Gets or sets the concept key which classifies the industry in which the organization operates
+        /// </summary>
+        /// <remarks>
+        /// The industry concept is used to classify the industrial sector to which an organization belongs. For example,
+        /// an organization may be of type NGO, but the industry in which that organization operates is Healthcare
+        /// </remarks>
+        /// <see cref="IndustryConcept"/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
 		[XmlElement("industryConcept"), JsonProperty("industryConcept")]
 		public Guid? IndustryConceptKey
 		{
