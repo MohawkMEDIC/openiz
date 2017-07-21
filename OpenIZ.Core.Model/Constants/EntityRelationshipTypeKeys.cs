@@ -638,5 +638,13 @@ namespace OpenIZ.Core.Model.Constants
 		/// The replaces
 		/// </summary>
 		public static readonly Guid Replaces = Guid.Parse("D1578637-E1CB-415E-B319-4011DA033813");
-	}
+        /// <summary>
+        /// The target entity represents an instance of the scoper entity
+        /// </summary>
+        public static readonly Guid Instance = Guid.Parse("AC45A740-B0C7-4425-84D8-B3F8A41FEF9F");
+        /// <summary>
+        /// Relates the target entity to a source location
+        /// </summary>
+        public static readonly Guid LocatedEntity = Guid.Parse("4F6273D3-8223-4E18-8596-C718AD029DEB");
+    }
 }
