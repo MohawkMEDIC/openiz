@@ -134,7 +134,9 @@
     <Compile Include="Services\AdoRoleProvider.cs" />
     <Compile Include="Services\IAdoPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActDerivedPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ActParticipationPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActPersistenceService.cs" />
+    <Compile Include="Services\Persistence\ActRelationshipPersistenceService.cs" />
     <Compile Include="Services\Persistence\AdoPersistenceCache.cs" />
     <Compile Include="Services\Persistence\AlertPersistenceService.cs" />
     <Compile Include="Services\Persistence\ApplicationEntityPersistenceService.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Services\Persistence\EntityDerivedPersistenceService.cs" />
     <Compile Include="Services\Persistence\EntityNamePersistenceService.cs" />
     <Compile Include="Services\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Services\Persistence\EntityRelationshipPersistenceService.cs" />
     <Compile Include="Services\Persistence\IdentifiedPersistenceService.cs" />
     <Compile Include="Services\Persistence\IdentifierTypePersistenceService.cs" />
     <Compile Include="Services\Persistence\ManufacturedMaterialPersistenceService.cs" />
@@ -204,7 +207,9 @@
     <Content Include="Data\SQL\PSQL\openiz-init.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\SQL\PSQL\Updates\20170721-01.sql" />
+    <Content Include="Data\SQL\PSQL\Updates\20170721-01.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
     <Content Include="Data\SQL\PSQL\openiz-codes.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
