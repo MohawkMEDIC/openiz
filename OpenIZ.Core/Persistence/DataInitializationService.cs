@@ -45,7 +45,7 @@ namespace OpenIZ.Core.Persistence
     /// <summary>
     /// Data initialization service
     /// </summary>
-    public class DataInitializationService : IDaemonService
+    public class DataInitializationService : IDaemonService, IReportProgressChanged
     {
 
         // Trace source
@@ -78,6 +78,10 @@ namespace OpenIZ.Core.Persistence
         /// Fired when the service is stopping
         /// </summary>
         public event EventHandler Stopping;
+        /// <summary>
+        /// Fired when progress changes
+        /// </summary>
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
         /// <summary>
         /// Event handler which fires after startup
@@ -94,12 +98,14 @@ namespace OpenIZ.Core.Persistence
 
                 this.m_traceSource.TraceInformation("Applying {0} ({1} objects)...", ds.Id, ds.Action.Count);
 
-
+                int i = 0;
                 foreach (var itm in ds.Action.Where(o=>o.Element != null))
                 {
 
                     try
                     {
+                        this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(i++ / (float)ds.Action.Count, ds.Id));
+
                         // IDP Type
                         Type idpType = typeof(IDataPersistenceService<>);
                         idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });

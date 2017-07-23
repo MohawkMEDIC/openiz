@@ -41,6 +41,7 @@
     <None Include="Doc\XmlDecisionSupport\index.md" />
     <None Include="Schema\OpenIZProtocol.xsd">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

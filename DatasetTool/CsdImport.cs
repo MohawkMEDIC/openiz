@@ -42,370 +42,407 @@ using System.Xml.Serialization;
 
 namespace OizDevTool
 {
-	/// <summary>
-	/// Represents a CSD import utility.
-	/// </summary>
-	[Description("Care Services Discovery (CSD) tooling")]
-	public partial class CsdImport
-	{
-		/// <summary>
-		/// The address component code system.
-		/// </summary>
-		private const string AddressComponentCodeSystem = "urn:ihe:iti:csd:2013:address";
+    /// <summary>
+    /// Represents a CSD import utility.
+    /// </summary>
+    [Description("Care Services Discovery (CSD) tooling")]
+    public partial class CsdImport
+    {
+        /// <summary>
+        /// The address component code system.
+        /// </summary>
+        private const string AddressComponentCodeSystem = "urn:ihe:iti:csd:2013:address";
 
-		/// <summary>
-		/// The address type code system.
-		/// </summary>
-		private const string AddressTypeCodeSystem = "urn:ihe:iti:csd:2013:addressType";
+        /// <summary>
+        /// The address type code system.
+        /// </summary>
+        private const string AddressTypeCodeSystem = "urn:ihe:iti:csd:2013:addressType";
 
-		/// <summary>
-		/// The imported data tag.
-		/// </summary>
-		private const string ImportedDataTag = "http://openiz.org/tags/contrib/importedData";
+        /// <summary>
+        /// The imported data tag.
+        /// </summary>
+        private const string ImportedDataTag = "http://openiz.org/tags/contrib/importedData";
 
-		/// <summary>
-		/// The program exit message.
-		/// </summary>
-		private const string ProgramExitMessage = "Unable to continue import CSD document, press any key to exit.";
+        /// <summary>
+        /// The program exit message.
+        /// </summary>
+        private const string ProgramExitMessage = "Unable to continue import CSD document, press any key to exit.";
 
-		/// <summary>
-		/// The concept keys.
-		/// </summary>
-		private static readonly Dictionary<CompositeKey, Guid> conceptKeys = new Dictionary<CompositeKey, Guid>();
+        /// <summary>
+        /// The concept keys.
+        /// </summary>
+        private static readonly Dictionary<CompositeKey, Guid> conceptKeys = new Dictionary<CompositeKey, Guid>();
 
-		/// <summary>
-		/// The related entities.
-		/// </summary>
-		private static readonly Dictionary<string, Entity> entityMap = new Dictionary<string, Entity>();
+        /// <summary>
+        /// The related entities.
+        /// </summary>
+        private static readonly Dictionary<string, Entity> entityMap = new Dictionary<string, Entity>();
 
-		/// <summary>
-		/// The emergency message.
-		/// </summary>
-		private static string emergencyMessage;
+        /// <summary>
+        /// The emergency message.
+        /// </summary>
+        private static string emergencyMessage;
 
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CsdImport"/> class.
-		/// </summary>
-		public CsdImport()
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CsdImport"/> class.
+        /// </summary>
+        public CsdImport()
+        {
+        }
 
-		/// <summary>
-		/// Imports the CSD.
-		/// </summary>
-		/// <param name="args">The arguments.</param>
-		[ParameterClass(typeof(CsdOptions))]
-		[Description("Converts a Care Services Discovery (CSD) export to DATASET import file")]
-		[Example("Import a Care Services Discovery (CSD) export to a DATASET import file", "--tool=CsdImport --operation=ImportCsd --file=CSD-Organizations-Connectathon-20150120.xml --live")]
-		public static void ImportCsd(string[] args)
-		{
-			ApplicationContext.Current.Start();
+        /// <summary>
+        /// Imports the CSD.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
+        [ParameterClass(typeof(CsdOptions))]
+        [Description("Converts a Care Services Discovery (CSD) export to DATASET import file")]
+        [Example("Import a Care Services Discovery (CSD) export to a DATASET import file", "--tool=CsdImport --operation=ImportCsd --file=CSD-Organizations-Connectathon-20150120.xml --live")]
+        public static void ImportCsd(string[] args)
+        {
+            ApplicationContext.Current.Start();
 
-			ShowInfoMessage("Adding service providers...");
+            ShowInfoMessage("Adding service providers...");
 
-			ApplicationContext.Current.AddServiceProvider(typeof(LocalEntityRepositoryService));
-			ApplicationContext.Current.AddServiceProvider(typeof(LocalMetadataRepositoryService));
-			ApplicationContext.Current.AddServiceProvider(typeof(LocalConceptRepositoryService));
+            ApplicationContext.Current.AddServiceProvider(typeof(LocalEntityRepositoryService));
+            ApplicationContext.Current.AddServiceProvider(typeof(LocalMetadataRepositoryService));
+            ApplicationContext.Current.AddServiceProvider(typeof(LocalConceptRepositoryService));
 
-			AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+            AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 
-			ApplicationContext.Current.Started += (o, e) =>
-			{
-				emergencyMessage = ApplicationContext.Current.GetLocaleString("01189998819991197253");
-			};
+            ApplicationContext.Current.Started += (o, e) =>
+            {
+                emergencyMessage = ApplicationContext.Current.GetLocaleString("01189998819991197253");
+            };
 
-			var parameters = new ParameterParser<CsdOptions>().Parse(args);
+            var parameters = new ParameterParser<CsdOptions>().Parse(args);
 
-			var csdDatasetInstall = new DatasetInstall("HFR via CSD, Organizations, Places, Providers, Services");
+            var csdDatasetInstall = new DatasetInstall("HFR via CSD, Organizations, Places, Providers, Services");
 
-			var actions = new List<DataInstallAction>();
+            var actions = new List<DataInstallAction>();
 
-			var serializer = new XmlSerializer(typeof(CSD));
+            var serializer = new XmlSerializer(typeof(CSD));
 
-			var fileInfo = new FileInfo(parameters.File);
+            var fileInfo = new FileInfo(parameters.File);
 
-			ShowInfoMessage($"Loading file: {fileInfo.Name}...");
+            ShowInfoMessage($"Loading file: {fileInfo.Name}...");
 
-			var csd = (CSD)serializer.Deserialize(new StreamReader(parameters.File));
+            var csd = (CSD)serializer.Deserialize(new StreamReader(parameters.File));
 
-			ShowInfoMessage($"File: {fileInfo.Name} loaded successfully, starting mapping process...");
+            ShowInfoMessage($"File: {fileInfo.Name} loaded successfully, starting mapping process...");
 
-			var stopwatch = new Stopwatch();
+            int limit = Int32.MaxValue;
+            if (!String.IsNullOrEmpty(parameters.Limit))
+                limit = Int32.Parse(parameters.Limit);
 
-			stopwatch.Start();
+            if (parameters.RelationshipsOnly)
+            {
+                int idx = 0;
+                foreach(var fac in csd.facilityDirectory.Take(limit))
+                {
+                    var place = GetOrCreateEntity<Place>(fac.entityID, parameters.EntityUidAuthority, parameters);
+                    var rels = CreateEntityRelationships(place, fac, csd.organizationDirectory, parameters);
+                    actions.AddRange(rels.Select(o => new DataUpdate()
+                    {
+                        Element = o, 
+                        InsertIfNotExists = true,
+                        IgnoreErrors = true
+                    }));
 
-			// map organizations
-			var organizations = MapOrganizations(csd.organizationDirectory, parameters).Select(o => new DataUpdate
-			{
-				InsertIfNotExists = true,
-				Element = o
-			});
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine($"Mapped place: ({idx++}/{csd.facilityDirectory.Take(limit).Count()}) {place.Key.Value} {string.Join(" ", place.Names.SelectMany(n => n.Component).Select(c => c.Value))}");
+                    Console.ResetColor();
+                }
+            }
+            else
+            {
 
-			actions.AddRange(organizations);
+                var stopwatch = new Stopwatch();
 
-			// map places
-			var places = MapPlaces(csd.facilityDirectory, csd.organizationDirectory, parameters).Select(p => new DataUpdate
-			{
-				InsertIfNotExists = true,
-				Element = p
-			});
+                stopwatch.Start();
 
-			actions.AddRange(places);
+                // map organizations
+                var organizations = !parameters.SkipOrganizations ? MapOrganizations(csd.organizationDirectory.Take(limit), parameters).Select(o => new DataUpdate
+                {
+                    InsertIfNotExists = true,
+                    Element = o
+                }) : new List<DataUpdate>();
 
-			// map providers
-			var providers = MapProviders(csd.providerDirectory, parameters).Select(p => new DataUpdate
-			{
-				InsertIfNotExists = true,
-				Element = p
-			});
+                actions.AddRange(organizations);
 
-			actions.AddRange(providers);
+                // map places
+                var places = !parameters.SkipFacilties ? MapPlaces(csd.facilityDirectory.Take(limit), csd.organizationDirectory, parameters).Select(p => new DataUpdate
+                {
+                    InsertIfNotExists = true,
+                    Element = p
+                }) : new List<DataUpdate>();
 
-			// map services
-			var services = MapServices(csd.serviceDirectory).Select(s => new DataUpdate
-			{
-				InsertIfNotExists = true,
-				Element = s
-			});
+                actions.AddRange(places);
 
-			actions.AddRange(services);
 
-			stopwatch.Stop();
+                // map providers
+                var providers = MapProviders(csd.providerDirectory.Take(limit), parameters).Select(p => new DataUpdate
+                {
+                    InsertIfNotExists = true,
+                    Element = p
+                });
 
-			ShowPerformanceMessage($"Mapped {places.Count()} Places, {providers.Count()} Providers, {organizations.Count()} Organizations, and {services.Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
+                actions.AddRange(providers);
 
-			var entities = new List<Entity>();
-			var relationships = new List<EntityRelationship>();
+                // map services
+                var services = MapServices(csd.serviceDirectory.Take(limit)).Select(s => new DataUpdate
+                {
+                    InsertIfNotExists = true,
+                    Element = s
+                });
 
-			foreach (var entity in actions.Where(a => a.Element is Entity).Select(c => c.Element as Entity))
-			{
-                entity.Relationships.ForEach(o => o.SourceEntityKey = entity.Key);
-				relationships.AddRange(entity.Relationships);
+                actions.AddRange(services);
 
-				// HACK: clear the entity relationships because we are going to import them separately
-				entity.Relationships.Clear();
+                stopwatch.Stop();
 
-				entities.Add(entity);
-			}
+                ShowPerformanceMessage($"Mapped {places.Count()} Places, {providers.Count()} Providers, {organizations.Count()} Organizations, and {services.Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
 
-			// add entities to the list of items to import
-			csdDatasetInstall.Action.AddRange(entities.Select(e => new DataUpdate
-			{
-				InsertIfNotExists = true,
-				Element = e
-			}).ToList());
+            }
 
-			// add relationships to the list of items to import
-			csdDatasetInstall.Action.AddRange(relationships.Select(e => new DataUpdate
-			{
-				InsertIfNotExists = true,
-				Element = e
-			}).ToList());
 
-			// add the places services to the list of items to import
-			csdDatasetInstall.Action.AddRange(services);
+            if (parameters.RelationshipsOnly)
+            {
+                csdDatasetInstall.Action = actions;
+            }
+            else
+            {
+                var entities = new List<Entity>();
+                var relationships = new List<EntityRelationship>();
+                foreach (var entity in actions.Where(a => a.Element is Entity).Select(c => c.Element as Entity))
+                {
+                    entity.Relationships.ForEach(o => o.SourceEntityKey = entity.Key);
+                    relationships.AddRange(entity.Relationships);
 
+                    // HACK: clear the entity relationships because we are going to import them separately
+                    entity.Relationships.Clear();
+
+                    entities.Add(entity);
+                }
+
+                // add entities to the list of items to import
+                csdDatasetInstall.Action.AddRange(entities.Select(e => new DataUpdate
+                {
+                    InsertIfNotExists = true,
+                    Element = e
+                }).ToList());
+
+                // add relationships to the list of items to import
+                csdDatasetInstall.Action.AddRange(relationships.Select(e => new DataUpdate
+                {
+                    InsertIfNotExists = true,
+                    Element = e
+                }).ToList());
+            }
+               
             csdDatasetInstall.Action = csdDatasetInstall.Action.Distinct(new EntityComparison()).ToList();
-			serializer = new XmlSerializer(typeof(DatasetInstall));
 
-			var filename = $"999-CSD-import-{fileInfo.Name}.dataset";
+            if (parameters.RelationshipsOnly)
+                csdDatasetInstall.Action.RemoveAll(o => !(o.Element is EntityRelationship) || (o.Element as EntityRelationship).RelationshipTypeKey == EntityRelationshipTypeKeys.Parent);
 
-			using (var fileStream = File.Create(filename))
-			{
-				serializer.Serialize(fileStream, csdDatasetInstall);
-			}
+            serializer = new XmlSerializer(typeof(DatasetInstall));
+            
+            var filename = $"999-CSD-import-{fileInfo.Name}.dataset";
 
-			ShowInfoMessage($"Dataset file created: {filename}");
+            using (var fileStream = File.Create(filename))
+            {
+                serializer.Serialize(fileStream, csdDatasetInstall);
+            }
 
-			if (parameters.Live)
-			{
-				ShowWarningMessage("Warning, the live flag is set to true, data will be imported directly into the database");
+            ShowInfoMessage($"Dataset file created: {filename}");
 
-				ShowInfoMessage("Starting live import");
+            if (parameters.Live)
+            {
+                ShowWarningMessage("Warning, the live flag is set to true, data will be imported directly into the database");
 
-				stopwatch = new Stopwatch();
-				stopwatch.Start();
+                ShowInfoMessage("Starting live import");
 
-				var bundle = new Bundle
-				{
-					Item = actions.Select(a => a.Element).ToList()
-				};
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
 
-				var bundlePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+                var bundle = new Bundle
+                {
+                    Item = actions.Select(a => a.Element).ToList()
+                };
 
-				ShowInfoMessage("Importing data directly into the database...");
+                var bundlePersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 
-				bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+                ShowInfoMessage("Importing data directly into the database...");
 
-				ShowInfoMessage("The CSD live import is now complete");
+                bundlePersistenceService.Insert(bundle, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
 
-				stopwatch.Stop();
+                ShowInfoMessage("The CSD live import is now complete");
 
-				ShowPerformanceMessage($"Imported {bundle.Item.OfType<Place>().Count()} Places, {bundle.Item.OfType<Provider>().Count()} Providers, {bundle.Item.OfType<Organization>().Count()} Organizations, and {bundle.Item.OfType<PlaceService>().Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
-			}
-		}
+                stopwatch.Stop();
 
-		/// <summary>
-		/// Looks up the entity by entity identifier. This will also create a new entity if one is not found.
-		/// </summary>
-		/// <typeparam name="T">The type of entity to lookup.</typeparam>
-		/// <param name="entityId">The entity identifier.</param>
-		/// <returns>Returns the entity instance.</returns>
-		private static T GetOrCreateEntity<T>(string entityId, String authorityName, CsdOptions options) where T : Entity, new()
-		{
-			Entity entity;
+                ShowPerformanceMessage($"Imported {bundle.Item.OfType<Place>().Count()} Places, {bundle.Item.OfType<Provider>().Count()} Providers, {bundle.Item.OfType<Organization>().Count()} Organizations, and {bundle.Item.OfType<PlaceService>().Count()} Services in {stopwatch.Elapsed.Minutes} minutes and {stopwatch.Elapsed.Seconds} seconds");
+            }
+        }
 
-			if (entityMap.TryGetValue(entityId, out entity))
-			{
-				return entity as T;
-			}
+        /// <summary>
+        /// Looks up the entity by entity identifier. This will also create a new entity if one is not found.
+        /// </summary>
+        /// <typeparam name="T">The type of entity to lookup.</typeparam>
+        /// <param name="entityId">The entity identifier.</param>
+        /// <returns>Returns the entity instance.</returns>
+        private static T GetOrCreateEntity<T>(string entityId, String authorityName, CsdOptions options) where T : Entity, new()
+        {
+            Entity entity;
 
-			var entityService = ApplicationContext.Current.GetService<IDataPersistenceService<T>>();
+            if (entityMap.TryGetValue(entityId, out entity))
+            {
+                return entity as T;
+            }
 
-			int totalResults = 0;
+            var entityService = ApplicationContext.Current.GetService<IDataPersistenceService<T>>();
 
-            if(!options.NoDbCheck)
-			    entity = entityService.Query(c => c.Identifiers.Any(i => i.Authority.DomainName == authorityName && i.Value == entityId) && c.ObsoletionTime == null, 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
+            int totalResults = 0;
 
-			if (totalResults > 1)
-			{
-				ShowWarningMessage($"Warning, found multiple entities with the same entityID: '{entityId}', will default to: '{entity.Key.Value}' {Environment.NewLine}");
-			}
+            if (!options.NoDbCheck)
+                entity = entityService.Query(c => c.Identifiers.Any(i => i.Authority.DomainName == authorityName && i.Value == entityId) && c.ObsoletionTime == null, 0, 1, AuthenticationContext.SystemPrincipal, out totalResults).FirstOrDefault();
 
-			if (entity != null)
-			{
-				return (T)entity;
-			}
+            if (totalResults > 1)
+            {
+                ShowWarningMessage($"Warning, found multiple entities with the same entityID: '{entityId}', will default to: '{entity.Key.Value}' {Environment.NewLine}");
+            }
 
-			ShowWarningMessage("Warning, ENTITY NOT FOUND, will create one");
+            if (entity != null || options.NoCreate)
+            {
+                return (T)entity;
+            }
 
-			// setup basic properties of the entity instance
-			entity = new T
-			{
-				CreationTime = DateTimeOffset.Now,
-				Key = Guid.NewGuid(),
-				StatusConceptKey = StatusKeys.Active,
-				Tags = new List<EntityTag>
-				{
-					new EntityTag(ImportedDataTag, "true")
-				}
-			};
+            ShowWarningMessage("Warning, ENTITY NOT FOUND, will create one");
 
-			entity.Identifiers.Add(new EntityIdentifier(authorityName, entityId));
+            // setup basic properties of the entity instance
+            entity = new T
+            {
+                CreationTime = DateTimeOffset.Now,
+                Key = Guid.NewGuid(),
+                StatusConceptKey = StatusKeys.Active,
+                Tags = new List<EntityTag>
+                {
+                    new EntityTag(ImportedDataTag, "true")
+                }
+            };
 
-			return (T)entity;
-		}
+            entity.Identifiers.Add(new EntityIdentifier(authorityName, entityId));
 
-		/// <summary>
-		/// Reconciles the versioned associations.
-		/// </summary>
-		/// <param name="existingAssociations">The existing associations.</param>
-		/// <param name="newAssociations">The new associations.</param>
-		/// <returns>Returns a list of version association items which are new, i.e. not a part of the existing associations.</returns>
-		private static IEnumerable<VersionedAssociation<Entity>> ReconcileVersionedAssociations(IEnumerable<VersionedAssociation<Entity>> existingAssociations, IEnumerable<VersionedAssociation<Entity>> newAssociations)
-		{
-			// if there are no existing associations, we can just return the new associations, as items to be added
-			if (!existingAssociations.Any())
-			{
-				return newAssociations;
-			}
+            return (T)entity;
+        }
 
-			// if there are no new associations, we can just return the empty list of new associations
-			if (!newAssociations.Any())
-			{
-				return newAssociations;
-			}
+        /// <summary>
+        /// Reconciles the versioned associations.
+        /// </summary>
+        /// <param name="existingAssociations">The existing associations.</param>
+        /// <param name="newAssociations">The new associations.</param>
+        /// <returns>Returns a list of version association items which are new, i.e. not a part of the existing associations.</returns>
+        private static IEnumerable<VersionedAssociation<Entity>> ReconcileVersionedAssociations(IEnumerable<VersionedAssociation<Entity>> existingAssociations, IEnumerable<VersionedAssociation<Entity>> newAssociations)
+        {
+            // if there are no existing associations, we can just return the new associations, as items to be added
+            if (!existingAssociations.Any())
+            {
+                return newAssociations;
+            }
 
-			return (from newAssociation
-					in newAssociations
-					from existingAssociation
-					in existingAssociations
-					where !existingAssociation.SemanticEquals(newAssociation)
-					select newAssociation).ToList();
-		}
+            // if there are no new associations, we can just return the empty list of new associations
+            if (!newAssociations.Any())
+            {
+                return newAssociations;
+            }
 
-		/// <summary>
-		/// Exits the application, when an entity is not found.
-		/// </summary>
-		/// <param name="message">The message.</param>
-		private static void ShowErrorOnNotFound(string message)
-		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine(message);
-			Console.WriteLine(ProgramExitMessage);
-			Console.ResetColor();
-			Console.ReadKey();
-			Environment.Exit(999);
-		}
+            return (from newAssociation
+                    in newAssociations
+                    from existingAssociation
+                    in existingAssociations
+                    where !existingAssociation.SemanticEquals(newAssociation)
+                    select newAssociation).ToList();
+        }
 
-		/// <summary>
-		/// Prints an informational message.
-		/// </summary>
-		/// <param name="message">The message.</param>
-		private static void ShowInfoMessage(string message)
-		{
-			//Console.ForegroundColor = ConsoleColor.Cyan;
-			//Console.WriteLine($"{message} {Environment.NewLine}");
-			//Console.ResetColor();
-		}
+        /// <summary>
+        /// Exits the application, when an entity is not found.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private static void ShowErrorOnNotFound(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.WriteLine(ProgramExitMessage);
+            Console.ResetColor();
+            Console.ReadKey();
+            Environment.Exit(999);
+        }
 
-		/// <summary>
-		/// Prints a performance message.
-		/// </summary>
-		/// <param name="message">The message.</param>
-		private static void ShowPerformanceMessage(string message)
-		{
-			//Console.ForegroundColor = ConsoleColor.Green;
-			//Console.WriteLine($"{message} {Environment.NewLine}");
-			//Console.ResetColor();
-		}
+        /// <summary>
+        /// Prints an informational message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private static void ShowInfoMessage(string message)
+        {
+            //Console.ForegroundColor = ConsoleColor.Cyan;
+            //Console.WriteLine($"{message} {Environment.NewLine}");
+            //Console.ResetColor();
+        }
 
-		/// <summary>
-		/// Prints a warning message.
-		/// </summary>
-		/// <param name="message">The message.</param>
-		private static void ShowWarningMessage(string message)
-		{
-			//Console.ForegroundColor = ConsoleColor.Yellow;
-			//Console.WriteLine(message);
-			//Console.WriteLine($"{message} {Environment.NewLine}");
-			//Console.ResetColor();
-		}
+        /// <summary>
+        /// Prints a performance message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private static void ShowPerformanceMessage(string message)
+        {
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine($"{message} {Environment.NewLine}");
+            //Console.ResetColor();
+        }
 
-		/// <summary>
-		/// Prints a warning when an entity is not found.
-		/// </summary>
-		/// <param name="message">The message.</param>
-		/// <param name="defaultValueName">Default name of the value.</param>
-		/// <param name="defaultValue">The default value.</param>
-		private static void ShowWarningOnNotFound(string message, string defaultValueName, Guid defaultValue)
-		{
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine(message);
-			Console.WriteLine($"Defaulting to {defaultValueName} {defaultValue} {Environment.NewLine}");
-			Console.ResetColor();
-		}
+        /// <summary>
+        /// Prints a warning message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        private static void ShowWarningMessage(string message)
+        {
+            //Console.ForegroundColor = ConsoleColor.Yellow;
+            //Console.WriteLine(message);
+            //Console.WriteLine($"{message} {Environment.NewLine}");
+            //Console.ResetColor();
+        }
 
-		/// <summary>
-		/// Represents CSD options.
-		/// </summary>
-		private class CsdOptions
-		{
-			/// <summary>
-			/// Gets or sets the file.
-			/// </summary>
-			[Parameter("file")]
-			[Description("The path to the CSD file")]
-			public string File { get; set; }
+        /// <summary>
+        /// Prints a warning when an entity is not found.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="defaultValueName">Default name of the value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        private static void ShowWarningOnNotFound(string message, string defaultValueName, Guid defaultValue)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(message);
+            Console.WriteLine($"Defaulting to {defaultValueName} {defaultValue} {Environment.NewLine}");
+            Console.ResetColor();
+        }
 
-			/// <summary>
-			/// Gets or sets a value indicating whether this <see cref="CsdOptions"/> is live.
-			/// </summary>
-			/// <value><c>true</c> if true, data is directly imported into the database vs generating dataset files to be imported at a later date; otherwise, <c>false</c>.</value>
-			[Parameter("live")]
-			[Description("Directly import data into the database vs generating dataset files to import at a later date")]
-			public bool Live { get; set; }
+        /// <summary>
+        /// Represents CSD options.
+        /// </summary>
+        private class CsdOptions
+        {
+            /// <summary>
+            /// Gets or sets the file.
+            /// </summary>
+            [Parameter("file")]
+            [Description("The path to the CSD file")]
+            public string File { get; set; }
+
+            /// <summary>
+            /// Gets or sets a value indicating whether this <see cref="CsdOptions"/> is live.
+            /// </summary>
+            /// <value><c>true</c> if true, data is directly imported into the database vs generating dataset files to be imported at a later date; otherwise, <c>false</c>.</value>
+            [Parameter("live")]
+            [Description("Directly import data into the database vs generating dataset files to import at a later date")]
+            public bool Live { get; set; }
 
             /// <summary>
             /// Gets or sets the entity UID authority
@@ -425,7 +462,7 @@ namespace OizDevTool
             /// Cascade assigned facilities
             /// </summary>
             [Description("Cascade assigned facilities to children")]
-            [Parameter("cascadeAssignedFacilities")]
+            [Parameter("cascadeFacilities")]
             public bool CascadeAssignedFacilities { get; internal set; }
 
             /// <summary>
@@ -449,10 +486,16 @@ namespace OizDevTool
             [Parameter("parent-facType")]
             public StringCollection ParentCodeType { get; set; }
 
+            /// <summary>
+            /// Set facility type extension
+            /// </summary>
             [Description("Sets the type of the facility type extension")]
-            [Parameter("facilityType-extension")]
+            [Parameter("type-extension")]
             public string FacilityTypeExtension { get; set; }
 
+            /// <summary>
+            /// Don't check db
+            /// </summary>
             [Description("Does not check the db for existing items")]
             [Parameter("nodb")]
             public bool NoDbCheck { get; internal set; }
@@ -461,6 +504,7 @@ namespace OizDevTool
             /// Skip import of organizations
             /// </summary>
             [Parameter("skip-orgs")]
+            [Description("Skip import of organizations")]
             public bool SkipOrganizations { get; set; }
 
             /// <summary>
@@ -470,8 +514,29 @@ namespace OizDevTool
             [Description("Skip import of facilities")]
             public bool SkipFacilties { get; set; }
 
+            /// <summary>
+            /// Only scans for new relationships
+            /// </summary>
+            [Parameter("relsOnly")]
+            [Description("Relationships only")]
+            public bool RelationshipsOnly { get; set; }
+
+            /// <summary>
+            /// Only scans for new relationships
+            /// </summary>
+            [Parameter("noCreate")]
+            [Description("Don't create new objects")]
+            public bool NoCreate { get; set; }
+
+            /// <summary>
+            /// Limit
+            /// </summary>
+            [Parameter("limit")]
+            [Description("Limit the number of facilities processed (for debugging)")]
+            public String Limit { get; set; }
+
         }
-	}
+    }
 
     /// <summary>
     /// Compares entities
@@ -496,88 +561,88 @@ namespace OizDevTool
     /// Represents a composite key.
     /// </summary>
     internal class CompositeKey
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CompositeKey" /> class.
-		/// </summary>
-		public CompositeKey()
-		{
-		}
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompositeKey" /> class.
+        /// </summary>
+        public CompositeKey()
+        {
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="CompositeKey"/> class.
-		/// </summary>
-		/// <param name="firstKey">The first key.</param>
-		/// <param name="secondKey">The second key.</param>
-		public CompositeKey(string firstKey, string secondKey)
-		{
-			this.FirstKey = firstKey;
-			this.SecondKey = secondKey;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompositeKey"/> class.
+        /// </summary>
+        /// <param name="firstKey">The first key.</param>
+        /// <param name="secondKey">The second key.</param>
+        public CompositeKey(string firstKey, string secondKey)
+        {
+            this.FirstKey = firstKey;
+            this.SecondKey = secondKey;
+        }
 
-		/// <summary>
-		/// Gets or sets the first key.
-		/// </summary>
-		/// <value>The first key.</value>
-		public string FirstKey { get; }
+        /// <summary>
+        /// Gets or sets the first key.
+        /// </summary>
+        /// <value>The first key.</value>
+        public string FirstKey { get; }
 
-		/// <summary>
-		/// Gets or sets the second key.
-		/// </summary>
-		/// <value>The second key.</value>
-		public string SecondKey { get; }
+        /// <summary>
+        /// Gets or sets the second key.
+        /// </summary>
+        /// <value>The second key.</value>
+        public string SecondKey { get; }
 
-		/// <summary>
-		/// Implements the != operator.
-		/// </summary>
-		/// <param name="left">The left.</param>
-		/// <param name="right">The right.</param>
-		/// <returns>The result of the operator.</returns>
-		public static bool operator !=(CompositeKey left, CompositeKey right)
-		{
-			return !(left == right);
-		}
+        /// <summary>
+        /// Implements the != operator.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator !=(CompositeKey left, CompositeKey right)
+        {
+            return !(left == right);
+        }
 
-		/// <summary>
-		/// Implements the == operator.
-		/// </summary>
-		/// <param name="left">The left.</param>
-		/// <param name="right">The right.</param>
-		/// <returns>The result of the operator.</returns>
-		public static bool operator ==(CompositeKey left, CompositeKey right)
-		{
-			if (ReferenceEquals(left, right))
-			{
-				return true;
-			}
+        /// <summary>
+        /// Implements the == operator.
+        /// </summary>
+        /// <param name="left">The left.</param>
+        /// <param name="right">The right.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator ==(CompositeKey left, CompositeKey right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
 
-			return left?.FirstKey == right?.FirstKey && left?.SecondKey == right?.SecondKey;
-		}
+            return left?.FirstKey == right?.FirstKey && left?.SecondKey == right?.SecondKey;
+        }
 
-		/// <summary>
-		/// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
-		/// </summary>
-		/// <param name="obj">The object to compare with the current object.</param>
-		/// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
-		public override bool Equals(object obj)
-		{
-			var other = obj as CompositeKey;
+        /// <summary>
+        /// Determines whether the specified <see cref="System.Object" /> is equal to this instance.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current object.</param>
+        /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
+        public override bool Equals(object obj)
+        {
+            var other = obj as CompositeKey;
 
-			if (other == null)
-			{
-				return false;
-			}
+            if (other == null)
+            {
+                return false;
+            }
 
-			return this.FirstKey == other.FirstKey && this.SecondKey == other.SecondKey;
-		}
+            return this.FirstKey == other.FirstKey && this.SecondKey == other.SecondKey;
+        }
 
-		/// <summary>
-		/// Returns a hash code for this instance.
-		/// </summary>
-		/// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
-		public override int GetHashCode()
-		{
-			return this.FirstKey.GetHashCode() ^ this.SecondKey.GetHashCode();
-		}
-	}
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</returns>
+        public override int GetHashCode()
+        {
+            return this.FirstKey.GetHashCode() ^ this.SecondKey.GetHashCode();
+        }
+    }
 }

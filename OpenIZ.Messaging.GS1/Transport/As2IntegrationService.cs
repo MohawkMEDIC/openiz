@@ -79,9 +79,10 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
             {
                 do
                 {
+                    Object dq = null;
                     try
                     {
-                        var dq = ApplicationContext.Current.GetService<IPersistentQueueService>().Dequeue(this.m_configuration.Gs1QueueName);
+                        dq = ApplicationContext.Current.GetService<IPersistentQueueService>().Dequeue(this.m_configuration.Gs1QueueName);
                         if (dq == null) break;
                         this.SendQueueMessage(dq);
                     }
@@ -89,7 +90,7 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
                     {
                         this.m_tracer.TraceError(">>>> !!ALERT!! >>>> Error sending message to GS1 broker. All further communications with the broker will be suspended");
                         this.m_tracer.TraceError(ex.ToString());
-                        this.Stop();
+                        ApplicationContext.Current.GetService<IPersistentQueueService>().Enqueue("dead", dq);
                         break;
                     }
                 } while (true);

@@ -304,7 +304,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         if (!(mmat is ManufacturedMaterial))
                             continue;
 
-                        var mat = this.m_materialRepository.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "ManufacturedProduct").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
+                        var mat = this.m_materialRepository.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "Instance").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
 
                         decimal balanceOH = rel.Quantity ?? 0;
 

@@ -91,8 +91,8 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
 
             retVal.OfType<ManufacturedMaterial>().AsParallel().ForAll(o => {
                 int tr = 0;
-                if(!o.Relationships.Any(r=>r.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct))
-                    o.Relationships.AddRange(erPersistence.QueryFast(q => q.TargetEntityKey == o.Key && q.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct, Guid.Empty, 0, 100, authContext, out tr));
+                if(!o.Relationships.Any(r=>r.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance))
+                    o.Relationships.AddRange(erPersistence.QueryFast(q => q.TargetEntityKey == o.Key && q.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance, Guid.Empty, 0, 100, authContext, out tr));
             });
 
             return retVal;

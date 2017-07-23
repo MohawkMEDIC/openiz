@@ -303,7 +303,7 @@ namespace OizDevTool
                 TypeConceptKey = typeConceptKey == Guid.Empty ? (Guid?)null : typeConceptKey,
                 Relationships = new List<EntityRelationship>()
                 {
-                    new EntityRelationship(EntityRelationshipTypeKeys.ManufacturedProduct, id) { SourceEntityKey = materialId },
+                    new EntityRelationship(EntityRelationshipTypeKeys.Instance, id) { SourceEntityKey = materialId },
                 },
                 Names = new List<EntityName>()
                 {
@@ -322,7 +322,7 @@ namespace OizDevTool
                 Quantity = 1
             };
             if (organizationId != Guid.Empty)
-                retVal.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.WarrantedProduct, id) { SourceEntityKey = organizationId });
+                retVal.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.ManufacturedProduct, id) { SourceEntityKey = organizationId });
 
             return retVal;
         }

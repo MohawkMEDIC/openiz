@@ -256,7 +256,7 @@ namespace OpenIZ.Messaging.GS1.Model
             if (material is ManufacturedMaterial)
             {
                 var mmat = material as ManufacturedMaterial;
-                var mat = this.m_materialRepository.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "ManufacturedProduct").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
+                var mat = this.m_materialRepository.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "Instance").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
 
                 return new TransactionalTradeItemType()
                 {
@@ -390,7 +390,7 @@ namespace OpenIZ.Messaging.GS1.Model
                 // Material relationship
                 EntityRelationship materialRelationship = new EntityRelationship()
                 {
-                    RelationshipTypeKey = EntityRelationshipTypeKeys.ManufacturedProduct,
+                    RelationshipTypeKey = EntityRelationshipTypeKeys.Instance,
                     Quantity = (int)(additionalData.tradeItemQuantity?.Value ?? 1),
                     SourceEntityKey = materialReference.Key,
                     TargetEntityKey = retVal.Key,

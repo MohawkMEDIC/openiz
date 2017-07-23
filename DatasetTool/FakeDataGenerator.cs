@@ -189,7 +189,7 @@ namespace OizDevTool
 							// Add some stock!!! :)
 							foreach (var m in mat)
 							{
-								var mmats = m.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.ManufacturedProduct).OrderBy(o => r.Next()).FirstOrDefault();
+								var mmats = m.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance).OrderBy(o => r.Next()).FirstOrDefault();
 								Console.WriteLine("Selected {0} out of {1} materials", mmats, m.Relationships.Count);
 								var rdp = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
 								if (mmats != null)
