@@ -41,6 +41,7 @@
     <property modelName="CreationTime" domainName="CreationTime" />
     <property modelName="Value" domainName="Value" />
     <property modelName="IsNullable" domainName="IsNullable" />
+    <property modelName="ReportDefinitionKey" domainName="ReportId" />
   </class>
 
   <!-- Parameter Types -->
