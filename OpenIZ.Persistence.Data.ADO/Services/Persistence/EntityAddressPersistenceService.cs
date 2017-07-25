@@ -41,12 +41,46 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     {
 
         /// <summary>
+        /// Convert data instance to model instance
+        /// </summary>
+        public override EntityAddress ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
+        {
+            return base.ToModelInstance(dataInstance, context, principal);
+        }
+
+        /// <summary>
         /// Get addresses from source
         /// </summary>
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddress>(id, versionSequenceId), Guid.Empty, 0, null, out tr, principal, false);
+            var addrLookupQuery = context.CreateSqlStatement<DbEntityAddressComponent>().SelectFrom()
+                .InnerJoin<DbEntityAddress>(o=>o.SourceKey, o=>o.Key)
+                .InnerJoin<DbEntityAddressComponentValue>(o=>o.ValueSequenceId, o=>o.SequenceId)
+                .Where<DbEntityAddress>(o=>o.SourceKey == id);
+
+            /// Yowza! But it appears to be faster than the other way 
+            return this.DomainQueryInternal<CompositeResult<DbEntityAddressComponent, DbEntityAddress, DbEntityAddressComponentValue>>(context, addrLookupQuery, ref tr)
+                .GroupBy(o=>o.Object2.Key)
+                .Select(o =>
+                    new EntityAddress()
+                    {
+                        AddressUseKey = o.FirstOrDefault().Object2.UseConceptKey,
+                        EffectiveVersionSequenceId = o.FirstOrDefault().Object2.EffectiveVersionSequenceId,
+                        Key = o.Key,
+                        LoadState = Core.Model.LoadState.PartialLoad,
+                        ObsoleteVersionSequenceId = o.FirstOrDefault().Object2.ObsoleteVersionSequenceId,
+                        SourceEntityKey = o.FirstOrDefault().Object2.SourceKey,
+                        Component = o.Select(c=>new EntityAddressComponent()
+                        {
+                            ComponentTypeKey = c.Object1.ComponentTypeKey,
+                            Key = c.Object1.Key,
+                            LoadState = Core.Model.LoadState.FullLoad,
+                            SourceEntityKey = c.Object2.Key,
+                            Value = c.Object3.Value
+                        }).ToList()
+                    });
+
         }
 
         /// <summary>
@@ -114,7 +148,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (dataInstance == null) return null;
 
             var addrComp = (dataInstance as CompositeResult)?.Values.OfType<DbEntityAddressComponent>().FirstOrDefault() ?? dataInstance as DbEntityAddressComponent;
-            var addrValue = (dataInstance as CompositeResult)?.Values.OfType<DbEntityAddressComponentValue>().FirstOrDefault() ?? context.FirstOrDefault<DbEntityAddressComponentValue>(o => o.Key == addrComp.ValueKey);
+            var addrValue = (dataInstance as CompositeResult)?.Values.OfType<DbEntityAddressComponentValue>().FirstOrDefault();
+            if (addrValue == null)
+                addrValue = context.FirstOrDefault<DbEntityAddressComponentValue>(o => o.SequenceId == addrComp.ValueSequenceId);
+
             return new EntityAddressComponent()
             {
                 ComponentTypeKey = addrComp.ComponentTypeKey,
@@ -133,13 +170,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
             // Address component already exists?
             var existing = context.FirstOrDefault<DbEntityAddressComponentValue>(o => o.Value == modelInstance.Value);
-            if (existing != null && existing.Key != retVal.ValueKey)
-                retVal.ValueKey = existing.Key;
+            if (existing != null && existing.SequenceId != retVal.ValueSequenceId)
+                retVal.ValueSequenceId = existing.SequenceId.Value;
             else
-                retVal.ValueKey = context.Insert(new DbEntityAddressComponentValue()
+                retVal.ValueSequenceId = context.Insert(new DbEntityAddressComponentValue()
                 {
                     Value = modelInstance.Value
-                }).Key;
+                }).SequenceId.Value;
             return retVal;
         }
 
@@ -170,7 +207,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddressComponent>(id), Guid.Empty, 0, null, out tr, principal, false);
+            return this.QueryInternal(context, base.BuildSourceQuery<EntityAddressComponent>(id), Guid.Empty, 0, null, out tr, principal, false).ToList();
         }
 
     }

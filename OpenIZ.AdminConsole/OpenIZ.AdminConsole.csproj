@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{04421AB6-68F0-4315-AB5A-9F2486D8DC64}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenIZ.AdminConsole</RootNamespace>
+    <AssemblyName>oizac</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>OpenIZ.AdminConsole.Program</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\AdminCommandAttribute.cs" />
+    <Compile Include="Attributes\AdminCommandletAttribute.cs" />
+    <Compile Include="Security\AdminClientDescription.cs" />
+    <Compile Include="Security\HttpBasicIdentityProvider.cs" />
+    <Compile Include="Security\HttpBasicTokenCredentialProvider.cs" />
+    <Compile Include="Security\OAuth2CredentialProvider.cs" />
+    <Compile Include="Security\OAuthIdentityProvider.cs" />
+    <Compile Include="Security\OauthTokenRequest.cs" />
+    <Compile Include="Security\OAuthTokenServiceCredentials.cs" />
+    <Compile Include="Security\SecurityConfigurationDescription.cs" />
+    <Compile Include="Security\TokenClaimsPrincipal.cs" />
+    <Compile Include="Security\TokenCredentialProvider.cs" />
+    <Compile Include="Security\TokenCredentials.cs" />
+    <Compile Include="Security\TokenValidationManager.cs" />
+    <Compile Include="Security\X509CertificateUtils.cs" />
+    <Compile Include="Shell\AdminClientEndpointDescription.cs" />
+    <Compile Include="Shell\CmdLets\ServerInfoCmdlet.cs" />
+    <Compile Include="Shell\CmdLets\UserCmdlet.cs" />
+    <Compile Include="Shell\ConsoleTraceWriter.cs" />
+    <Compile Include="Shell\ApplicationContext.cs" />
+    <Compile Include="Parameters\ConsoleParameters.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shell\InteractiveShell.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Model.AMI\OpenIZ.Core.Model.AMI.csproj">
+      <Project>{65ef51c6-5cb8-43b8-ae65-4a68f0b44ad2}</Project>
+      <Name>OpenIZ.Core.Model.AMI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
+      <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
+      <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
+      <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
+      <Name>OpenIZ.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Messaging.AMI.Client\OpenIZ.Messaging.AMI.Client.csproj">
+      <Project>{0fdbd4db-30ae-4e1d-aae1-5fe1370dce3f}</Project>
+      <Name>OpenIZ.Messaging.AMI.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Messaging.IMSI.Client\OpenIZ.Messaging.IMSI.Client.csproj">
+      <Project>{c222b929-6e9e-4b2e-a98e-cc23ee681047}</Project>
+      <Name>OpenIZ.Messaging.IMSI.Client</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MARC.HI.EHRS.SVC.Core, Version=2.0.0.24244, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MohawkCollege.Util.Console.Parameters, Version=0.2.6316.34524, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MohawkCollege.Util.Console.Parameters.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

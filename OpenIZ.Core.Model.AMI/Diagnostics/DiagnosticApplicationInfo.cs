@@ -73,10 +73,17 @@ namespace OpenIZ.Core.Model.AMI.Diagnostics
 		[JsonProperty("applet"), XmlElement("applet")]
 		public List<AppletInfo> Applets { get; set; }
 
-		/// <summary>
-		/// Gets or sets file info
-		/// </summary>
-		[JsonProperty("fileInfo"), XmlElement("fileInfo")]
+        /// <summary>
+        /// Gets or sets the applets
+        /// </summary>
+        [JsonProperty("service"), XmlElement("service")]
+        public List<DiagnosticServiceInfo> ServiceInfo { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets file info
+        /// </summary>
+        [JsonProperty("fileInfo"), XmlElement("fileInfo")]
 		public List<DiagnosticAttachmentInfo> FileInfo { get; set; }
 
 		/// <summary>

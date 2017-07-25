@@ -144,7 +144,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
                     return (this.m_repository as IPersistableQueryRepositoryService).Find<TResource>(queryExpression, offset, count, out totalCount, queryId);
             }
             else
-                return this.m_repository.Find(queryExpression, offset, count, out totalCount);
+            {
+                List<String> lean = null;
+                if (queryParameters.TryGetValue("_lean", out lean) && lean[0] == "true" && this.m_repository is IFastQueryRepositoryService)
+                    return (this.m_repository as IFastQueryRepositoryService).FindFast<TResource>(queryExpression, offset, count, out totalCount, Guid.Empty);
+                else
+                    return this.m_repository.Find(queryExpression, offset, count, out totalCount);
+            }
         }
 
         /// <summary>

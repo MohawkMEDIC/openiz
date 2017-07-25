@@ -61,6 +61,7 @@ namespace OizDevTool
 
             public AdminShell()
             {
+                AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.AnonymousPrincipal);
                 ApplicationServiceContext.Current = ApplicationContext.Current;
                 ApplicationContext.Current.AddServiceProvider(typeof(ServiceManager));
                 System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.ConsoleTraceListener()
@@ -68,10 +69,14 @@ namespace OizDevTool
                     Filter = new EventTypeFilter(SourceLevels.Warning | SourceLevels.Error)
                 });
 
-                Tracer.AddWriter(new ConsoleTraceWriter(EventLevel.LogAlways, "dbg"), EventLevel.LogAlways);
                 ApplicationContext.Current.Start();
-                AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.AnonymousPrincipal);
-                this.m_prompt = "**openiz $";
+
+                Tracer.AddWriter(new ConsoleTraceWriter(EventLevel.LogAlways, "dbg"), EventLevel.LogAlways);
+                Console.Clear();
+                Console.WriteLine("Open Administration Console v{0}", typeof(Program).Assembly.GetName().Version);
+                Console.WriteLine("Copyright (C) 2015 - 2017, Mohawk College of Applied Arts and Technology");
+
+                this.m_prompt = "> ";
             }
 
             #region Helpers
@@ -231,9 +236,9 @@ namespace OizDevTool
                 AuthenticationContext.Current = new AuthenticationContext(principal);
 
                 if (ApplicationContext.Current.GetService<IRoleProviderService>().IsUserInRole(userName, "ADMINISTRATORS"))
-                    this.m_prompt = "**openiz # ";
+                    this.m_prompt = "# ";
                 else
-                    this.m_prompt = "**openiz $ ";
+                    this.m_prompt = "> ";
             }
 
             /// <summary>
@@ -308,14 +313,14 @@ namespace OizDevTool
 
                 var securityService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
                 var users = securityService.FindUsers(o=>o.UserName.Contains(userName));
-                Console.WriteLine("SID{0}UserName{1}Last Lgn{2}Lockout{2} ILA  A", new String(' ', 37), new String(' ', 12), new String(' ', 13));
+                Console.WriteLine("SID{0}UserName{1}Last Lgn{2}Lockout{2} ILA  A", new String(' ', 37), new String(' ', 32), new String(' ', 13));
                 foreach(var usr in users)
                 {
                     Console.WriteLine("{0}{1}{2}{3}{4}{5}{6}{5}{7}{8}{9}",
                         usr.Key.Value.ToString("B"),
                         new String(' ', 2),
-                        usr.UserName,
-                        new String(' ', 20 - usr.UserName.Length),
+                        usr.UserName.Length > 38 ? usr.UserName.Substring(0, 38) : usr.UserName,
+                        new String(' ', usr.UserName.Length > 38 ? 2 : 40 - usr.UserName.Length),
                         usr.LastLoginTime.HasValue ? usr.LastLoginTime?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") : new String(' ', 19),
                         "  ",
                         usr.Lockout.HasValue ? usr.Lockout?.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") : new string(' ', 19),
@@ -402,7 +407,6 @@ namespace OizDevTool
         [Interactive]
         public static void Shell(String[] args)
         {
-
             AdminShell shell = new AdminShell();
             shell.Exec();
         }

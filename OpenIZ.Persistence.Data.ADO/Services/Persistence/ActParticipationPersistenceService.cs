@@ -30,13 +30,14 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
     /// <summary>
     /// Act participation persistence service
     /// </summary>
-    public class ActParticipationPersistenceService : IdentifiedPersistenceService<ActParticipation, DbActParticipation> ,IAdoAssociativePersistenceService
+    public class ActParticipationPersistenceService : IdentifiedPersistenceService<ActParticipation, DbActParticipation, DbActParticipation> ,IAdoAssociativePersistenceService
     {
         /// <summary>
         /// Get from source id
@@ -44,8 +45,29 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, base.BuildSourceQuery<ActParticipation>(id, versionSequenceId), Guid.Empty, 0, null, out tr, principal, false);
+            return this.QueryInternal(context, base.BuildSourceQuery<ActParticipation>(id, versionSequenceId), Guid.Empty, 0, null, out tr, principal, false).ToList();
 
+        }
+
+        /// <summary>
+        /// Represents as a model instance
+        /// </summary>
+        public override ActParticipation ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
+        {
+            if (dataInstance == null) return null;
+
+            var participationPart = dataInstance as DbActParticipation;
+            return new ActParticipation()
+            {
+                EffectiveVersionSequenceId = participationPart.EffectiveVersionSequenceId,
+                ObsoleteVersionSequenceId = participationPart.ObsoleteVersionSequenceId,
+                ActKey = participationPart.SourceKey,
+                PlayerEntityKey = participationPart.TargetKey,
+                ParticipationRoleKey= participationPart.ParticipationRoleKey,
+                ParticipationRole = context.LoadState == Core.Model.LoadState.FullLoad ? AdoPersistenceService.GetPersister(typeof(Concept)).Get(participationPart.ParticipationRoleKey) as Concept : null,
+                LoadState = context.LoadState,
+                Quantity = participationPart.Quantity
+            };
         }
 
         /// <summary>

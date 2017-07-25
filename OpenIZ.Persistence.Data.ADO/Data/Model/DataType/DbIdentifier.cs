@@ -57,7 +57,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.DataType
         /// Gets or sets the authority identifier.
         /// </summary>
         /// <value>The authority identifier.</value>
-        [Column("aut_id"), ForeignKey(typeof(DbAssigningAuthority), nameof(DbAssigningAuthority.Key))]
+        [Column("aut_id"), ForeignKey(typeof(DbAssigningAuthority), nameof(DbAssigningAuthority.Key)), AlwaysJoin]
         public Guid AuthorityKey
         {
             get;

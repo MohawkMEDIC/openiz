@@ -37,7 +37,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the link type concept
         /// </summary>
-        [Column("rel_typ_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
+        [Column("rel_typ_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key)), AlwaysJoin]
         public Guid RelationshipTypeKey { get; set; }
 
         /// <summary>

@@ -155,6 +155,11 @@ namespace OpenIZ.Core.Http
 		/// Fired after the request has been finished
 		/// </summary>
 		event EventHandler<RestResponseEventArgs> Responded;
-        
-	}
+
+        /// <summary>
+        /// Fired on response
+        /// </summary>
+        event EventHandler<RestResponseEventArgs> Responding;
+
+    }
 }

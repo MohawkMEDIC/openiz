@@ -183,7 +183,7 @@ namespace OpenIZ.Core.Model.DataTypes
         /// <summary>
         /// Concept sets as identifiers for XML purposes only
         /// </summary>
-        [DataIgnore, XmlElement("conceptSet"), JsonProperty("conceptSet")]
+        [XmlElement("conceptSet"), JsonProperty("conceptSet")]
         public List<Guid> ConceptSetsXml { get; set; }
 
         /// <summary>

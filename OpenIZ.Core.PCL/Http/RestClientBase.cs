@@ -54,6 +54,11 @@ namespace OpenIZ.Core.Http
         public event EventHandler<RestResponseEventArgs> Responded;
 
         /// <summary>
+        /// Fired on response
+        /// </summary>
+        public event EventHandler<RestResponseEventArgs> Responding;
+
+        /// <summary>
         /// Progress has changed
         /// </summary>
         public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
@@ -111,7 +116,8 @@ namespace OpenIZ.Core.Http
         protected virtual WebRequest CreateHttpRequest(String resourceName, NameValueCollection query)
         {
             // URL is relative to base address
-
+            if (this.Description.Endpoint.Count == 0)
+                throw new InvalidOperationException("No endpoints found, is the interface configured properly?");
             Uri baseUrl = new Uri(this.Description.Endpoint[0].Address);
             UriBuilder uriBuilder = new UriBuilder(baseUrl);
 
@@ -220,6 +226,8 @@ namespace OpenIZ.Core.Http
                     else
                         try
                         {
+                            this.Responding?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 200, o.Result.ContentLength));
+
                             byte[] buffer = new byte[2048];
                             int br = 1;
                             using (var ms = new MemoryStream())
@@ -270,14 +278,27 @@ namespace OpenIZ.Core.Http
                     throw requestException;
 
 
-                this.Responded?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 200));
+                this.Responded?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 200, 0));
 
                 return retVal;
+            }
+            catch(WebException e)
+            {
+                switch (this.ValidateResponse(e.Response)) {
+                    case ServiceClientErrorType.Valid:
+                        return this.Get(url);
+                    default:
+                        throw new RestClientException<byte[]>(
+                                            null,
+                                            e,
+                                            e.Status,
+                                            e.Response);
+                }
             }
             catch (Exception e)
             {
                 s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
-                this.Responded?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 500));
+                this.Responded?.Invoke(this, new RestResponseEventArgs("GET", url, null, null, null, 500, 0));
                 throw;
             }
         }
@@ -330,13 +351,13 @@ namespace OpenIZ.Core.Http
                 // Invoke
                 WebHeaderCollection responseHeaders = null;
                 var retVal = this.InvokeInternal<TBody, TResult>(requestEventArgs.Method, requestEventArgs.Url, requestEventArgs.ContentType, requestEventArgs.AdditionalHeaders, out responseHeaders, body, requestEventArgs.Query);
-                this.Responded?.Invoke(this, new RestResponseEventArgs(requestEventArgs.Method, requestEventArgs.Url, requestEventArgs.Query, requestEventArgs.ContentType, retVal, 200));
+                this.Responded?.Invoke(this, new RestResponseEventArgs(requestEventArgs.Method, requestEventArgs.Url, requestEventArgs.Query, requestEventArgs.ContentType, retVal, 200, 0));
                 return retVal;
             }
             catch (Exception e)
             {
                 s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
-                this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, null, 500));
+                this.Responded?.Invoke(this, new RestResponseEventArgs(method, url, parameters, contentType, null, 500, 0));
                 throw;
             }
         }
@@ -461,14 +482,26 @@ namespace OpenIZ.Core.Http
                                 if (this.Description.Binding.Security.CredentialProvider != null)
                                 {
                                     this.Credentials = this.Description.Binding.Security.CredentialProvider.Authenticate(this);
-                                    return ServiceClientErrorType.Valid;
+                                    if (this.Credentials != null)
+                                        return ServiceClientErrorType.Valid;
+                                    else
+                                        return ServiceClientErrorType.SecurityError;
                                 }
                                 else
                                     return ServiceClientErrorType.SecurityError;
                             }
                         }
-                    default:
+                    case HttpStatusCode.ServiceUnavailable:
+                        return ServiceClientErrorType.NotReady;
+                    case HttpStatusCode.OK:
+                    case HttpStatusCode.NoContent:
+                    case HttpStatusCode.NotModified:
+                    case HttpStatusCode.Created:
+                    case HttpStatusCode.Redirect:
+                    case HttpStatusCode.Moved:
                         return ServiceClientErrorType.Valid;
+                    default:
+                        return ServiceClientErrorType.GenericError;
                 }
             }
             else
@@ -517,7 +550,7 @@ namespace OpenIZ.Core.Http
             catch (Exception e)
             {
                 s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
-                this.Responded?.Invoke(this, new RestResponseEventArgs("PATCH", url, null, contentType, null, 500));
+                this.Responded?.Invoke(this, new RestResponseEventArgs("PATCH", url, null, contentType, null, 500, 0));
                 throw;
             }
 
@@ -554,28 +587,39 @@ namespace OpenIZ.Core.Http
                 Exception fault = null;
                 var httpTask = httpWebReq.GetResponseAsync().ContinueWith(o =>
                 {
-                    if(o.IsFaulted)
+                    if (o.IsFaulted)
                         fault = o.Exception.InnerExceptions.First();
                     else
+                    {
+                        this.Responding?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 200, o.Result.ContentLength));
                         foreach (var itm in o.Result.Headers.AllKeys)
                             retVal.Add(itm, o.Result.Headers[itm]);
+                    }
                 }, TaskContinuationOptions.LongRunning);
                 httpTask.Wait();
                 if (fault != null)
                     throw fault;
-                this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 200));
+                this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 200, 0));
 
                 return retVal;
             }
             catch (Exception e)
             {
                 s_tracer.TraceError("Error invoking HTTP: {0}", e.Message);
-                this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 500));
+                this.Responded?.Invoke(this, new RestResponseEventArgs("HEAD", resourceName, parameters, null, null, 500, 0));
                 throw;
             }
         }
-    }
 
+        /// <summary>
+        /// Fire responding event
+        /// </summary>
+        protected void FireResponding(RestResponseEventArgs args)
+        {
+            this.Responding?.Invoke(this, args);
+        }
+
+    }
     /// <summary>
     /// Service client error type
     /// </summary>
@@ -585,6 +629,7 @@ namespace OpenIZ.Core.Http
         GenericError,
         AuthenticationSchemeMismatch,
         SecurityError,
-        RealmMismatch
+        RealmMismatch,
+        NotReady
     }
 }

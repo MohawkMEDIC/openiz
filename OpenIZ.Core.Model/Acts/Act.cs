@@ -638,6 +638,13 @@ namespace OpenIZ.Core.Model.Acts
         /// </summary>
         /// <returns></returns>
         public bool ShouldSerializeProtocols() => this.Protocols.Count > 0;
+
+        /// <summary>
+        /// Should serialize template key
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeTemplateKey() => this.TemplateKey.GetValueOrDefault() != Guid.Empty;
+
         /// <summary>
         /// Should serialize policies
         /// </summary>

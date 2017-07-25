@@ -95,6 +95,8 @@ namespace OizDevTool
 			int npatients = 0;
 			Console.WriteLine("Generating Patients...");
 
+            DateTime startTime = DateTime.Now;
+
 			WaitCallback genFunc = (s) =>
 			{
 				AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
@@ -107,8 +109,12 @@ namespace OizDevTool
 				var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
 				// Insert
 				int pPatient = Interlocked.Increment(ref npatients);
-				patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-				Console.WriteLine("Generated Patient #{2:#,###,###}: {0} ({1} mo) [{3}]", patient, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient, places.FirstOrDefault(p => p.Key == patient.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey).Names.FirstOrDefault().ToString());
+
+                var ips = (((double)(DateTime.Now - startTime).Ticks / pPatient) * (populationSize - pPatient));
+                var remaining = new TimeSpan((long)ips);
+
+                patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+				Console.WriteLine("#{2:#,###,###}({4:0%} - ETA:{5}): {0} ({1:#0} mo) [{3}]", patient.Identifiers.First().Value, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient, places.FirstOrDefault(p => p.Key == patient.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey).Names.FirstOrDefault().ToString(), (float)pPatient / populationSize, remaining.ToString("hh'h 'mm'm 'ss's'"));
 
 				// Schedule
 				if (!parameters.PatientOnly)
@@ -250,7 +256,7 @@ namespace OizDevTool
 				Names = new List<EntityName>() { new EntityName(NameUseKeys.OfficialRecord, mother.Names[0].Component[0].Value, SeedData.SeedData.Current.PickRandomGivenName(gender).Name, SeedData.SeedData.Current.PickRandomGivenName(gender).Name) },
 				DateOfBirth = DateTime.Now.AddDays(-Math.Abs(BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0) % maxAge)),
 				GenderConcept = new Concept() { Mnemonic = gender },
-				Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").Substring(0, 10)) }
+				Identifiers = new List<EntityIdentifier>() { new EntityIdentifier(barcodeAuth, BitConverter.ToString(Guid.NewGuid().ToByteArray()).Replace("-", "").Replace("A","0").Replace("B","4").Replace("C", "6").Replace("D", "8").Replace("E", "9").Replace("F", "5").Substring(0, 10)) }
 			};
 
 			if (address != null)

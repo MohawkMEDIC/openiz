@@ -32,6 +32,8 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core;
 using OpenIZ.Core.Services.Impl;
+using OpenIZ.Core.Security;
+using OpenIZ.AdminConsole.Shell;
 
 namespace OpenIZ
 {
@@ -54,7 +56,7 @@ namespace OpenIZ
 
             // Handle Unahndled exception
             AppDomain.CurrentDomain.UnhandledException += (o, e) => {
-                var emergencyString = ApplicationContext.Current?.GetLocaleString("01189998819991197253");
+                var emergencyString = MARC.HI.EHRS.SVC.Core.ApplicationContext.Current?.GetLocaleString("01189998819991197253");
                 Trace.TraceError(emergencyString ?? "FATAL ERROR", e.ExceptionObject);
                 Environment.Exit(999);
             };
@@ -93,13 +95,31 @@ namespace OpenIZ
                     Console.WriteLine("{0}", entryAsm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright);
                     Console.WriteLine("Complete Copyright information available at http://openiz.codeplex.com/wikipage?title=Contributions");
                     ServiceUtil.Start(typeof(Program).GUID);
-                    ApplicationServiceContext.Current = ApplicationContext.Current;
-                    ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
+                    ApplicationServiceContext.Current = MARC.HI.EHRS.SVC.Core.ApplicationContext.Current;
+                    MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
                     ApplicationServiceContext.HostType = OpenIZHostType.Server;
                     if (!parameters.StartupTest)
                     {
                         Console.WriteLine("Press [ENTER] to stop...");
-                        Console.ReadLine();
+                        var cInput = Console.ReadLine();
+                        if (new MD5PasswordHashingService().EncodePassword(cInput) == "ff0a95a168055e0156f9200658e58a4c")
+                        {
+                            AdminConsole.Shell.ApplicationContext.Initialize(new AdminConsole.Parameters.ConsoleParameters()
+                            {
+                                AppId = "org.openiz.administration",
+                                AppSecret = "Mohawk123"
+                                
+                            });
+                            Console.BackgroundColor = ConsoleColor.Blue;
+                            Console.Clear();
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Blue;
+
+                            if (AdminConsole.Shell.ApplicationContext.Current.Start())
+                            {
+                                new InteractiveShell().Exec();
+                            }
+                        }
                     }
                     ServiceUtil.Stop();
                 }

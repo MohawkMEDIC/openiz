@@ -224,7 +224,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
             {
                 int tr = 0;
-                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId), Guid.Empty, 0, null, out tr, principal);
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId), Guid.Empty, 0, null, out tr, principal).ToList();
             }
         }
 
@@ -243,7 +243,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 int tr = 0;
                 // TODO: Check that this query is actually building what it is supposed to.
-                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), Guid.Empty, 0, null, out tr, principal);
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), Guid.Empty, 0, null, out tr, principal).ToList();
             }
         }
 
@@ -261,7 +261,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             public IEnumerable GetFromSource(DataContext context, Guid sourceId, decimal? versionSequenceId, IPrincipal principal)
             {
                 int tr = 0;
-                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId), Guid.Empty, 0, null, out tr, principal);
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId), Guid.Empty, 0, null, out tr, principal).ToList();
             }
         }
 
@@ -280,7 +280,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 int tr = 0;
                 // TODO: Check that this query is actually building what it is supposed to.
-                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), Guid.Empty, 0, null, out tr, principal);
+                return this.QueryInternal(context, base.BuildSourceQuery<TModel>(sourceId, versionSequenceId), Guid.Empty, 0, null, out tr, principal).ToList();
             }
         }
 

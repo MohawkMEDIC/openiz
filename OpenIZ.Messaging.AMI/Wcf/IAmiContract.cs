@@ -171,12 +171,22 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
 
-		/// <summary>
-		/// Creates the type of the extension.
-		/// </summary>
-		/// <param name="extensionType">Type of the extension.</param>
-		/// <returns>Returns the created extension type.</returns>
-		[WebInvoke(UriTemplate = "/extensionType", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+
+        /// <summary>
+        /// Gets a server diagnostic report.
+        /// </summary>
+        /// <param name="report">The diagnostic report to be created.</param>
+        /// <returns>Returns the created diagnostic report.</returns>
+        [WebGet(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare)]
+        DiagnosticReport GetServerDiagnosticReport();
+
+
+        /// <summary>
+        /// Creates the type of the extension.
+        /// </summary>
+        /// <param name="extensionType">Type of the extension.</param>
+        /// <returns>Returns the created extension type.</returns>
+        [WebInvoke(UriTemplate = "/extensionType", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		ExtensionType CreateExtensionType(ExtensionType extensionType);
 
 		/// <summary>

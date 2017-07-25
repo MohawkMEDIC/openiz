@@ -237,15 +237,23 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public void AddCacheCommit(IdentifiedData data)
         {
-            if (data.Key.HasValue && !this.m_cacheCommit.ContainsKey(data.Key.Value))
+            try
             {
-                lock (this.m_lockObject)
-                    // check again
-                    if (!m_cacheCommit.ContainsKey(data.Key.Value))
-                        this.m_cacheCommit.Add(data.Key.Value, data);
+                IdentifiedData existing = null;
+                if (data.Key.HasValue && this.m_cacheCommit.TryGetValue(data.Key.Value, out existing))
+                {
+                    lock (this.m_lockObject)
+                        // check again
+                        if (!m_cacheCommit.ContainsKey(data.Key.Value))
+                            this.m_cacheCommit.Add(data.Key.Value, data);
+                }
+                else if (data.Key.HasValue && data.LoadState > (existing?.LoadState ?? 0))
+                    this.m_cacheCommit[data.Key.Value] = data;
             }
-            else if(data.Key.HasValue)
-                this.m_cacheCommit[data.Key.Value] = data;
+            catch(Exception e)
+            {
+                this.m_tracer.TraceWarning("Object {0} won't be added to cache: {1}", data, e);
+            }
         }
 
 
@@ -255,7 +263,8 @@ namespace OpenIZ.OrmLite
         public IdentifiedData GetCacheCommit(Guid key)
         {
             IdentifiedData retVal = null;
-            this.m_cacheCommit.TryGetValue(key, out retVal);
+            lock(this.m_lockObject)
+                this.m_cacheCommit.TryGetValue(key, out retVal);
             return retVal;
         }
 
