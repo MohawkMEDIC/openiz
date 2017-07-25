@@ -84,7 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleParameters.cs" />
-    <None Include="Data\000-IndustryTypes.dataset" />
+    <None Include="Data\000-IndustryTypes.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="OpenIZ.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -149,7 +151,9 @@
     <None Include="Data\000-DischargeDisposition.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\000-OrganizationType.dataset" />
+    <None Include="Data\000-OrganizationType.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\000-ProblemObservationTypes.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -186,6 +190,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.AdminConsole\OpenIZ.AdminConsole.csproj">
+      <Project>{04421ab6-68f0-4315-ab5a-9f2486d8dc64}</Project>
+      <Name>OpenIZ.AdminConsole</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
       <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
       <Name>OpenIZ.Core.Model</Name>
@@ -207,7 +215,9 @@
     <None Include="Data\000-SecurityAuditCodes.dataset">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\000-PlaceTypeConceptSet.dataset" />
+    <None Include="Data\000-PlaceTypeConceptSet.dataset">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Content Include="Data\OpenIZ.mdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

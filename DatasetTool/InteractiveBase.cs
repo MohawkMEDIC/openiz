@@ -91,7 +91,7 @@ namespace OizDevTool
         {
 
             Console.CursorVisible = true;
-            Console.WriteLine("{0} for help use ?", this.GetType().GetCustomAttribute<DescriptionAttribute>()?.Description ?? this.GetType().Name);
+            Console.WriteLine("Ready...");
 
             var col = Console.ForegroundColor;
 

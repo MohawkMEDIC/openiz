@@ -277,8 +277,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     catch (Exception e)
                     {
-	                    this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
-	                    tx?.Rollback();
+
+#if DEBUG
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+#else
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e.Message);
+#endif
+                        tx?.Rollback();
 
 						// if the exception is key not found, we want the caller to know
 						// so that a potential insert can take place
@@ -684,7 +689,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         }
 
 
-        #region Event Handler Helpers
+#region Event Handler Helpers
 
         /// <summary>
         /// Fire retrieving
@@ -719,7 +724,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             return this.QueryInternal(query, queryId, offset, count, authContext, out totalCount, true);
         }
 
-        #endregion
+#endregion
 
     }
 }

@@ -48,7 +48,7 @@ namespace OpenIZ.Core.Wcf.Compression
         /// </summary>
         public Stream CreateCompressionStream(Stream underlyingStream)
         {
-            return new DeflateStream(underlyingStream, CompressionMode.Compress);
+            return new DeflateStream(underlyingStream, CompressionLevel.Optimal);
         }
 
         /// <summary>

@@ -527,5 +527,12 @@ namespace OpenIZ.Core.Model.Entities
             retVal.Extensions = new List<EntityExtension>(this.Extensions.ToArray());
             return retVal;
         }
+
+        /// <summary>
+        /// Should serialize template key
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeTemplateKey() => this.TemplateKey.GetValueOrDefault() != Guid.Empty;
+
     }
 }

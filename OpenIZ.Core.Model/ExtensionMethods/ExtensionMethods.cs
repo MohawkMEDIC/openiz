@@ -45,6 +45,14 @@ namespace OpenIZ.Core.Model
 		private static Dictionary<Type, PropertyInfo[]> s_typePropertyCache = new Dictionary<Type, PropertyInfo[]>();
 
         /// <summary>
+        /// Get postal code
+        /// </summary>
+        public static String Value(this EntityAddress me, Guid addressType)
+        {
+            return me.LoadCollection<EntityAddressComponent>("Component").FirstOrDefault(o => o.ComponentTypeKey == addressType)?.Value;
+        }
+
+        /// <summary>
         /// Delay load property
         /// </summary>
         public static TReturn LoadProperty<TReturn>(this IdentifiedData me, string propertyName)

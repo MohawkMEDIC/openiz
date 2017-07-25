@@ -80,6 +80,11 @@ namespace OpenIZ.Core.Security.Claims
         /// </summary>
         public const string OpenIZTfaSecretExpiry = "http://openiz.org/claims/tfa-secret-expiry";
 
+        /// <summary>
+        /// TFA secret expiry
+        /// </summary>
+        public const string OpenIzScopeClaim = "http://openiz.org/claims/scope";
+
 
         /// <summary>
         /// Patient identifier claim

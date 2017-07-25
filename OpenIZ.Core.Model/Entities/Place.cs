@@ -88,6 +88,24 @@ namespace OpenIZ.Core.Model.Entities
 		[XmlElement("lng"), JsonProperty("lng")]
 		public double? Lng { get; set; }
 
+        /// <summary>
+        /// Should serialize mobile
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeIsMobile() => this.IsMobile;
+
+        /// <summary>
+        /// Should serialize latitude
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeLat() => this.Lat.GetValueOrDefault() != 0;
+
+        /// <summary>
+        /// Should serialize longitude
+        /// </summary>
+        /// <returns></returns>
+        public bool ShouldSerializeLng() => this.Lng.GetValueOrDefault() != 0;
+
 		/// <summary>
 		/// Gets the services
 		/// </summary>

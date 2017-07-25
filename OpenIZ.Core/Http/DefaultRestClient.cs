@@ -98,7 +98,11 @@ namespace OpenIZ.Core.Http
 			if (this.Description.Binding.Optimize)
 				retVal.Headers.Add(HttpRequestHeader.AcceptEncoding, "deflate,gzip");
 
-
+            if (this.Description?.Binding?.Security?.CertificateValidator != null)
+                retVal.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
+                {
+                    return this.Description.Binding.Security.CertificateValidator.ValidateCertificate(certificate, chain);
+                };
 			return retVal;
 		}
 
@@ -308,8 +312,6 @@ namespace OpenIZ.Core.Http
 							{
 								this.traceSource.TraceEvent(TraceEventType.Error, 0, "Could not de-serialize error response! {0}", dse);
 
-                                using (StreamReader r = new StreamReader(errorResponse.GetResponseStream()))
-                                    this.traceSource.TraceEvent(TraceEventType.Error, 0, r.ReadToEnd());
 							}
 
 							switch (errorResponse.StatusCode)

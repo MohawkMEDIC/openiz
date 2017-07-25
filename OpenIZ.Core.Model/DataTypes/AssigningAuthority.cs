@@ -126,6 +126,11 @@ namespace OpenIZ.Core.Model.DataTypes
         public bool IsUnique { get; set; }
 
         /// <summary>
+        /// Should serialize IsUnique
+        /// </summary>
+        public bool ShouldSerializeIsUnique() => this.IsUnique;
+
+        /// <summary>
         /// Gets or sets the assigning device
         /// </summary>
         [XmlIgnore, JsonIgnore]

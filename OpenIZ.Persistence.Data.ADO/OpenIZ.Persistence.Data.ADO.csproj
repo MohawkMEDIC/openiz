@@ -132,6 +132,7 @@
     <Compile Include="Services\AdoPersistenceService.cs" />
     <Compile Include="Services\AdoPolicyInformationService.cs" />
     <Compile Include="Services\AdoRoleProvider.cs" />
+    <Compile Include="Services\Persistence\EntityIdentifierPersistenceService.cs" />
     <Compile Include="Services\IAdoPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActDerivedPersistenceService.cs" />
     <Compile Include="Services\Persistence\ActParticipationPersistenceService.cs" />
@@ -208,6 +209,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\SQL\PSQL\Updates\20170721-01.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\SQL\PSQL\Updates\20170725-01.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />

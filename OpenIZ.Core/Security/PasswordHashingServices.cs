@@ -58,6 +58,21 @@ namespace OpenIZ.Core.Security
     }
 
     /// <summary>
+    /// SHA1 password generator service
+    /// </summary>
+    public class MD5PasswordHashingService : IPasswordHashingService
+    {
+        /// <summary>
+        /// Encode a password using the SHA256 encoding
+        /// </summary>
+        public string EncodePassword(string password)
+        {
+            MD5 hasher = MD5.Create();
+            return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(password))).Replace("-", "").ToLower();
+        }
+    }
+
+    /// <summary>
     /// Plaintext password generator service
     /// </summary>
     public class PlainPasswordHashingService : IPasswordHashingService

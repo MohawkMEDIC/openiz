@@ -324,12 +324,20 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Get<AlertMessageInfo>($"alert/{id}");
 		}
 
-		/// <summary>
-		/// Gets a list of alerts.
+        /// <summary>
+		/// Gets a diagnostic alert.
 		/// </summary>
-		/// <param name="query">The query expression to use to find the alerts.</param>
-		/// <returns>Returns a collection of alerts which match the specified criteria.</returns>
-		public AmiCollection<AlertMessageInfo> GetAlerts(Expression<Func<AlertMessage, bool>> query)
+		public DiagnosticReport GetServerDiagnoticReport()
+        {
+            return this.Client.Get<DiagnosticReport>($"sherlock");
+        }
+
+        /// <summary>
+        /// Gets a list of alerts.
+        /// </summary>
+        /// <param name="query">The query expression to use to find the alerts.</param>
+        /// <returns>Returns a collection of alerts which match the specified criteria.</returns>
+        public AmiCollection<AlertMessageInfo> GetAlerts(Expression<Func<AlertMessage, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<AlertMessageInfo>>("alert", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}

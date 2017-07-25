@@ -29,6 +29,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Data.Warehouse;
+using System.Threading;
+using System.IO;
 
 namespace OpenIZ.OrmLite
 {
@@ -184,6 +186,33 @@ namespace OpenIZ.OrmLite
 #endif
         }
 
+#if DBPERF
+        private static object s_lockObject = new object();
+        /// <summary>
+        /// Performance monitor
+        /// </summary>
+        private void PerformanceMonitor(SqlStatement stmt, IDbCommand dbc, Stopwatch sw)
+        {
+            sw.Stop();
+            if(sw.ElapsedMilliseconds > 5)
+            {
+                lock(s_lockObject)
+                {
+                    using (var tw = File.AppendText("dbperf.xml"))
+                    {
+                        tw.WriteLine($"<sql><cmd>{this.GetQueryLiteral(stmt.Build())}</cmd><elapsed>{sw.ElapsedMilliseconds}</elapsed>");
+                        tw.WriteLine($"<stack><[!CDATA[{new System.Diagnostics.StackTrace(true).ToString()}]]></stack><plan><![CDATA[");
+                        dbc.CommandText = "EXPLAIN " + dbc.CommandText;
+                        using (var rdr = dbc.ExecuteReader())
+                            while (rdr.Read())
+                                tw.WriteLine(rdr[0].ToString());
+                        tw.WriteLine("]]></plan></sql>");
+                    }
+                }
+            }
+            sw.Start();
+        }
+#endif
 
 
         /// <summary>
@@ -280,9 +309,13 @@ namespace OpenIZ.OrmLite
                     {
                         using (var rdr = dbc.ExecuteReader())
                             return this.ReaderToResult(returnType, rdr);
+
                     }
                     finally
                     {
+#if DBPERF
+                        this.PerformanceMonitor(stmt, dbc, sw);
+#endif
                         if (!this.IsPreparedCommand(dbc))
                             dbc.Dispose();
                     }
@@ -354,6 +387,10 @@ namespace OpenIZ.OrmLite
                     }
                     finally
                     {
+
+#if DBPERF
+                        this.PerformanceMonitor(stmt, dbc, sw);
+#endif
                         if (!this.IsPreparedCommand(dbc))
                             dbc.Dispose();
                     }
@@ -389,6 +426,9 @@ namespace OpenIZ.OrmLite
                     }
                     finally
                     {
+#if DBPERF
+                        this.PerformanceMonitor(stmt, dbc, sw);
+#endif
                         if (!this.IsPreparedCommand(dbc))
                             dbc.Dispose();
                     }
@@ -429,11 +469,15 @@ namespace OpenIZ.OrmLite
                             if (!rdr.Read()) return retVal;
                             else throw new InvalidOperationException("Sequence contains more than one element");
                         }
+
                     }
                     finally
                     {
+#if DBPERF
+                        this.PerformanceMonitor(stmt, dbc, sw);
+#endif
                         if (!this.IsPreparedCommand(dbc))
-                            dbc.Dispose();
+                        dbc.Dispose();
                     }
                 }
 
@@ -629,13 +673,16 @@ namespace OpenIZ.OrmLite
                     var dbc = this.m_provider.CreateCommand(this, query);
                     try
                     {
-                        using (var rdr = dbc.ExecuteReader())
+                        using (var rdr = dbc.ExecuteReader()) 
                             return this.ReaderToCollection<TModel>(rdr).ToList();
                     }
                     finally
                     {
+#if DBPERF
+                        this.PerformanceMonitor(query, dbc, sw);
+#endif
                         if (!this.IsPreparedCommand(dbc))
-                            dbc.Dispose();
+                        dbc.Dispose();
                     }
                 }
 
@@ -680,11 +727,15 @@ namespace OpenIZ.OrmLite
                     {
                         using (var rdr = dbc.ExecuteReader())
                             return this.ReaderToCollection<TModel>(rdr).ToList();
+
                     }
                     finally
                     {
+#if DBPERF
+                        this.PerformanceMonitor(query, dbc, sw);
+#endif
                         if (!this.IsPreparedCommand(dbc))
-                            dbc.Dispose();
+                             dbc.Dispose();
                     }
                 }
 

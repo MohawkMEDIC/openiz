@@ -44,7 +44,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
         /// <summary>
         /// Gets or sets the role that the player plays in the act
         /// </summary>
-        [Column("rol_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
+        [Column("rol_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key)), AlwaysJoin]
         public Guid ParticipationRoleKey { get; set; }
 
         /// <summary>

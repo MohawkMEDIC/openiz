@@ -69,12 +69,34 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			return persister.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 		}
 
-		/// <summary>
-		/// Gets the schema for the administrative interface.
-		/// </summary>
-		/// <param name="schemaId">The id of the schema to be retrieved.</param>
-		/// <returns>Returns the administrative interface schema.</returns>
-		public XmlSchema GetSchema(int schemaId)
+        /// <summary>
+        /// Create a diagnostic report
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public DiagnosticReport GetServerDiagnosticReport()
+        {
+            var retVal = new DiagnosticReport();
+            retVal.ApplicationInfo = new DiagnosticApplicationInfo(Assembly.GetEntryAssembly());
+            retVal.CreatedByKey = Guid.Parse(AuthenticationContext.SystemUserSid);
+
+            retVal.ApplicationInfo.Assemblies = AppDomain.CurrentDomain.GetAssemblies().Select(o => new DiagnosticVersionInfo(o)).ToList();
+            retVal.ApplicationInfo.EnvironmentInfo = new DiagnosticEnvironmentInfo()
+            {
+                Is64Bit = Environment.Is64BitOperatingSystem && Environment.Is64BitProcess,
+                OSVersion = String.Format("{0} v{1}", System.Environment.OSVersion.Platform, System.Environment.OSVersion.Version),
+                ProcessorCount = Environment.ProcessorCount,
+                UsedMemory = GC.GetTotalMemory(false),
+                Version = Environment.Version.ToString()
+            };
+            retVal.ApplicationInfo.ServiceInfo = ApplicationContext.Current.GetServices().OfType<IDaemonService>().Select(o => new DiagnosticServiceInfo(o)).ToList();
+            return retVal;
+        }
+        /// <summary>
+        /// Gets the schema for the administrative interface.
+        /// </summary>
+        /// <param name="schemaId">The id of the schema to be retrieved.</param>
+        /// <returns>Returns the administrative interface schema.</returns>
+        public XmlSchema GetSchema(int schemaId)
 		{
 			try
 			{

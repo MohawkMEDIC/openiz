@@ -132,7 +132,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             int resultCount = 0;
             var results = this.QueryInternal(context, query, queryId, offset, count, out resultCount, countResults);
             totalResults = resultCount;
-            return results.AsParallel().Select(o => {
+            return results.AsParallel().Select(o =>
+            {
                 var subContext = context;
                 var newSubContext = results.Count() > 1;
 
@@ -145,13 +146,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     else
                         return this.CacheConvert(o, subContext, principal);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error performing sub-query: {0}", e);
                     throw;
                 }
                 finally
                 {
+                    if(newSubContext)
+                        foreach (var i in subContext.CacheOnCommit)
+                            context.AddCacheCommit(i);
                     if (newSubContext) subContext.Dispose();
                 }
             });
@@ -209,15 +213,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 }
 
                 domainQuery = this.AppendOrderBy(domainQuery);
-
-                // Build and see if the query already exists on the stack???
-                domainQuery = domainQuery.Build();
-                var cachedQueryResults = context.CacheQuery(domainQuery);
-                if (cachedQueryResults != null)
-                {
-                    totalResults = cachedQueryResults.Count();
-                    return cachedQueryResults;
-                }
 
                 // Query id just get the UUIDs in the db
                 if (queryId != Guid.Empty)
@@ -277,12 +272,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 if (count.HasValue)
                     domainQuery.Limit(count.Value);
 
-
-                var results = context.Query<TQueryReturn>(domainQuery).OfType<Object>();
-
-                // Cache query result
-                context.AddQuery(domainQuery, results);
-                return results;
+                return this.DomainQueryInternal<TQueryReturn>(context, domainQuery, ref totalResults).OfType<Object>();
 #if DEBUG
             }
             finally
@@ -290,6 +280,29 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 sw.Stop();
             }
 #endif
+        }
+
+        /// <summary>
+        /// Perform a domain query
+        /// </summary>
+        protected IEnumerable<TResult> DomainQueryInternal<TResult>(DataContext context, SqlStatement domainQuery, ref int totalResults)
+        {
+
+            // Build and see if the query already exists on the stack???
+            domainQuery = domainQuery.Build();
+            var cachedQueryResults = context.CacheQuery(domainQuery);
+            if (cachedQueryResults != null)
+            {
+                totalResults = cachedQueryResults.Count();
+                return cachedQueryResults.OfType<TResult>();
+            }
+
+            var results = context.Query<TResult>(domainQuery).ToList();
+
+            // Cache query result
+            context.AddQuery(domainQuery, results.OfType<Object>());
+            return results;
+
         }
 
 
@@ -338,7 +351,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 else
                 {
                     cacheItem = this.ToModelInstance(o, context, principal);
-                    if(context.Transaction == null)
+                    if (context.Transaction == null)
                         cacheService?.Add(cacheItem);
                 }
                 return cacheItem;

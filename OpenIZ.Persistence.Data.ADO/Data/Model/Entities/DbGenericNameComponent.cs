@@ -44,7 +44,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
         /// <summary>
         /// Gets or sets the value key
         /// </summary>
-        [Column("val_id")]
-        public virtual Guid ValueKey { get; set; }
+        [Column("val_seq_id")]
+        public virtual Decimal ValueSequenceId { get; set; }
     }
 }

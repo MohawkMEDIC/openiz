@@ -225,7 +225,14 @@ namespace OpenIZ.OrmLite
             }
             else
                 lhsPk = TableMapping.Get(rhsPk.ForeignKey.Table).GetColumn(rhsPk.ForeignKey.Column);
-            if (lhsPk == null || rhsPk == null) throw new InvalidOperationException("Unambiguous linked keys not found");
+
+            if (lhsPk == null || rhsPk == null) // Try a natural join
+            {
+                rhsPk = tableMap.Columns.SingleOrDefault(o => TableMapping.Get(tLeft).Columns.Any(l=>o.Name == l.Name));
+                lhsPk = TableMapping.Get(tLeft).Columns.SingleOrDefault(o => o.Name == rhsPk?.Name);
+                if(rhsPk == null || lhsPk == null)
+                    throw new InvalidOperationException("Unambiguous linked keys not found");
+            }
             joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
             return joinStatement;
         }

@@ -28,6 +28,8 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 using OpenIZ.OrmLite;
 using System.Security.Principal;
 using OpenIZ.Persistence.Data.ADO.Data;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -36,16 +38,37 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// </summary>
     public class EntityRelationshipPersistenceService : IdentifiedPersistenceService<EntityRelationship, DbEntityRelationship>, IAdoAssociativePersistenceService
     {
+
         /// <summary>
         /// Get relationships from source
         /// </summary>
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, base.BuildSourceQuery<EntityRelationship>(id, versionSequenceId), Guid.Empty, 0, null, out tr, principal, false);
+            return this.QueryInternal(context, base.BuildSourceQuery<EntityRelationship>(id, versionSequenceId), Guid.Empty, 0, null, out tr, principal, false).ToList();
 
         }
 
+        /// <summary>
+        /// Represents as a model instance
+        /// </summary>
+        public override EntityRelationship ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
+        {
+            if (dataInstance == null) return null;
+
+            var entPart = dataInstance as DbEntityRelationship;
+            return new EntityRelationship()
+            {
+                EffectiveVersionSequenceId = entPart.EffectiveVersionSequenceId,
+                ObsoleteVersionSequenceId = entPart.ObsoleteVersionSequenceId,
+                HolderKey = entPart.SourceKey,
+                TargetEntityKey = entPart.TargetKey,
+                RelationshipType = context.LoadState == Core.Model.LoadState.FullLoad ?  AdoPersistenceService.GetPersister(typeof(Concept)).Get(entPart.RelationshipTypeKey) as Concept : null,
+                RelationshipTypeKey = entPart.RelationshipTypeKey,
+                Quantity = entPart.Quantity,
+                LoadState = context.LoadState
+            };
+        }
 
         /// <summary>
         /// Insert the relationship
