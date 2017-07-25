@@ -24,6 +24,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
+using OpenIZ.Core.Security;
 using ReportDefinition = OpenIZ.Core.Model.RISI.ReportDefinition;
 
 namespace OpenIZ.Persistence.Reporting.PSQL.Services
@@ -229,7 +230,7 @@ namespace OpenIZ.Persistence.Reporting.PSQL.Services
 
 			foreach (var reportParameter in reportDefinition.Parameters)
 			{
-				var existingReportParameter = reportParameterPersistenceService.Get(context, reportParameter.CorrelationId, principal);
+				var existingReportParameter = context.Query<ReportParameter>(c => c.ReportId == reportDefinition.Key.Value && c.CorrelationId == reportParameter.CorrelationId).FirstOrDefault();
 
 				reportParameter.ReportDefinitionKey = reportDefinition.Key.Value;
 

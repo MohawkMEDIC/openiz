@@ -498,7 +498,7 @@ namespace OpenIZ.Reporting.Jasper
 				}
 
 				int totalResults;
-				reportParameter.Key = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>()?.Query(r => r.CorrelationId == inputControl.Uri, 0, 1, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault()?.Key;
+				reportParameter.Key = ApplicationContext.Current.GetService<IDataPersistenceService<ReportParameter>>()?.Query(r => r.CorrelationId == inputControl.Uri, 0, null, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault(r => r.CorrelationId == inputControl.Uri && r.ReportDefinitionKey == id)?.Key;
 				reportDefinition.Parameters.Add(reportParameter);
 			}
 
@@ -927,7 +927,10 @@ namespace OpenIZ.Reporting.Jasper
 
 				if (value != null)
 				{
-					builder.Append($"&{reportParameter.Name}={FromByteArray(value)}");
+					// HACK: this is because jasper doesn't know how to manage parameters...
+					var name = reportParameter.CorrelationId.Split('/').Last();
+
+					builder.Append($"{name}={FromByteArray(value)}&");
 				}
 			}
 
