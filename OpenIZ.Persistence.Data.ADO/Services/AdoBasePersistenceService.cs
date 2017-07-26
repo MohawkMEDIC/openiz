@@ -511,7 +511,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     var postData = new PostQueryEventArgs<TData>(query, results.AsQueryable(), authContext);
                     this.Queried?.Invoke(this, postData);
 
-                    var retVal = postData.Results.AsParallel().ToList();
+                    var retVal = postData.Results.ToList();
 
                     // Add to cache
                     foreach (var i in retVal.Where(i => i != null))

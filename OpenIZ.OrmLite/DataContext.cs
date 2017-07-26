@@ -240,7 +240,7 @@ namespace OpenIZ.OrmLite
             try
             {
                 IdentifiedData existing = null;
-                if (data.Key.HasValue && this.m_cacheCommit.TryGetValue(data.Key.Value, out existing))
+                if (data.Key.HasValue && !this.m_cacheCommit.TryGetValue(data.Key.Value, out existing))
                 {
                     lock (this.m_lockObject)
                         // check again

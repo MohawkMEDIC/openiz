@@ -29,6 +29,7 @@ using OpenIZ.Messaging.IMSI.Wcf.Behavior;
 using OpenIZ.Messaging.IMSI.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -65,6 +66,7 @@ namespace OpenIZ.Messaging.IMSI
     /// <summary>
     /// The IMSI Message Handler Daemon class
     /// </summary>
+    [Description("IMSI Message Service")]
     public class ImsiMessageHandler : IMessageHandlerService, IApiEndpointProvider
     {
 

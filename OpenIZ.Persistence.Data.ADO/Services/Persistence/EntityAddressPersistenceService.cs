@@ -57,7 +57,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var addrLookupQuery = context.CreateSqlStatement<DbEntityAddressComponent>().SelectFrom()
                 .InnerJoin<DbEntityAddress>(o=>o.SourceKey, o=>o.Key)
                 .InnerJoin<DbEntityAddressComponentValue>(o=>o.ValueSequenceId, o=>o.SequenceId)
-                .Where<DbEntityAddress>(o=>o.SourceKey == id);
+                .Where<DbEntityAddress>(o=>o.SourceKey == id && o.ObsoleteVersionSequenceId == null);
 
             /// Yowza! But it appears to be faster than the other way 
             return this.DomainQueryInternal<CompositeResult<DbEntityAddressComponent, DbEntityAddress, DbEntityAddressComponentValue>>(context, addrLookupQuery, ref tr)

@@ -191,7 +191,7 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Performance monitor
         /// </summary>
-        private void PerformanceMonitor(SqlStatement stmt, IDbCommand dbc, Stopwatch sw)
+        private void PerformanceMonitor(SqlStatement stmt, Stopwatch sw)
         {
             sw.Stop();
             if(sw.ElapsedMilliseconds > 5)
@@ -202,10 +202,11 @@ namespace OpenIZ.OrmLite
                     {
                         tw.WriteLine($"<sql><cmd>{this.GetQueryLiteral(stmt.Build())}</cmd><elapsed>{sw.ElapsedMilliseconds}</elapsed>");
                         tw.WriteLine($"<stack><[!CDATA[{new System.Diagnostics.StackTrace(true).ToString()}]]></stack><plan><![CDATA[");
-                        dbc.CommandText = "EXPLAIN " + dbc.CommandText;
-                        using (var rdr = dbc.ExecuteReader())
-                            while (rdr.Read())
-                                tw.WriteLine(rdr[0].ToString());
+                        stmt = this.CreateSqlStatement("EXPLAIN ").Append(stmt);
+                        using (var dbc = this.m_provider.CreateCommand(this, stmt))
+                            using (var rdr = dbc.ExecuteReader())
+                                while (rdr.Read())
+                                    tw.WriteLine(rdr[0].ToString());
                         tw.WriteLine("]]></plan></sql>");
                     }
                 }
@@ -314,7 +315,7 @@ namespace OpenIZ.OrmLite
                     finally
                     {
 #if DBPERF
-                        this.PerformanceMonitor(stmt, dbc, sw);
+                        this.PerformanceMonitor(stmt, sw);
 #endif
                         if (!this.IsPreparedCommand(dbc))
                             dbc.Dispose();
@@ -389,7 +390,7 @@ namespace OpenIZ.OrmLite
                     {
 
 #if DBPERF
-                        this.PerformanceMonitor(stmt, dbc, sw);
+                        this.PerformanceMonitor(stmt, sw);
 #endif
                         if (!this.IsPreparedCommand(dbc))
                             dbc.Dispose();
@@ -427,7 +428,7 @@ namespace OpenIZ.OrmLite
                     finally
                     {
 #if DBPERF
-                        this.PerformanceMonitor(stmt, dbc, sw);
+                        this.PerformanceMonitor(stmt, sw);
 #endif
                         if (!this.IsPreparedCommand(dbc))
                             dbc.Dispose();
@@ -474,7 +475,7 @@ namespace OpenIZ.OrmLite
                     finally
                     {
 #if DBPERF
-                        this.PerformanceMonitor(stmt, dbc, sw);
+                        this.PerformanceMonitor(stmt, sw);
 #endif
                         if (!this.IsPreparedCommand(dbc))
                         dbc.Dispose();
@@ -679,7 +680,7 @@ namespace OpenIZ.OrmLite
                     finally
                     {
 #if DBPERF
-                        this.PerformanceMonitor(query, dbc, sw);
+                        this.PerformanceMonitor(query, sw);
 #endif
                         if (!this.IsPreparedCommand(dbc))
                         dbc.Dispose();
@@ -732,7 +733,7 @@ namespace OpenIZ.OrmLite
                     finally
                     {
 #if DBPERF
-                        this.PerformanceMonitor(query, dbc, sw);
+                        this.PerformanceMonitor(query, sw);
 #endif
                         if (!this.IsPreparedCommand(dbc))
                              dbc.Dispose();

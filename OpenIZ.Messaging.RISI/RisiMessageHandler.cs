@@ -26,6 +26,7 @@ using OpenIZ.Core.Wcf.Security;
 using OpenIZ.Messaging.RISI.Wcf;
 using OpenIZ.Messaging.RISI.Wcf.Behavior;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace OpenIZ.Messaging.RISI
 	/// <summary>
 	/// Represents a message handler for reporting services.
 	/// </summary>
+    [Description("RISI Message Service")]
 	public class RisiMessageHandler : IDaemonService, IApiEndpointProvider
 	{
 		/// <summary>

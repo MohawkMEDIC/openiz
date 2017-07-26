@@ -108,7 +108,6 @@ namespace OpenIZ
                             {
                                 AppId = "org.openiz.administration",
                                 AppSecret = "Mohawk123"
-                                
                             });
                             Console.BackgroundColor = ConsoleColor.Blue;
                             Console.Clear();
@@ -118,6 +117,11 @@ namespace OpenIZ
                             if (AdminConsole.Shell.ApplicationContext.Current.Start())
                             {
                                 new InteractiveShell().Exec();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Cannot start admin console... Press [ENTER] to terminate...");
+                                Console.ReadLine();
                             }
                         }
                     }

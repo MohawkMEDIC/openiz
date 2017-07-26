@@ -2,6 +2,7 @@
 using OpenIZ.Messaging.AMI.Client;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,6 +71,7 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         /// Get assembly info from server
         /// </summary>
         [AdminCommand("svci", "Shows the server service information")]
+        [Description("This command will show the running daemon services in the connected IMS instance")]
         public static void ServiceInformation()
         {
             var diagReport = m_client.GetServerDiagnoticReport().ApplicationInfo;
@@ -81,7 +83,7 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
                 string name = itm.Description ?? itm.Type;
                 Console.WriteLine("{0}{1}{2}",
                     name.Length > 37 ? name.Substring(0, 37) + "..." : name,
-                    name.Length > 37 ? "  " : new string(' ', 37 - name.Length),
+                    name.Length > 37 ? "  " : new string(' ', 42 - name.Length),
                     itm.IsRunning ? "Running" : "Stopped");
             }
         }

@@ -28,6 +28,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace OpenIZ.Core.Http
@@ -476,7 +477,9 @@ namespace OpenIZ.Core.Http
 
                                 if (!String.IsNullOrEmpty(this.Description.Binding.Security.AuthRealm) &&
                                     !this.Description.Binding.Security.AuthRealm.Equals(realm))
-                                    return ServiceClientErrorType.RealmMismatch;
+                                {
+                                    s_tracer.TraceWarning("Warning: REALM mismatch, authentication may fail. Server reports {0} but client configured for {1}", realm, this.Description.Binding.Security.AuthRealm);
+                                }
 
                                 // Credential provider
                                 if (this.Description.Binding.Security.CredentialProvider != null)

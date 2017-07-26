@@ -58,7 +58,35 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public IEnumerable GetFromSource(DataContext context, Guid id, decimal? versionSequenceId, IPrincipal principal)
         {
             int tr = 0;
-            return this.QueryInternal(context, base.BuildSourceQuery<EntityName>(id, versionSequenceId), Guid.Empty, 0, null, out tr, principal, false).ToList();
+            var addrLookupQuery = context.CreateSqlStatement<DbEntityNameComponent>().SelectFrom()
+                .InnerJoin<DbEntityName>(o => o.SourceKey, o => o.Key)
+                .InnerJoin<DbPhoneticValue>(o => o.ValueSequenceId, o => o.SequenceId)
+                .Where<DbEntityName>(o => o.SourceKey == id && o.ObsoleteVersionSequenceId == null);
+
+            /// Yowza! But it appears to be faster than the other way 
+            return this.DomainQueryInternal<CompositeResult<DbEntityNameComponent, DbEntityName, DbPhoneticValue>>(context, addrLookupQuery, ref tr)
+                .GroupBy(o => o.Object2.Key)
+                .Select(o =>
+                    new EntityName()
+                    {
+                        NameUseKey = o.FirstOrDefault().Object2.UseConceptKey,
+                        EffectiveVersionSequenceId = o.FirstOrDefault().Object2.EffectiveVersionSequenceId,
+                        Key = o.Key,
+                        LoadState = Core.Model.LoadState.PartialLoad,
+                        ObsoleteVersionSequenceId = o.FirstOrDefault().Object2.ObsoleteVersionSequenceId,
+                        SourceEntityKey = o.FirstOrDefault().Object2.SourceKey,
+                        Component = o.Select(c => new EntityNameComponent()
+                        {
+                            ComponentTypeKey = c.Object1.ComponentTypeKey,
+                            Key = c.Object1.Key,
+                            LoadState = Core.Model.LoadState.FullLoad,
+                            SourceEntityKey = c.Object2.Key,
+                            Value = c.Object3.Value,
+                            PhoneticAlgorithmKey = c.Object3.PhoneticAlgorithmKey,
+                            PhoneticCode = c.Object3.PhoneticCode
+                        }).ToList()
+                    });
+
         }
 
         /// <summary>

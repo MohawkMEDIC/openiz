@@ -26,6 +26,7 @@ using OpenIZ.Messaging.GS1.Configuration;
 using OpenIZ.Messaging.GS1.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,7 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
     /// <summary>
     /// GS1 Stock Integration Service
     /// </summary>
+    [Description("GS1 AS2(ish) Integration Service")]
     public class As2IntegrationService : IDaemonService
     {
 

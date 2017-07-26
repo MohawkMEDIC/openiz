@@ -33,6 +33,7 @@ using OpenIZ.Core.Services;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -46,6 +47,7 @@ namespace OpenIZ.Caching.Redis
     /// <summary>
     /// Redis memory caching service
     /// </summary>
+    [Description("REDIS Data Caching Service")]
     public class RedisCacheService : IDataCachingService, IDaemonService
     {
 
@@ -340,7 +342,9 @@ namespace OpenIZ.Caching.Redis
 
                 var configuration = new ConfigurationOptions()
                 {
-                    Password = this.m_configuration.Password
+                    Password = this.m_configuration.Password,
+                    ConnectTimeout = 20,
+                    SyncTimeout = 20
                 };
                 foreach (var itm in this.m_configuration.Servers)
                     configuration.EndPoints.Add(itm);
