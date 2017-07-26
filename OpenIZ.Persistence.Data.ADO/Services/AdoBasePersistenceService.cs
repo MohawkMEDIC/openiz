@@ -514,7 +514,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     var retVal = postData.Results.ToList();
 
                     // Add to cache
-                    foreach (var i in retVal.Where(i => i != null))
+                    foreach (var i in retVal.AsParallel().Where(i => i != null))
                         connection.AddCacheCommit(i);
 
                     ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueUserWorkItem(o =>

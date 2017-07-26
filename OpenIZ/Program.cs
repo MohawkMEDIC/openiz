@@ -125,6 +125,7 @@ namespace OpenIZ
                             }
                         }
                     }
+                    Console.WriteLine("Shutting down service...");
                     ServiceUtil.Stop();
                 }
                 else

@@ -77,7 +77,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				{
 					encodings = encodings.ToLowerInvariant();
 
-					if (encodings.Contains("gzip"))
+                    if (encodings.Contains("lzma"))
+                        compressionScheme = "lzma";
+                    else if (encodings.Contains("bzip2"))
+                        compressionScheme = "bzip2";
+                    else if (encodings.Contains("gzip"))
 						compressionScheme = "gzip";
 					else if (encodings.Contains("deflate"))
 						compressionScheme = "deflate";

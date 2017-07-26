@@ -129,6 +129,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\Solution Items\SharpCompress.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Core.Alert\OpenIZ.Core.Alert.csproj">
