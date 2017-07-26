@@ -48,6 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\Solution Items\SharpCompress.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -141,11 +144,13 @@
     <Compile Include="Services\IStoredQueryDataPersistenceService.cs" />
     <Compile Include="Services\ITfaRelayService.cs" />
     <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
+    <Compile Include="Wcf\Compression\BZip2CompressionScheme.cs" />
     <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />
     <Compile Include="Wcf\Compression\CompressionUtil.cs" />
     <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\GzipCompressionScheme.cs" />
     <Compile Include="Wcf\Compression\ICompressionScheme.cs" />
+    <Compile Include="Wcf\Compression\LzmaCompressionScheme.cs" />
     <Compile Include="Wcf\IApiEndpointProvider.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
     <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />

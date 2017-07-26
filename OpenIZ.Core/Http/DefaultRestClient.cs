@@ -20,15 +20,18 @@
 using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Security;
+using SharpCompress.Compressors.BZip2;
+using SharpCompress.Compressors.LZMA;
+using SharpCompress.Compressors;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using SharpCompress.Compressors.Deflate;
 
 namespace OpenIZ.Core.Http
 {
@@ -94,9 +97,6 @@ namespace OpenIZ.Core.Http
 			if (this.ClientCertificates != null)
 				retVal.ClientCertificates.AddRange(this.ClientCertificates);
 
-			// Compress?
-			if (this.Description.Binding.Optimize)
-				retVal.Headers.Add(HttpRequestHeader.AcceptEncoding, "deflate,gzip");
 
             if (this.Description?.Binding?.Security?.CertificateValidator != null)
                 retVal.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
@@ -180,10 +180,21 @@ namespace OpenIZ.Core.Http
 							// Serialize and compress with deflate
 							if (this.Description.Binding.Optimize)
 							{
-								requestObj.Headers.Add("Content-Encoding", "deflate");
-								using (var df = new DeflateStream(requestStream, CompressionMode.Compress))
+#if HTTP_LZMA
+                                requestObj.Headers.Add("Content-Encoding", "lzma");
+								using (var df = new LZipStream(requestStream, CompressionMode.Compress, leaveOpen: true))
 									serializer.Serialize(df, body);
-							}
+#elif HTTP_GZ
+                                requestObj.Headers.Add("Content-Encoding", "gzip");
+								using (var df = new GZipStream(requestStream, CompressionMode.Compress, leaveOpen: true))
+									serializer.Serialize(df, body);
+#else
+
+                                requestObj.Headers.Add("Content-Encoding", "deflate");
+								using (var df = new DeflateStream(requestStream, CompressionMode.Compress, leaveOpen: true))
+									serializer.Serialize(df, body);
+#endif
+                            }
 							else
 								serializer.Serialize(requestStream, body);
 						}
@@ -246,16 +257,24 @@ namespace OpenIZ.Core.Http
 						switch (response.Headers[HttpResponseHeader.ContentEncoding])
 						{
 							case "deflate":
-								using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
+								using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
 									retVal = (TResult)serializer.DeSerialize(df);
 								break;
 
 							case "gzip":
-								using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
+								using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
 									retVal = (TResult)serializer.DeSerialize(df);
 								break;
+                            case "bzip2":
+                                using (var bzs = new BZip2Stream(response.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
+                                    retVal = (TResult)serializer.DeSerialize(bzs);
+                                break;
+                            case "lzma":
+                                using (var lzmas = new LZipStream(response.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
+                                    retVal = (TResult)serializer.DeSerialize(lzmas);
 
-							default:
+                                break;
+                            default:
 								retVal = (TResult)serializer.DeSerialize(response.GetResponseStream());
 								break;
 						}
@@ -294,16 +313,24 @@ namespace OpenIZ.Core.Http
                                 switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
 								{
 									case "deflate":
-										using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+										using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
 											result = (TResult)serializer.DeSerialize(df);
 										break;
 
 									case "gzip":
-										using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+										using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
 											result = (TResult)serializer.DeSerialize(df);
 										break;
+                                    case "bzip2":
+                                        using (var bzs = new BZip2Stream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
+                                            result = (TResult)serializer.DeSerialize(bzs);
+                                        break;
+                                    case "lzma":
+                                        using (var lzmas = new LZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress, leaveOpen: true))
+                                            result = (TResult)serializer.DeSerialize(lzmas);
 
-									default:
+                                        break;
+                                    default:
 										result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
 										break;
 								}
@@ -311,7 +338,6 @@ namespace OpenIZ.Core.Http
 							catch (Exception dse)
 							{
 								this.traceSource.TraceEvent(TraceEventType.Error, 0, "Could not de-serialize error response! {0}", dse);
-
 							}
 
 							switch (errorResponse.StatusCode)

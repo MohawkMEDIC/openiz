@@ -21,10 +21,13 @@ using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
+using SharpCompress.Compressors;
+using SharpCompress.Compressors.BZip2;
+using SharpCompress.Compressors.Deflate;
+using SharpCompress.Compressors.LZMA;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
@@ -154,6 +157,11 @@ namespace OpenIZ.Core.Http
                 }
             }
 
+            // Compress?
+            if (this.Description.Binding.Optimize)
+                retVal.Headers[HttpRequestHeader.AcceptEncoding] =  "lzma,bzip2,gzip,deflate";
+
+
             // Return type?
             if (!String.IsNullOrEmpty(this.Accept))
             {
@@ -248,7 +256,7 @@ namespace OpenIZ.Core.Http
                                 switch (o.Result.Headers["Content-Encoding"])
                                 {
                                     case "deflate":
-                                        using (var dfs = new DeflateStream(ms, CompressionMode.Decompress))
+                                        using (var dfs = new DeflateStream(ms, CompressionMode.Decompress, leaveOpen: true))
                                         using (var oms = new MemoryStream())
                                         {
                                             dfs.CopyTo(oms);
@@ -256,13 +264,29 @@ namespace OpenIZ.Core.Http
                                         }
                                         break;
                                     case "gzip":
-                                        using (var gzs = new GZipStream(ms, CompressionMode.Decompress))
+                                        using (var gzs = new GZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
                                         using (var oms = new MemoryStream())
                                         {
                                             gzs.CopyTo(oms);
                                             retVal = oms.ToArray();
                                         }
                                             break;
+                                    case "bzip2":
+                                        using (var lzmas = new BZip2Stream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                        using (var oms = new MemoryStream())
+                                        {
+                                            lzmas.CopyTo(oms);
+                                            retVal = oms.ToArray();
+                                        }
+                                        break;
+                                    case "lzma":
+                                        using (var lzmas = new LZipStream(ms, CompressionMode.Decompress, leaveOpen: true))
+                                        using (var oms = new MemoryStream())
+                                        {
+                                            lzmas.CopyTo(oms);
+                                            retVal = oms.ToArray();
+                                        }
+                                        break;
                                     default:
                                         retVal = ms.ToArray();
                                         break;

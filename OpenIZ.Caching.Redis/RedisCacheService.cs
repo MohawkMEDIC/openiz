@@ -264,26 +264,34 @@ namespace OpenIZ.Caching.Redis
         /// </summary>
         public void Add(IdentifiedData data)
         {
-            // We want to add only those when the connection is present
-            if (this.m_connection == null || data == null || !data.Key.HasValue ||
-                (data as BaseEntityData)?.ObsoletionTime.HasValue == true ||
-                this.m_nonCached.Contains(data.GetType()))
-                return;
+            try
+            {
 
-            // Only add data which is an entity, act, or relationship
-            //if (data is Act || data is Entity || data is ActRelationship || data is ActParticipation || data is EntityRelationship || data is Concept)
-            //{
-            // Add
-            var redisDb = this.m_connection.GetDatabase();
-            var existing = redisDb.KeyExists(data.Key.Value.ToString());
-            redisDb.HashSet(data.Key.Value.ToString(), this.SerializeObject(data));
+                // We want to add only those when the connection is present
+                if (this.m_connection == null || data == null || !data.Key.HasValue ||
+                    (data as BaseEntityData)?.ObsoletionTime.HasValue == true ||
+                    this.m_nonCached.Contains(data.GetType()))
+                    return;
 
-            this.EnsureCacheConsistency(new DataCacheEventArgs(data));
-            if (existing)
-                this.m_connection.GetSubscriber().Publish("oiz.events", $"PUT http://{Environment.MachineName}/cache/{data.Key.Value}");
-            else
-                this.m_connection.GetSubscriber().Publish("oiz.events", $"POST http://{Environment.MachineName}/cache/{data.Key.Value}");
-            //}
+                // Only add data which is an entity, act, or relationship
+                //if (data is Act || data is Entity || data is ActRelationship || data is ActParticipation || data is EntityRelationship || data is Concept)
+                //{
+                // Add
+                var redisDb = this.m_connection.GetDatabase();
+                var existing = redisDb.KeyExists(data.Key.Value.ToString());
+                redisDb.HashSet(data.Key.Value.ToString(), this.SerializeObject(data));
+
+                this.EnsureCacheConsistency(new DataCacheEventArgs(data));
+                if (existing)
+                    this.m_connection.GetSubscriber().Publish("oiz.events", $"PUT http://{Environment.MachineName}/cache/{data.Key.Value}");
+                else
+                    this.m_connection.GetSubscriber().Publish("oiz.events", $"POST http://{Environment.MachineName}/cache/{data.Key.Value}");
+                //}
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceWarning("REDIS CACHE ERROR (CACHING SKIPPED): {0}", e);
+            }
         }
 
         /// <summary>
@@ -291,20 +299,27 @@ namespace OpenIZ.Caching.Redis
         /// </summary>
         public object GetCacheItem(Guid key)
         {
-            // We want to add
-            if (this.m_connection == null)
+            try { 
+                // We want to add
+                if (this.m_connection == null)
+                    return null;
+
+                // Add
+                var redisDb = this.m_connection.GetDatabase();
+                return this.DeserializeObject(redisDb.HashGetAll(key.ToString()));
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceWarning("REDIS CACHE ERROR (FETCHING SKIPPED): {0}", e);
                 return null;
+            }
 
-            // Add
-            var redisDb = this.m_connection.GetDatabase();
-            return this.DeserializeObject(redisDb.HashGetAll(key.ToString()));
+}
 
-        }
-
-        /// <summary>
-        /// Get cache item of type
-        /// </summary>
-        public TData GetCacheItem<TData>(Guid key) where TData : IdentifiedData
+/// <summary>
+/// Get cache item of type
+/// </summary>
+public TData GetCacheItem<TData>(Guid key) where TData : IdentifiedData
         {
             var retVal = this.GetCacheItem(key);
             if (retVal is TData)
@@ -342,9 +357,7 @@ namespace OpenIZ.Caching.Redis
 
                 var configuration = new ConfigurationOptions()
                 {
-                    Password = this.m_configuration.Password,
-                    ConnectTimeout = 20,
-                    SyncTimeout = 20
+                    Password = this.m_configuration.Password
                 };
                 foreach (var itm in this.m_configuration.Servers)
                     configuration.EndPoints.Add(itm);
@@ -353,7 +366,7 @@ namespace OpenIZ.Caching.Redis
                 this.m_subscriber = this.m_connection.GetSubscriber();
 
                 // Look for non-cached types
-                foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null))
+                foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null || o.GetCustomAttribute<XmlRootAttribute>() == null))
                     this.m_nonCached.Add(itm);
 
                 // Subscribe to OpenIZ events

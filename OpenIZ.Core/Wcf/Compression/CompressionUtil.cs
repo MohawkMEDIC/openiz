@@ -51,6 +51,10 @@ namespace OpenIZ.Core.Wcf.Compression
                     return new GzipCompressionScheme();
                 case "deflate":
                     return new DeflateCompressionScheme();
+                case "lzma":
+                    return new LzmaCompressionScheme();
+                case "bzip2":
+                    return new BZip2CompressionScheme();
                 default:
                     return null;
             }
