@@ -42,7 +42,7 @@ namespace OpenIZ.AdminConsole.Shell
         protected string m_prompt = "> ";
         private ConsoleColor m_promptColor = Console.ForegroundColor;
         // Commandlets
-        private Dictionary<String, MethodInfo> m_commandlets = new Dictionary<string, MethodInfo>();
+        private Dictionary<AdminCommandAttribute, MethodInfo> m_commandlets = new Dictionary<AdminCommandAttribute, MethodInfo>();
 
         /// <summary>
         /// Sets the root path
@@ -53,7 +53,7 @@ namespace OpenIZ.AdminConsole.Shell
                 foreach (var t in asm.GetTypes().Where(o => o.GetCustomAttribute<AdminCommandletAttribute>() != null))
                 {
                     foreach (var me in t.GetRuntimeMethods().Where(o => o.GetCustomAttribute<AdminCommandAttribute>() != null))
-                        this.m_commandlets.Add(me.GetCustomAttribute<AdminCommandAttribute>().Command, me);
+                        this.m_commandlets.Add(me.GetCustomAttribute<AdminCommandAttribute>(), me);
                     if (t.GetRuntimeMethod("Init", new Type[0]) != null)
                         t.GetRuntimeMethod("Init", new Type[0]).Invoke(null, null);
                 }
@@ -141,7 +141,7 @@ namespace OpenIZ.AdminConsole.Shell
 
                 // Get tokens
                 MethodInfo cmdMi = null;
-                if (!this.m_commandlets.TryGetValue(tokens[0], out cmdMi))
+                if (!this.m_commandlets.Keys.Any(o=>o.Command == tokens[0]))
                     Console.Error.WriteLine("ERR: Command {0} with {1} parms not found", tokens[0], tokens.Length - 1);
                 else
                 {
@@ -149,7 +149,11 @@ namespace OpenIZ.AdminConsole.Shell
 
                     try
                     {
-                        cmdMi.Invoke(this, parmValues);
+                        // Find the matches
+                        var candidates = this.m_commandlets.Where(o => o.Key.Command == tokens[0] && o.Value.GetParameters().Length == (parmValues?.Length ?? 0));
+                        if (candidates.Count() == 1) // exact match
+                            candidates.First().Value.Invoke(this, parmValues);
+                        else; // We need to parse the parms in to a value
                     }
                     catch (Exception e)
                     {
@@ -187,14 +191,51 @@ namespace OpenIZ.AdminConsole.Shell
         public void Help()
         {
 
-            foreach (var mi in this.m_commandlets.OrderBy(o => o.Key))
+            List<String> hlp = new List<string>();
+            foreach (var mi in this.m_commandlets.OrderBy(o => o.Key.Command))
             {
                 var itm = mi.Value.GetCustomAttribute<AdminCommandAttribute>();
                 if (itm == null || String.IsNullOrEmpty(itm.Description)) continue;
-                Console.Write("{0:2} {1}", itm.Command, String.Join(" ", mi.Value.GetParameters().Select(o => $"[{o.Name}]")));
-                Console.WriteLine("{0}{1}", new String(' ', 50 - Console.CursorLeft), itm.Description);
-
+                if (!hlp.Contains(itm.Command))
+                {
+                    hlp.Add(itm.Command);
+                    Console.Write("{0:2}", itm.Command, String.Join(" ", mi.Value.GetParameters().Select(o => $"[{o.Name}]")));
+                    Console.WriteLine("{0}{1}", new String(' ', 20 - Console.CursorLeft), itm.Description);
+                }
             }
+            Console.WriteLine("Use:\r\n\thelp cmd\r\nFor command specific help");
+        }
+
+        /// <summary>
+        /// Get help
+        /// </summary>
+        [AdminCommand("help", "Show help for specific method")]
+        public void Help([Description("The command for which help should be shown")] String cmd)
+        {
+
+            var cmdlets = this.m_commandlets.Where(o=>o.Key.Command == cmd).Select(o=>o.Value);
+            foreach(var cmdlet in cmdlets)
+            {
+                var itm = cmdlet.GetCustomAttribute<AdminCommandAttribute>();
+                if (itm == null || String.IsNullOrEmpty(itm.Description)) return;
+
+                Console.WriteLine("{0} {1} - {2}", itm.Command, String.Join(" ", cmdlet.GetParameters().Select(o=>o.Name)), itm.Description);
+
+                var descr = cmdlet.GetCustomAttribute<DescriptionAttribute>();
+                if (descr != null)
+                    Console.WriteLine("{0} + {1}", new String(' ', itm.Command.Length + 1), descr.Description);
+
+                foreach(var p in cmdlet.GetParameters())
+                {
+                    Console.Write("{0}{1} - ", new String(' ', itm.Command.Length + 1), p.Name);
+                    descr = p.GetCustomAttribute<DescriptionAttribute>();
+                    if (descr != null)
+                        Console.WriteLine("{0}", descr.Description);
+                    else
+                        Console.WriteLine();
+                }
+            }
+
         }
 
         /// <summary>

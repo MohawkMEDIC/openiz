@@ -153,10 +153,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 }
                 finally
                 {
-                    if(newSubContext)
+                    if (newSubContext)
+                    {
                         foreach (var i in subContext.CacheOnCommit)
                             context.AddCacheCommit(i);
-                    if (newSubContext) subContext.Dispose();
+                        subContext.Dispose();
+                    }
                 }
             });
         }

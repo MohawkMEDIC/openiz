@@ -24,6 +24,7 @@ using OpenIZ.Core.Configuration;
 using OpenIZ.Core.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
@@ -36,6 +37,7 @@ namespace OpenIZ.Core.Services.Impl
     /// <summary>
     /// Represents a thread pool service
     /// </summary>
+    [Description("OpenIZ PCL ThreadPool Provider")]
     public class ThreadPoolService : IDaemonService, IDisposable, IThreadPoolService
     {
 

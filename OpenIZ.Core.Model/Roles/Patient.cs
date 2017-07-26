@@ -146,7 +146,7 @@ namespace OpenIZ.Core.Model.Roles
         /// Should serialize deceasd date
         /// </summary>
         /// <returns></returns>
-        public bool SouldSerializeDeceasedDatePrecision() => this.DeceasedDatePrecision.HasValue;
+        public bool ShouldSerializeDeceasedDatePrecision() => this.DeceasedDatePrecision.HasValue;
         /// <summary>
         /// Should serialize deceased date?
         /// </summary>

@@ -27,6 +27,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,7 @@ namespace OpenIZ.Core.Security.Audit
     /// <summary>
     /// A daemon service which listens to audit sources and forwards them to the auditor
     /// </summary>
+    [Description("SECURITY AUDIT SERVICE")]
     public class AuditDaemonService : IDaemonService
     {
         private bool m_safeToStop = false;

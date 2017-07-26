@@ -66,7 +66,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 RelationshipType = context.LoadState == Core.Model.LoadState.FullLoad ?  AdoPersistenceService.GetPersister(typeof(Concept)).Get(entPart.RelationshipTypeKey) as Concept : null,
                 RelationshipTypeKey = entPart.RelationshipTypeKey,
                 Quantity = entPart.Quantity,
-                LoadState = context.LoadState
+                LoadState = context.LoadState,
+                Key = entPart.Key,
+                SourceEntityKey = entPart.SourceKey
             };
         }
 

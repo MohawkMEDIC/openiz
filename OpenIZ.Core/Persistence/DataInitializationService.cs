@@ -39,12 +39,14 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Interfaces;
+using System.ComponentModel;
 
 namespace OpenIZ.Core.Persistence
 {
     /// <summary>
     /// Data initialization service
     /// </summary>
+    [Description("Dataset Installation Service")]
     public class DataInitializationService : IDaemonService, IReportProgressChanged
     {
 
@@ -81,7 +83,7 @@ namespace OpenIZ.Core.Persistence
         /// <summary>
         /// Fired when progress changes
         /// </summary>
-        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+        public event EventHandler<Services.ProgressChangedEventArgs> ProgressChanged;
 
         /// <summary>
         /// Event handler which fires after startup
@@ -104,7 +106,7 @@ namespace OpenIZ.Core.Persistence
 
                     try
                     {
-                        this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(i++ / (float)ds.Action.Count, ds.Id));
+                        this.ProgressChanged?.Invoke(this, new Services.ProgressChangedEventArgs(i++ / (float)ds.Action.Count, ds.Id));
 
                         // IDP Type
                         Type idpType = typeof(IDataPersistenceService<>);

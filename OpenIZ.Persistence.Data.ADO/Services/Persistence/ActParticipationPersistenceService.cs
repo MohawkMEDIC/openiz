@@ -66,7 +66,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 ParticipationRoleKey= participationPart.ParticipationRoleKey,
                 ParticipationRole = context.LoadState == Core.Model.LoadState.FullLoad ? AdoPersistenceService.GetPersister(typeof(Concept)).Get(participationPart.ParticipationRoleKey) as Concept : null,
                 LoadState = context.LoadState,
-                Quantity = participationPart.Quantity
+                Quantity = participationPart.Quantity,
+                Key = participationPart.Key,
+                SourceEntityKey = participationPart.SourceKey
             };
         }
 

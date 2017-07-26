@@ -22,6 +22,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.BusinessRules.JavaScript;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,7 @@ namespace OpenIZ.Core.Services.Daemons
     /// <summary>
     /// A daemon which loads business rules from the applet manager
     /// </summary>
+    [Description("Applet BRE Source")]
     public class AppletBusinessRulesDaemon : IDaemonService
     {
 
@@ -41,7 +43,7 @@ namespace OpenIZ.Core.Services.Daemons
         {
             get
             {
-                return true;
+                return false;
             }
         }
 

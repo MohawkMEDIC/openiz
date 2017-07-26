@@ -28,6 +28,7 @@ using OpenIZ.Messaging.AMI.Configuration;
 using OpenIZ.Messaging.AMI.Wcf;
 using OpenIZ.Messaging.AMI.Wcf.Behavior;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -40,6 +41,7 @@ namespace OpenIZ.Messaging.AMI
 	/// <summary>
 	/// AMI Message handler
 	/// </summary>
+    [Description("AMI Message Service")]
 	public class AmiMessageHandler : IDaemonService, IApiEndpointProvider
 	{
 		/// <summary>

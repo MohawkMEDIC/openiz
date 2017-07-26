@@ -24,6 +24,7 @@ using OpenIZ.Core.Wcf.Behavior;
 using OpenIZ.Core.Wcf.Security;
 using OpenIZ.Messaging.GS1.Wcf;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -36,6 +37,7 @@ namespace OpenIZ.Messaging.GS1
 	/// <summary>
 	/// Stock service message handler
 	/// </summary>
+    [Description("GS1 Stock Service")]
 	public class StockServiceMessageHandler : IMessageHandlerService, IApiEndpointProvider
 	{
 		// IMSI Trace host
