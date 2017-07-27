@@ -75,7 +75,11 @@ namespace OpenIZ.Core.Exceptions
         {
             var sb = new StringBuilder("BRE Violations:");
             foreach (var i in this.Issues)
+#if DEBUG
                 sb.AppendFormat("\r\n{0}- {1}", i.Priority, i.Text);
+#else
+                sb.AppendFormat("\r\n{0}- {1}", i.Priority, i.Text);
+#endif
             return sb.ToString();
         }
 

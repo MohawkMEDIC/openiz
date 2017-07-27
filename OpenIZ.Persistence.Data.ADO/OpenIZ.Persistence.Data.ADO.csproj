@@ -35,6 +35,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
     </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core">
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
@@ -45,6 +49,8 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +62,13 @@
     <Compile Include="AdoDataConstants.cs" />
     <Compile Include="Configuration\AdoConfiguration.cs" />
     <Compile Include="Configuration\AdoConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\UserInterface\AdoPersistenceConfigurableFeature.cs" />
+    <Compile Include="Configuration\UserInterface\ucAdoPersistence.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\UserInterface\ucAdoPersistence.Designer.cs">
+      <DependentUpon>ucAdoPersistence.cs</DependentUpon>
+    </Compile>
     <Compile Include="Data\Extensions\DataModelExtensions.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbActVersion.cs" />
@@ -70,6 +83,11 @@
     <Compile Include="Data\Model\Alerts\DbAlertMessage.cs" />
     <Compile Include="Data\Model\Alerts\DbAlertRcptTo.cs" />
     <Compile Include="Exceptions\AdoFormalConstraintException.cs" />
+    <Compile Include="Resources\Locale.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Locale.resx</DependentUpon>
+    </Compile>
     <Compile Include="Services\AdoBasePersistenceService.cs" />
     <Compile Include="Data\Model\Concepts\DbCodeSystem.cs" />
     <Compile Include="Data\Model\Concepts\DbConceptReferenceTerm.cs" />
@@ -202,6 +220,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\SQL\PSQL\openiz-drop.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\SQL\PSQL\openiz-fn.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -214,6 +235,9 @@
     <Content Include="Data\SQL\PSQL\Updates\20170725-01.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Configuration\UserInterface\ucAdoPersistence.resx">
+      <DependentUpon>ucAdoPersistence.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
     <Content Include="Data\SQL\PSQL\openiz-codes.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -221,6 +245,10 @@
     <Content Include="Data\SQL\PSQL\openiz-ddl.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="Resources\Locale.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Locale.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Interfaces\" />

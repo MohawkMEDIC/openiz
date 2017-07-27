@@ -51,6 +51,8 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
     public class BusinessRulesBridge
     {
 
+        private Tracer m_tracer = Tracer.GetTracer(typeof(BusinessRulesBridge));
+
         private Regex date_regex = new Regex(@"(\d{4})-(\d{2})-(\d{2})");
         // View model serializer
         private JsonViewModelSerializer m_modelSerializer = new JsonViewModelSerializer();
@@ -134,23 +136,31 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object SaveTags(ExpandoObject obj)
         {
-            var modelObj = this.ToModel(obj) as ITaggable;
-            if (modelObj != null)
+            try
             {
-                var tags = modelObj.Tags;
-                if (tags.Count() > 0)
+                var modelObj = this.ToModel(obj) as ITaggable;
+                if (modelObj != null)
                 {
-                    var tpi = ApplicationServiceContext.Current.GetService(typeof(ITagPersistenceService)) as ITagPersistenceService;
-                    if (tpi == null)
-                        return obj;
-                    foreach (var t in tags)
+                    var tags = modelObj.Tags;
+                    if (tags.Count() > 0)
                     {
-                        t.SourceEntityKey = (modelObj as IIdentifiedEntity).Key;
-                        tpi.Save(t.SourceEntityKey.Value, t);
+                        var tpi = ApplicationServiceContext.Current.GetService(typeof(ITagPersistenceService)) as ITagPersistenceService;
+                        if (tpi == null)
+                            return obj;
+                        foreach (var t in tags)
+                        {
+                            t.SourceEntityKey = (modelObj as IIdentifiedEntity).Key;
+                            tpi.Save(t.SourceEntityKey.Value, t);
+                        }
                     }
                 }
+                return obj;
             }
-            return obj;
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error saving tags: {0}", e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -173,22 +183,30 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public ExpandoObject ToViewModel(IdentifiedData data)
         {
-            // Serialize to a view model serializer
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                using (TextWriter tw = new StreamWriter(ms, Encoding.UTF8, 2048, true))
-                    this.m_modelSerializer.Serialize(tw, data);
-                ms.Seek(0, SeekOrigin.Begin);
-
-                // Parse
-                Jint.Native.Json.JsonParser parser = new Jint.Native.Json.JsonParser(JavascriptBusinessRulesEngine.Current.Engine);
-                JsonSerializer jsz = new JsonSerializer() { DateFormatHandling = DateFormatHandling.IsoDateFormat, TypeNameHandling = TypeNameHandling.None };
-                using (JsonReader reader = new JsonTextReader(new StreamReader(ms)))
+                // Serialize to a view model serializer
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    var retVal = jsz.Deserialize<Newtonsoft.Json.Linq.JObject>(reader);
-                    return this.ConvertToJint(retVal);
-                    ///return retVal;
+                    using (TextWriter tw = new StreamWriter(ms, Encoding.UTF8, 2048, true))
+                        this.m_modelSerializer.Serialize(tw, data);
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    // Parse
+                    Jint.Native.Json.JsonParser parser = new Jint.Native.Json.JsonParser(JavascriptBusinessRulesEngine.Current.Engine);
+                    JsonSerializer jsz = new JsonSerializer() { DateFormatHandling = DateFormatHandling.IsoDateFormat, TypeNameHandling = TypeNameHandling.None };
+                    using (JsonReader reader = new JsonTextReader(new StreamReader(ms)))
+                    {
+                        var retVal = jsz.Deserialize<Newtonsoft.Json.Linq.JObject>(reader);
+                        return this.ConvertToJint(retVal);
+                        ///return retVal;
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error converting to view model: {0}", e);
+                throw;
             }
         }
 
@@ -197,36 +215,44 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public Object ExecuteBundleRules(String trigger, Object bundle)
         {
-            var thdPool = ApplicationServiceContext.Current.GetService(typeof(IThreadPoolService)) as IThreadPoolService;
-            IDictionary<String, Object> bdl = bundle as IDictionary<String, Object>;
-
-            this.m_cacheObject.Clear();
-
-            Object[] itms = null;
-            if (bdl.ContainsKey("$item"))
-                itms = bdl["$item"] as Object[];
-            else
-                itms = bdl["item"] as Object[];
-
-            for (int i = 0; i < itms.Length; i++)
+            try
             {
-                try
-                {
-                    itms[i] = JavascriptBusinessRulesEngine.Current.InvokeRaw(trigger, itms[i]);
-                }
-                catch (Exception e)
-                {
-                    //if (System.Diagnostics.Debugger.IsAttached)
-                    throw;
-                    //else
-                    //    Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itms[i], e);
-                }
-            }
+                var thdPool = ApplicationServiceContext.Current.GetService(typeof(IThreadPoolService)) as IThreadPoolService;
+                IDictionary<String, Object> bdl = bundle as IDictionary<String, Object>;
 
-            bdl.Remove("item");
-            bdl.Remove("$item");
-            bdl.Add("$item", itms);
-            return bdl;
+                this.m_cacheObject.Clear();
+
+                Object[] itms = null;
+                if (bdl.ContainsKey("$item"))
+                    itms = bdl["$item"] as Object[];
+                else
+                    itms = bdl["item"] as Object[];
+
+                for (int i = 0; i < itms.Length; i++)
+                {
+                    try
+                    {
+                        itms[i] = JavascriptBusinessRulesEngine.Current.InvokeRaw(trigger, itms[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        //if (System.Diagnostics.Debugger.IsAttached)
+                        throw;
+                        //else
+                        //    Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itms[i], e);
+                    }
+                }
+
+                bdl.Remove("item");
+                bdl.Remove("$item");
+                bdl.Add("$item", itms);
+                return bdl;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error executing bundle rules: {0}", e);
+                throw;
+            }
 
         }
 
@@ -235,6 +261,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         private ExpandoObject ConvertToJint(JObject source)
         {
+            try { 
             var retVal = new ExpandoObject();
 
             if (source == null)
@@ -260,6 +287,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 }
             }
             return retVal;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error converting to JINT : {0}", e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -309,6 +342,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public IdentifiedData ToModel(Object data)
         {
+            try { 
             var dictData = data as IDictionary<String, object>;
             if (dictData?.ContainsKey("$item") == true) // HACK: JInt does not like Item property on ExpandoObject
             {
@@ -328,6 +362,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 var retVal = this.m_modelSerializer.DeSerialize<IdentifiedData>(ms);
                 return retVal;
             }
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error converting to model instance : {0}", e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -335,7 +375,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object Obsolete(String type, Guid id)
         {
-
+            try { 
             Type dataType = null;
             if (!this.m_modelMap.TryGetValue(type, out dataType))
                 throw new InvalidOperationException($"Cannot find type information for {type}");
@@ -347,6 +387,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
 
             var mi = idp.GetRuntimeMethod("Obsolete", new Type[] { typeof(Guid) });
             return this.ToViewModel(mi.Invoke(idpInstance, new object[] { id }) as IdentifiedData);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error obsoleting object : {0}", e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -354,30 +400,38 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object Get(String type, String id)
         {
-            var guidId = Guid.Parse(id);
-
-            // First, does the object existing the cache
-            ExpandoObject retVal = null;
-            if (!this.m_cacheObject.TryGetValue(guidId, out retVal))
+            try
             {
-                Type dataType = null;
-                if (!this.m_modelMap.TryGetValue(type, out dataType))
-                    throw new InvalidOperationException($"Cannot find type information for {type}");
+                var guidId = Guid.Parse(id);
 
-                var idp = typeof(IRepositoryService<>).MakeGenericType(dataType);
-                var idpInstance = ApplicationServiceContext.Current.GetService(idp);
-                if (idpInstance == null)
-                    throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
+                // First, does the object existing the cache
+                ExpandoObject retVal = null;
+                if (!this.m_cacheObject.TryGetValue(guidId, out retVal))
+                {
+                    Type dataType = null;
+                    if (!this.m_modelMap.TryGetValue(type, out dataType))
+                        throw new InvalidOperationException($"Cannot find type information for {type}");
 
-                var mi = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
-                retVal = this.ToViewModel(mi.Invoke(idpInstance, new object[] { guidId }) as IdentifiedData);
-                if (this.m_cacheObject.Count >= 10)
-                    this.m_cacheObject.Clear();
-                if (!this.m_cacheObject.ContainsKey(guidId))
-                    this.m_cacheObject.Add(guidId, retVal);
+                    var idp = typeof(IRepositoryService<>).MakeGenericType(dataType);
+                    var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+                    if (idpInstance == null)
+                        throw new KeyNotFoundException($"The repository service for {type} was not found. Ensure an IRepositoryService<{type}> is registered");
+
+                    var mi = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
+                    retVal = this.ToViewModel(mi.Invoke(idpInstance, new object[] { guidId }) as IdentifiedData);
+                    if (this.m_cacheObject.Count >= 10)
+                        this.m_cacheObject.Clear();
+                    if (!this.m_cacheObject.ContainsKey(guidId))
+                        this.m_cacheObject.Add(guidId, retVal);
+                }
+                return retVal;
+             }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error getting object: {0}", e);
+                throw;
             }
-            return retVal;
-        }
+}
 
         /// <summary>
         /// Find object
@@ -393,6 +447,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object Find(String type, String query)
         {
+            try { 
             Type dataType = null;
             if (!this.m_modelMap.TryGetValue(type, out dataType))
                 throw new InvalidOperationException($"Cannot find type information for {type}");
@@ -414,6 +469,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 Item = results.ToList(),
                 TotalResults = results.Count()
             });
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error executing search : {0}", e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -421,7 +482,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object Save(object value)
         {
-
+            try { 
             var data = this.ToModel(value);
 
             if (data.Key.HasValue && this.m_cacheObject.ContainsKey(data.Key.Value))
@@ -436,7 +497,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
 
             var mi = idp.GetRuntimeMethod("Save", new Type[] { data.GetType() });
             return this.ToViewModel(mi.Invoke(idpInstance, new object[] { data }) as IdentifiedData);
-
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error saving object: {0}", e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -444,20 +510,27 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object Insert(object value)
         {
+            try
+            {
+                var data = this.ToModel(value);
+                if (data == null) throw new ArgumentException("Could not parse value for insert");
 
-            var data = this.ToModel(value);
-            if (data == null) throw new ArgumentException("Could not parse value for insert");
+                if (data.Key.HasValue && this.m_cacheObject.ContainsKey(data.Key.Value))
+                    this.m_cacheObject.Remove(data.Key.Value);
 
-            if (data.Key.HasValue && this.m_cacheObject.ContainsKey(data.Key.Value))
-                this.m_cacheObject.Remove(data.Key.Value);
-            
-            var idp = typeof(IRepositoryService<>).MakeGenericType(data.GetType());
-            var idpInstance = ApplicationServiceContext.Current.GetService(idp);
-            if (idpInstance == null)
-                throw new KeyNotFoundException($"The repository service for {data.GetType()} was not found. Ensure an IRepositoryService<{data.GetType()}> is registered");
+                var idp = typeof(IRepositoryService<>).MakeGenericType(data.GetType());
+                var idpInstance = ApplicationServiceContext.Current.GetService(idp);
+                if (idpInstance == null)
+                    throw new KeyNotFoundException($"The repository service for {data.GetType()} was not found. Ensure an IRepositoryService<{data.GetType()}> is registered");
 
-            var mi = idp.GetRuntimeMethod("Insert", new Type[] { data.GetType() });
-            return this.ToViewModel(mi.Invoke(idpInstance, new object[] { data }) as IdentifiedData);
+                var mi = idp.GetRuntimeMethod("Insert", new Type[] { data.GetType() });
+                return this.ToViewModel(mi.Invoke(idpInstance, new object[] { data }) as IdentifiedData);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error inserting BRE object: {0}", e);
+                throw;
+            }
         }
     }
 }
