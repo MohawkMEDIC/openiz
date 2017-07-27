@@ -157,9 +157,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             existingObject.ObsoletedByKey = data.CreatedByKey ?? user;
             existingObject.ObsoletionTime = DateTimeOffset.Now;
             newEntityVersion.CreationTime = DateTimeOffset.Now;
-            newEntityVersion = context.Insert<TDomain>(newEntityVersion);
-            nonVersionedObect = context.Update<TDomainKey>(nonVersionedObect);
-            context.Update(existingObject);
+
+	        context.Update(existingObject);
+
+	        newEntityVersion = context.Insert<TDomain>(newEntityVersion);
+			nonVersionedObect = context.Update<TDomainKey>(nonVersionedObect);
+
             // Pull database generated fields
             data.VersionSequence = newEntityVersion.VersionSequenceId;
             data.CreationTime = newEntityVersion.CreationTime;
