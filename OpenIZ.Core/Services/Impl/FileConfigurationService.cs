@@ -29,9 +29,16 @@ namespace OpenIZ.Core.Services.Impl
             if (!File.Exists(configFile))
                 configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "openiz.exe.config");
 
-            ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap() { ExeConfigFilename = configFile }; //Path to your config file
-            this.m_configuration = System.Configuration.ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            this.Open(configFile);
+        }
 
+        /// <summary>
+        /// Open the specified configuration for this service
+        /// </summary>
+        public void Open(String fileName)
+        {
+            ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap() { ExeConfigFilename = fileName }; //Path to your config file
+            this.m_configuration = System.Configuration.ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
         }
 
         /// <summary>

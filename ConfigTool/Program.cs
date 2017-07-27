@@ -3,6 +3,7 @@ using MARC.HI.EHRS.SVC.Configuration.Data;
 using MARC.HI.EHRS.SVC.Configuration.UI;
 using MARC.HI.EHRS.SVC.Core.Configuration;
 using MohawkCollege.Util.Console.Parameters;
+using OpenIZ.Core.Services.Impl;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -60,7 +61,6 @@ namespace ConfigTool
 #else
                 ConfigurationApplicationContext.s_configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "OpenIZ.exe.config");
 #endif
-
                 ParameterParser<ConsoleParameters> parser = new ParameterParser<ConsoleParameters>();
 
                 var consoleParms = parser.Parse(args);
@@ -68,7 +68,7 @@ namespace ConfigTool
                 if (consoleParms.ListDeploy)
                 {
                     StringBuilder options = new StringBuilder("Available deployment modules: \r\n");
-                    foreach (var pnl in ConfigurationApplicationContext.s_configurationPanels.FindAll(o => o.AlwaysConfigure))
+                    foreach (var pnl in ConfigurationApplicationContext.s_configurationPanels.OfType<IScriptableConfigurableFeature>())
                         options.AppendFormat("{0}\r\n", pnl.Name);
                     MessageBox.Show(options.ToString());
                 }
@@ -87,7 +87,6 @@ namespace ConfigTool
                     ConfigurationApplicationContext.s_configurationPanels.Sort((a, b) => a.Name.CompareTo(b.Name));
                     ConfigurationApplicationContext.ConfigurationApplied += new EventHandler(ConfigurationApplicationContext_ConfigurationApplied);
 
-
                     // Configuration File exists?
                     if (!File.Exists(ConfigurationApplicationContext.s_configFile))
                     {
@@ -96,6 +95,16 @@ namespace ConfigTool
                             return;
                     }
 
+                    // Allow data services to use the application context 
+                    MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
+                    MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.GetService<FileConfigurationService>().Open(ConfigurationApplicationContext.s_configFile);
+                    try
+                    {
+                        MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.Start();
+                    }
+                    catch { }
+
+                    // Now we need to deploy
                     Application.Run(new frmMain());
                 }
             }
