@@ -121,7 +121,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data
                 existing = idpInstance.Get(context, me.Key.Value, principal) as IIdentifiedEntity;
 
             var classAtt = me.GetType().GetCustomAttribute<KeyLookupAttribute>();
-            if (classAtt != null)
+            if (classAtt != null && existing == null)
             {
 
                 // Get the domain type
