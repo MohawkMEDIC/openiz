@@ -60,10 +60,21 @@ namespace OpenIZ.Core.Model.Entities
 				this.Component.Add(new EntityAddressComponent(AddressComponentKeys.PostalCode, zipCode));
 		}
 
-		/// <summary>
-		/// Default CTOR
-		/// </summary>
-		public EntityAddress()
+        /// <summary>
+        /// Create the address from components
+        /// </summary>
+        public EntityAddress(Guid useKey, String streetAddressLine, String precinct, String city, String county, String province, String country, String zipCode) : this(useKey, streetAddressLine, city, province, country, zipCode)
+        {
+            if (!String.IsNullOrEmpty(precinct))
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.Precinct, precinct));
+            if (!String.IsNullOrEmpty(county))
+                this.Component.Add(new EntityAddressComponent(AddressComponentKeys.County, county));
+        }
+
+        /// <summary>
+        /// Default CTOR
+        /// </summary>
+        public EntityAddress()
 		{
 			this.Component = new List<EntityAddressComponent>();
 		}
