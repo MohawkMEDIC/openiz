@@ -23,6 +23,7 @@ using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Caching.Memory.Configuration;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
@@ -34,8 +35,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Caching.Memory
 {
@@ -55,6 +58,9 @@ namespace OpenIZ.Caching.Memory
         private MemoryCacheConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.caching.memory") as MemoryCacheConfiguration;
         private TraceSource m_tracer = new TraceSource("OpenIZ.Caching.Memory");
 	    private static object s_lock = new object();
+
+        // Non cached types
+        private HashSet<Type> m_nonCached = new HashSet<Type>();
 
         /// <summary>
         /// True when the memory cache is running
@@ -140,6 +146,9 @@ namespace OpenIZ.Caching.Memory
                     };
             }
 
+            // Look for non-cached types
+            foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null || o.GetCustomAttribute<XmlRootAttribute>() == null))
+                this.m_nonCached.Add(itm);
 
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;
@@ -245,7 +254,9 @@ namespace OpenIZ.Caching.Memory
         public void Add(IdentifiedData data)
         {
 			// if the data is null, continue
-	        if (data == null)
+	        if (data == null || !data.Key.HasValue ||
+                    (data as BaseEntityData)?.ObsoletionTime.HasValue == true ||
+                    this.m_nonCached.Contains(data.GetType()))
 	        {
 		        return;
 	        }

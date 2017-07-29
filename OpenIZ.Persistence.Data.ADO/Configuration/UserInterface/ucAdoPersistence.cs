@@ -42,9 +42,5 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
 
         }
 
-        private void cbxSecondary_CheckedChanged(object sender, EventArgs e)
-        {
-            dbSecondary.Enabled = this.cbxSecondary.Checked;
-        }
     }
 }

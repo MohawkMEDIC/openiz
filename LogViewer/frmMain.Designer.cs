@@ -31,7 +31,8 @@
             this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -54,6 +55,9 @@
             this.sameSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sameThreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sameLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtText = new System.Windows.Forms.RichTextBox();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.decodeBase64ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -64,9 +68,7 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.cbxThread = new System.Windows.Forms.ToolStripComboBox();
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.decodeBase64ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtText = new System.Windows.Forms.RichTextBox();
+            this.openAppInfoxmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -78,8 +80,8 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             this.contextMenuStrip2.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -97,30 +99,39 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
+            this.openToolStripMenuItem1,
             this.toolStripMenuItem1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 22);
             this.fileToolStripMenuItem.Text = "&File";
             // 
-            // openToolStripMenuItem
+            // openToolStripMenuItem1
             // 
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.openToolStripMenuItem.Text = "&Open...";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+            this.openToolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openFileToolStripMenuItem,
+            this.openAppInfoxmlToolStripMenuItem});
+            this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem1.Text = "Open";
+            // 
+            // openFileToolStripMenuItem
+            // 
+            this.openFileToolStripMenuItem.Name = "openFileToolStripMenuItem";
+            this.openFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openFileToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.openFileToolStripMenuItem.Text = "Open Log File...";
+            this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             // 
             // statusStrip1
@@ -307,6 +318,32 @@
             this.sameLevelToolStripMenuItem.Text = "Same Level";
             this.sameLevelToolStripMenuItem.Click += new System.EventHandler(this.sameLevelToolStripMenuItem_Click);
             // 
+            // txtText
+            // 
+            this.txtText.ContextMenuStrip = this.contextMenuStrip2;
+            this.txtText.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtText.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtText.Location = new System.Drawing.Point(0, 19);
+            this.txtText.Name = "txtText";
+            this.txtText.ReadOnly = true;
+            this.txtText.Size = new System.Drawing.Size(869, 181);
+            this.txtText.TabIndex = 1;
+            this.txtText.Text = "";
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.decodeBase64ToolStripMenuItem});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(149, 26);
+            // 
+            // decodeBase64ToolStripMenuItem
+            // 
+            this.decodeBase64ToolStripMenuItem.Name = "decodeBase64ToolStripMenuItem";
+            this.decodeBase64ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.decodeBase64ToolStripMenuItem.Text = "Inspect Data...";
+            this.decodeBase64ToolStripMenuItem.Click += new System.EventHandler(this.decodeBase64ToolStripMenuItem_Click);
+            // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -389,31 +426,14 @@
             this.cbxThread.Size = new System.Drawing.Size(201, 23);
             this.cbxThread.SelectedIndexChanged += new System.EventHandler(this.cbxThread_SelectedIndexChanged);
             // 
-            // contextMenuStrip2
+            // openAppInfoxmlToolStripMenuItem
             // 
-            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.decodeBase64ToolStripMenuItem});
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(149, 26);
-            // 
-            // decodeBase64ToolStripMenuItem
-            // 
-            this.decodeBase64ToolStripMenuItem.Name = "decodeBase64ToolStripMenuItem";
-            this.decodeBase64ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.decodeBase64ToolStripMenuItem.Text = "Inspect Data...";
-            this.decodeBase64ToolStripMenuItem.Click += new System.EventHandler(this.decodeBase64ToolStripMenuItem_Click);
-            // 
-            // txtText
-            // 
-            this.txtText.ContextMenuStrip = this.contextMenuStrip2;
-            this.txtText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtText.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtText.Location = new System.Drawing.Point(0, 19);
-            this.txtText.Name = "txtText";
-            this.txtText.ReadOnly = true;
-            this.txtText.Size = new System.Drawing.Size(869, 181);
-            this.txtText.TabIndex = 1;
-            this.txtText.Text = "";
+            this.openAppInfoxmlToolStripMenuItem.Name = "openAppInfoxmlToolStripMenuItem";
+            this.openAppInfoxmlToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.A)));
+            this.openAppInfoxmlToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.openAppInfoxmlToolStripMenuItem.Text = "Open AppInfo.xml...";
+            this.openAppInfoxmlToolStripMenuItem.Click += new System.EventHandler(this.openAppInfoxmlToolStripMenuItem_Click);
             // 
             // frmMain
             // 
@@ -441,9 +461,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStrip2.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.contextMenuStrip2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -453,7 +473,6 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -489,6 +508,9 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.ToolStripMenuItem decodeBase64ToolStripMenuItem;
         private System.Windows.Forms.RichTextBox txtText;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem openFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openAppInfoxmlToolStripMenuItem;
     }
 }
 

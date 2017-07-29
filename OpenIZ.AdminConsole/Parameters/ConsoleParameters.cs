@@ -24,7 +24,6 @@ namespace OpenIZ.AdminConsole.Parameters
             this.AppId = "org.openiz.oizac";
             this.AppSecret = "oizac-secret";
             this.Port = "8080";
-            this.User = "administrator";
         }
 
         /// <summary>

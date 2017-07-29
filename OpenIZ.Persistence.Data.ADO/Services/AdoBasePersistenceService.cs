@@ -189,6 +189,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
                             data = this.Insert(connection, data, principal);
                         }
+                        data.LoadState = LoadState.FullLoad; // We just persisted so it is fully loaded
 
                         if (mode == TransactionMode.Commit)
                         {
@@ -255,6 +256,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
 
                         data = this.Update(connection, data, principal);
+                        data.LoadState = LoadState.FullLoad; // We just persisted this so it is fully loaded
 
                         if (mode == TransactionMode.Commit)
                         {
