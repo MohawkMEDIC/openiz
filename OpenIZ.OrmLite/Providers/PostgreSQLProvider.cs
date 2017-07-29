@@ -86,7 +86,7 @@ namespace OpenIZ.OrmLite.Providers
         {
             get
             {
-                return "pgsql";
+                return "npgsql";
             }
         }
 

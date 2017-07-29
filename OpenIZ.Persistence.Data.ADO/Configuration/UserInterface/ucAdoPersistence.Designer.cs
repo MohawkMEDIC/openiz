@@ -119,7 +119,6 @@
             // 
             // dbSelector
             // 
-            this.dbSelector.DatabaseConfigurator = null;
             this.dbSelector.Dock = System.Windows.Forms.DockStyle.Top;
             this.dbSelector.Location = new System.Drawing.Point(0, 32);
             this.dbSelector.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
@@ -138,9 +137,9 @@
             this.Controls.Add(this.dbSelector);
             this.Controls.Add(this.label1);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.MinimumSize = new System.Drawing.Size(508, 683);
+            this.MinimumSize = new System.Drawing.Size(508, 450);
             this.Name = "ucAdoPersistence";
-            this.Size = new System.Drawing.Size(616, 683);
+            this.Size = new System.Drawing.Size(616, 450);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
