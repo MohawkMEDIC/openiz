@@ -11,7 +11,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.SQL
     /// <summary>
     /// Represents a data definition feature
     /// </summary>
-    public class AdoCoreDataFeature : IDataFeature
+    public class AdoDataInitialization : IDataFeature
     {
         /// <summary>
         /// Gets or sets the name of the feature
@@ -20,7 +20,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.SQL
         {
             get
             {
-                return "OpenIZ Core Deployment";
+                return "OpenIZ Initialization";
             }
         }
 
@@ -29,7 +29,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.SQL
         /// </summary>
         public string GetCheckSql(string invariantName)
         {
-            return "SELECT false;";
+            return "SELECT COUNT(*) > 0 FROM sec_usr_tbl WHERE usr_name = 'Administrator';";
         }
 
         /// <summary>
@@ -39,8 +39,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.SQL
         {
             String[] resource = new String[]
             {
-                "openiz-ddl.sql",
-                "openiz-fn.sql"
+                "openiz-init.sql",
             };
 
             // Build sql
@@ -63,15 +62,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.SQL
         /// </summary>
         public string GetUnDeploySql(string invariantName)
         {
-            // Build sql
-            switch (invariantName.ToLower())
-            {
-                case "npgsql":
-                    using (var streamReader = new StreamReader(typeof(AdoCoreDataFeature).Assembly.GetManifestResourceStream($"OpenIZ.Persistence.Data.ADO.Data.SQL.PSQL.openiz-drop.sql")))
-                        return streamReader.ReadToEnd();
-                default:
-                    throw new InvalidOperationException($"Deployment for {invariantName} not supported");
-            }
+            return null;
         }
     }
 }

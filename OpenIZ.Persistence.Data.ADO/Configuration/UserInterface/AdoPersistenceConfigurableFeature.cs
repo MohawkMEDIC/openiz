@@ -11,13 +11,15 @@ using System.Threading.Tasks;
 using System.Xml;
 using MARC.HI.EHRS.SVC.Configuration.Data;
 using OpenIZ.Persistence.Data.ADO.Data.SQL;
+using MARC.HI.EHRS.SVC.Configuration.UI;
+using OpenIZ.OrmLite.Providers;
 
 namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
 {
     /// <summary>
     /// ADO.NET Persistence configuration feature
     /// </summary>
-    public class AdoPersistenceConfigurableFeature : IScriptableConfigurableFeature, IDataboundFeature
+    public class AdoPersistenceConfigurableFeature : IScriptableConfigurableFeature, IDataboundFeature, IReportProgressChanged
     {
 
         #region Console Parameters
@@ -77,6 +79,10 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
 
         // Panel 
         private ucAdoPersistence m_panel = new ucAdoPersistence();
+       
+
+        // Progress changed
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
 
         /// <summary>
         /// True if the feature should always be configured
@@ -141,20 +147,18 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         /// <summary>
         /// Gets or sets the connection string for this object
         /// </summary>
-        public string ConnectionString
+        public DbConnectionString ConnectionString
         {
-            get;
-            set;
+            get
+            {
+                return this.m_panel.ConnectionString;
+            }
+            set
+            {
+                this.m_panel.ConnectionString = value;
+            }
         }
-
-        /// <summary>
-        /// Gets or sets the data provider for this feature
-        /// </summary>
-        public IDatabaseProvider DataProvider
-        {
-            get;set;
-        }
-
+        
         public List<IDataFeature> DataFeatures
         {
             get
@@ -168,7 +172,64 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         /// </summary>
         public void Configure(XmlDocument configurationDom)
         {
-            throw new NotImplementedException();
+            // Deploy schema
+            this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(25, "Deploying Core Schema..."));
+            this.ConnectionString.Provider.DeployFeature(new AdoCoreDataFeature(), this.ConnectionString.Name, configurationDom);
+            this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(50, "Deploying Core Codes..."));
+            this.ConnectionString.Provider.DeployFeature(new AdoCodeDataFeature(), this.ConnectionString.Name, configurationDom);
+            this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(75, "Initializing Users..."));
+            this.ConnectionString.Provider.DeployFeature(new AdoDataInitialization(), this.ConnectionString.Name, configurationDom);
+
+            // TODO: Check for updates and then install them
+
+            // TODO: Check for dataset files and then install them
+
+            // Configure XML
+            var xmlSection = configurationDom.GetOrAddSectionDefinition(AdoDataConstants.ConfigurationSectionName, typeof(AdoConfigurationSectionHandler));
+            var configurationElement = xmlSection.SelectSingleNode("./connectionManager");
+            if (configurationElement == null)
+            {
+                configurationElement = configurationDom.CreateElement("connectionManager");
+                xmlSection.AppendChild(configurationElement);
+            }
+
+            // ro connection
+            if (configurationElement.Attributes["readonlyConnection"] == null)
+                configurationElement.Attributes.Append(configurationDom.CreateAttributeValue("readonlyConnection", this.m_panel.ConfigurationObject.ReadonlyConnectionString ?? this.ConnectionString.Name));
+            else
+                configurationElement.Attributes["readonlyConnection"].Value = this.m_panel.ConfigurationObject.ReadonlyConnectionString ?? this.ConnectionString.Name;
+
+            // rw connection
+            if (configurationElement.Attributes["readWriteConnection"] == null)
+                configurationElement.Attributes.Append(configurationDom.CreateAttributeValue("readWriteConnection", m_panel.ConfigurationObject.ReadWriteConnectionString ?? this.ConnectionString.Name));
+            else
+                configurationElement.Attributes["readWriteConnection"].Value = this.m_panel.ConfigurationObject.ReadWriteConnectionString ?? this.ConnectionString.Name;
+
+            // trace
+            if (configurationElement.Attributes["traceSql"] == null)
+                configurationElement.Attributes.Append(configurationDom.CreateAttributeValue("traceSql", this.m_panel.ConfigurationObject.TraceSql.ToString()));
+            else
+                configurationElement.Attributes["traceSql"].Value = this.m_panel.ConfigurationObject.TraceSql.ToString();
+
+            // autoinsert kids
+            if (configurationElement.Attributes["autoInsertChildren"] == null)
+                configurationElement.Attributes.Append(configurationDom.CreateAttributeValue("autoInsertChildren", this.m_panel.ConfigurationObject.AutoInsertChildren.ToString()));
+            else
+                configurationElement.Attributes["autoInsertChildren"].Value = this.m_panel.ConfigurationObject.AutoInsertChildren.ToString();
+
+            // auto-update
+            if (configurationElement.Attributes["insertUpdate"] == null)
+                configurationElement.Attributes.Append(configurationDom.CreateAttributeValue("insertUpdate", this.m_panel.ConfigurationObject.AutoUpdateExisting.ToString()));
+            else
+                configurationElement.Attributes["insertUpdate"].Value = this.m_panel.ConfigurationObject.AutoUpdateExisting.ToString();
+
+            // Find the provider 
+            var providerType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(o => o.ExportedTypes).FirstOrDefault(o => typeof(IDbProvider).IsAssignableFrom(o) && !o.IsInterface && !o.IsAbstract && (Activator.CreateInstance(o) as IDbProvider).Name.ToLower() == this.ConnectionString.Provider.InvariantName.ToLower());
+            if (configurationElement.Attributes["provider"] == null)
+                configurationElement.Attributes.Append(configurationDom.CreateAttributeValue("provider", providerType.AssemblyQualifiedName));
+            else
+                configurationElement.Attributes["provider"].Value = providerType.AssemblyQualifiedName;
+
         }
 
         /// <summary>
@@ -184,12 +245,15 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         /// </summary>
         public void EasyConfigure(XmlDocument configFile)
         {
-            // Deploy schema
-            this.DataProvider.DeployFeature(new AdoCoreDataFeature(), this.ConnectionString, configFile);
 
-            // TODO: Check for updates and then install them
-
-            // TODO: Check for dataset files and then install them
+            this.m_panel.ConfigurationObject = new AdoConfiguration()
+            {
+                AutoInsertChildren = false,
+                AutoUpdateExisting = false,
+                TraceSql = false,
+            };
+            this.m_panel.ConnectionString = this.ConnectionString;
+            this.Configure(configFile);
         }
 
         /// <summary>
@@ -198,7 +262,23 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         public bool IsConfigured(XmlDocument configurationDom)
         {
             // Read configuration here
-            return false;
+            var adoConfiguration = configurationDom.GetSection("openiz.persistence.data.ado") as AdoConfiguration;
+            this.m_panel.ConfigurationObject = adoConfiguration ?? new AdoConfiguration()
+            {
+                AutoInsertChildren = false,
+                AutoUpdateExisting = false,
+                TraceSql = false,
+                ReadWriteConnectionString = this.ConnectionString.Name,
+                ReadonlyConnectionString = this.ConnectionString.Name
+            };
+
+            if (adoConfiguration != null)
+            {
+                var connectionString = configurationDom.GetConnectionString(adoConfiguration.ReadWriteConnectionString);
+                this.m_panel.ConnectionString = connectionString;
+            }
+
+            return adoConfiguration != null;
         }
 
         /// <summary>
@@ -224,6 +304,15 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         public bool Validate(XmlDocument configurationDom)
         {
             return false;
+        }
+
+        /// <summary>
+        /// Represent as string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.Name;
         }
     }
 }
