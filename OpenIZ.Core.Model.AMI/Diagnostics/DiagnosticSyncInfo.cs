@@ -38,10 +38,16 @@ namespace OpenIZ.Core.Model.AMI.Diagnostics
 		[JsonProperty("lastSync"), XmlAttribute("lastSync")]
 		public DateTime LastSync { get; set; }
 
-		/// <summary>
-		/// Filter used to sync
-		/// </summary>
-		[JsonProperty("filter"), XmlText]
+        /// <summary>
+        /// Friendly name of the sync
+        /// </summary>
+        [JsonProperty("name"), XmlAttribute("name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Filter used to sync
+        /// </summary>
+        [JsonProperty("filter"), XmlText]
 		public String Filter { get; set; }
 	}
 }

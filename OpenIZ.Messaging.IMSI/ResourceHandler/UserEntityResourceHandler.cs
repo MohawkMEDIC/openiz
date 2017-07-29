@@ -40,10 +40,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Create the specified user entity
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
         public override IdentifiedData Create(IdentifiedData data, bool updateIfExists)
         {
             // Additional security: User should 
+            var securityUser = ApplicationContext.Current.GetService<ISecurityRepositoryService>().GetUser(AuthenticationContext.Current.Principal.Identity);
+            if (securityUser.Key != (data as UserEntity)?.SecurityUserKey)
+                new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedMetadata).Demand();
+
             return base.Create(data, updateIfExists);
         }
 
@@ -86,9 +89,13 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         /// <summary>
         /// Update specified data
         /// </summary>
-        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedMetadata)]
         public override IdentifiedData Update(IdentifiedData data)
         {
+            // Additional security: User should be admin be editing themselves
+            var securityUser = ApplicationContext.Current.GetService<ISecurityRepositoryService>().GetUser(AuthenticationContext.Current.Principal.Identity);
+            if (securityUser.Key != (data as UserEntity)?.SecurityUserKey)
+                new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.UnrestrictedMetadata).Demand();
+
             return base.Update(data);
         }
     }

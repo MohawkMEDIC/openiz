@@ -395,7 +395,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                     // Obsolete
 	                if (lockout)
-		                user.Lockout = DateTime.Now;
+		                user.Lockout = DateTime.MaxValue.AddDays(-10);
 	                else
 		                user.Lockout = null;
 

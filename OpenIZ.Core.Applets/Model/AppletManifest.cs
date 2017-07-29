@@ -23,7 +23,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
-using System.IO.Compression;
+using SharpCompress.Compressors.LZMA;
+using SharpCompress.Compressors.Deflate;
+using SharpCompress.Compressors.BZip2;
 
 namespace OpenIZ.Core.Applets.Model
 {
@@ -67,21 +69,41 @@ namespace OpenIZ.Core.Applets.Model
                 mnu.Initialize(this);
         }
 
-		/// <summary>
-		/// Create an unsigned package
-		/// </summary>
-		/// <returns>The package.</returns>
-		public AppletPackage CreatePackage()
+        /// <summary>
+        /// Create an unsigned package
+        /// </summary>
+        /// <returns>The package.</returns>
+        public AppletPackage CreatePackage(String compression = null)
 		{
 			AppletPackage retVal = new AppletPackage () {
-				Meta = this.Info
+				Meta = this.Info,
+                Compression = compression
 			};
             using (MemoryStream ms = new MemoryStream())
             {
-                using (DeflateStream dfs = new DeflateStream(ms, CompressionMode.Compress))
-                {
+                Stream compressStream = null;
+                try {
+                    switch (compression)
+                    {
+                        case "lzma":
+                            compressStream = new LZipStream(ms, SharpCompress.Compressors.CompressionMode.Compress, leaveOpen: true);
+                            break;
+                        case "bzip2":
+                            compressStream = new BZip2Stream(ms, SharpCompress.Compressors.CompressionMode.Compress, leaveOpen: true);
+                            break;
+                        case "gzip":
+                            compressStream = new GZipStream(ms, SharpCompress.Compressors.CompressionMode.Compress, leaveOpen: true);
+                            break;
+                        default:
+                            compressStream = new DeflateStream(ms, SharpCompress.Compressors.CompressionMode.Compress, leaveOpen: true);
+                            break;
+                    }
                     XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
-                    xsz.Serialize(dfs, this);
+                    xsz.Serialize(compressStream, this);
+                }
+                finally
+                {
+                    compressStream.Dispose();
                 }
                 retVal.Manifest = ms.ToArray();
 

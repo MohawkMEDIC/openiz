@@ -82,6 +82,7 @@
     <Compile Include="Data\Model\Acts\DbSubstanceAdministration.cs" />
     <Compile Include="Data\Model\Alerts\DbAlertMessage.cs" />
     <Compile Include="Data\Model\Alerts\DbAlertRcptTo.cs" />
+    <Compile Include="Data\SQL\AdoCoreDataFeature.cs" />
     <Compile Include="Exceptions\AdoFormalConstraintException.cs" />
     <Compile Include="Resources\Locale.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -220,31 +221,31 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\SQL\PSQL\openiz-drop.sql">
+    <EmbeddedResource Include="Data\SQL\PSQL\openiz-drop.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\SQL\PSQL\openiz-fn.sql">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\SQL\PSQL\openiz-fn.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\SQL\PSQL\openiz-init.sql">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\SQL\PSQL\openiz-init.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\SQL\PSQL\Updates\20170721-01.sql">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\SQL\PSQL\Updates\20170721-01.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\SQL\PSQL\Updates\20170725-01.sql">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\SQL\PSQL\Updates\20170725-01.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="Configuration\UserInterface\ucAdoPersistence.resx">
       <DependentUpon>ucAdoPersistence.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
-    <Content Include="Data\SQL\PSQL\openiz-codes.sql">
+    <EmbeddedResource Include="Data\SQL\PSQL\openiz-codes.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\SQL\PSQL\openiz-ddl.sql">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\SQL\PSQL\openiz-ddl.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Locale.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Locale.Designer.cs</LastGenOutput>

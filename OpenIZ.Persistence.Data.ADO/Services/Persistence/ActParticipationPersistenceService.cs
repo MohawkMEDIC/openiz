@@ -57,19 +57,27 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (dataInstance == null) return null;
 
             var participationPart = dataInstance as DbActParticipation;
-            return new ActParticipation()
+            var retVal = new ActParticipation()
             {
                 EffectiveVersionSequenceId = participationPart.EffectiveVersionSequenceId,
                 ObsoleteVersionSequenceId = participationPart.ObsoleteVersionSequenceId,
                 ActKey = participationPart.SourceKey,
                 PlayerEntityKey = participationPart.TargetKey,
-                ParticipationRole = context.LoadState == Core.Model.LoadState.FullLoad ? AdoPersistenceService.GetPersister(typeof(Concept)).Get(participationPart.ParticipationRoleKey) as Concept : null,
                 ParticipationRoleKey = participationPart.ParticipationRoleKey,
                 LoadState = context.LoadState,
                 Quantity = participationPart.Quantity,
                 Key = participationPart.Key,
                 SourceEntityKey = participationPart.SourceKey
             };
+
+            if (context.LoadState == Core.Model.LoadState.FullLoad)
+            {
+                var concept = AdoPersistenceService.GetPersister(typeof(Concept)).Get(participationPart.ParticipationRoleKey);
+                if (concept != null)
+                    retVal.ParticipationRole = concept as Concept;
+            }
+
+            return retVal;
         }
 
         /// <summary>

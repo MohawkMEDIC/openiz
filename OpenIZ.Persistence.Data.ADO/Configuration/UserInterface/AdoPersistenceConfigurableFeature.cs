@@ -9,13 +9,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using MARC.HI.EHRS.SVC.Configuration.Data;
+using OpenIZ.Persistence.Data.ADO.Data.SQL;
 
 namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
 {
     /// <summary>
     /// ADO.NET Persistence configuration feature
     /// </summary>
-    public class AdoPersistenceConfigurableFeature : IScriptableConfigurableFeature
+    public class AdoPersistenceConfigurableFeature : IScriptableConfigurableFeature, IDataboundFeature
     {
 
         #region Console Parameters
@@ -137,6 +139,31 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         }
 
         /// <summary>
+        /// Gets or sets the connection string for this object
+        /// </summary>
+        public string ConnectionString
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the data provider for this feature
+        /// </summary>
+        public IDatabaseProvider DataProvider
+        {
+            get;set;
+        }
+
+        public List<IDataFeature> DataFeatures
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
         /// Creates the configuration in the configuration section
         /// </summary>
         public void Configure(XmlDocument configurationDom)
@@ -157,7 +184,12 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         /// </summary>
         public void EasyConfigure(XmlDocument configFile)
         {
-            
+            // Deploy schema
+            this.DataProvider.DeployFeature(new AdoCoreDataFeature(), this.ConnectionString, configFile);
+
+            // TODO: Check for updates and then install them
+
+            // TODO: Check for dataset files and then install them
         }
 
         /// <summary>

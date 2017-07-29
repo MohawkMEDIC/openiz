@@ -52,6 +52,7 @@
     <Compile Include="Security\TokenValidationManager.cs" />
     <Compile Include="Security\X509CertificateUtils.cs" />
     <Compile Include="Shell\AdminClientEndpointDescription.cs" />
+    <Compile Include="Shell\CmdLets\RoleCmdlet.cs" />
     <Compile Include="Shell\CmdLets\ServerInfoCmdlet.cs" />
     <Compile Include="Shell\CmdLets\UserCmdlet.cs" />
     <Compile Include="Shell\ConsoleTraceWriter.cs" />

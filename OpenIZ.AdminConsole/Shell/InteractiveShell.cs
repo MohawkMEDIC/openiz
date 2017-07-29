@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2017-6-23
  */
+using MohawkCollege.Util.Console.Parameters;
 using OpenIZ.AdminConsole.Attributes;
 using OpenIZ.Core.Security;
 using System;
@@ -145,15 +146,19 @@ namespace OpenIZ.AdminConsole.Shell
                     Console.Error.WriteLine("ERR: Command {0} with {1} parms not found", tokens[0], tokens.Length - 1);
                 else
                 {
-                    var parmValues = tokens.Length > 1 ? tokens.OfType<Object>().Skip(1).ToArray() : null;
+                    var parmValues = tokens.Length > 1 ? tokens.OfType<String>().Skip(1).ToArray() : new string[0];
 
                     try
                     {
                         // Find the matches
-                        var candidates = this.m_commandlets.Where(o => o.Key.Command == tokens[0] && o.Value.GetParameters().Length == (parmValues?.Length ?? 0));
-                        if (candidates.Count() == 1) // exact match
-                            candidates.First().Value.Invoke(this, parmValues);
-                        else; // We need to parse the parms in to a value
+                        var candidates = this.m_commandlets.Where(o => o.Key.Command == tokens[0]);
+                        if (candidates.Count() == 1)
+                            candidates.First().Value.Invoke(this, this.CreateParameters(parmValues, candidates.First().Value.GetParameters()));
+                        else 
+                        {
+                            var candidate = candidates.FirstOrDefault(o => parmValues.Length == o.Value.GetParameters().Length);
+                            candidate.Value?.Invoke(this, this.CreateParameters(parmValues, candidate.Value?.GetParameters()));
+                        }
                     }
                     catch (Exception e)
                     {
@@ -163,6 +168,28 @@ namespace OpenIZ.AdminConsole.Shell
 
                 Console.ForegroundColor = col;
             }
+        }
+
+        /// <summary>
+        /// Create a parameter list
+        /// </summary>
+        private object[] CreateParameters(string[] args, ParameterInfo[] argTypes)
+        {
+            if (args == null) return null;
+
+            object[] argVals = new object[argTypes.Length];
+            for(int i = 0; i < argTypes.Length; i++)
+            {
+                if (argTypes[i].ParameterType == typeof(String))
+                    argVals[i] = args[i];
+                else
+                {
+                    var ppt = typeof(ParameterParser<>).MakeGenericType(argTypes[i].ParameterType);
+                    var pp = Activator.CreateInstance(ppt);
+                    argVals[i] = ppt.GetMethod("Parse").Invoke(pp, new object[] { args });
+                }
+            }
+            return argVals;
         }
 
         /// <summary>
@@ -227,12 +254,21 @@ namespace OpenIZ.AdminConsole.Shell
 
                 foreach(var p in cmdlet.GetParameters())
                 {
-                    Console.Write("{0}{1} - ", new String(' ', itm.Command.Length + 1), p.Name);
-                    descr = p.GetCustomAttribute<DescriptionAttribute>();
-                    if (descr != null)
-                        Console.WriteLine("{0}", descr.Description);
+                    if (p.ParameterType == typeof(String))
+                    {
+                        Console.Write("{0}{1} - ", new String(' ', itm.Command.Length + 1), p.Name);
+                        descr = p.GetCustomAttribute<DescriptionAttribute>();
+                        if (descr != null)
+                            Console.WriteLine("{0}", descr.Description);
+                        else
+                            Console.WriteLine();
+                    }
                     else
-                        Console.WriteLine();
+                    {
+                        var ppt = typeof(ParameterParser<>).MakeGenericType(p.ParameterType);
+                        var pp = Activator.CreateInstance(ppt);
+                        ppt.GetMethod("WriteHelp").Invoke(pp, new object[] { Console.Out });
+                    }
                 }
             }
 

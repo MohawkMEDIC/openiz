@@ -17,9 +17,13 @@
  * User: justi
  * Date: 2016-8-2
  */
+using SharpCompress.Compressors;
+using SharpCompress.Compressors.BZip2;
+using SharpCompress.Compressors.Deflate;
+using SharpCompress.Compressors.LZMA;
 using System;
 using System.IO;
-using System.IO.Compression;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Applets.Model
@@ -31,6 +35,15 @@ namespace OpenIZ.Core.Applets.Model
     [XmlRoot(nameof(AppletPackage), Namespace = "http://openiz.org/applet")]
 	public class AppletPackage
 	{
+
+
+        /// <summary>
+        /// Applet package
+        /// </summary>
+        public AppletPackage()
+        {
+            this.Version = typeof(AppletPackage).GetTypeInfo().Assembly.GetName().Version.ToString();
+        }
 
         // Serializer
         private static XmlSerializer s_xsz = new XmlSerializer(typeof(AppletPackage));
@@ -76,6 +89,18 @@ namespace OpenIZ.Core.Applets.Model
 		}
 
         /// <summary>
+        /// The pak version
+        /// </summary>
+        [XmlAttribute("pakVersion")]
+        public String Version { get; set; }
+
+        /// <summary>
+        /// Compression algorithm
+        /// </summary>
+        [XmlAttribute("compress")]
+        public String Compression { get; set; }
+
+        /// <summary>
         /// Public signing certificate
         /// </summary>
         [XmlElement("certificate")]
@@ -86,9 +111,25 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         public AppletManifest Unpack()
         {
-            using (MemoryStream ms = new MemoryStream(this.Manifest))
-            using (DeflateStream dfs = new DeflateStream(ms, CompressionMode.Decompress))
-                return AppletManifest.Load(dfs);
+            switch(this.Compression)
+            {
+                case "lzma":
+                    using (MemoryStream ms = new MemoryStream(this.Manifest))
+                    using (var dfs = new LZipStream(ms, SharpCompress.Compressors.CompressionMode.Decompress, true))
+                        return AppletManifest.Load(dfs);
+                case "bzip2":
+                    using (MemoryStream ms = new MemoryStream(this.Manifest))
+                    using (var dfs = new BZip2Stream(ms, SharpCompress.Compressors.CompressionMode.Decompress, true))
+                        return AppletManifest.Load(dfs);
+                case "gzip":
+                    using (MemoryStream ms = new MemoryStream(this.Manifest))
+                    using (GZipStream dfs = new GZipStream(ms, CompressionMode.Decompress))
+                        return AppletManifest.Load(dfs);
+                default:
+                    using (MemoryStream ms = new MemoryStream(this.Manifest))
+                    using (DeflateStream dfs = new DeflateStream(ms, CompressionMode.Decompress))
+                        return AppletManifest.Load(dfs);
+            }
         }
 
         /// <summary>

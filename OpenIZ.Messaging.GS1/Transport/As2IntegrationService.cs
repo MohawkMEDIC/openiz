@@ -90,10 +90,9 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
                     }
                     catch (Exception ex)
                     {
-                        this.m_tracer.TraceError(">>>> !!ALERT!! >>>> Error sending message to GS1 broker. All further communications with the broker will be suspended");
+                        this.m_tracer.TraceError(">>>> !!ALERT!! >>>> Error sending message to GS1 broker. Message will be placed in dead-letter queue");
                         this.m_tracer.TraceError(ex.ToString());
                         ApplicationContext.Current.GetService<IPersistentQueueService>().Enqueue("dead", dq);
-                        break;
                     }
                 } while (true);
             };
@@ -132,7 +131,6 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
             catch(Exception e)
             {
                 this.m_tracer.TraceError("Could not dispatch message to GS1 endpoint: {0}", e);
-                ApplicationContext.Current.GetService<IPersistentQueueService>().Enqueue(this.m_configuration.Gs1QueueName, queueMessage);
                 throw;
             }
         }
