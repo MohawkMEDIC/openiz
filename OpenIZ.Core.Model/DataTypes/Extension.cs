@@ -110,6 +110,15 @@ namespace OpenIZ.Core.Model.DataTypes
         }
 
         /// <summary>
+        /// Get the value of the extension
+        /// </summary>
+        /// <returns></returns>
+        public Object GetValue()
+        {
+            return this.LoadProperty<ExtensionType>("ExtensionType")?.ExtensionHandlerInstance?.DeSerialize(this.ExtensionValueXml);
+        }
+
+        /// <summary>
         /// Gets or sets an extension displayable value
         /// </summary>
         [XmlIgnore, JsonIgnore]

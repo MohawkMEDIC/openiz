@@ -228,5 +228,13 @@ namespace OpenIZ.Core.Model
                 return false;
             return this.Type == other.Type;
         }
+
+        /// <summary>
+        /// To display value
+        /// </summary>
+        public virtual String ToDisplay()
+        {
+            return this.Key.ToString();
+        }
     }
 }

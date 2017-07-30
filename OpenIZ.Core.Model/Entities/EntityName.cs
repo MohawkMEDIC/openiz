@@ -183,5 +183,13 @@ namespace OpenIZ.Core.Model.Entities
                 return $"{this.Component.Find(o => o.ComponentTypeKey == NameComponentKeys.Given)?.Value} {this.Component.Find(o => o.ComponentTypeKey == NameComponentKeys.Family)?.Value}";
             }
         }
+
+        /// <summary>
+        /// Represent the entity name as a display string
+        /// </summary>
+        public override string ToDisplay()
+        {
+            return this.ToString();
+        }
     }
 }

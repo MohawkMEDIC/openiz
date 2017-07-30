@@ -82,6 +82,10 @@ namespace OizDevTool
             [Parameter("anon")]
             [Description("Anonymizes the demographic data for testing")]
             public bool Anonymize { get; set; }
+
+            [Parameter("confirm")]
+            [Description("Confirms before creating facility in OpenIZ")]
+            public bool ConfirmCreate { get; set; }
         }
 
         /// <summary>
@@ -196,12 +200,10 @@ namespace OizDevTool
         {
             var retVal = new EntityAddress();
             retVal.AddressUseKey = typeKey;
-            if (!String.IsNullOrEmpty(place.Code))
-                retVal.Component.Add(new EntityAddressComponent(AddressComponentKeys.CensusTract, placeEntityMap[place.Id].ToString()));
 
             Queue<Guid> addressParts = new Queue<Guid>(new Guid[] {
-                AddressComponentKeys.AdditionalLocator,
                 AddressComponentKeys.StreetAddressLine,
+                AddressComponentKeys.Precinct,
                 AddressComponentKeys.City,
                 AddressComponentKeys.County,
                 AddressComponentKeys.State,
@@ -303,7 +305,7 @@ namespace OizDevTool
                 TypeConceptKey = typeConceptKey == Guid.Empty ? (Guid?)null : typeConceptKey,
                 Relationships = new List<EntityRelationship>()
                 {
-                    new EntityRelationship(EntityRelationshipTypeKeys.Instance, id) { SourceEntityKey = materialId },
+                    new EntityRelationship(EntityRelationshipTypeKeys.Instance, id) { SourceEntityKey = materialId, Quantity = item.GtinObject?.Alt1QtyPer },
                 },
                 Names = new List<EntityName>()
                 {
@@ -390,7 +392,7 @@ namespace OizDevTool
                 {
                     new ActParticipation(ActParticipationKey.Location, facilityMap[o.HealthFacilityId]),
                     new ActParticipation(ActParticipationKey.RecordTarget, patient.Key.Value),
-                    o.VaccineLotId <= 0 ? null : new ActParticipation(ActParticipationKey.Consumable, manufacturedMaterialMap[o.VaccineLotId]),
+                    o.VaccineLotId <= 0 ? null : new ActParticipation(ActParticipationKey.Consumable, manufacturedMaterialMap[o.VaccineLotId]) { Quantity = -1 },
                     o.Dose?.ScheduledVaccination?.ItemId == null ? null : new ActParticipation(ActParticipationKey.Product, materialMap[matId]),
                     userEntityMap.ContainsKey(o.ModifiedBy) && userEntityMap[o.ModifiedBy] != Guid.Empty ? new ActParticipation(ActParticipationKey.Authororiginator, userEntityMap[o.ModifiedBy]) : null
                 }
@@ -828,18 +830,38 @@ namespace OizDevTool
             Console.WriteLine("Map OpenIZ Places...");
             placeEntityMap = places.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_PLCID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
             facilityMap = facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
-            facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", ""))).Id, o => o.Key.Value);
+            facilityTypeId = conceptPersister.Query(o => o.ConceptSets.Any(c => c.Mnemonic == "HealthFacilityTypes"), AuthenticationContext.SystemPrincipal).Where(o=> HealthFacilityType.GetHealthFacilityTypeList().Any(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", "")))).ToDictionary(o => HealthFacilityType.GetHealthFacilityTypeList().First(f => o.Mnemonic.EndsWith(f.Name.Replace(" ", ""))).Id, o => o.Key.Value);
+
+#if DEBUG
+            Console.WriteLine("Will use the following map for Health Facility Types");
+            foreach (var itm in facilityTypeId)
+                Console.WriteLine("{0} ---> {1}", itm.Key, itm.Value);
+#endif
 
             Console.WriteLine("Map OpenIZ Materials...");
             manufacturedMaterialMap = manufmaterials.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM_LOT")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_ITEM_LOT").Value), o => o.Key.Value);
-            // Map materials
+
+#if DEBUG
+            Console.WriteLine("Will use the following map for Stock Items");
+            foreach (var itm in manufacturedMaterialMap)
+                Console.WriteLine("{0} ---> {1}", itm.Key, itm.Value);
+#endif
+
             foreach (var itm in materials)
             {
                 var giisCode = Item.GetItemById(Int32.Parse(itm.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GIIS_ITEM")?.Value));
                 if (giisCode != null && !materialMap.ContainsKey(giisCode.Code))
+                {
                     materialMap.Add(giisCode.Code, itm.Key.Value);
+                }
             }
 
+            // Map materials
+#if DEBUG
+            Console.WriteLine("Will use the following map for Item Types");
+            foreach(var itm in materialMap)
+                Console.WriteLine("{0} ---> {1}", itm.Key, itm.Value);
+#endif
             DatasetInstall resultSet = new DatasetInstall() { Id = $"Ad-hoc GIIS import {String.Join(":", parms.FacilityId)}" };
 
             IEnumerable facilityIdentifiers = parms.FacilityId;
@@ -853,9 +875,27 @@ namespace OizDevTool
                     Console.Error.WriteLine("Facility {0} not found!!!", facId);
                     continue;
                 }
+
                 var children = Child.GetChildByHealthFacilityId(giisHf.Id);
 
                 var dbFacility = placePersister.Query(o => o.Identifiers.Any(i => i.Value == facId && i.Authority.DomainName == "GIIS_FACID"), AuthenticationContext.AnonymousPrincipal).FirstOrDefault();
+                
+                // Confirm creation
+                if(dbFacility == null && parms.ConfirmCreate)
+                {
+                    Console.WriteLine("Facility with GIIS_FACID #{0} not found", facId);
+                    var createUpdate = Prompt("Do you want to (c)reate a new facility or (f)ind another or (a)bort?", new string[] { "c", "f", "a" });
+                    switch (createUpdate)
+                    {
+                        case "a":
+                            return;
+                        case "f":
+                            dbFacility = MergeFind(giisHf.Name);
+                            if (dbFacility == null)
+                                return;
+                            break;
+                    }
+                }
 
                 if (dbFacility == null)
                 {
@@ -870,9 +910,9 @@ namespace OizDevTool
                     Console.WriteLine("Will update facility {0} ({1} patients)...", giisHf.Name, children.Count);
 
                     // Clear and update
-                    dbFacility.Relationships.Clear();
+                    dbFacility.Relationships.RemoveAll(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity);
                     var bkup = MapFacility(giisHf);
-                    dbFacility.Relationships = bkup.Relationships;
+                    dbFacility.Relationships.AddRange(bkup.Relationships.Where(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity));
                     dbFacility.Extensions = bkup.Extensions;
 
                     // Insert
@@ -1006,6 +1046,63 @@ namespace OizDevTool
                     xsz.Serialize(fs, resultSet);
             }
 
+        }
+
+        /// <summary>
+        /// Find a place by name
+        /// </summary>
+        private static OpenIZ.Core.Model.Entities.Place MergeFind(string name)
+        {
+            OpenIZ.Core.Model.Entities.Place retVal = null;
+            name = name.Split(' ')[0];
+
+            var placeService = ApplicationContext.Current.GetService<IDataPersistenceService<OpenIZ.Core.Model.Entities.Place>>();
+            while(retVal == null)
+            {
+                Console.WriteLine("Candidates matching: *{0}*", name);
+                Console.WriteLine("======================{0}=", new String('=', name.Length));
+                var candidates = placeService.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation && o.Names.Any(n => n.Component.Any(c => c.Value.Contains(name))), AuthenticationContext.SystemPrincipal);
+                int optNum = 0;
+                foreach (var p in candidates)
+                    Console.WriteLine("\t({0}) - {1} - {2} - {3}", ++optNum, p.LoadCollection<EntityName>("Names").FirstOrDefault().ToDisplay(),
+                        p.LoadProperty<Concept>("TypeConcept").ToDisplay(),
+                        p.LoadCollection<EntityAddress>("Addresses").FirstOrDefault().ToDisplay());
+
+                String[] options = Enumerable.Repeat(1, optNum).Select(o=>o.ToString()).ToArray();
+                var option = Prompt("Match Facility # or (s)earch for another or (a)bort:", options.Union(new String[] { "s", "a" }).ToArray());
+                if (option == "s")
+                {
+                    Console.Write("Search Term:");
+                    name = Console.ReadLine();
+                }
+                else if (option == "a")
+                    return null;
+                else
+                    try
+                    {
+                        return candidates.ElementAt(Int32.Parse(option));
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Invalid selection: {0}", option);
+                    }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Prompt for input
+        /// </summary>
+        private static String Prompt(string prompt, String[] validResponses)
+        {
+            String retVal = String.Empty;
+            while (!validResponses.Contains(retVal))
+            {
+                Console.Write(prompt);
+                retVal = Console.ReadLine();
+            }
+            return retVal;
         }
 
         /// <summary>
