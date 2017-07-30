@@ -13,6 +13,7 @@ using MARC.HI.EHRS.SVC.Configuration.Data;
 using OpenIZ.Persistence.Data.ADO.Data.SQL;
 using MARC.HI.EHRS.SVC.Configuration.UI;
 using OpenIZ.OrmLite.Providers;
+using OpenIZ.Persistence.Data.ADO.Services;
 
 namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
 {
@@ -229,6 +230,8 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
                 configurationElement.Attributes.Append(configurationDom.CreateAttributeValue("provider", providerType.AssemblyQualifiedName));
             else
                 configurationElement.Attributes["provider"].Value = providerType.AssemblyQualifiedName;
+
+            configurationDom.RegisterService(typeof(AdoPersistenceService));
 
         }
 

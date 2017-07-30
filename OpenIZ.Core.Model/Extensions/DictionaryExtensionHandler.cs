@@ -18,6 +18,7 @@
  * Date: 2017-4-17
  */
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,11 @@ namespace OpenIZ.Core.Extensions
 		        using (var tr = new StreamReader(ms))
 		        using (var jr = new JsonTextReader(tr))
 		        {
-			        return jsz.Deserialize(jr);
+			        var obj = jsz.Deserialize<dynamic>(jr);
+                    if (obj is JArray)
+                        return (obj as JArray).Values<dynamic>().ToArray();
+                    else if (obj is JObject)
+                        return (obj as JObject).Value<dynamic>();
 		        }
 			}
 	        catch

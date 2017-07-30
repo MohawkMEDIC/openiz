@@ -24,6 +24,8 @@ using OpenIZ.Core.Model.DataTypes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.Entities
@@ -125,10 +127,20 @@ namespace OpenIZ.Core.Model.Entities
 		[AutoLoad]
 		public List<EntityAddressComponent> Component { get; set; }
 
-		/// <summary>
-		/// Remove empty components
-		/// </summary>
-		public override IdentifiedData Clean()
+
+        /// <summary>
+        /// Get components
+        /// </summary>
+        public string GetComponent(Guid key)
+        {
+            var comps = this.LoadCollection<EntityAddressComponent>("Component");
+            return comps.FirstOrDefault(o => o.ComponentTypeKey == key)?.Value;
+        }
+
+        /// <summary>
+        /// Remove empty components
+        /// </summary>
+        public override IdentifiedData Clean()
 		{
 			this.Component.RemoveAll(o => String.IsNullOrEmpty(o.Value));
 			return this;
@@ -162,6 +174,33 @@ namespace OpenIZ.Core.Model.Entities
         public override bool ShouldSerializeSourceEntityKey()
         {
             return false;
+        }
+
+        /// <summary>
+        /// Represent as display
+        /// </summary>
+        public override string ToDisplay()
+        {
+
+            StringBuilder sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(this.GetComponent(AddressComponentKeys.StreetAddressLine)))
+                sb.AppendFormat("{0}, ", this.GetComponent(AddressComponentKeys.StreetAddressLine));
+            if (!string.IsNullOrEmpty(this.GetComponent(AddressComponentKeys.Precinct)))
+                sb.AppendFormat("{0}, ", this.GetComponent(AddressComponentKeys.Precinct));
+            if (!string.IsNullOrEmpty(this.GetComponent(AddressComponentKeys.City)))
+                sb.AppendFormat("{0}, ", this.GetComponent(AddressComponentKeys.City));
+            if (!string.IsNullOrEmpty(this.GetComponent(AddressComponentKeys.County)))
+                sb.AppendFormat("{0}, ", this.GetComponent(AddressComponentKeys.County));
+            if (!string.IsNullOrEmpty(this.GetComponent(AddressComponentKeys.State)))
+                sb.AppendFormat("{0}, ", this.GetComponent(AddressComponentKeys.State));
+            if (!string.IsNullOrEmpty(this.GetComponent(AddressComponentKeys.Country)))
+                sb.AppendFormat("{0}, ", this.GetComponent(AddressComponentKeys.Country));
+            if (!string.IsNullOrEmpty(this.GetComponent(AddressComponentKeys.PostalCode)))
+                sb.AppendFormat("{0}, ", this.GetComponent(AddressComponentKeys.PostalCode));
+
+            if (sb.Length > 2)
+                sb.Remove(sb.Length - 2, 2);
+            return sb.ToString();
         }
     }
 }

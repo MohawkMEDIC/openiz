@@ -229,5 +229,14 @@ namespace OpenIZ.Core.Model.DataTypes
                 this.IsSystemConcept == other.IsSystemConcept &&
                 this.Relationship?.SemanticEquals(other.Relationship) == true;
         }
+
+
+        /// <summary>
+        /// Represent as a display string
+        /// </summary>
+        public override string ToDisplay()
+        {
+            return this.LoadCollection<ConceptName>("ConceptNames")?.FirstOrDefault().Name;
+        }
     }
 }

@@ -419,6 +419,8 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Messagin
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Persistence.Diagnostics.Jira.dll"" /nologo /silent"; Components: interop\jira; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Diagnostics.Jira.dll"; flags: runhidden
 #endif
 
+[Icons]
+
 ; Components
 [Code]
 var
