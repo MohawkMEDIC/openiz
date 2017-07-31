@@ -72,7 +72,6 @@ namespace OpenIZ.Core.Configuration.UI
         /// <param name="configFile"></param>
         public void EasyConfigure(XmlDocument configFile)
         {
-            throw new NotImplementedException();
         }
 
         /// <summary>
