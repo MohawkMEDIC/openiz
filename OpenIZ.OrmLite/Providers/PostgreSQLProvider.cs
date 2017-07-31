@@ -120,6 +120,10 @@ namespace OpenIZ.OrmLite.Providers
                 IPAddress ip = null;
                 if (IPAddress.TryParse(host.ToString(), out ip)) // server is an IP, no need to dns
                     this.m_readonlyIpAddresses = new IPAddress[] { ip };
+                else if (host.ToString() == "localhost") {
+                    conn.ConnectionString = this.ReadonlyConnectionString;
+                    return new DataContext(this, conn, true);
+                }
                 else
                     this.m_readonlyIpAddresses = Dns.GetHostAddresses(host.ToString());
                 dbst.Remove("host");

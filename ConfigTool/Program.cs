@@ -55,6 +55,7 @@ namespace ConfigTool
 
                 // Scan for configuration options
                 ConfigurationApplicationContext.Initialize();
+                ConfigurationApplicationContext.s_configurationPanels.Add(new OpenIZAboutPanel());
                 splash.Close();
 #if DEBUG
                 ConfigurationApplicationContext.s_configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "OpenIZ.exe.config.test");
@@ -87,6 +88,9 @@ namespace ConfigTool
                     ConfigurationApplicationContext.s_configurationPanels.Sort((a, b) => a.Name.CompareTo(b.Name));
                     ConfigurationApplicationContext.ConfigurationApplied += new EventHandler(ConfigurationApplicationContext_ConfigurationApplied);
 
+                    // Allow data services to use the application context 
+                    MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
+
                     // Configuration File exists?
                     if (!File.Exists(ConfigurationApplicationContext.s_configFile))
                     {
@@ -94,9 +98,6 @@ namespace ConfigTool
                         if (start.ShowDialog() == DialogResult.Cancel)
                             return;
                     }
-
-                    // Allow data services to use the application context 
-                    MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
                     MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.GetService<FileConfigurationService>().Open(ConfigurationApplicationContext.s_configFile);
                     try
                     {

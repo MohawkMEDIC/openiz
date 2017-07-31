@@ -212,51 +212,61 @@ namespace OpenIZ.Core.Persistence
         {
             this.m_persistenceHandler = (o, e) => {
 
-                try
+                this.InstallDataDirectory();
+            };
+        }
+
+        /// <summary>
+        /// Install data directory contents
+        /// </summary>
+        public void InstallDataDirectory(EventHandler<Services.ProgressChangedEventArgs> fileProgress = null)
+        {
+            try
+            {
+                // Set system principal 
+                AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+
+                String dataDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data");
+                this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Scanning Directory {0} for datasets", dataDirectory);
+
+                XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
+                var datasetFiles = Directory.GetFiles(dataDirectory, "*.dataset");
+                Array.Sort(datasetFiles);
+                int i = 0;
+                // Perform migrations
+                foreach (var f in datasetFiles)
                 {
-                    // Set system principal 
-                    AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 
-                    String dataDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Data");
-                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Scanning Directory {0} for datasets", dataDirectory);
-
-                    XmlSerializer xsz = new XmlSerializer(typeof(DatasetInstall));
-                    var datasetFiles = Directory.GetFiles(dataDirectory, "*.dataset");
-                    Array.Sort(datasetFiles);
-                    // Perform migrations
-                    foreach (var f in datasetFiles)
+                    try
                     {
 
-                        try
+                        var logFile = Path.ChangeExtension(f, "completed");
+                        if (File.Exists(logFile))
+                            continue; // skip
+
+                        using (var fs = File.OpenRead(f))
                         {
-
-                            var logFile = Path.ChangeExtension(f, "completed");
-                            if (File.Exists(logFile))
-                                continue; // skip
-
-                            using (var fs = File.OpenRead(f))
-                            {
-                                var ds = xsz.Deserialize(fs) as DatasetInstall;
-                                this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Installing {0}...", Path.GetFileName(f));
-                                this.InstallDataset(ds);
-                            }
-
-
-                            File.Move(f, logFile);
+                            var ds = xsz.Deserialize(fs) as DatasetInstall;
+                            fileProgress?.Invoke(this, new Services.ProgressChangedEventArgs(++i / (float)datasetFiles.Length, ds.Id));
+                            this.m_traceSource.TraceEvent(TraceEventType.Information, 0, "Installing {0}...", Path.GetFileName(f));
+                            this.InstallDataset(ds);
                         }
-                        catch (Exception ex)
-                        {
-                            this.m_traceSource.TraceEvent(TraceEventType.Error, ex.HResult, "Error applying {0}: {1}", f, ex);
-                            throw;
-                        }
+
+
+                        File.Move(f, logFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.m_traceSource.TraceEvent(TraceEventType.Error, ex.HResult, "Error applying {0}: {1}", f, ex);
+                        throw;
                     }
                 }
-                finally
-                {
-                    this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Un-binding event handler");
-                    ApplicationContext.Current.Started -= this.m_persistenceHandler;
-                }
-            };
+            }
+            finally
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Un-binding event handler");
+                ApplicationContext.Current.Started -= this.m_persistenceHandler;
+            }
         }
 
         /// <summary>

@@ -14,6 +14,9 @@ using OpenIZ.Persistence.Data.ADO.Data.SQL;
 using MARC.HI.EHRS.SVC.Configuration.UI;
 using OpenIZ.OrmLite.Providers;
 using OpenIZ.Persistence.Data.ADO.Services;
+using OpenIZ.Core.Services.Impl;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Persistence;
 
 namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
 {
@@ -164,7 +167,30 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         {
             get
             {
-                throw new NotImplementedException();
+                return new List<IDataFeature>()
+                {
+                    new AdoCoreDataFeature(),
+                    new AdoCodeDataFeature(),
+                    new AdoDataInitialization()
+                };
+            }
+        }
+
+        /// <summary>
+        /// Updates
+        /// </summary>
+        public List<IDataUpdate> Updates
+        {
+            get
+            {
+                List<IDataUpdate> retVal = new List<IDataUpdate>();
+                foreach(var nam in typeof(AdoPersistenceConfigurableFeature).Assembly.GetManifestResourceNames())
+                    if(nam.StartsWith("OpenIZ.Persistence.Data.ADO.Data.SQL.Updates"))
+                    {
+                        using (var str = typeof(AdoPersistenceConfigurableFeature).Assembly.GetManifestResourceStream(nam))
+                            retVal.Add(SqlSourceUpdate.Load(str));
+                    }
+                return retVal;
             }
         }
 
@@ -173,14 +199,6 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         /// </summary>
         public void Configure(XmlDocument configurationDom)
         {
-            // Deploy schema
-            this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(25, "Deploying Core Schema..."));
-            this.ConnectionString.Provider.DeployFeature(new AdoCoreDataFeature(), this.ConnectionString.Name, configurationDom);
-            this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(50, "Deploying Core Codes..."));
-            this.ConnectionString.Provider.DeployFeature(new AdoCodeDataFeature(), this.ConnectionString.Name, configurationDom);
-            this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(75, "Initializing Users..."));
-            this.ConnectionString.Provider.DeployFeature(new AdoDataInitialization(), this.ConnectionString.Name, configurationDom);
-
             // TODO: Check for updates and then install them
 
             // TODO: Check for dataset files and then install them
@@ -248,7 +266,6 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         /// </summary>
         public void EasyConfigure(XmlDocument configFile)
         {
-
             this.m_panel.ConfigurationObject = new AdoConfiguration()
             {
                 AutoInsertChildren = false,
@@ -257,6 +274,7 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
             };
             this.m_panel.ConnectionString = this.ConnectionString;
             this.Configure(configFile);
+            this.EnableConfiguration = true;
         }
 
         /// <summary>
@@ -316,6 +334,39 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
         public override string ToString()
         {
             return this.Name;
+        }
+
+        /// <summary>
+        /// After deployment
+        /// </summary>
+        public void AfterDeploy()
+        {
+
+        }
+
+        /// <summary>
+        /// Fired after applying updates
+        /// </summary>
+        public void AfterUpdate()
+        {
+
+            // Update the configuration
+            ApplicationContext.Current.GetService<FileConfigurationService>().Open(ConfigurationApplicationContext.s_configFile);
+
+            if (ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>() == null)
+            {
+                ApplicationContext.Current.AddServiceProvider(typeof(AdoPersistenceService));
+                ApplicationContext.Current.GetService<AdoPersistenceService>().Start();
+            }
+
+            // Check the directory for datasets to install
+            var dsi = new DataInitializationService();
+            dsi.ProgressChanged += (o, e) => this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((int)(e.Progress * 100), e.State));
+            dsi.InstallDataDirectory((o,e) => this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((int)(e.Progress * 100), null)));
+        }
+
+        public void AfterUnDeploy()
+        {
         }
     }
 }
