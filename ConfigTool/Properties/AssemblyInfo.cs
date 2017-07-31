@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ConfigTool")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("OpenIZ Configuration Tool")]
+[assembly: AssemblyDescription("Configuration tool for setting up and maintaining OpenIZ")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ConfigTool")]
-[assembly: AssemblyCopyright("Copyright ©  2017")]
+[assembly: AssemblyProduct("OpenIZ")]
+[assembly: AssemblyCopyright("Copyright ©  2016-2017 Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.0.*")]
+[assembly: AssemblyVersion("0.9.7.*")]
 [assembly: AssemblyInformationalVersion("Edmonton CTP3")]
 [assembly: AssemblyFileVersion("0.8.0.0")]

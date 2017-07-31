@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Open Immunize"
-#define MyAppVersion "0.9.7.0"
+#define MyAppVersion "0.9.7.3"
 #define MyAppPublisher "Mohawk College mHealth & eHealth Development and Innovation Centre"
 #define MyAppURL "http://openiz.org"
-#define DEBUG
+
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
 ; Do not use the same AppId value in installers for other applications.
@@ -120,11 +120,13 @@ Source: ..\Solution Items\MARC.Everest.dll; DestDir: {app}; Components: core;
 Source: ..\Solution Items\MARC.Everest.Connectors.WCF.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.QM.Core.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.QM.Persistence.Data.dll; DestDir: {app}; Components: core
-Source: ..\Solution Items\MARC.HI.EHRS.SVC.Core.ComponentModel.dll; DestDir: {app}; Components: core
+Source: ..\Solution Items\SharpCompress.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Core.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Core.Timer.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Localization.dll; DestDir: {app}; Components: core
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Messaging.Persistence.Data.dll; DestDir: {app}; Components: core
+Source: ..\bin\Release\OpenIZ.Messaging.AMI.Client.dll; DestDir: {app}; Components: core
+Source: ..\bin\Release\OpenIZ.Messaging.IMSI.Client.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.Model.ViewModelSerializers.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.Applets.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.PCL.dll; DestDir: {app}; Components: core
@@ -133,7 +135,11 @@ Source: ..\bin\Release\OpenIZ.Core.Model.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.dll; DestDir: {app}; Components: core
 Source: ..\bin\release\OpenIZ.exe; DestDir: {app}; Components: core
 Source: ..\bin\Release\OpenIZ.Core.Model.RISI.dll; DestDir: {app}; Components: core
-Source: ..\bin\Release\MARC.HI.EHRS.SVC.Configuration.dll; DestDir: {app}; Components: core
+Source: ..\Solution Items\MARC.HI.EHRS.SVC.Configuration.dll; DestDir: {app}; Components: core
+Source: ..\Solution Items\MARC.HI.EHRS.SVC.Configurator.Npgsql.dll; DestDir: {app}; Components: core
+Source: ..\Solution Items\MARC.HI.EHRS.SVC.Core.dll; DestDir: {app}; Components: core
+Source: ..\bin\Release\ConfigTool.exe; DestDir: {app}; Components: core
+Source: ..\bin\Release\ConfigTool.exe.config; DestDir: {app}; Components: core
 ; AMI
 Source: ..\Solution Items\MARC.Util.CertificateTools.dll; DestDir: {app}; Components: msg\ami
 Source: ..\Solution Items\CERTADMINLib.dll; DestDir: {app}; Components: msg\ami
@@ -165,6 +171,7 @@ Source: ..\bin\release\OpenIZ.Messaging.HL7.dll; DestDir: {app}; Components: int
 Source: ..\Solution Items\AjaxMin.dll; DestDir: {app}; Components: tools
 Source: ..\bin\release\oizdt.exe; DestDir: {app}; Components: tools
 Source: ..\bin\release\LogViewer.exe; DestDir: {app}; Components: tools
+Source: ..\bin\release\oizac.exe; DestDir: {app}; Components: tools
 
 ; Twilio
 Source: ..\Solution Items\RestSharp.dll; DestDir: {app}; Components: tfa\twilio
@@ -420,6 +427,8 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\OpenIZ.Persiste
 #endif
 
 [Icons]
+Name: "{commonprograms}\Open Immunize\OpenIZ Administration Console"; Filename: "{app}\oizac.exe"; Parameters: "-r localhost -a org.openiz.administration -s Mohawk123"
+Name: "{commonprograms}\Open Immunize\Configure OpenIZ IMS"; Filename: "{app}\configtool.exe"; 
 
 ; Components
 [Code]

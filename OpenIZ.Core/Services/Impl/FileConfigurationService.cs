@@ -28,11 +28,15 @@ namespace OpenIZ.Core.Services.Impl
         /// </summary>
         public FileConfigurationService()
         {
-            var configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "openiz.config");
-            if (!File.Exists(configFile))
-                configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "openiz.exe.config");
+            try
+            {
+                var configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "openiz.config");
+                if (!File.Exists(configFile))
+                    configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "openiz.exe.config");
 
-            this.Open(configFile);
+                this.Open(configFile);
+            }
+            catch { }
         }
 
         /// <summary>

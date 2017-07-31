@@ -98,6 +98,7 @@ namespace ConfigTool
                         if (start.ShowDialog() == DialogResult.Cancel)
                             return;
                     }
+
                     MARC.HI.EHRS.SVC.Core.ApplicationContext.Current.GetService<FileConfigurationService>().Open(ConfigurationApplicationContext.s_configFile);
                     try
                     {
@@ -112,6 +113,8 @@ namespace ConfigTool
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                Trace.TraceError(e.ToString());
+                MessageBox.Show(e.ToString());
             }
             finally
             {
