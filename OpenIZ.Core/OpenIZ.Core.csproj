@@ -40,6 +40,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
     </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Configuration, Version=2.0.0.40976, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Configuration.dll</HintPath>
+    </Reference>
     <Reference Include="MARC.HI.EHRS.SVC.Core, Version=2.0.0.39574, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
@@ -55,6 +59,9 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=4.0.20622.1351, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -63,6 +70,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,6 +81,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ServiceTool.cs" />
+    <Compile Include="Configuration\UI\CoreConfigurationPanel.cs" />
+    <Compile Include="Configuration\UI\ServiceConfigurationPanel.cs" />
+    <Compile Include="Configuration\UI\ucCoreSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\UI\ucCoreSettings.Designer.cs">
+      <DependentUpon>ucCoreSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\UI\ucServiceSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\UI\ucServiceSettings.designer.cs">
+      <DependentUpon>ucServiceSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="Diagnostics\DiagnosticExtensions.cs" />
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="ExtensionMethods.cs" />
@@ -199,6 +221,14 @@
       <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
       <Name>OpenIZ.Core.PCL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\UI\ucCoreSettings.resx">
+      <DependentUpon>ucCoreSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\UI\ucServiceSettings.resx">
+      <DependentUpon>ucServiceSettings.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

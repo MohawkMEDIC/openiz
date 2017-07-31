@@ -276,6 +276,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <summary>
         /// Create a basic user
         /// </summary>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.CreateIdentity)]
         public IIdentity CreateIdentity(string userName, string password, IPrincipal authContext)
         {
 
@@ -337,6 +338,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <summary>
         /// Delete the specified identity
         /// </summary>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public void DeleteIdentity(string userName, IPrincipal authContext)
         {
             if (String.IsNullOrEmpty(userName))
@@ -375,6 +377,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// <summary>
         /// Set the lockout status
         /// </summary>
+        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         public void SetLockout(string userName, bool lockout, IPrincipal authContext)
         {
             if (String.IsNullOrEmpty(userName))
@@ -429,6 +432,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             else if (claim == null)
                 throw new ArgumentNullException(nameof(claim));
 
+            if (AuthenticationContext.Current.Principal.Identity.Name != userName &&
+                !ApplicationContext.Current.GetService<IRoleProviderService>().IsUserInRole(AuthenticationContext.Current.Principal, "SYNCHRONIZERS"))
+                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand();
+
             try
             {
                 using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
@@ -479,6 +486,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 throw new ArgumentNullException(nameof(userName));
             else if (claimType == null)
                 throw new ArgumentNullException(nameof(claimType));
+
+            if (AuthenticationContext.Current.Principal.Identity.Name != userName &&
+                !ApplicationContext.Current.GetService<IRoleProviderService>().IsUserInRole(AuthenticationContext.Current.Principal, "SYNCHRONIZERS"))
+                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand();
 
             try
             {

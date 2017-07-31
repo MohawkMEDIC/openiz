@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-
+using MARC.HI.EHRS.SVC.Configuration;
 namespace OpenIZ.Core.Services.Impl
 {
     /// <summary>
@@ -19,6 +19,9 @@ namespace OpenIZ.Core.Services.Impl
 
         // Configuration
         private System.Configuration.Configuration m_configuration = null;
+
+        // Raw configuration
+        private XmlDocument m_rawConfiguration = null;
 
         /// <summary>
         /// 
@@ -39,6 +42,8 @@ namespace OpenIZ.Core.Services.Impl
         {
             ExeConfigurationFileMap fileMap = new ExeConfigurationFileMap() { ExeConfigFilename = fileName }; //Path to your config file
             this.m_configuration = System.Configuration.ConfigurationManager.OpenMappedExeConfiguration(fileMap, ConfigurationUserLevel.None);
+            this.m_rawConfiguration = new XmlDocument();
+            this.m_rawConfiguration.Load(fileName);
         }
 
         /// <summary>
@@ -87,8 +92,13 @@ namespace OpenIZ.Core.Services.Impl
 
                 var handler = Activator.CreateInstance(handlerType) as IConfigurationSectionHandler;
                 if (handler == null)
-                    throw new ConfigurationErrorsException($"Configuration handler {configSection.SectionInformation.Type} does not implement IConfigurationSectionHandler");
-
+                {
+                    // Fallback on manual
+                    var sect = this.m_rawConfiguration.GetSection(sectionName);
+                    if(sect == null)
+                        throw new ConfigurationErrorsException($"Configuration handler {configSection.SectionInformation.Type} does not implement IConfigurationSectionHandler");
+                    return sect;
+                }
                 var xml = configSection.SectionInformation.GetRawXml();
                 if (String.IsNullOrEmpty(xml))
                     return null;

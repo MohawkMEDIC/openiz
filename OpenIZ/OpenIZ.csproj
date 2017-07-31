@@ -98,6 +98,9 @@
     <Compile Include="ServiceInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
+    <EmbeddedResource Include="License.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">

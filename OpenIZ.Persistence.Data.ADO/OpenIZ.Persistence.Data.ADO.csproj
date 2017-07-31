@@ -232,10 +232,10 @@
     <EmbeddedResource Include="Data\SQL\PSQL\openiz-init.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Data\SQL\PSQL\Updates\20170721-01.sql">
+    <EmbeddedResource Include="Data\SQL\Updates\20170721-PSQL.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Data\SQL\PSQL\Updates\20170725-01.sql">
+    <EmbeddedResource Include="Data\SQL\Updates\20170725-PSQL.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration\UserInterface\ucAdoPersistence.resx">
