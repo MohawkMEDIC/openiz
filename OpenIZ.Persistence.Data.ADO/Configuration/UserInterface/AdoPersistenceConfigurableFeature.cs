@@ -83,7 +83,9 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
 
         // Panel 
         private ucAdoPersistence m_panel = new ucAdoPersistence();
-       
+
+        // Configuration
+        private AdoConfiguration m_configuration;
 
         // Progress changed
         public event EventHandler<ProgressChangedEventArgs> ProgressChanged;

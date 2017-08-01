@@ -444,7 +444,16 @@ namespace OpenIZ.OrmLite
                                 retVal.Append(" <> ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         case '~':
-                            retVal.Append(" ILIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            if(sValue.Contains("*") || sValue.Contains("?"))
+                                retVal.Append(" ILIKE ? ", CreateParameterValue(sValue.Substring(1).Replace("*","%"), propertyInfo.PropertyType));
+                            else
+                                retVal.Append(" ILIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            break;
+                        case '$':
+                            retVal.Append(" ILIKE '%' || ? ", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
+                            break;
+                        case '^':
+                            retVal.Append(" ILIKE ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         default:
                             if (sValue.Equals("null"))

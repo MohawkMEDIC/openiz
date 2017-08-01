@@ -26,6 +26,7 @@ using System.IdentityModel.Tokens;
 using System.Reflection;
 using System.ServiceModel.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Collections.ObjectModel;
 
 namespace OpenIZ.Core.Configuration
 {
@@ -40,7 +41,7 @@ namespace OpenIZ.Core.Configuration
         /// </summary>
         public OpenIzClaimsAuthorization()
         {
-            this.Audiences = new List<string>();
+            this.Audiences = new ObservableCollection<string>();
             this.IssuerKeys = new Dictionary<string, SecurityKey>();
         }
 
@@ -50,14 +51,14 @@ namespace OpenIZ.Core.Configuration
         public Type CustomValidator { get; set; }
 
         /// <summary>
-        /// Symmetric issuer keys
+        /// Issuer keys
         /// </summary>
-        public Dictionary<String,SecurityKey> IssuerKeys { get; set; }
-
+        public Dictionary<String, SecurityKey> IssuerKeys { get; set; }
+        
         /// <summary>
         /// Gets or sets the allowed audiences 
         /// </summary>
-        public List<String> Audiences { get; set; }
+        public ObservableCollection<String> Audiences { get; set; }
 
         /// <summary>
         /// Gets or sets the realm

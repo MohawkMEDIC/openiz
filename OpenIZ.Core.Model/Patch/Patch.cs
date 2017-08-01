@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -40,8 +41,15 @@ namespace OpenIZ.Core.Model.Patch
         /// </summary>
         public Patch()
         {
+            this.Version = typeof(Patch).GetTypeInfo().Assembly.GetName().Version.ToString();
             this.Operation = new List<PatchOperation>();
         }
+
+        /// <summary>
+        /// Gets or sets the version of the patch file
+        /// </summary>
+        [XmlAttribute("version"), JsonProperty("version")]
+        public String Version { get; set; }
 
         /// <summary>
         /// Application version

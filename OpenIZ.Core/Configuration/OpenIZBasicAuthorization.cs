@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace OpenIZ.Core.Configuration
 {
@@ -32,10 +33,10 @@ namespace OpenIZ.Core.Configuration
         /// </summary>
         public bool RequireClientAuth { get; set; }
 
+        public ObservableCollection<string> AllowedClientClaims { get; set; }
         /// <summary>
         /// Allowed claims 
         /// </summary>
-        public List<string> AllowedClientClaims { get; set; }
 
         /// <summary>
         /// Realm of basic auth
