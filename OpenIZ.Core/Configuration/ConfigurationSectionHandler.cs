@@ -80,7 +80,7 @@ namespace OpenIZ.Core.Configuration
                     appletSecurityNode = securityNode.SelectSingleNode("./applet") as XmlElement;
 
                 retVal.Security.AllowUnsignedApplets = Boolean.Parse(appletSecurityNode?.Attributes["allowUnsignedApplets"]?.Value ?? "false");
-                retVal.Security.TrustedPublishers = appletSecurityNode?.SelectNodes("./trustedPublishers/add")?.OfType<XmlElement>().Select(o => o.InnerText).ToArray();
+                retVal.Security.TrustedPublishers = new System.Collections.ObjectModel.ObservableCollection<string>(appletSecurityNode?.SelectNodes("./trustedPublishers/add")?.OfType<XmlElement>().Select(o => o.InnerText).ToArray());
 
                 if (tokenSecurityNode != null)
                 {
@@ -125,7 +125,7 @@ namespace OpenIZ.Core.Configuration
                     retVal.Security.BasicAuth.Realm = basicSecurityNode.Attributes["realm"]?.Value;
                     // Allowed claims
                     XmlNodeList allowedClaims = basicSecurityNode.SelectNodes("./allowedClaims/add/@claimType");
-                    retVal.Security.BasicAuth.AllowedClientClaims = new List<string>();
+                    retVal.Security.BasicAuth.AllowedClientClaims = new System.Collections.ObjectModel.ObservableCollection<string>();
                     foreach(XmlNode all in allowedClaims)
                         retVal.Security.BasicAuth.AllowedClientClaims.Add(all.Value);
                 }

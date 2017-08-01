@@ -199,7 +199,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// Get all roles
         /// </summary>
         /// <returns></returns>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterRoles)]
         public string[] GetAllRoles()
         {
             using (var dataContext = this.m_configuration.Provider.GetReadonlyConnection())
@@ -219,7 +218,6 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// Get all rolesfor user
         /// </summary>
         /// <returns></returns>
-        [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterRoles)]
         public string[] GetAllRoles(String userName)
         {
             using (var dataContext = this.m_configuration.Provider.GetReadonlyConnection())

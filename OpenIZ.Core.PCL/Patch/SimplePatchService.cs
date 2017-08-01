@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Services.Impl
                     var serializationName = pi.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
                     if (ignoreProperties?.Contains($"{path}{serializationName}") == true) continue;
 
-                    object existingValue = pi.GetValue(existing),
+                    object existingValue = existing.LoadProperty(pi.Name),
                         updatedValue = pi.GetValue(updated);
 
                     // Skip ignore properties
@@ -123,7 +123,8 @@ namespace OpenIZ.Core.Services.Impl
                         if (existingValue != null && updatedValue == null) // remove
                         {
                             // Generate tests
-                            retVal.AddRange(this.GenerateTests(existingValue, $"{path}{serializationName}"));
+                            if(typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo()))
+                                retVal.AddRange(this.GenerateTests(existingValue, $"{path}{serializationName}"));
                             retVal.Add(new PatchOperation(PatchOperationType.Remove, $"{path}{serializationName}", null));
                         }
                         else if ((existingValue as IdentifiedData)?.SemanticEquals(updatedValue as IdentifiedData) == false) // They are different
@@ -315,7 +316,13 @@ namespace OpenIZ.Core.Services.Impl
                             if (instance != null)
                                 (applyTo as IList).Remove(instance);
                             else
-                                throw new PatchAssertionException("Cannot remove a non-existing relationship");
+                            {
+                                // HACK: Patches with no version code don't adhere to ths
+                                if (String.IsNullOrEmpty(patch.Version) && force)
+                                    this.m_tracer.TraceWarning("Patch specifies removal of non-existing relationship {0} -> Ignoring", op);
+                                else
+                                    throw new PatchAssertionException("Cannot remove a non-existing relationship");
+                            }
                         }
                         else if (op.Value == null)
                             property.SetValue(applyParent, null);

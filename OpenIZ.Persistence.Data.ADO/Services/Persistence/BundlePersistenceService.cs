@@ -138,6 +138,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 
                 data.Item[i] = mi.Invoke(svc, new object[] { context, itm, principal }) as IdentifiedData;
             }
+
+            // Cache items
+            foreach (var itm in data.Item)
+            {
+                itm.LoadState = LoadState.FullLoad;
+                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+            }
             return data;
         }
 

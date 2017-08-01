@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
@@ -40,27 +39,25 @@
             this.btnAddPublisher = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.txtPublisher = new System.Windows.Forms.TextBox();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.lsbPublishers = new System.Windows.Forms.ListBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.cbxSecurity = new System.Windows.Forms.ComboBox();
+            this.cbxHashing = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.cbxSecurity = new System.Windows.Forms.ComboBox();
             this.txtRealm = new System.Windows.Forms.TextBox();
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.label8 = new System.Windows.Forms.Label();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.btnAddOauth = new System.Windows.Forms.Button();
             this.btnDelOauth = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.lsbOAuth = new System.Windows.Forms.ListBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
-            this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.txtIssuer = new System.Windows.Forms.TextBox();
             this.txtSymmSecret = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.cbxHashing = new System.Windows.Forms.ComboBox();
             this.flowLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numThreadPool)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -173,6 +170,7 @@
             this.btnAddPublisher.TabIndex = 0;
             this.btnAddPublisher.Text = "Add";
             this.btnAddPublisher.UseVisualStyleBackColor = true;
+            this.btnAddPublisher.Click += new System.EventHandler(this.btnAddPublisher_Click);
             // 
             // btnRemove
             // 
@@ -191,11 +189,6 @@
             this.txtPublisher.Name = "txtPublisher";
             this.txtPublisher.Size = new System.Drawing.Size(348, 20);
             this.txtPublisher.TabIndex = 2;
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // lsbPublishers
             // 
@@ -253,18 +246,30 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(437, 84);
             this.tableLayoutPanel2.TabIndex = 35;
             // 
-            // cbxSecurity
+            // cbxHashing
             // 
-            this.cbxSecurity.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbxSecurity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbxSecurity.FormattingEnabled = true;
-            this.cbxSecurity.Items.AddRange(new object[] {
+            this.cbxHashing.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbxHashing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxHashing.FormattingEnabled = true;
+            this.cbxHashing.Items.AddRange(new object[] {
             "Bearer Token Authentication",
             "HTTP Basic Authentication"});
-            this.cbxSecurity.Location = new System.Drawing.Point(123, 3);
-            this.cbxSecurity.Name = "cbxSecurity";
-            this.cbxSecurity.Size = new System.Drawing.Size(311, 21);
-            this.cbxSecurity.TabIndex = 2;
+            this.cbxHashing.Location = new System.Drawing.Point(123, 57);
+            this.cbxHashing.Name = "cbxHashing";
+            this.cbxHashing.Size = new System.Drawing.Size(311, 21);
+            this.cbxHashing.TabIndex = 6;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label11.Location = new System.Drawing.Point(3, 54);
+            this.label11.Name = "label11";
+            this.label11.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
+            this.label11.Size = new System.Drawing.Size(114, 27);
+            this.label11.TabIndex = 5;
+            this.label11.Text = "Hashing:";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label7
             // 
@@ -278,6 +283,19 @@
             this.label7.Text = "Realm:";
             this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // cbxSecurity
+            // 
+            this.cbxSecurity.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbxSecurity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbxSecurity.FormattingEnabled = true;
+            this.cbxSecurity.Items.AddRange(new object[] {
+            "Bearer Token Authentication",
+            "HTTP Basic Authentication"});
+            this.cbxSecurity.Location = new System.Drawing.Point(123, 3);
+            this.cbxSecurity.Name = "cbxSecurity";
+            this.cbxSecurity.Size = new System.Drawing.Size(311, 21);
+            this.cbxSecurity.TabIndex = 2;
+            // 
             // txtRealm
             // 
             this.txtRealm.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -285,11 +303,6 @@
             this.txtRealm.Name = "txtRealm";
             this.txtRealm.Size = new System.Drawing.Size(311, 20);
             this.txtRealm.TabIndex = 4;
-            // 
-            // contextMenuStrip2
-            // 
-            this.contextMenuStrip2.Name = "contextMenuStrip2";
-            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
             // label8
             // 
@@ -311,7 +324,7 @@
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 83F));
             this.tableLayoutPanel3.Controls.Add(this.btnAddOauth, 1, 0);
             this.tableLayoutPanel3.Controls.Add(this.btnDelOauth, 1, 1);
-            this.tableLayoutPanel3.Controls.Add(this.listBox1, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.lsbOAuth, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 343);
@@ -325,31 +338,32 @@
             // btnAddOauth
             // 
             this.btnAddOauth.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnAddOauth.Location = new System.Drawing.Point(357, 28);
+            this.btnAddOauth.Location = new System.Drawing.Point(357, 29);
             this.btnAddOauth.Name = "btnAddOauth";
             this.btnAddOauth.Size = new System.Drawing.Size(77, 23);
             this.btnAddOauth.TabIndex = 0;
             this.btnAddOauth.Text = "Add";
             this.btnAddOauth.UseVisualStyleBackColor = true;
+            this.btnAddOauth.Click += new System.EventHandler(this.btnAddOauth_Click);
             // 
             // btnDelOauth
             // 
             this.btnDelOauth.Dock = System.Windows.Forms.DockStyle.Top;
-            this.btnDelOauth.Location = new System.Drawing.Point(357, 57);
+            this.btnDelOauth.Location = new System.Drawing.Point(357, 58);
             this.btnDelOauth.Name = "btnDelOauth";
             this.btnDelOauth.Size = new System.Drawing.Size(77, 23);
             this.btnDelOauth.TabIndex = 1;
             this.btnDelOauth.Text = "Remove";
             this.btnDelOauth.UseVisualStyleBackColor = true;
             // 
-            // listBox1
+            // lsbOAuth
             // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(3, 57);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(348, 107);
-            this.listBox1.TabIndex = 3;
+            this.lsbOAuth.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lsbOAuth.FormattingEnabled = true;
+            this.lsbOAuth.Location = new System.Drawing.Point(3, 58);
+            this.lsbOAuth.Name = "lsbOAuth";
+            this.lsbOAuth.Size = new System.Drawing.Size(348, 106);
+            this.lsbOAuth.TabIndex = 3;
             // 
             // tableLayoutPanel4
             // 
@@ -366,8 +380,20 @@
             this.tableLayoutPanel4.RowCount = 2;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel4.Size = new System.Drawing.Size(348, 48);
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(348, 49);
             this.tableLayoutPanel4.TabIndex = 4;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label10.Location = new System.Drawing.Point(3, 24);
+            this.label10.Name = "label10";
+            this.label10.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
+            this.label10.Size = new System.Drawing.Size(114, 25);
+            this.label10.TabIndex = 2;
+            this.label10.Text = "Symmetric Secret:";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label9
             // 
@@ -380,18 +406,6 @@
             this.label9.TabIndex = 1;
             this.label9.Text = "Issuer:";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label10.Location = new System.Drawing.Point(3, 24);
-            this.label10.Name = "label10";
-            this.label10.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
-            this.label10.Size = new System.Drawing.Size(114, 24);
-            this.label10.TabIndex = 2;
-            this.label10.Text = "Symmetric Secret:";
-            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtIssuer
             // 
@@ -409,31 +423,6 @@
             this.txtSymmSecret.PasswordChar = '*';
             this.txtSymmSecret.Size = new System.Drawing.Size(222, 20);
             this.txtSymmSecret.TabIndex = 4;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label11.Location = new System.Drawing.Point(3, 54);
-            this.label11.Name = "label11";
-            this.label11.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
-            this.label11.Size = new System.Drawing.Size(114, 27);
-            this.label11.TabIndex = 5;
-            this.label11.Text = "Hashing:";
-            this.label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // cbxHashing
-            // 
-            this.cbxHashing.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbxHashing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbxHashing.FormattingEnabled = true;
-            this.cbxHashing.Items.AddRange(new object[] {
-            "Bearer Token Authentication",
-            "HTTP Basic Authentication"});
-            this.cbxHashing.Location = new System.Drawing.Point(123, 57);
-            this.cbxHashing.Name = "cbxHashing";
-            this.cbxHashing.Size = new System.Drawing.Size(311, 21);
-            this.cbxHashing.TabIndex = 6;
             // 
             // ucCoreSettings
             // 
@@ -481,7 +470,6 @@
         private System.Windows.Forms.Button btnRemove;
         private System.Windows.Forms.TextBox txtPublisher;
         private System.Windows.Forms.ListBox lsbPublishers;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
@@ -490,12 +478,11 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cbxSecurity;
         private System.Windows.Forms.TextBox txtRealm;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Button btnAddOauth;
         private System.Windows.Forms.Button btnDelOauth;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox lsbOAuth;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;

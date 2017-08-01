@@ -432,10 +432,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             else if (claim == null)
                 throw new ArgumentNullException(nameof(claim));
 
-            if (AuthenticationContext.Current.Principal.Identity.Name != userName &&
-                !ApplicationContext.Current.GetService<IRoleProviderService>().IsUserInRole(AuthenticationContext.Current.Principal, "SYNCHRONIZERS"))
-                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand();
-
+           
             try
             {
                 using (var dataContext = this.m_configuration.Provider.GetWriteConnection())
@@ -487,10 +484,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             else if (claimType == null)
                 throw new ArgumentNullException(nameof(claimType));
 
-            if (AuthenticationContext.Current.Principal.Identity.Name != userName &&
-                !ApplicationContext.Current.GetService<IRoleProviderService>().IsUserInRole(AuthenticationContext.Current.Principal, "SYNCHRONIZERS"))
-                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand();
-
+            
             try
             {
                 using (var dataContext = this.m_configuration.Provider.GetWriteConnection())

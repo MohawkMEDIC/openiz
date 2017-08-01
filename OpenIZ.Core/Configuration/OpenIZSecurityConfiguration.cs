@@ -17,12 +17,14 @@
  * User: justi
  * Date: 2016-6-14
  */
+using System.Collections.ObjectModel;
+
 namespace OpenIZ.Core.Configuration
 {
     /// <summary>
     /// OpenIZ Security configuration
     /// </summary>
-    public class OpenIzSecurityConfiguration
+    public class OpenIzSecurityConfiguration 
     {
 
         /// <summary>
@@ -48,6 +50,6 @@ namespace OpenIZ.Core.Configuration
         /// <summary>
         /// Trusted publishers
         /// </summary>
-        public string[] TrustedPublishers { get; set; }
+        public ObservableCollection<string> TrustedPublishers { get; set; }
     }
 }
