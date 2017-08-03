@@ -20,7 +20,7 @@ using System.Xml.Serialization;
 using System.Reflection;
 using System.IO;
 using System.Xml.Linq;
-
+using System.ServiceModel.Web;
 
 namespace OizDevTool
 {
@@ -54,6 +54,40 @@ namespace OizDevTool
         }
 
         /// <summary>
+        /// Concept set parameter reference
+        /// </summary>
+        public class ServiceDocParameters
+        {
+            /// <summary>
+            /// Gets or set the assembly
+            /// </summary>
+            [Parameter("asm")]
+            [Description("Identifies the assembly to load from")]
+            public string Assembly { get; set; }
+
+            /// <summary>
+            /// Output
+            /// </summary>
+            [Parameter("contract")]
+            [Description("Identifies the contract to create")]
+            public string Contract { get; set; }
+
+            /// <summary>
+            /// Get or sets the output 
+            /// </summary>
+            [Parameter("output")]
+            [Description("Sets the output")]
+            public String Output { get; set; }
+
+            /// <summary>
+            /// Gets or sets the documentation file
+            /// </summary>
+            [Parameter("xmlDoc")]
+            [Description("Sets the xml documentation file")]
+            public String XmlDocFile { get; set; }
+        }
+
+        /// <summary>
         /// Schema documentation parameters
         /// </summary>
         public class SchemaDocParameters
@@ -83,8 +117,99 @@ namespace OizDevTool
         }
 
         /// <summary>
+        /// Documetnation
+        /// </summary>
+        private struct SvcDoc
+        {
+            public MethodInfo Method { get; set; }
+
+            public WebInvokeAttribute Contract { get; set; }
+
+        }
+
+        /// <summary>
+        /// Generates documentation for the specified contract
+        /// </summary>
+        [Description("Generate WCF interface documentation")]
+        [ParameterClass(typeof(ServiceDocParameters))]
+        public static void WcfDoc(String[] args)
+        {
+            var parms = new ParameterParser<ServiceDocParameters>().Parse(args);
+
+            Assembly loadedAssembly = Assembly.LoadFile(parms.Assembly);
+            var type = loadedAssembly.ExportedTypes.FirstOrDefault(o => o.Name == parms.Contract && o.IsInterface);
+            var xmlDoc = new XmlDocument();
+            xmlDoc.Load(parms.XmlDocFile ?? Path.ChangeExtension(parms.Assembly, "xml"));
+
+            // Generate documentation
+            using (XmlWriter xw = XmlWriter.Create(parms.Output))
+            {
+                xw.WriteStartElement("html", NS_HTML);
+                xw.WriteStartElement("head", NS_HTML);
+                xw.WriteElementString("title", NS_HTML, "Service Documentation");
+                xw.WriteStartElement("link", NS_HTML);
+                xw.WriteAttributeString("rel", "stylesheet");
+                xw.WriteAttributeString("type", "text/css");
+                xw.WriteAttributeString("href", "bootstrap.css");
+                xw.WriteEndElement(); // link
+                xw.WriteEndElement(); // head
+                xw.WriteStartElement("body");
+                xw.WriteElementString("h1", NS_HTML, type.Name);
+
+                xw.WriteStartElement("table", NS_HTML);
+                xw.WriteAttributeString("class", "table table-bordered");
+
+                xw.WriteStartElement("thead", NS_HTML);
+                xw.WriteStartElement("tr", NS_HTML);
+                xw.WriteElementString("th", NS_HTML, "Resource");
+                xw.WriteElementString("th", NS_HTML, "Operation");
+                xw.WriteElementString("th", NS_HTML, "Description");
+                xw.WriteEndElement(); // tr
+                xw.WriteEndElement(); // thead
+
+                xw.WriteStartElement("tbody", NS_HTML);
+
+                var description = type.GetMethods().Select(o => new { Method = o, Doc = (object)o.GetCustomAttribute<WebGetAttribute>() ?? o.GetCustomAttribute<WebInvokeAttribute>() });
+                var combined = description.Where(o => o.Doc is WebGetAttribute).Select(o => new SvcDoc() { Method = o.Method, Contract = new WebInvokeAttribute() { Method = "GET", UriTemplate = (o.Doc as WebGetAttribute).UriTemplate } }).Union(description.Where(o=>o.Doc is WebInvokeAttribute).Select(o=>new SvcDoc() { Method = o.Method, Contract = o.Doc as WebInvokeAttribute }));
+
+                foreach (var comb in combined.GroupBy(o => o.Contract.UriTemplate).OrderBy(o => o.Key))
+                {
+                    xw.WriteStartElement("tr", NS_HTML);
+                    xw.WriteStartElement("td", NS_HTML);
+                    xw.WriteAttributeString("rowspan", comb.Count().ToString());
+                    xw.WriteString(comb.Key);
+                    xw.WriteEndElement(); // td
+
+                    foreach(var itm in comb)
+                    {
+                        xw.WriteElementString("td", NS_HTML, itm.Contract.Method);
+                        
+                        XmlNode typeDoc = xmlDoc.SelectSingleNode(String.Format("//*[local-name() = 'member'][@name = 'M:{0}.{1}']", itm.Method.DeclaringType.FullName, itm.Method.Name));
+                        if(typeDoc == null)
+                        {
+                            typeDoc = xmlDoc.SelectSingleNode(String.Format("//*[local-name() = 'member'][@name = 'M:{0}.{1}({2})']", itm.Method.DeclaringType.FullName, itm.Method.Name, String.Join(",", itm.Method.GetParameters().Select(o=>o.ParameterType.FullName))));
+                        }
+                        xw.WriteElementString("td", NS_HTML, typeDoc?.InnerText);
+                        if (itm.Method != comb.Last().Method)
+                        {
+                            xw.WriteEndElement(); // tr
+                            xw.WriteStartElement("tr", NS_HTML);
+                        }
+                    }
+                    xw.WriteEndElement(); // tr
+                }
+                xw.WriteEndElement();// tbody
+                xw.WriteEndElement(); // table
+                xw.WriteEndElement(); // body
+                xw.WriteEndElement(); // html
+            }
+        }
+
+        /// <summary>
         /// Adds documentation to an XML Schema File
         /// </summary>
+        [Description("Generate XML Schema documentation")]
+        [ParameterClass(typeof(SchemaDocParameters))]
         public static void SchemaDoc(String[] args)
         {
             var docParameters = new ParameterParser<SchemaDocParameters>().Parse(args);
@@ -129,6 +254,9 @@ namespace OizDevTool
         /// </summary>
         private static void CreateAssemblyDoc(XmlSchemaSimpleType xmlSchemaSimpleType, Type type, XmlDocument xmlDoc)
         {
+
+
+
         }
 
         /// <summary>

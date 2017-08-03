@@ -82,7 +82,27 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         /// </summary>
         public TModel DeSerialize<TModel>(Stream s)
         {
-            return (TModel)this.DeSerialize(s, typeof(TModel));
+            try
+            {
+                return (TModel)this.DeSerialize(s, typeof(TModel));
+            }
+            catch (Exception e)
+            {
+                try
+                {
+                    if (s.CanSeek)
+                    {
+                        s.Seek(0, SeekOrigin.Begin);
+                        using (var ms = new MemoryStream())
+                        {
+                            s.CopyTo(ms);
+                            this.m_tracer.TraceError("{0} -> {1}", e.Message, Encoding.UTF8.GetString(ms.ToArray(), 0, (int)ms.Length));
+                        }
+                    }
+                }
+                catch { }
+                throw;
+            }
         }
 
         /// <summary>
@@ -185,7 +205,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 case JsonToken.StartArray:
                     {
                         if (!typeof(IList).GetTypeInfo().IsAssignableFrom(t.GetTypeInfo()))
-                            throw new JsonSerializationException($"{t} does not implement IList");
+                            throw new JsonSerializationException($"{t} does not implement IList at {r.Path}");
                         int depth = r.Depth;
                         var listInstance = Activator.CreateInstance(t) as IList;
                         while (r.Read() && !(r.TokenType == JsonToken.EndArray && r.Depth == depth))

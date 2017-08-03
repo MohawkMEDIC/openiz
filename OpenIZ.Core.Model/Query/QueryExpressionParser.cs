@@ -374,29 +374,18 @@ namespace OpenIZ.Core.Model.Query
                                 et = ExpressionType.Equal;
                                 if (thisAccessExpression.Type == typeof(String))
                                 {
-                                    thisAccessExpression = Expression.Call(thisAccessExpression, typeof(String).GetRuntimeMethod("StartsWith", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
+                                    thisAccessExpression = Expression.Call(thisAccessExpression, typeof(String).GetRuntimeMethod("StartsWith", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1)));
                                     pValue = "true";
                                 }
                                 else
                                     throw new InvalidOperationException("^ can only be applied to string properties");
 
                                 break;
-                            case '$':
-                                et = ExpressionType.Equal;
-                                if (thisAccessExpression.Type == typeof(String))
-                                {
-                                    thisAccessExpression = Expression.Call(thisAccessExpression, typeof(String).GetRuntimeMethod("EndsWith", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
-                                    pValue = "true";
-                                }
-                                else
-                                    throw new InvalidOperationException("$ can only be applied to string properties");
-
-                                break;
                             case '~':
                                 et = ExpressionType.Equal;
                                 if (thisAccessExpression.Type == typeof(String))
                                 {
-                                    thisAccessExpression = Expression.Call(thisAccessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1).Replace("*", "/")));
+                                    thisAccessExpression = Expression.Call(thisAccessExpression, typeof(String).GetRuntimeMethod("Contains", new Type[] { typeof(String) }), Expression.Constant(pValue.Substring(1)));
                                     pValue = "true";
                                 }
                                 else if (thisAccessExpression.Type == typeof(DateTime) ||

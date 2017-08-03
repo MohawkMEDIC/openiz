@@ -121,7 +121,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             var sourceKey = data.Key.Value.ToByteArray();
 
             // Data component
-            if (data.Component != null)
+            if (data.Component != null && data.Component.Count > 0)
                 base.UpdateAssociatedItems<Core.Model.Entities.EntityAddressComponent, DbEntityAddressComponent>(
                    data.Component,
                     data,

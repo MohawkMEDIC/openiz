@@ -102,7 +102,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the certificate signing request to be accepted.</param>
 		/// <returns>Returns the acceptance result.</returns>
-		[WebInvoke(UriTemplate = "/csr/accept/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		[WebInvoke(UriTemplate = "/csr/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SubmissionResult AcceptCsr(string id);
 
 		/// <summary>

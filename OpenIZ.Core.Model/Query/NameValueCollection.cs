@@ -82,6 +82,7 @@ namespace OpenIZ.Core.Model.Query
                 var value = expr[1].Replace('+', ' ').
                     Replace("%3A", ":").
                     Replace("%2F", "/").
+                    Replace("%2A", "*").
                     Replace("%3C", "<").
                     Replace("%3E", ">").
                     Replace("%21", "!").
