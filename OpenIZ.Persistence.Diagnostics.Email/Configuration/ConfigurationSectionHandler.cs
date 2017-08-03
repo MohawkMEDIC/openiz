@@ -41,7 +41,7 @@ namespace OpenIZ.Persistence.Diagnostics.Email.Configuration
 			if (smtp == null)
 				throw new ConfigurationErrorsException("Missing SMTP configuration", section);
 			else
-				retVal.Smtp = new SmtpConfiguration(new Uri(smtp.Attributes["server"]?.Value ?? "smtp://localhost:25"), smtp.Attributes["username"]?.Value ?? string.Empty, smtp.Attributes["password"]?.Value ?? string.Empty, Boolean.Parse(smtp.Attributes["ssl"]?.Value ?? "false"));
+				retVal.Smtp = new SmtpConfiguration(new Uri(smtp.Attributes["server"]?.Value ?? "smtp://localhost:25"), smtp.Attributes["username"]?.Value ?? string.Empty, smtp.Attributes["password"]?.Value ?? string.Empty, Boolean.Parse(smtp.Attributes["ssl"]?.Value ?? "false"), smtp.Attributes["from"]?.Value ?? "no-reply@openiz.org");
 
             retVal.Recipients = new System.Collections.Generic.List<string>();
             foreach (XmlElement itm in recipients)

@@ -351,11 +351,36 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     principal);
 
             if (data.Participations != null)
+            {
+                // Correct mixed keys
+                if(AdoPersistenceService.GetConfiguration().DataCorrectionKeys.Contains("edmonton-participation-keyfix"))
+                {
+                    // Obsolete all
+                    foreach(var itm in context.Query<DbActParticipation>(o=>o.SourceKey == retVal.Key && o.ObsoleteVersionSequenceId == null && o.ParticipationRoleKey == ActParticipationKey.Consumable)) {
+                        itm.ObsoleteVersionSequenceId = retVal.VersionSequence;
+                        context.Update(itm);
+                    }
+                    // Now we want to re-point to correct the issue
+                    foreach (var itm in context.Query<DbActParticipation>(o => o.SourceKey == retVal.Key && o.ParticipationRoleKey == ActParticipationKey.Consumable && o.ObsoleteVersionSequenceId == retVal.VersionSequence))
+                    {
+
+                        var dItm = data.Participations.Find(o => o.Key == itm.Key);
+                        if(dItm != null)
+                            itm.TargetKey = dItm.PlayerEntityKey.Value;
+                        itm.ObsoleteVersionSequenceId = null;
+                        context.Update(itm);
+                    }
+                }
+
+                // Update versioned association items
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActParticipation, DbActParticipation>(
-                                      data.Participations.Where(o => o != null && !o.IsEmpty()),
-                    retVal,
-                    context,
-                    principal);
+                      data.Participations.Where(o => o != null && !o.IsEmpty()),
+                        retVal,
+                        context,
+                        principal);
+
+
+            }
 
             if (data.Relationships != null)
                 base.UpdateVersionedAssociatedItems<Core.Model.Acts.ActRelationship, DbActRelationship>(

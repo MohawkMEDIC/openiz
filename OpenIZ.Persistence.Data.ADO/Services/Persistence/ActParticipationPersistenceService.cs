@@ -50,6 +50,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         }
 
         /// <summary>
+        /// Append orderby
+        /// </summary>
+        protected override SqlStatement AppendOrderBy(SqlStatement rawQuery)
+        {
+            return rawQuery.OrderBy<DbActParticipation>(o => o.SequenceId);
+        }
+
+        /// <summary>
         /// Represents as a model instance
         /// </summary>
         public override ActParticipation ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)

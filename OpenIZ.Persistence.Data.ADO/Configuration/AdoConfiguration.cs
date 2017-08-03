@@ -33,6 +33,14 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
     {
 
         /// <summary>
+        /// ADO configuration
+        /// </summary>
+        public AdoConfiguration()
+        {
+            this.DataCorrectionKeys = new List<string>();
+        }
+
+        /// <summary>
         /// Read/write connection string
         /// </summary>
         public String ReadWriteConnectionString { get; set; }
@@ -61,5 +69,10 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
         /// Provider type
         /// </summary>
         public IDbProvider Provider { get; set; }
+
+        /// <summary>
+        /// Gets a list of data corrections to apply
+        /// </summary>
+        public List<String> DataCorrectionKeys { get; set; }
     }
 }

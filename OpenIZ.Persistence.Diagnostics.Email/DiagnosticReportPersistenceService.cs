@@ -110,7 +110,7 @@ namespace OpenIZ.Persistence.Diagnostics.Email
                 // Setup message
 
                 MailMessage bugMessage = new MailMessage();
-                bugMessage.From = new MailAddress("noreply@openiz.org", $"OpenIZ Bug on behalf of {storageData?.Submitter?.Names?.FirstOrDefault()?.Component?.FirstOrDefault(n => n.ComponentTypeKey == NameComponentKeys.Given)?.Value}");
+                bugMessage.From = new MailAddress(this.m_configuration.Smtp.From, $"OpenIZ Bug on behalf of {storageData?.Submitter?.Names?.FirstOrDefault()?.Component?.FirstOrDefault(n => n.ComponentTypeKey == NameComponentKeys.Given)?.Value}");
                 foreach (var itm in this.m_configuration.Recipients)
                     bugMessage.To.Add(itm);
                 bugMessage.Subject = $"ISSUE #{issueId}";
