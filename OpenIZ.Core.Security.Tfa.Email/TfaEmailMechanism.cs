@@ -108,7 +108,7 @@ namespace OpenIZ.Core.Security.Tfa.Email
 				if (template == null)
 					template = new EmailTemplate()
 					{
-						From = this.m_configuration.Smtp.Username,
+						From = this.m_configuration.Smtp.From,
 						Body = Strings.default_body,
 						Subject = Strings.default_subject
 					};

@@ -29,18 +29,24 @@ namespace OpenIZ.Core.Security.Tfa.Email.Configuration
 		/// <summary>
 		/// SMTP configuration
 		/// </summary>
-		public SmtpConfiguration(Uri server, String userName, String password, bool ssl)
+		public SmtpConfiguration(Uri server, String userName, String password, bool ssl, String from)
 		{
 			this.Server = server;
 			this.Username = userName;
 			this.Password = password;
 			this.Ssl = ssl;
+            this.From = from;
 		}
 
-		/// <summary>
-		/// Gets the password
-		/// </summary>
-		public string Password { get; private set; }
+        /// <summary>
+        /// Gets the from address
+        /// </summary>
+        public String From { get; private set; }
+
+        /// <summary>
+        /// Gets the password
+        /// </summary>
+        public string Password { get; private set; }
 
 		/// <summary>
 		/// Gets the SMTP server

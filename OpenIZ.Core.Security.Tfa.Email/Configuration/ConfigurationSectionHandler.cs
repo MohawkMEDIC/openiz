@@ -29,20 +29,20 @@ namespace OpenIZ.Core.Security.Tfa.Email.Configuration
 	/// </summary>
 	public class ConfigurationSectionHandler : IConfigurationSectionHandler
 	{
-		/// <summary>
-		/// Creates the specified configuration object
-		/// </summary>
-		public object Create(object parent, object configContext, XmlNode section)
-		{
-			XmlElement smtp = section.SelectSingleNode("./*[local-name() = 'smtp']") as XmlElement;
-			XmlNodeList templates = section.SelectNodes("./*[local-name() = 'template']/*[local-name() = 'add']");
+        /// <summary>
+        /// Creates the specified configuration object
+        /// </summary>
+        public object Create(object parent, object configContext, XmlNode section)
+        {
+            XmlElement smtp = section.SelectSingleNode("./*[local-name() = 'smtp']") as XmlElement;
+            XmlNodeList templates = section.SelectNodes("./*[local-name() = 'template']/*[local-name() = 'add']");
 
-			MechanismConfiguration configuration = new MechanismConfiguration();
+            MechanismConfiguration configuration = new MechanismConfiguration();
 
-			if (smtp == null)
-				throw new ConfigurationErrorsException("Missing SMTP configuration", section);
-			else
-				configuration.Smtp = new SmtpConfiguration(new Uri(smtp.Attributes["server"]?.Value ?? "smtp://localhost:25"), smtp.Attributes["username"]?.Value ?? string.Empty, smtp.Attributes["password"]?.Value ?? string.Empty, Boolean.Parse(smtp.Attributes["ssl"]?.Value ?? "false"));
+            if (smtp == null)
+                throw new ConfigurationErrorsException("Missing SMTP configuration", section);
+            else
+                configuration.Smtp = new SmtpConfiguration(new Uri(smtp.Attributes["server"]?.Value ?? "smtp://localhost:25"), smtp.Attributes["username"]?.Value ?? string.Empty, smtp.Attributes["password"]?.Value ?? string.Empty, Boolean.Parse(smtp.Attributes["ssl"]?.Value ?? "false"), smtp.Attributes["from"]?.Value);
 
 			// templates
 			configuration.Templates = templates.OfType<XmlElement>().Select(o => new TemplateConfiguration(o.Attributes["lang"]?.Value, o.Attributes["file"]?.Value)).ToList();

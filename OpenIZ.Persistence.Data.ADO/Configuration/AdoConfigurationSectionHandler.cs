@@ -79,6 +79,9 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                 if (retVal.ReadWriteConnectionString == null || retVal.ReadonlyConnectionString == null)
                     throw new ConfigurationErrorsException("Connection string not found");
 
+                foreach (XmlElement corr in section.SelectNodes("./corrections/add"))
+                    retVal.DataCorrectionKeys.Add(corr.InnerText);
+
 
                 return retVal;
 

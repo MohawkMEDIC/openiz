@@ -52,6 +52,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 retVal.DoseUnitKey = sbadmInstance.DoseUnitConceptKey;
             if (sbadmInstance.RouteConceptKey != null)
                 retVal.RouteKey = sbadmInstance.RouteConceptKey;
+            if (sbadmInstance.SiteConceptKey != null)
+                retVal.SiteKey = sbadmInstance.SiteConceptKey;
+
             retVal.DoseQuantity = sbadmInstance.DoseQuantity;
             retVal.SequenceId = (int)sbadmInstance.SequenceId;
             
