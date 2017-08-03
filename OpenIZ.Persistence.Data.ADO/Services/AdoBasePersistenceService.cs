@@ -46,6 +46,9 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.ADO.Services.Persistence;
+using System.Xml.Serialization;
+using System.IO;
+using System.Text;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -212,7 +215,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     }
                     catch (Exception e)
                     {
-                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
+
                         tx?.Rollback();
                         throw new DataPersistenceException(e.Message, e);
                     }
@@ -281,7 +285,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     {
 
 #if DEBUG
-                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
 #else
                         this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e.Message);
 #endif
@@ -302,6 +306,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     {
                     }
 
+            }
+        }
+
+        /// <summary>
+        /// Convert object to string
+        /// </summary>
+        private String ObjectToString(TData data)
+        {
+            if (data == null) return "null";
+            XmlSerializer xsz = new XmlSerializer(data.GetType());
+            using (MemoryStream ms = new MemoryStream())
+            {
+                xsz.Serialize(ms, data);
+                return Encoding.UTF8.GetString(ms.ToArray());
             }
         }
 

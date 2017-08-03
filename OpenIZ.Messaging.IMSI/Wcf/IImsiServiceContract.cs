@@ -82,50 +82,50 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     {
 
         /// <summary>
-        /// Executes an options action
+        /// Gets the operations that each resource in this IMS instance supports.
         /// </summary>
         [WebInvoke(UriTemplate = "/", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Options();
 
         /// <summary>
-        /// Ping the server
+        /// Performs a minimal PING request to test service uptime
         /// </summary>
         [WebInvoke(UriTemplate = "/", Method = "PING", BodyStyle = WebMessageBodyStyle.Bare)]
         void Ping();
 
         /// <summary>
-        /// Search for the specified resource type
+        /// Performs a search for the specified resource, returning only current version items.
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]
         [FaultContract(typeof(ErrorResult))]
         IdentifiedData Search(string resourceType);
 
         /// <summary>
-        /// Search for the specified resource type
+        /// Searches for the specified resource and returns only the HEADer metadata
         /// </summary>
         [WebInvoke(Method = "HEAD", UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]
         void HeadSearch(string resourceType);
 
         /// <summary>
-        /// Get the specified resource
+        /// Retrieves the current version of the specified resource from the IMS.
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Get(string resourceType, string id);
 
         /// <summary>
-        /// HEAD the specified resource
+        /// Retrieves only the metadata of the specified resource
         /// </summary>
         [WebInvoke(Method = "HEAD", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         void GetHead(string resourceType, string id);
 
         /// <summary>
-        /// Get history of an object
+        /// Gets a complete history of all changes made to the specified resource
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}/history", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData History(string resourceType, string id);
 
         /// <summary>
-        /// Patch the specified data 
+        /// Updates the specified resource according to the instructions in the PATCH file
         /// </summary>
         /// <returns></returns>
         [WebInvoke(Method = "PATCH", UriTemplate = "/{resourceType}/{id}")]
@@ -138,31 +138,31 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         Patch GetPatch(string resourceType, string id);
 
         /// <summary>
-        /// Get a specific version
+        /// Retrieves a specific version of the specified resource
         /// </summary>
         [WebGet(UriTemplate = "/{resourceType}/{id}/history/{versionId}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData GetVersion(string resourceType, string id, string versionId);
 
         /// <summary>
-        /// Create the resource
+        /// Creates the resource. If the resource already exists, then a 409 is thrown
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/{resourceType}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Create(string resourceType, IdentifiedData body);
 
         /// <summary>
-        /// Update the specified resource
+        /// Updates the specified resource. If the resource does not exist than a 404 is thrown
         /// </summary>
         [WebInvoke(Method = "PUT", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Update(string resourceType, string id, IdentifiedData body);
 
         /// <summary>
-        /// Creates a resource or updates one
+        /// Creates or updates a resource. That is, creates the resource if it does not exist, or updates it if it does
         /// </summary>
         [WebInvoke(Method = "POST", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body);
 
         /// <summary>
-        /// Creates a resource or updates one
+        /// Deletes the specified resource from the IMS instance
         /// </summary>
         [WebInvoke(Method = "DELETE", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         IdentifiedData Delete(string resourceType, string id);

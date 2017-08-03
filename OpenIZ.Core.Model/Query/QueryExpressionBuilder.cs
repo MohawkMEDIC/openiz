@@ -130,13 +130,6 @@ namespace OpenIZ.Core.Model.Query
                             this.AddCondition(parmName, "^" + parmValue.ToString());
                             return null;
                         }
-                    case "EndsWith":
-                        {
-                            var parmName = this.ExtractPath(node.Object);
-                            object parmValue = this.ExtractValue(node.Arguments[0]);
-                            this.AddCondition(parmName, "$" + parmValue.ToString());
-                            return null;
-                        }
                     case "Any":
                         {
                             var parmName = this.ExtractPath(node.Arguments[0]);

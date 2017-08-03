@@ -449,9 +449,6 @@ namespace OpenIZ.OrmLite
                             else
                                 retVal.Append(" ILIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
-                        case '$':
-                            retVal.Append(" ILIKE '%' || ? ", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
-                            break;
                         case '^':
                             retVal.Append(" ILIKE ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;

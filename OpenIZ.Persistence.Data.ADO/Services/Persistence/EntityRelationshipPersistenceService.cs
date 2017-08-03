@@ -82,8 +82,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if(data.TargetEntity != null && !data.InversionIndicator) data.TargetEntity = data.TargetEntity.EnsureExists(context, principal) as Entity;
             data.TargetEntityKey = data.TargetEntity?.Key ?? data.TargetEntityKey;
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
-
-          
+            
             return base.InsertInternal(context, data, principal);
         }
 

@@ -86,6 +86,7 @@ namespace OpenIZ.Core.Model.Collection
         public Bundle()
         {
             this.Item = new List<IdentifiedData>();
+            this.ExpansionKeys = new List<Guid>();
         }
 
         // Lock object
@@ -169,6 +170,13 @@ namespace OpenIZ.Core.Model.Collection
         /// </summary>
         [XmlElement("totalResults"), JsonProperty("totalResults")]
         public int TotalResults { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the keys of objects that aren't really in the bundle but are expansion items
+        /// </summary>
+        [XmlElement("result"), JsonProperty("result")]
+        public List<Guid> ExpansionKeys { get; set; }
 
         /// <summary>
         /// Add item to the bundle
@@ -349,7 +357,10 @@ namespace OpenIZ.Core.Model.Collection
                                     if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null)
                                         lock (currentBundle.m_lockObject)
                                             if (!currentBundle.HasTag(iValue.Tag) && iValue.Key.HasValue)
+                                            {
+                                                currentBundle.ExpansionKeys.Add(iValue.Key.Value);
                                                 currentBundle.Insert(0, iValue);
+                                            }
                                     ProcessModel(iValue, currentBundle, false);
                                 }
                             }
@@ -364,7 +375,10 @@ namespace OpenIZ.Core.Model.Collection
                                 if (pi.GetCustomAttribute<XmlIgnoreAttribute>() != null && iValue != null)
                                     lock (currentBundle.m_lockObject)
                                         if (!currentBundle.HasTag(iValue.Tag) && iValue.Key.HasValue)
+                                        {
+                                            currentBundle.ExpansionKeys.Add(iValue.Key.Value);
                                             currentBundle.Insert(0, iValue);
+                                        }
                                 ProcessModel(iValue, currentBundle, followList);
                             }
                         }
@@ -379,6 +393,23 @@ namespace OpenIZ.Core.Model.Collection
             {
                 Debug.WriteLine("Error: {0}", e);
             }
+        }
+
+
+        /// <summary>
+        /// Gets from the item set only those items which are for expansion
+        /// </summary>
+        public IEnumerable<IdentifiedData> GetExpansionItems()
+        {
+            return this.Item.Where(o => this.ExpansionKeys.Contains(o.Key.Value));
+        }
+
+        /// <summary>
+        /// Gets from the item set only those items which are results
+        /// </summary>
+        public IEnumerable<IdentifiedData> GetResultItems()
+        {
+            return this.Item.Where(o => !this.ExpansionKeys.Contains(o.Key.Value));
         }
 
     }

@@ -59,8 +59,16 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             }
             //retVal.ConceptSetsXml = de.Concept.ConceptSetMembers.Select(o => o.ConceptSetId).ToList();
 
-            if(context.LoadState == Core.Model.LoadState.FullLoad)
+            if (context.LoadState == Core.Model.LoadState.FullLoad)
+            {
                 retVal.LoadAssociations(context, principal);
+                retVal.LoadState = Core.Model.LoadState.FullLoad;
+            }
+            else
+            {
+                retVal.LoadState = Core.Model.LoadState.PartialLoad;
+                retVal.ConceptNames = context.Query<DbConceptName>(o => o.SourceKey == retVal.Key).Select(o => new ConceptName(o.Language, o.Name)).ToList();
+            }
             return retVal;
         }
 
