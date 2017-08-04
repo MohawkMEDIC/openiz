@@ -23,6 +23,7 @@ using OpenIZ.OrmLite.Providers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,9 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
     /// </summary>
     public class AdoConfigurationSectionHandler : IConfigurationSectionHandler
     {
+
+        private TraceSource m_traceSource = new TraceSource(AdoDataConstants.TraceSourceName);
+
         /// <summary>
         /// Create the configuration section
         /// </summary>
@@ -80,7 +84,10 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                     throw new ConfigurationErrorsException("Connection string not found");
 
                 foreach (XmlElement corr in section.SelectNodes("./corrections/add"))
+                {
+                    this.m_traceSource.TraceInformation("Adding correction {0}", corr.InnerText);
                     retVal.DataCorrectionKeys.Add(corr.InnerText);
+                }
 
 
                 return retVal;

@@ -69,7 +69,7 @@ namespace OpenIZ.Caching.Memory
         {
             get
             {
-                return this.m_mappedHandler != null && m_mappedHandler != null;
+                return this.m_mappingHandler != null;
             }
         }
 

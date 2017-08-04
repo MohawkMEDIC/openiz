@@ -615,6 +615,11 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                                 id));
                 }
             }
+            catch(PatchAssertionException e)
+            {
+                this.m_traceSource.TraceEvent(TraceEventType.Warning, e.HResult, e.Message);
+                throw;
+            }
             catch (Exception e)
             {
                 this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
