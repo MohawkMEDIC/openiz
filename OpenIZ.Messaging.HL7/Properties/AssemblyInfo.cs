@@ -50,8 +50,8 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("0.9.7.*")][assembly: AssemblyInformationalVersion("Edmonton CTP3")]
+// [assembly: AssemblyVersion("0.9.7.*")][assembly: AssemblyInformationalVersion("Edmonton CTP4")]
 [assembly: AssemblyVersion("0.9.7.*")]
-[assembly: AssemblyInformationalVersion("Edmonton CTP3")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyInformationalVersion("Edmonton CTP4")]
+[assembly: AssemblyFileVersion("0.9.7.4")]
 [assembly: InternalsVisibleTo("OpenIZ.Messaging.HL7.Test")]
