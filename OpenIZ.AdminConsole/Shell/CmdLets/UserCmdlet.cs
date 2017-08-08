@@ -34,18 +34,19 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
             /// Gets or sets the username
             /// </summary>
             [Description("The username of the user")]
+            [Parameter("*")]
             [Parameter("u")]
-            public String UserName { get; set; }
+            public StringCollection UserName { get; set; }
 
         }
-        
+
         // Ami client
         private static AmiServiceClient m_client = new AmiServiceClient(ApplicationContext.Current.GetRestClient(Core.Interop.ServiceEndpointType.AdministrationIntegrationService));
 
         #region User Add
         internal class UseraddParms : GenericUserParms
         {
-            
+
             /// <summary>
             /// Gets or sets the password
             /// </summary>
@@ -79,16 +80,22 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
 
             var roles = new List<SecurityRoleInfo>();
 
-            if(parms.Roles?.Count > 0)
+            if (parms.Roles?.Count > 0)
                 roles = parms.Roles.OfType<String>().Select(o => m_client.GetRoles(r => r.Name == o).CollectionItem.FirstOrDefault()).ToList();
 
-            m_client.CreateUser(new Core.Model.AMI.Auth.SecurityUserInfo()
-            {
-                UserName = parms.UserName,
-                Password = parms.Password ?? "Mohawk123",
-                Email = parms.Email,
-                Roles = roles
-            });
+            if (roles.Count == 0)
+                throw new InvalidOperationException("The specified roles do not exit. Roles are case sensitive"); ;
+            if (parms.UserName == null)
+                throw new InvalidOperationException("Must specify a user");
+
+            foreach (var un in parms.UserName)
+                m_client.CreateUser(new Core.Model.AMI.Auth.SecurityUserInfo()
+                {
+                    UserName = un,
+                    Password = parms.Password ?? "Mohawk123",
+                    Email = parms.Email,
+                    Roles = roles
+                });
 
         }
 
@@ -118,11 +125,17 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         internal static void Userdel(GenericUserParms parms)
         {
-            var user = m_client.GetUsers(o => o.UserName == parms.UserName).CollectionItem.FirstOrDefault();
-            if (user == null)
-                throw new KeyNotFoundException($"User {parms.UserName} not found");
+            if (parms.UserName == null)
+                throw new InvalidOperationException("Must specify a user");
 
-            m_client.DeleteUser(user.UserId.ToString());
+            foreach (var un in parms.UserName)
+            {
+                var user = m_client.GetUsers(o => o.UserName == un).CollectionItem.FirstOrDefault();
+                if (user == null)
+                    throw new KeyNotFoundException($"User {un} not found");
+
+                m_client.DeleteUser(user.UserId.ToString());
+            }
 
         }
 
@@ -134,16 +147,21 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AlterIdentity)]
         internal static void Userudel(GenericUserParms parms)
         {
-            var user = m_client.GetUsers(o => o.UserName == parms.UserName).CollectionItem.FirstOrDefault();
-            if (user == null)
-                throw new KeyNotFoundException($"User {parms.UserName} not found");
+            if (parms.UserName == null)
+                throw new InvalidOperationException("Must specify a user");
 
-            user.Lockout = false;
-            user.User.ObsoletionTime = null;
-            user.User.ObsoletedBy = null;
+            foreach (var un in parms.UserName)
+            {
+                var user = m_client.GetUsers(o => o.UserName == un).CollectionItem.FirstOrDefault();
+                if (user == null)
+                    throw new KeyNotFoundException($"User {un} not found");
 
-            m_client.UpdateUser(user.UserId.Value, user);
+                user.Lockout = false;
+                user.User.ObsoletionTime = null;
+                user.User.ObsoletedBy = null;
 
+                m_client.UpdateUser(user.UserId.Value, user);
+            }
         }
 
         /// <summary>
@@ -154,14 +172,19 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         [Description("This command will change lock status of the user, either setting it or un-setting it")]
         internal static void Userlock(UserLockParms parms)
         {
-            var user = m_client.GetUsers(o => o.UserName == parms.UserName).CollectionItem.FirstOrDefault();
-            if (user == null)
-                throw new KeyNotFoundException($"User {parms.UserName} not found");
+            if (parms.UserName == null)
+                throw new InvalidOperationException("Must specify a user");
 
-            user.Lockout = parms.Locked;
+            foreach (var un in parms.UserName)
+            {
+                var user = m_client.GetUsers(o => o.UserName == un).CollectionItem.FirstOrDefault();
+                if (user == null)
+                    throw new KeyNotFoundException($"User {un} not found");
 
-            m_client.UpdateUser(user.UserId.Value, user);
+                user.Lockout = parms.Locked;
 
+                m_client.UpdateUser(user.UserId.Value, user);
+            }
         }
 
         #endregion
@@ -210,19 +233,20 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         [Description("This command lists all users in the user database regardless of their status, or class. To filter use the filter parameters listed.")]
         internal static void Userlist(UserListParms parms)
         {
+            var un = parms.UserName?.OfType<String>()?.FirstOrDefault();
             AmiCollection<SecurityUserInfo> users = null;
-            if (parms.Locked && !String.IsNullOrEmpty(parms.UserName))
-                users = m_client.GetUsers(o => o.UserName.Contains(parms.UserName) && o.Lockout.HasValue);
-            else if (!String.IsNullOrEmpty(parms.UserName))
-                users = m_client.GetUsers(o => o.UserName.Contains(parms.UserName));
+            if (parms.Locked && !String.IsNullOrEmpty(un))
+                users = m_client.GetUsers(o => o.UserName.Contains(un) && o.Lockout.HasValue);
+            else if (!String.IsNullOrEmpty(un))
+                users = m_client.GetUsers(o => o.UserName.Contains(un));
             else
                 users = m_client.GetUsers(o => o.UserName != null);
 
             if (parms.Active)
                 users.CollectionItem = users.CollectionItem.Where(o => !o.User.ObsoletionTime.HasValue).ToList();
-            if(parms.Human)
+            if (parms.Human)
                 users.CollectionItem = users.CollectionItem.Where(o => o.User.UserClass == UserClassKeys.HumanUser).ToList();
-            else if(parms.System)
+            else if (parms.System)
                 users.CollectionItem = users.CollectionItem.Where(o => o.User.UserClass != UserClassKeys.HumanUser).ToList();
 
             Console.WriteLine("SID{0}UserName{1}Last Lgn{2}Lockout{2} ILA  A", new String(' ', 37), new String(' ', 32), new String(' ', 13));
@@ -264,17 +288,24 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         [Description("This command is used to assign roles for the specified user to the specified roles. Note that the role list provided replaces the current role list of the user")]
         internal static void ChangeRoles(ChangeRoleParms parms)
         {
-            var user = m_client.GetUsers(o => o.UserName == parms.UserName).CollectionItem.FirstOrDefault();
-            if (user == null)
-                throw new KeyNotFoundException($"User {parms.UserName} not found");
+            if (parms.UserName == null)
+                throw new InvalidOperationException("Must specify a user");
 
-            var roles = new List<SecurityRoleInfo>();
-            if (parms.Roles?.Count > 0)
-                roles = parms.Roles.OfType<String>().Select(o => m_client.GetRoles(r => r.Name == o).CollectionItem.FirstOrDefault()).ToList();
+            foreach (var un in parms.UserName)
+            {
+                var user = m_client.GetUsers(o => o.UserName == un).CollectionItem.FirstOrDefault();
+                if (user == null)
+                    throw new KeyNotFoundException($"User {un} not found");
 
-            user.Roles = roles;
-            m_client.UpdateUser(user.UserId.Value, user);
+                var roles = new List<SecurityRoleInfo>();
+                if (parms.Roles?.Count > 0)
+                    roles = parms.Roles.OfType<String>().Select(o => m_client.GetRoles(r => r.Name == o).CollectionItem.FirstOrDefault()).ToList();
+                if (roles.Count == 0)
+                    throw new InvalidOperationException("The specified roles do not exit. Roles are case sensitive"); ;
 
+                user.Roles = roles;
+                m_client.UpdateUser(user.UserId.Value, user);
+            }
         }
         #endregion
 
@@ -299,13 +330,20 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         [PolicyPermission(System.Security.Permissions.SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ChangePassword)]
         internal static void SetPassword(UserPasswordParms parms)
         {
-            var user = m_client.GetUsers(o => o.UserName == parms.UserName).CollectionItem.FirstOrDefault();
-            if (user == null)
-                throw new KeyNotFoundException($"User {parms.UserName} not found");
+            if (parms.UserName == null)
+                throw new InvalidOperationException("Must specify a user");
 
-            user.Password = parms.Password;
-            
-            m_client.UpdateUser(user.UserId.Value, user);
+            foreach (var un in parms.UserName)
+            {
+                var user = m_client.GetUsers(o => o.UserName == un).CollectionItem.FirstOrDefault();
+                if (user == null)
+                    throw new KeyNotFoundException($"User {un} not found");
+
+                user.Password = parms.Password;
+
+                m_client.UpdateUser(user.UserId.Value, user);
+                break;
+            }
         }
 
         /// <summary>
@@ -317,50 +355,55 @@ namespace OpenIZ.AdminConsole.Shell.CmdLets
         internal static void UserInfo(GenericUserParms parms)
         {
 
-            var user = m_client.GetUsers(o => o.UserName == parms.UserName).CollectionItem.FirstOrDefault();
-            if (user == null)
-                throw new KeyNotFoundException($"User {parms.UserName} not found");
+            if (parms.UserName == null)
+                throw new InvalidOperationException("Must specify a user");
 
-            Console.WriteLine("User: {0}", user.UserName);
-            Console.WriteLine("\tSID: {0}", user.UserId);
-            Console.WriteLine("\tEmail: {0}", user.Email);
-            Console.WriteLine("\tPhone: {0}", user.User.PhoneNumber);
-            Console.WriteLine("\tInvalid Logins: {0}", user.User.InvalidLoginAttempts);
-            Console.WriteLine("\tLockout: {0}", user.User.Lockout);
-            Console.WriteLine("\tLast Login: {0}", user.User.LastLoginTime);
-            Console.WriteLine("\tCreated: {0} ({1})", user.User.CreationTime, m_client.GetUser(user.User.CreatedByKey.ToString()).UserName);
-            if (user.User.UpdatedTime.HasValue)
-                Console.WriteLine("\tLast Updated: {0} ({1})", user.User.UpdatedTime, m_client.GetUser(user.User.UpdatedByKey.ToString()).UserName);
-            if (user.User.ObsoletionTime.HasValue)
-                Console.WriteLine("\tDeActivated: {0} ({1})", user.User.ObsoletionTime, m_client.GetUser(user.User.ObsoletedByKey.ToString()).UserName);
-            Console.WriteLine("\tGroups: {0}", String.Join(";", user.Roles.Select(o => o.Name)));
-
-            List<SecurityPolicyInfo> policies = m_client.GetPolicies(o => o.ObsoletionTime == null).CollectionItem.OrderBy(o=>o.Oid).ToList();
-            policies.ForEach(o => o.Grant = (PolicyGrantType)10);
-            foreach(var rol in user.Roles)
-                foreach(var pol in m_client.GetRole(rol.Id.ToString()).Policies)
-                {
-                    var existing = policies.FirstOrDefault(o => o.Oid == pol.Oid);
-                    if (pol.Grant < existing.Grant)
-                        existing.Grant = pol.Grant;
-                }
-
-            Console.WriteLine("\tEffective Policies:");
-            foreach(var itm in policies)
+            foreach (var un in parms.UserName)
             {
-                Console.Write("\t\t{0} : ", itm.Name);
-                if (itm.Grant == (PolicyGrantType)10) // Lookup parent
-                {
-                    var parent = policies.LastOrDefault(o => itm.Oid.StartsWith(o.Oid + ".") && itm.Oid != o.Oid);
-                    if (parent != null && parent.Grant <= PolicyGrantType.Grant)
-                        Console.WriteLine("{0} (inherited from {1})", parent.Grant, parent.Name);
-                    else
-                        Console.WriteLine("Deny (automatic)");
-                }
-                else
-                    Console.WriteLine("{0} (explicit)", itm.Grant);
-            }
+                var user = m_client.GetUsers(o => o.UserName == un).CollectionItem.FirstOrDefault();
+                if (user == null)
+                    throw new KeyNotFoundException($"User {un} not found");
 
+                Console.WriteLine("User: {0}", user.UserName);
+                Console.WriteLine("\tSID: {0}", user.UserId);
+                Console.WriteLine("\tEmail: {0}", user.Email);
+                Console.WriteLine("\tPhone: {0}", user.User.PhoneNumber);
+                Console.WriteLine("\tInvalid Logins: {0}", user.User.InvalidLoginAttempts);
+                Console.WriteLine("\tLockout: {0}", user.User.Lockout);
+                Console.WriteLine("\tLast Login: {0}", user.User.LastLoginTime);
+                Console.WriteLine("\tCreated: {0} ({1})", user.User.CreationTime, m_client.GetUser(user.User.CreatedByKey.ToString()).UserName);
+                if (user.User.UpdatedTime.HasValue)
+                    Console.WriteLine("\tLast Updated: {0} ({1})", user.User.UpdatedTime, m_client.GetUser(user.User.UpdatedByKey.ToString()).UserName);
+                if (user.User.ObsoletionTime.HasValue)
+                    Console.WriteLine("\tDeActivated: {0} ({1})", user.User.ObsoletionTime, m_client.GetUser(user.User.ObsoletedByKey.ToString()).UserName);
+                Console.WriteLine("\tGroups: {0}", String.Join(";", user.Roles.Select(o => o.Name)));
+
+                List<SecurityPolicyInfo> policies = m_client.GetPolicies(o => o.ObsoletionTime == null).CollectionItem.OrderBy(o => o.Oid).ToList();
+                policies.ForEach(o => o.Grant = (PolicyGrantType)10);
+                foreach (var rol in user.Roles)
+                    foreach (var pol in m_client.GetRole(rol.Id.ToString()).Policies)
+                    {
+                        var existing = policies.FirstOrDefault(o => o.Oid == pol.Oid);
+                        if (pol.Grant < existing.Grant)
+                            existing.Grant = pol.Grant;
+                    }
+
+                Console.WriteLine("\tEffective Policies:");
+                foreach (var itm in policies)
+                {
+                    Console.Write("\t\t{0} : ", itm.Name);
+                    if (itm.Grant == (PolicyGrantType)10) // Lookup parent
+                    {
+                        var parent = policies.LastOrDefault(o => itm.Oid.StartsWith(o.Oid + ".") && itm.Oid != o.Oid);
+                        if (parent != null && parent.Grant <= PolicyGrantType.Grant)
+                            Console.WriteLine("{0} (inherited from {1})", parent.Grant, parent.Name);
+                        else
+                            Console.WriteLine("Deny (automatic)");
+                    }
+                    else
+                        Console.WriteLine("{0} (explicit)", itm.Grant);
+                }
+            }
         }
 
     }

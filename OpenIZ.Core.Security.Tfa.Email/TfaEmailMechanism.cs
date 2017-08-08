@@ -118,6 +118,7 @@ namespace OpenIZ.Core.Security.Tfa.Email
 				resetMessage.Subject = template.Subject;
 				resetMessage.Body = String.Format(template.Body, tfaSecret);
 
+                this.m_tracer.TraceInformation("Sending password reset to {0} from {1}", user.Email, template.From);
 				try
 				{
 					SmtpClient smtpClient = new SmtpClient(this.m_configuration.Smtp.Server.Host, this.m_configuration.Smtp.Server.Port);

@@ -28,6 +28,7 @@ using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.BusinessRules;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Diagnostics;
+using OpenIZ.Core.Model.AMI.Logging;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -79,6 +80,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(X509Certificate2Info))]
 	[ServiceKnownType(typeof(AssigningAuthorityInfo))]
 	[ServiceKnownType(typeof(CodeSystem))]
+	[ServiceKnownType(typeof(LogFileInfo))]
 	[ServiceKnownType(typeof(AmiCollection<SubmissionInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<ExtensionType>))]
 	[ServiceKnownType(typeof(AmiCollection<AppletManifestInfo>))]
@@ -93,6 +95,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 	[ServiceKnownType(typeof(AmiCollection<SecurityDevice>))]
 	[ServiceKnownType(typeof(AmiCollection<AlertMessageInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<SecurityUserInfo>))]
+	[ServiceKnownType(typeof(AmiCollection<LogFileInfo>))]
 	[ServiceKnownType(typeof(AmiCollection<CodeSystem>))]
 	[ServiceKnownType(typeof(AmiCollection<X509Certificate2Info>))]
 	public interface IAmiContract
@@ -636,12 +639,28 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
 
-		#region Auditing
+        #region Logging
 
-		/// <summary>
-		/// Create audit in the IMS' audit repository
-		/// </summary>
-		[WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+        /// <summary>
+        /// Get log files on the server and their sizes
+        /// </summary>
+        [WebGet(UriTemplate = "/log")]
+        AmiCollection<LogFileInfo> GetLogs();
+
+        /// <summary>
+        /// Gets the specific log file
+        /// </summary>
+        [WebGet(UriTemplate = "/log/{logId}")]
+        LogFileInfo GetLog(String logId);
+
+        #endregion
+
+        #region Auditing
+
+        /// <summary>
+        /// Create audit in the IMS' audit repository
+        /// </summary>
+        [WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		void CreateAudit(AuditInfo audit);
 
 		#endregion Auditing

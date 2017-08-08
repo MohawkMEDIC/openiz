@@ -39,6 +39,7 @@ using System.Text.RegularExpressions;
 using OpenIZ.Core.Interfaces;
 using Jint.Parser.Ast;
 using Jint.Parser;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {
@@ -80,7 +81,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Business rules bridge
         /// </summary>
-        public BusinessRulesBridge Bridge {  get { return this.m_bridge; } }
+        public BusinessRulesBridge Bridge { get { return this.m_bridge; } }
 
         /// <summary>
         /// Initialize javascript BRE
@@ -102,10 +103,10 @@ namespace OpenIZ.BusinessRules.JavaScript
                 ).SetValue("OpenIZBre", this.m_bridge)
                 .SetValue("console", new JsConsoleProvider());
 
-            foreach(var itm in typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceNames().Where(o=>o.EndsWith(".js")))
-            using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))
-                this.AddRules(itm.Replace(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.FullName, ""), sr);
-            
+            foreach (var itm in typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceNames().Where(o => o.EndsWith(".js")))
+                using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))
+                    this.AddRules(itm.Replace(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.FullName, ""), sr);
+
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace OpenIZ.BusinessRules.JavaScript
                 Regex includeReg = new Regex(@"\/\/\/\s*?\<reference\s*?path\=[""'](.*?)[""']\s?\/\>", RegexOptions.Multiline);
                 var incMatches = includeReg.Matches(rawScript);
 
-                foreach(Match match in incMatches)
+                foreach (Match match in incMatches)
                 {
                     var include = match.Groups[1].Value;
                     var incStream = (ApplicationServiceContext.Current.GetService(typeof(IDataReferenceResolver)) as IDataReferenceResolver)?.Resolve(include);
@@ -162,16 +163,16 @@ namespace OpenIZ.BusinessRules.JavaScript
                             using (StreamReader sr = new StreamReader(incStream))
                                 this.m_engine.Execute(sr.ReadToEnd());
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             this.m_tracer.TraceWarning("Will skip {0} due to {1}", include, e.Message);
                         }
 
                 }
 
-                    this.m_engine.Execute(rawScript);
+                this.m_engine.Execute(rawScript);
             }
-            catch(JavaScriptException ex)
+            catch (JavaScriptException ex)
             {
                 this.m_tracer.TraceError("Error executing JavaScript {0}:{1} > {2}", ex.LineNumber, ex.Column, ex);
                 throw ex;
@@ -241,24 +242,25 @@ namespace OpenIZ.BusinessRules.JavaScript
             }
         }
 
-		/// <summary>
-		/// Get call list of action
-		/// </summary>
-		/// <typeparam name="TBinding">The type of the t binding.</typeparam>
-		/// <param name="action">The action.</param>
-		/// <returns>List&lt;Func&lt;System.Object, ExpandoObject&gt;&gt;.</returns>
-		public List<Func<object, ExpandoObject>> GetCallList<TBinding>(String action)
+        /// <summary>
+        /// Get call list of action
+        /// </summary>
+        /// <typeparam name="TBinding">The type of the t binding.</typeparam>
+        /// <param name="action">The action.</param>
+        /// <returns>List&lt;Func&lt;System.Object, ExpandoObject&gt;&gt;.</returns>
+        public List<Func<object, ExpandoObject>> GetCallList<TBinding>(String action)
         {
             return this.GetCallList(typeof(TBinding), action);
         }
 
-		/// <summary>
-		/// Generic method for bindig call list
-		/// </summary>
-		/// <param name="tbinding">The tbinding.</param>
-		/// <param name="action">The action.</param>
-		/// <returns>List&lt;Func&lt;System.Object, ExpandoObject&gt;&gt;.</returns>
-		public List<Func<object, ExpandoObject>> GetCallList(Type tbinding, String action) { 
+        /// <summary>
+        /// Generic method for bindig call list
+        /// </summary>
+        /// <param name="tbinding">The tbinding.</param>
+        /// <param name="action">The action.</param>
+        /// <returns>List&lt;Func&lt;System.Object, ExpandoObject&gt;&gt;.</returns>
+        public List<Func<object, ExpandoObject>> GetCallList(Type tbinding, String action)
+        {
             var className = tbinding.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
 
             // Try to get the binding
@@ -284,9 +286,10 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Get validator functions for binding
         /// </summary>
-        public List<Func<Object, Object[]>> GetValidators(Type tbinding) { 
+        public List<Func<Object, Object[]>> GetValidators(Type tbinding)
+        {
             var className = tbinding.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id;
-            
+
             // Try to get the binding
             List<Func<object, Object[]>> callList = null;
             if (this.m_validatorDefinitions.TryGetValue(className, out callList))
@@ -299,44 +302,45 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public object InvokeRaw(String action, Object data)
         {
-            try
-            {
-                var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
-
-                var sdata = data as IDictionary<String, Object>;
-                if (sdata == null || !sdata.ContainsKey("$type")) return data;
-
-                var callList = this.GetCallList(binder.BindToType("OpenIZ.Core.Model, Version=1.0.0.0", sdata["$type"].ToString()), action);
-                var retVal = data;
-
-                if (callList.Count > 0)
+            lock (s_syncLock)
+                try
                 {
-                    foreach (var c in callList)
+                    var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
+
+                    var sdata = data as IDictionary<String, Object>;
+                    if (sdata == null || !sdata.ContainsKey("$type")) return data;
+
+                    var callList = this.GetCallList(binder.BindToType("OpenIZ.Core.Model, Version=1.0.0.0", sdata["$type"].ToString()), action);
+                    var retVal = data;
+
+                    if (callList.Count > 0)
                     {
-                        data = c(data);
+                        foreach (var c in callList)
+                        {
+                            data = c(data);
+                        }
                     }
+
+                    return data;
                 }
-
-                return data;
-            }
-            catch (JavaScriptException e)
-            {
-                this.m_tracer.TraceError("JAVASCRIPT ERROR RUNNING {0} OBJECT :::::> {3}@{2}\r\n{1}", action, this.ProduceLiteral(data),  e.LineNumber, e);
-                return new List<DetectedIssue>()
+                catch (JavaScriptException e)
                 {
-                    new DetectedIssue()
+                    this.m_tracer.TraceError("JAVASCRIPT ERROR RUNNING {0} OBJECT :::::> {3}@{2}\r\n{1}", action, this.ProduceLiteral(data), e.LineNumber, e);
+                    throw new DetectedIssueException(new List<DetectedIssue>()
                     {
-                        Priority = DetectedIssuePriorityType.Error,
-                        Text = $"{e.Message} @ {e.LineNumber}"
-                    }
-                };
+                        new DetectedIssue()
+                        {
+                            Priority = DetectedIssuePriorityType.Error,
+                            Text = $"{e.Error.ToString()} @ {e.Location.Start.Line} - {e.Location.End.Line}"
+                        }
+                    });
 
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, this.ProduceLiteral(data), e);
-                throw new BusinessRulesExecutionException($"Error running business rule {action} for {this.ProduceLiteral(data)}", e);
-            }
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, this.ProduceLiteral(data), e);
+                    throw new BusinessRulesExecutionException($"Error running business rule {action} for {this.ProduceLiteral(data)}", e);
+                }
         }
 
         /// <summary>
@@ -359,30 +363,31 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding Invoke<TBinding>(string action, TBinding data) where TBinding : IdentifiedData
         {
-            try
-            {
-                if (data == default(TBinding)) return data;
-
-                var callList = this.GetCallList(data.GetType(), action).Union(this.GetCallList<TBinding>(action)).Distinct();
-                var retVal = data;
-
-                if (callList.Count() > 0)
+            lock (s_syncLock)
+                try
                 {
-                    dynamic viewModel = this.m_bridge.ToViewModel(retVal);
-                    foreach (var c in callList)
-                    {
-                        viewModel = c(viewModel);
-                    }
-                    retVal = (TBinding)this.m_bridge.ToModel(viewModel);
-                }
+                    if (data == default(TBinding)) return data;
 
-                return retVal;
-            }
-            catch(Exception e)
-            {
-                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
-                throw new BusinessRulesExecutionException($"Error running business rule {action} for {data}", e);
-            }
+                    var callList = this.GetCallList(data.GetType(), action).Union(this.GetCallList<TBinding>(action)).Distinct();
+                    var retVal = data;
+
+                    if (callList.Count() > 0)
+                    {
+                        dynamic viewModel = this.m_bridge.ToViewModel(retVal);
+                        foreach (var c in callList)
+                        {
+                            viewModel = c(viewModel);
+                        }
+                        retVal = (TBinding)this.m_bridge.ToModel(viewModel);
+                    }
+
+                    return retVal;
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
+                    throw new BusinessRulesExecutionException($"Error running business rule {action} for {data}", e);
+                }
         }
 
         /// <summary>
@@ -390,26 +395,27 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public List<DetectedIssue> Validate<TBinding>(TBinding data) where TBinding : IdentifiedData
         {
-            try
-            {
-                var callList = this.GetValidators(data.GetType()).Union(this.GetValidators<TBinding>()).Distinct() ;
-                var retVal = new List<DetectedIssue>();
-                var vmData = this.m_bridge.ToViewModel(data);
-                foreach (var c in callList)
+            lock (s_syncLock)
+                try
                 {
-                    var issues = c(vmData);
-                    retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o => new DetectedIssue()
+                    var callList = this.GetValidators(data.GetType()).Union(this.GetValidators<TBinding>()).Distinct();
+                    var retVal = new List<DetectedIssue>();
+                    var vmData = this.m_bridge.ToViewModel(data);
+                    foreach (var c in callList)
                     {
-                        Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,
-                        Priority = o.ContainsKey("priority") ? (DetectedIssuePriorityType)(int)(double)o["priority"] : DetectedIssuePriorityType.Informational
-                    }));
+                        var issues = c(vmData);
+                        retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o => new DetectedIssue()
+                        {
+                            Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,
+                            Priority = o.ContainsKey("priority") ? (DetectedIssuePriorityType)(int)(double)o["priority"] : DetectedIssuePriorityType.Informational
+                        }));
+                    }
+                    return retVal;
                 }
-                return retVal;
-            }
-            catch(JavaScriptException e)
-            {
-                this.m_tracer.TraceError("JAVASCRIPT ERROR VALIDATING OBJECT :::::> {1}@{0}", e.LineNumber, e);
-                return new List<DetectedIssue>()
+                catch (JavaScriptException e)
+                {
+                    this.m_tracer.TraceError("JAVASCRIPT ERROR VALIDATING OBJECT :::::> {1}@{0}", e.LineNumber, e);
+                    return new List<DetectedIssue>()
                 {
                     new DetectedIssue()
                     {
@@ -418,19 +424,19 @@ namespace OpenIZ.BusinessRules.JavaScript
                     }
                 };
 
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error validating {0} : {1}", data, e);
-                return new List<DetectedIssue>()
+                }
+                catch (Exception e)
                 {
-                    new DetectedIssue()
+                    this.m_tracer.TraceError("Error validating {0} : {1}", data, e);
+                    return new List<DetectedIssue>()
                     {
-                        Priority = DetectedIssuePriorityType.Error,
-                        Text = e.Message
-                    }
-                };
-            }
+                        new DetectedIssue()
+                        {
+                            Priority = DetectedIssuePriorityType.Error,
+                            Text = e.Message
+                        }
+                    };
+                }
         }
     }
 }

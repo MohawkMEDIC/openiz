@@ -116,13 +116,18 @@ namespace OizDevTool
 
                     // Now we want to group by consumable
                     int t = 0;
+                    
                     var groupedConsumables = consumablePtcpts.GroupBy(o => o.PlayerEntityKey).Select(o => new
                     {
                         ManufacturedMaterialKey = o.Key,
                         UsedQty = o.Sum(s => s.Quantity),
-                        MaterialKey = matlService.QueryFast(m => m.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance && r.TargetEntityKey == o.Key), Guid.Empty, 0, 1, AuthenticationContext.Current.Principal, out t).FirstOrDefault().Key
+                        MaterialKey = matlService.QueryFast(m => m.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance && r.TargetEntityKey == o.Key), Guid.Empty, 0, 1, AuthenticationContext.Current.Principal, out t)?.FirstOrDefault()?.Key
                     }).ToList();
 
+                    foreach (var i in groupedConsumables.Where(o => !o.MaterialKey.HasValue)) 
+                        Console.WriteLine("MMAT {0} is not linked to any MAT", i.ManufacturedMaterialKey);
+
+                    groupedConsumables.RemoveAll(o => !o.MaterialKey.HasValue);
                     // Now, we want to build the stock policy object
                     dynamic[] stockPolicyObject = new dynamic[0];
                     var stockPolicyExtension = plc.LoadCollection<EntityExtension>("Extensions").FirstOrDefault(o => o.ExtensionTypeKey == Guid.Parse("DFCA3C81-A3C4-4C82-A901-8BC576DA307C"));

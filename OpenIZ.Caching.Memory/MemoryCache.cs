@@ -170,7 +170,7 @@ namespace OpenIZ.Caching.Memory
             CacheEntry candidate = null;
             if (this.m_entryTable.TryGetValue(idData.Key.Value, out candidate))
             {
-                if ((candidate.Data as IIdentifiedEntity).LoadState < idData.LoadState)
+                if ((candidate.Data as IIdentifiedEntity).LoadState <= idData.LoadState)
                     candidate.Update(data as IdentifiedData);
             }
             else

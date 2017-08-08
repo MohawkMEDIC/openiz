@@ -23,6 +23,7 @@ using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
@@ -117,12 +118,16 @@ namespace OpenIZ.AdminConsole.Shell
                 Console.ForegroundColor = this.GetResponseColor();
                 if (String.IsNullOrEmpty(cmd)) continue;
 
+                var redir = cmd.Split('>');
+                cmd = redir[0];
                 // Get tokens / parms
                 var tokens = cmd.Split(' ').ToArray();
                 List<String> tToken = new List<string>() { tokens[0] };
                 String sstr = String.Empty;
                 foreach (var tkn in tokens.Skip(1))
                 {
+                    if (string.IsNullOrEmpty(tkn.Trim()))
+                        continue;
                     if (tkn.StartsWith("'") && tkn.EndsWith("'"))
                         tToken.Add(tkn.Substring(1, tkn.Length - 2));
                     else if (tkn.StartsWith("'"))
@@ -139,6 +144,16 @@ namespace OpenIZ.AdminConsole.Shell
                         tToken.Add(tkn);
                 }
                 tokens = tToken.ToArray();
+
+                // Set output
+                TextWriter tw = null, orig = Console.Out;
+                if (redir.Length > 1) {
+                    if (redir.Length == 2)
+                        tw = File.CreateText(redir[1].Trim());
+                    else if (redir.Length == 3)
+                        tw = File.AppendText(redir[2].Trim());
+                    Console.SetOut(tw);
+                }
 
                 // Get tokens
                 MethodInfo cmdMi = null;
@@ -166,6 +181,11 @@ namespace OpenIZ.AdminConsole.Shell
                     }
                 }
 
+                if (tw != null)
+                {
+                    tw.Close();
+                    Console.SetOut(orig);
+                }
                 Console.ForegroundColor = col;
             }
         }
@@ -198,7 +218,7 @@ namespace OpenIZ.AdminConsole.Shell
         [AdminCommand("ver", "Shows current Admin Console Version")]
         public void Version()
         {
-            Console.WriteLine("Open Immunize Adminisration & Security Console v{0}", typeof(Program).Assembly.GetName().Version);
+            Console.WriteLine("Open Immunize Adminisration & Security Console v{0} ({1})", typeof(Program).Assembly.GetName().Version, typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
             Console.WriteLine("Copyright (C) 2015 - 2017, Mohawk College of Applied Arts and Technology");
         }
 

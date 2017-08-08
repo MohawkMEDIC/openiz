@@ -130,7 +130,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         public override IEnumerable<TModel> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, IPrincipal principal, bool countResults = true)
         {
             int resultCount = 0;
-            var results = this.QueryInternal(context, query, queryId, offset, count, out resultCount, countResults);
+            var results = this.QueryInternal(context, query, queryId, offset, count, out resultCount, countResults).ToList();
             totalResults = resultCount;
             return results.AsParallel().Select(o =>
             {
@@ -233,6 +233,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     var resultKeys = context.Query<Guid>(keyQuery.Build());
 
                     //ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(a => this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query), null);
+                    // Another check
                     this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Count(), resultKeys.Select(o => new Identifier<Guid>(o)).Take(1000).ToArray(), query);
 
                     ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>

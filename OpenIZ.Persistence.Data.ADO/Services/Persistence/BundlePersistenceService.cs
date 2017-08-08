@@ -37,6 +37,7 @@ using OpenIZ.OrmLite;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -102,6 +103,20 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         if (retVal.Item.Any(o => o.Key == rel.PlayerEntityKey))
                             continue;
                         retVal.Item.Add(bitm); // make sure it gets inserted first
+                    }
+
+
+                    // Old versions of the mobile had an issue with missing record targets
+                    if(AdoPersistenceService.GetConfiguration().DataCorrectionKeys.Contains("correct-missing-rct"))
+                    {
+                        var patientEncounter = bundle.Item.OfType<PatientEncounter>().FirstOrDefault();
+                        if (patientEncounter == null) continue;
+                        var rct = act.Participations.FirstOrDefault(o => o.ParticipationRoleKey == OpenIZ.Core.Model.Constants.ActParticipationKey.RecordTarget);
+                        if (rct == null || rct.PlayerEntityKey.HasValue) continue;
+                        var perct = patientEncounter.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
+
+                        act.Participations.Remove(rct);
+                        act.Participations.Add(new ActParticipation(ActParticipationKey.RecordTarget, perct.PlayerEntityKey));
                     }
                 }
 

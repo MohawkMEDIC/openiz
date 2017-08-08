@@ -22,21 +22,82 @@
 <configuration>
   <configSections>
     <section name="marc.hi.ehrs.svc.core" type="MARC.HI.EHRS.SVC.Core.Configuration.HostConfigurationSectionHandler, MARC.HI.EHRS.SVC.Core, Version=2.0.0.0" />
+    <section name="openiz.persistence.data.ado" type="OpenIZ.Persistence.Data.ADO.Configuration.AdoConfigurationSectionHandler, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0" />
     <section name="openiz.core" type="OpenIZ.Core.Configuration.ConfigurationSectionHandler, OpenIZ.Core, Version=0.6.0.0" />
   </configSections>
-  
   <marc.hi.ehrs.svc.core>
     <serviceProviders>
+      <!--
+      Un-Comment these lines if you plan on using MSSQL
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlServerPersistenceService, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlPolicyInformationService, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlRoleProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlIdentityProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0" />
+      -->
+      <!-- 
+      Un-Comment these lines if you plan on using ADO.NET 
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoApplicationIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPersistenceService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPolicyInformationService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoRoleProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0" />
+      -->
       <add type="OpenIZ.Core.Security.SHA256PasswordHashingService, OpenIZ.Core, Version=0.6.0.0" />
       <add type="OpenIZ.Core.Security.LocalPolicyDecisionService, OpenIZ.Core, Version=0.6.0.0" />
-      <add type="OpenIZ.Caching.Memory.MemoryCacheService, OpenIZ.Caching.Memory, Version=0.6.0.0" />
+
       <add type="OpenIZ.Core.Services.Impl.ThreadPoolService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalAppletManagerService, OpenIZ.Core, Version=0.8.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalConceptRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalPatientRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalSecurityRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalMaterialRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalPlaceRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalProviderRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalPersonRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalMetadataRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalActRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalAlertRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalOrganizationRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalIdentifierTypeRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalAssigningAuthorityRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalStockManagementRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalEntityRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+
+      <add type="OpenIZ.Core.Security.LocalPolicyDecisionService, OpenIZ.Core, Version=0.6.0.0" />
       <add type="OpenIZ.Core.Services.Impl.NullPhoneticAlgorithmHandler, OpenIZ.Core.PCL, Version=0.6.0.0" />
       <add type="OpenIZ.Core.Services.Impl.SimplePatchService, OpenIZ.Core.PCL, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Impl.LocalBatchRepositoryService, OpenIZ.Core, Version=0.6.0.0" />
+
+      <add type="OpenIZ.Caching.Memory.MemoryCacheService, OpenIZ.Caching.Memory, Version=0.8.0.0"/>-->
+
       <add type="OpenIZ.Core.Services.Impl.LocalServiceManager, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Persistence.Data.ADO.AdoOidRegistrarService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0" />
+
+      <add type="OpenIZ.Services.Daemons.AppletBusinessRulesDaemon, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Warehouse.ADO.ADODataWarehouse, OpenIZ.Warehouse.ADO, Version=0.8.0.0"/>
+      <add type="OpenIZ.Protocol.Xml.AppletClinicalProtocolRepository, OpenIZ.Protocol.Xml, Version=0.8.0.0" />
       <add type="OpenIZ.Core.Protocol.SimpleCarePlanService, OpenIZ.Core.PCL, Version=0.8.0.0" />
+    
     </serviceProviders>
   </marc.hi.ehrs.svc.core>
+  <!-- 
+  Un-comment these lines to enable PostgreSQL connectivity 
+  <openiz.persistence.data.ado>
+    <connectionManager readonlyConnection="PSQL_CLIN"
+                       readWriteConnection="PSQL_CLIN"
+                       traceSql="false"
+                       autoInsertChildren="true"
+                       provider="OpenIZ.OrmLite.Providers.PostgreSQLProvider, OpenIZ.OrmLite, Version=0.6.0.0"/>
+  </openiz.persistence.data.ado>
+  -->
+  <connectionStrings>
+    <!-- Connection String to the Data Warehouse -->
+    <add name="WHSE" connectionString="server=localhost; database=openiz_dw; user id=postgres; password=postgres; pooling=true; MinPoolSize=10; MaxPoolSize=30; Timeout=1; " providerName="Npgsql"/>
+    <!-- Connection to the clinical data store -->
+    <add name="PSQL_CLIN" connectionString="server=localhost; database=openiz; user id=postgres; password=postgres; pooling=true; MinPoolSize=10; MaxPoolSize=30; Timeout=10; " providerName="Npgsql" />
+    <!-- Connection if using GIIS import functions -->
+    <add name="GiisConnectionString" connectionString="Host=localhost;User Id=postgres;Password=postgres;DataBase=giis;CommandTimeout=300;Timeout=100;maxpoolsize=1000" providerName="Npgsql" />
+  </connectionStrings>
   <runtime>
     <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
       <dependentAssembly>
@@ -55,6 +116,12 @@
   </startup>
   <openiz.core>
     <security>
+      <!-- Security section - To allow for unsigned applets to be loaded use the allowUnsignedApplets="true" attribute below -->
+      <applet allowUnsignedApplets="true">
+        <trustedPublishers>
+          <add>84BD51F0584A1F708D604CF0B8074A68D3BEB973</add>
+        </trustedPublishers>
+      </applet>
     </security>
   </openiz.core>
 </configuration>

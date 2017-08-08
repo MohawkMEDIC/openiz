@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Open Immunize"
-#define MyAppVersion "0.9.7.3"
+#define MyAppVersion "0.9.7.4"
 #define MyAppPublisher "Mohawk College mHealth & eHealth Development and Innovation Centre"
 #define MyAppURL "http://openiz.org"
 

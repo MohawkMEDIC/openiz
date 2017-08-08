@@ -45,29 +45,31 @@ using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.AMI.Logging;
+using System.IO;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
-	/// <summary>
-	/// Represents the administrative contract interface.
-	/// </summary>
-	[ServiceBehavior(ConfigurationName = "AMI")]
-	public partial class AmiBehavior : IAmiContract
-	{
-		// Trace source
-		private TraceSource traceSource = new TraceSource("OpenIZ.Messaging.AMI");
+    /// <summary>
+    /// Represents the administrative contract interface.
+    /// </summary>
+    [ServiceBehavior(ConfigurationName = "AMI")]
+    public partial class AmiBehavior : IAmiContract
+    {
+        // Trace source
+        private TraceSource traceSource = new TraceSource("OpenIZ.Messaging.AMI");
 
-		/// <summary>
-		/// Create a diagnostic report
-		/// </summary>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
-		public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
-		{
-			var persister = ApplicationContext.Current.GetService<IDataPersistenceService<DiagnosticReport>>();
-			if (persister == null)
-				throw new InvalidOperationException("Cannot find appriopriate persister");
-			return persister.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-		}
+        /// <summary>
+        /// Create a diagnostic report
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.Login)]
+        public DiagnosticReport CreateDiagnosticReport(DiagnosticReport report)
+        {
+            var persister = ApplicationContext.Current.GetService<IDataPersistenceService<DiagnosticReport>>();
+            if (persister == null)
+                throw new InvalidOperationException("Cannot find appriopriate persister");
+            return persister.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+        }
 
         /// <summary>
         /// Create a diagnostic report
@@ -91,202 +93,245 @@ namespace OpenIZ.Messaging.AMI.Wcf
             retVal.ApplicationInfo.ServiceInfo = ApplicationContext.Current.GetServices().OfType<IDaemonService>().Select(o => new DiagnosticServiceInfo(o)).ToList();
             return retVal;
         }
+
+
         /// <summary>
         /// Gets the schema for the administrative interface.
         /// </summary>
         /// <param name="schemaId">The id of the schema to be retrieved.</param>
         /// <returns>Returns the administrative interface schema.</returns>
         public XmlSchema GetSchema(int schemaId)
-		{
-			try
-			{
-				XmlSchemas schemaCollection = new XmlSchemas();
+        {
+            try
+            {
+                XmlSchemas schemaCollection = new XmlSchemas();
 
-				XmlReflectionImporter importer = new XmlReflectionImporter("http://openiz.org/ami");
-				XmlSchemaExporter exporter = new XmlSchemaExporter(schemaCollection);
+                XmlReflectionImporter importer = new XmlReflectionImporter("http://openiz.org/ami");
+                XmlSchemaExporter exporter = new XmlSchemaExporter(schemaCollection);
 
-				foreach (var cls in typeof(IAmiContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(o => o.Type))
-					exporter.ExportTypeMapping(importer.ImportTypeMapping(cls, "http://openiz.org/ami"));
+                foreach (var cls in typeof(IAmiContract).GetCustomAttributes<ServiceKnownTypeAttribute>().Select(o => o.Type))
+                    exporter.ExportTypeMapping(importer.ImportTypeMapping(cls, "http://openiz.org/ami"));
 
-				if (schemaId > schemaCollection.Count)
-				{
-					WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
-					return null;
-				}
-				else
-				{
-					WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.OK;
-					WebOperationContext.Current.OutgoingResponse.ContentType = "text/xml";
-					return schemaCollection[schemaId];
-				}
-			}
-			catch (Exception e)
-			{
-				WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
-				this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
-				return null;
-			}
-		}
+                if (schemaId > schemaCollection.Count)
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotFound;
+                    return null;
+                }
+                else
+                {
+                    WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.OK;
+                    WebOperationContext.Current.OutgoingResponse.ContentType = "text/xml";
+                    return schemaCollection[schemaId];
+                }
+            }
+            catch (Exception e)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
+                this.traceSource.TraceEvent(TraceEventType.Error, e.HResult, e.ToString());
+                return null;
+            }
+        }
 
-		/// <summary>
-		/// Get a list of TFA mechanisms
-		/// </summary>
-		/// <returns>Returns a list of TFA mechanisms.</returns>
-		public AmiCollection<TfaMechanismInfo> GetTfaMechanisms()
-		{
-			var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
-			if (tfaRelay == null)
-				throw new InvalidOperationException("TFA Relay missing");
-			return new AmiCollection<TfaMechanismInfo>()
-			{
-				CollectionItem = tfaRelay.Mechanisms.Select(o => new TfaMechanismInfo()
-				{
-					Id = o.Id,
-					Name = o.Name,
-					ChallengeText = o.Challenge
-				}).ToList()
-			};
-		}
+        /// <summary>
+        /// Get a list of TFA mechanisms
+        /// </summary>
+        /// <returns>Returns a list of TFA mechanisms.</returns>
+        public AmiCollection<TfaMechanismInfo> GetTfaMechanisms()
+        {
+            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
+            if (tfaRelay == null)
+                throw new InvalidOperationException("TFA Relay missing");
+            return new AmiCollection<TfaMechanismInfo>()
+            {
+                CollectionItem = tfaRelay.Mechanisms.Select(o => new TfaMechanismInfo()
+                {
+                    Id = o.Id,
+                    Name = o.Name,
+                    ChallengeText = o.Challenge
+                }).ToList()
+            };
+        }
 
-		/// <summary>
-		/// Gets options for the AMI service.
-		/// </summary>
-		/// <returns>Returns options for the AMI service.</returns>
-		public IdentifiedData Options()
-		{
-			WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
-			WebOperationContext.Current.OutgoingResponse.Headers.Add("Allow", $"GET, PUT, POST, OPTIONS, HEAD, DELETE{(ApplicationContext.Current.GetService<IPatchService>() != null ? ", PATCH" : null)}");
+        /// <summary>
+        /// Gets options for the AMI service.
+        /// </summary>
+        /// <returns>Returns options for the AMI service.</returns>
+        public IdentifiedData Options()
+        {
+            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.OK;
+            WebOperationContext.Current.OutgoingResponse.Headers.Add("Allow", $"GET, PUT, POST, OPTIONS, HEAD, DELETE{(ApplicationContext.Current.GetService<IPatchService>() != null ? ", PATCH" : null)}");
 
-			if (ApplicationContext.Current.GetService<IPatchService>() != null)
-			{
-				WebOperationContext.Current.OutgoingResponse.Headers.Add("Accept-Patch", "application/xml+oiz-patch");
-			}
+            if (ApplicationContext.Current.GetService<IPatchService>() != null)
+            {
+                WebOperationContext.Current.OutgoingResponse.Headers.Add("Accept-Patch", "application/xml+oiz-patch");
+            }
 
-			var serviceOptions = new ServiceOptions
-			{
-				InterfaceVersion = typeof(AmiCollection<>).Assembly.GetName().Version.ToString(),
-				Services = new List<ServiceResourceOptions>
-				{
-					new ServiceResourceOptions()
-					{
-						ResourceName = null,
-						Verbs = new List<string>() { "OPTIONS" }
-					},
-					new ServiceResourceOptions()
-					{
-						ResourceName = "time",
-						Verbs = new List<string>() { "GET" }
-					}
-				}
-			};
+            var serviceOptions = new ServiceOptions
+            {
+                InterfaceVersion = typeof(AmiCollection<>).Assembly.GetName().Version.ToString(),
+                Services = new List<ServiceResourceOptions>
+                {
+                    new ServiceResourceOptions()
+                    {
+                        ResourceName = null,
+                        Verbs = new List<string>() { "OPTIONS" }
+                    },
+                    new ServiceResourceOptions()
+                    {
+                        ResourceName = "time",
+                        Verbs = new List<string>() { "GET" }
+                    }
+                }
+            };
 
-			// Get endpoints
-			serviceOptions.Endpoints = ApplicationContext.Current.GetServices().OfType<IApiEndpointProvider>().Select(o =>
-				new ServiceEndpointOptions()
-				{
-					BaseUrl = o.Url,
-					ServiceType = o.ApiType,
-					Capabilities = o.Capabilities
-				}
-			).ToList();
+            // Get endpoints
+            serviceOptions.Endpoints = ApplicationContext.Current.GetServices().OfType<IApiEndpointProvider>().Select(o =>
+                new ServiceEndpointOptions()
+                {
+                    BaseUrl = o.Url,
+                    ServiceType = o.ApiType,
+                    Capabilities = o.Capabilities
+                }
+            ).ToList();
 
-			var config = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
-			if (config != null && config.Endpoints != null)
-				serviceOptions.Endpoints.AddRange(config.Endpoints);
-			//foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))
-			//{
-			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
-			//	serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
-			//}
+            var config = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
+            if (config != null && config.Endpoints != null)
+                serviceOptions.Endpoints.AddRange(config.Endpoints);
+            //foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))
+            //{
+            //	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
+            //	serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
+            //}
 
-			//foreach (var methodInfo in typeof(IAmiContract).GetMethods())
-			//{
-			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
-			//	var webGet = methodInfo.GetCustomAttribute<WebGetAttribute>();
+            //foreach (var methodInfo in typeof(IAmiContract).GetMethods())
+            //{
+            //	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
+            //	var webGet = methodInfo.GetCustomAttribute<WebGetAttribute>();
 
-			//	if (webInvoke != null)
-			//	{
-			//		switch (webInvoke.Method)
-			//		{
-			//			case "DELETE":
-			//				break;
-			//			case "POST":
-			//				serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
-			//				break;
-			//			case "PUT":
-			//				break;
-			//		}
-			//	}
-			//	else if (webGet != null)
-			//	{
-			//		serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.Name, new List<string> { "GET" }));
-			//	}
-			//}
+            //	if (webInvoke != null)
+            //	{
+            //		switch (webInvoke.Method)
+            //		{
+            //			case "DELETE":
+            //				break;
+            //			case "POST":
+            //				serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
+            //				break;
+            //			case "PUT":
+            //				break;
+            //		}
+            //	}
+            //	else if (webGet != null)
+            //	{
+            //		serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.Name, new List<string> { "GET" }));
+            //	}
+            //}
 
-			return serviceOptions;
-		}
+            return serviceOptions;
+        }
 
-		/// <summary>
-		/// Perform a ping
-		/// </summary>
-		public void Ping()
-		{
-			WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
-		}
+        /// <summary>
+        /// Perform a ping
+        /// </summary>
+        public void Ping()
+        {
+            WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
+        }
 
-		/// <summary>
-		/// Creates security reset information
-		/// </summary>
-		public void SendTfaSecret(TfaRequestInfo resetInfo)
-		{
-			var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+        /// <summary>
+        /// Creates security reset information
+        /// </summary>
+        public void SendTfaSecret(TfaRequestInfo resetInfo)
+        {
+            var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
-			var securityUser = securityRepository.GetUser(resetInfo.UserName);
+            var securityUser = securityRepository.GetUser(resetInfo.UserName);
 
-			// don't throw an error if the user is not found, just act as if we sent it.
-			// this is to make sure that people cannot guess users
-			if (securityUser == null)
-			{
+            // don't throw an error if the user is not found, just act as if we sent it.
+            // this is to make sure that people cannot guess users
+            if (securityUser == null)
+            {
                 this.traceSource.TraceEvent(TraceEventType.Warning, 0, "Attempt to get TFA reset code for {0} which is not a valid user", resetInfo.UserName);
-				WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
-				return;
-			}
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
+                return;
+            }
 
-			// Identity provider
-			var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
-			var tfaSecret = identityProvider.GenerateTfaSecret(securityUser.UserName);
+            // Identity provider
+            var identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var tfaSecret = identityProvider.GenerateTfaSecret(securityUser.UserName);
 
-			// Add a claim
-			if (resetInfo.Purpose == "PasswordReset")
-			{
-				new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService);
-				identityProvider.AddClaim(securityUser.UserName, new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIZPasswordlessAuth, "true"));
-			}
+            // Add a claim
+            if (resetInfo.Purpose == "PasswordReset")
+            {
+                new PolicyPermission(PermissionState.Unrestricted, PermissionPolicyIdentifiers.LoginAsService);
+                identityProvider.AddClaim(securityUser.UserName, new System.Security.Claims.Claim(OpenIzClaimTypes.OpenIZPasswordlessAuth, "true"));
+            }
 
-			var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
-			if (tfaRelay == null)
-				throw new InvalidOperationException("TFA relay not specified");
+            var tfaRelay = ApplicationContext.Current.GetService<ITfaRelayService>();
+            if (tfaRelay == null)
+                throw new InvalidOperationException("TFA relay not specified");
 
-			// Now issue the TFA secret
-			tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
-			WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
-		}
+            // Now issue the TFA secret
+            tfaRelay.SendSecret(resetInfo.ResetMechanism, securityUser, resetInfo.Verification, tfaSecret);
+            WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NoContent;
+        }
 
-		/// <summary>
-		/// Creates a query
-		/// </summary>
-		/// <param name="nvc">The name value collection to use to create the query.</param>
-		/// <returns>Returns the created query.</returns>
-		private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
-		{
-			var retVal = new NameValueCollection();
+        /// <summary>
+        /// Creates a query
+        /// </summary>
+        /// <param name="nvc">The name value collection to use to create the query.</param>
+        /// <returns>Returns the created query.</returns>
+        private NameValueCollection CreateQuery(System.Collections.Specialized.NameValueCollection nvc)
+        {
+            var retVal = new NameValueCollection();
 
-			foreach (var k in nvc.AllKeys)
-			{
-				retVal.Add(k, new List<string>(nvc.GetValues(k)));
-			}
+            foreach (var k in nvc.AllKeys)
+            {
+                retVal.Add(k, new List<string>(nvc.GetValues(k)));
+            }
 
-			return retVal;
-		}
-	}
+            return retVal;
+        }
+
+        /// <summary>
+        /// Get all log files
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public AmiCollection<LogFileInfo> GetLogs()
+        {
+            var logDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            var retVal = new AmiCollection<LogFileInfo>();
+            foreach (var itm in Directory.GetFiles(logDirectory, "*.log"))
+            {
+                var fi = new FileInfo(itm);
+                retVal.CollectionItem.Add(new LogFileInfo()
+                {
+                    LastWrite = fi.LastWriteTime,
+                    Name = Path.GetFileNameWithoutExtension(fi.Name),
+                    Size = fi.Length
+                });
+            }
+            return retVal;
+        }
+
+        /// <summary>
+        /// Get log file
+        /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        public LogFileInfo GetLog(string logId)
+        {
+
+            var logFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), logId + ".log");
+            var retVal = new AmiCollection<LogFileInfo>();
+            var fi = new FileInfo(logFile);
+            return new LogFileInfo()
+            {
+                LastWrite = fi.LastWriteTime,
+                Name = fi.Name,
+                Size = fi.Length,
+                Contents = File.ReadAllBytes(logFile)
+            };
+        }
+
+    }
 }
