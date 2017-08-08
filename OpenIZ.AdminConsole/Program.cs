@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace OpenIZ.AdminConsole
         static void Main(string[] args)
         {
 
-            Console.WriteLine("Open Immunize Adminisration & Security Console v{0}", typeof(Program).Assembly.GetName().Version);
+            Console.WriteLine("Open Immunize Adminisration & Security Console v{0} ({1})", typeof(Program).Assembly.GetName().Version, typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
             Console.WriteLine("Copyright (C) 2015 - 2017, Mohawk College of Applied Arts and Technology");
 
             var pp = new ParameterParser<ConsoleParameters>();

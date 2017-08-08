@@ -303,33 +303,39 @@ namespace OpenIZ.Core.Services.Impl
 	        try
 	        {
 		        // Load packages from applets/ filesystem directory
-		        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Scanning {0} for applets...", Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets"));
-		        foreach (var f in Directory.GetFiles(Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets")))
-		        {
-			        // Try to open the file
-			        this.m_tracer.TraceInformation("Loading {0}...", f);
-			        using (var fs = File.OpenRead(f))
-			        {
-				        var pkg = AppletPackage.Load(fs);
+                var appletDir = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "applets");
+                if (!Directory.Exists(appletDir))
+                    this.m_tracer.TraceWarning("Applet directory {0} doesn't exist, no applets will be loaded", appletDir);
+                else
+                {
+                    this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Scanning {0} for applets...", appletDir);
+                    foreach (var f in Directory.GetFiles(appletDir))
+                    {
+                        // Try to open the file
+                        this.m_tracer.TraceInformation("Loading {0}...", f);
+                        using (var fs = File.OpenRead(f))
+                        {
+                            var pkg = AppletPackage.Load(fs);
 
-				        if (this.m_fileDictionary.ContainsKey(pkg.Meta.Id))
-				        {
-					        this.m_tracer.TraceEvent(TraceEventType.Critical, 1096, "Duplicate package {0} is not permitted", pkg.Meta.Id);
-					        throw new DuplicateKeyException(pkg.Meta.Id);
-				        }
-				        else if (this.Install(pkg, true))
-				        {
-					        //this.m_appletCollection.Add(pkg.Unpack());
-					        //this.m_fileDictionary.Add(pkg.Meta.Id, f);
-				        }
-				        else
-				        {
-					        this.m_tracer.TraceEvent(TraceEventType.Critical, 1098, "Cannot proceed while untrusted applets are present");
-					        throw new SecurityException("Cannot proceed while untrusted applets are present");
-				        }
-			        }
+                            if (this.m_fileDictionary.ContainsKey(pkg.Meta.Id))
+                            {
+                                this.m_tracer.TraceEvent(TraceEventType.Critical, 1096, "Duplicate package {0} is not permitted", pkg.Meta.Id);
+                                throw new DuplicateKeyException(pkg.Meta.Id);
+                            }
+                            else if (this.Install(pkg, true))
+                            {
+                                //this.m_appletCollection.Add(pkg.Unpack());
+                                //this.m_fileDictionary.Add(pkg.Meta.Id, f);
+                            }
+                            else
+                            {
+                                this.m_tracer.TraceEvent(TraceEventType.Critical, 1098, "Cannot proceed while untrusted applets are present");
+                                throw new SecurityException("Cannot proceed while untrusted applets are present");
+                            }
+                        }
 
-		        }
+                    }
+                }
 	        }
 	        catch (SecurityException e)
 	        {

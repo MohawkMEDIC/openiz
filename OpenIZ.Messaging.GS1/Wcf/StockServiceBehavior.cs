@@ -95,9 +95,9 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 Place sourceLocation = this.m_gs1Util.GetLocation(adv.shipper),
                     destinationLocation = this.m_gs1Util.GetLocation(adv.receiver);
                 if (sourceLocation == null)
-                    throw new KeyNotFoundException("Shipper location not found");
+                    throw new KeyNotFoundException($"Shipper location not found");
                 else if (destinationLocation == null)
-                    throw new KeyNotFoundException("Receiver location not found");
+                    throw new KeyNotFoundException($"Receiver location not found");
 
                 // Find the original order which this despatch advice is fulfilling
                 Act orderRequestAct = null;

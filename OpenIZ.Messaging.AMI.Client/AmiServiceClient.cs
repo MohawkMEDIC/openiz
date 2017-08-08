@@ -28,6 +28,7 @@ using OpenIZ.Core.Model.AMI.Applet;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model.AMI.DataTypes;
 using OpenIZ.Core.Model.AMI.Diagnostics;
+using OpenIZ.Core.Model.AMI.Logging;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Query;
@@ -778,5 +779,22 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>($"user/{id}", this.Client.Accept, user);
 		}
+
+        /// <summary>
+        /// Get all logs 
+        /// </summary>
+        public AmiCollection<LogFileInfo> GetLogs()
+        {
+            return this.Client.Get<AmiCollection<LogFileInfo>>("log");
+        }
+
+        /// <summary>
+        /// Gets the specified log from the server
+        /// </summary>
+        public LogFileInfo GetLog(string logId)
+        {
+            return this.Client.Get<LogFileInfo>($"log/{logId}");
+        }
+
 	}
 }

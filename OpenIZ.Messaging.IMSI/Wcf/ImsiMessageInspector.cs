@@ -70,6 +70,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             try
             {
 
+                this.m_traceSource.TraceEvent(TraceEventType.Verbose, 0, "Received request from {0} : {1} {2} ({3})",  (OperationContext.Current.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty)?.Address.ToString(), 
+                    WebOperationContext.Current.IncomingRequest.Method,
+                    WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri,
+                    WebOperationContext.Current.IncomingRequest.UserAgent);
                 // Handle compressed requests
                 var compressionScheme = CompressionUtil.GetCompressionScheme(WebOperationContext.Current.IncomingRequest.Headers[System.Net.HttpRequestHeader.ContentEncoding]);
                 if (compressionScheme != null)

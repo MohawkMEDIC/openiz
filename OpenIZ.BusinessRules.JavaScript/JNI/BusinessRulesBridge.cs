@@ -211,6 +211,21 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         }
 
         /// <summary>
+        /// Produce a literal representation of the data
+        /// </summary>
+        private object ProduceLiteral(object data)
+        {
+            StringBuilder sb = new StringBuilder();
+            var dict = data as IDictionary<String, Object>;
+            if (dict != null)
+                foreach (var kv in dict)
+                    sb.AppendFormat("{0}={{{1}}}", kv.Key, this.ProduceLiteral(kv.Value));
+            else
+                sb.Append(data?.ToString() ?? "null");
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// Execute bundle rules
         /// </summary>
         public Object ExecuteBundleRules(String trigger, Object bundle)
@@ -222,11 +237,14 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
 
                 this.m_cacheObject.Clear();
 
-                Object[] itms = null;
-                if (bdl.ContainsKey("$item"))
-                    itms = bdl["$item"] as Object[];
-                else
-                    itms = bdl["item"] as Object[];
+                object rawItems = null;
+                if (!bdl.TryGetValue("$item", out rawItems) && !bdl.TryGetValue("item", out rawItems))
+                {
+                    this.m_tracer.TraceVerbose("Bundle contains no items: {0}", this.ProduceLiteral(bdl));
+                    return bundle;
+                }
+
+                Object[] itms = rawItems as object[];
 
                 for (int i = 0; i < itms.Length; i++)
                 {

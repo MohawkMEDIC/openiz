@@ -110,7 +110,7 @@ namespace OpenIZ.Core.Services.Impl
 
             if (entity == null)
             {
-                throw new InvalidOperationException("Entity Relationship not found");
+                throw new KeyNotFoundException($"Entity {key} not found");
             }
 
             var businessRulesService = ApplicationContext.Current.GetBusinessRulesService<TEntity>();

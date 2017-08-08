@@ -62,6 +62,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
         /// </summary>
         public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
         {
+
             this.m_traceSource.TraceEvent(TraceEventType.Error, error.HResult, "Error on IMSI WCF Pipeline: {0}", error);
 
             ErrorResult retVal = null;

@@ -23,7 +23,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         public override EntityIdentifier ToModelInstance(object dataInstance, DataContext context, IPrincipal principal)
         {
-            var identifier = (dataInstance as CompositeResult).Values.OfType<DbEntityIdentifier>().FirstOrDefault() ?? dataInstance as DbEntityIdentifier;
+            var identifier = (dataInstance as CompositeResult)?.Values.OfType<DbEntityIdentifier>().FirstOrDefault() ?? dataInstance as DbEntityIdentifier;
             var authority = (dataInstance as CompositeResult)?.Values.OfType<DbAssigningAuthority>().FirstOrDefault();
             return new EntityIdentifier()
             {
