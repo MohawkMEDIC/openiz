@@ -66,6 +66,7 @@ namespace OpenIZ.Warehouse.ADO.Configuration
                     retVal.Provider.ConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[retVal.ReadWriteConnectionString]?.ConnectionString;
                     retVal.Provider.ReadonlyConnectionString = ApplicationContext.Current.GetService<IConfigurationManager>().ConnectionStrings[retVal.ReadonlyConnectionString]?.ConnectionString;
                     retVal.Provider.TraceSql = retVal.TraceSql;
+                    
                 }
                 else
                     throw new ConfigurationErrorsException("ADO.NET warehouse provider requires a [provider] attribute");

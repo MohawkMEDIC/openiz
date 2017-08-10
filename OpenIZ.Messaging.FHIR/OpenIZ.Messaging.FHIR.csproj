@@ -58,6 +58,7 @@
     <Compile Include="Handlers\AllergyIntoleranceResourceHandler.cs" />
     <Compile Include="Handlers\ConditionResourceHandler.cs" />
     <Compile Include="Handlers\LocationResourceHandler.cs" />
+    <Compile Include="Handlers\MedicationAdministrationResourceHandler.cs" />
     <Compile Include="Handlers\MedicationResourceHandler.cs" />
     <Compile Include="Handlers\RepositoryResourceHandlerBase.cs" />
     <Compile Include="Handlers\ImmunizationRecommendationResourceHandler.cs" />

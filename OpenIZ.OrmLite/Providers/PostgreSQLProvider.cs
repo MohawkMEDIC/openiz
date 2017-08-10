@@ -57,7 +57,7 @@ namespace OpenIZ.OrmLite.Providers
         /// Trace SQL commands
         /// </summary>
         public bool TraceSql { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the connection string
         /// </summary>
@@ -114,33 +114,39 @@ namespace OpenIZ.OrmLite.Providers
 
             DbConnectionStringBuilder dbst = new DbConnectionStringBuilder();
             dbst.ConnectionString = this.ReadonlyConnectionString;
-            Object host = String.Empty;
-            if(this.m_readonlyIpAddresses == null && dbst.TryGetValue("host", out host) || dbst.TryGetValue("server", out host))
+
+            if (this.ReadonlyConnectionString != this.ConnectionString)
             {
-                IPAddress ip = null;
-                if (IPAddress.TryParse(host.ToString(), out ip)) // server is an IP, no need to dns
-                    this.m_readonlyIpAddresses = new IPAddress[] { ip };
-                else if (host.ToString() == "localhost") {
-                    conn.ConnectionString = this.ReadonlyConnectionString;
-                    return new DataContext(this, conn, true);
+                Object host = String.Empty;
+                if (this.m_readonlyIpAddresses == null && dbst.TryGetValue("host", out host) || dbst.TryGetValue("server", out host))
+                {
+                    IPAddress ip = null;
+                    if (IPAddress.TryParse(host.ToString(), out ip)) // server is an IP, no need to dns
+                        this.m_readonlyIpAddresses = new IPAddress[] { ip };
+                    else if (host.ToString() == "localhost")
+                    {
+                        conn.ConnectionString = this.ReadonlyConnectionString;
+                        return new DataContext(this, conn, true);
+                    }
+                    else
+                        this.m_readonlyIpAddresses = Dns.GetHostAddresses(host.ToString());
+                    dbst.Remove("host");
+                    dbst.Remove("server");
+                    this.ReadonlyConnectionString = dbst.ConnectionString;
+                }
+
+                // Readonly IP address
+                if (this.m_readonlyIpAddresses?.Length > 1)
+                {
+                    dbst["server"] = this.m_readonlyIpAddresses[this.m_lastRrHost++ % this.m_readonlyIpAddresses.Length].ToString();
+                    if (this.m_lastRrHost > this.m_readonlyIpAddresses.Length) this.m_lastRrHost = 0;
+                    conn.ConnectionString = dbst.ConnectionString;
                 }
                 else
-                    this.m_readonlyIpAddresses = Dns.GetHostAddresses(host.ToString());
-                dbst.Remove("host");
-                dbst.Remove("server");
-                this.ReadonlyConnectionString = dbst.ConnectionString;
-            }
-
-            // Readonly IP address
-            if(this.m_readonlyIpAddresses?.Length > 0)
-            {
-                dbst["server"] = this.m_readonlyIpAddresses[this.m_lastRrHost++ % this.m_readonlyIpAddresses.Length].ToString();
-                if (this.m_lastRrHost > this.m_readonlyIpAddresses.Length) this.m_lastRrHost = 0;
-                conn.ConnectionString = dbst.ConnectionString;
+                    conn.ConnectionString = this.ReadonlyConnectionString;
             }
             else
                 conn.ConnectionString = this.ReadonlyConnectionString;
-
             return new DataContext(this, conn, true);
         }
 

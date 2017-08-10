@@ -51,6 +51,16 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
         public String ReadonlyConnectionString { get; set; }
 
         /// <summary>
+        /// Multi-threaded fetch
+        /// </summary>
+        public bool SingleThreadFetch { get; set; }
+
+        /// <summary>
+        /// Maximum requests
+        /// </summary>
+        public int MaxRequests { get; set; }
+
+        /// <summary>
         /// Trace SQL enabled
         /// </summary>
         public bool TraceSql { get; set; }
