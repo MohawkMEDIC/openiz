@@ -28,6 +28,7 @@ using System.Diagnostics;
 using System.IdentityModel.Tokens;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization;
 using System.Security;
 using System.Security.Authentication;
@@ -85,6 +86,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
             else if (error is Newtonsoft.Json.JsonException ||
                 error is System.Xml.XmlException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+            else if (error is LimitExceededException)
+            {
+                WebOperationContext.Current.OutgoingResponse.StatusCode = (HttpStatusCode)429;
+                WebOperationContext.Current.OutgoingResponse.StatusDescription = "Too Many Requests";
+                WebOperationContext.Current.OutgoingResponse.Headers.Add(HttpResponseHeader.RetryAfter, "1200");
+
+            }
             else if (error is UnauthorizedRequestException)
             {
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Unauthorized;

@@ -53,7 +53,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 
 			retVal.DoseQuantity = new FhirQuantity()
 			{
-				Units = model.DoseUnit?.Mnemonic,
+				Units = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>("DoseUnit"), "http://hl7.org/fhir/sid/ucum").GetPrimaryCode()?.Code?.Value,
 				Value = new FhirDecimal(model.DoseQuantity)
 			};
 			retVal.Date = (FhirDate)model.ActTime.DateTime;

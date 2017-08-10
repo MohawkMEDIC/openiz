@@ -223,10 +223,10 @@ namespace OpenIZ.OrmLite
         public void Dispose()
         {
             foreach (var itm in this.m_preparedCommands.Values)
-                itm.Dispose();
-            this.m_cacheCommit.Clear();
+                itm?.Dispose();
+            this.m_cacheCommit?.Clear();
             this.m_cacheCommit = null;
-            this.m_cachedQuery.Clear();
+            this.m_cachedQuery?.Clear();
             this.m_cachedQuery = null;
             this.m_transaction?.Dispose();
             this.m_connection?.Dispose();

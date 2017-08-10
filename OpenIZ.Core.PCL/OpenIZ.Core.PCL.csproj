@@ -49,6 +49,7 @@
     <Compile Include="Event\NotificationEventArgs.cs" />
     <Compile Include="Exceptions\DataPersistenceException.cs" />
     <Compile Include="Exceptions\DetectedIssueException.cs" />
+    <Compile Include="Exceptions\LimitExceededException.cs" />
     <Compile Include="Exceptions\PatchException.cs" />
     <Compile Include="Http\BinaryBodySerializer.cs" />
     <Compile Include="Http\Credentials.cs" />

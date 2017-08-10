@@ -37,6 +37,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MARC.HI.EHRS.SVC.Core.Data;
 using System.Diagnostics;
+using System.Net.Sockets;
 
 namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
 {
@@ -132,31 +133,41 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             int resultCount = 0;
             var results = this.QueryInternal(context, query, queryId, offset, count, out resultCount, countResults).ToList();
             totalResults = resultCount;
-            return results.AsParallel().Select(o =>
-            {
-                var subContext = context;
-                var newSubContext = results.Count() > 1;
 
-                try
+            if (!AdoPersistenceService.GetConfiguration().SingleThreadFetch)
+                return results.AsParallel().Select(o =>
                 {
-                    if (newSubContext) subContext = subContext.OpenClonedContext();
+                    var subContext = context;
+                    var newSubContext = results.Count() > 1;
 
+                    try
+                    {
+                        if (newSubContext) subContext = subContext.OpenClonedContext();
+
+                        if (o is Guid)
+                            return this.Get(subContext, (Guid)o, principal);
+                        else
+                            return this.CacheConvert(o, subContext, principal);
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error performing sub-query: {0}", e);
+                        throw;
+                    }
+                    finally
+                    {
+                        if (newSubContext)
+                            subContext.Dispose();
+                    }
+                });
+            else
+                return results.Select(o =>
+                {
                     if (o is Guid)
-                        return this.Get(subContext, (Guid)o, principal);
+                        return this.Get(context, (Guid)o, principal);
                     else
-                        return this.CacheConvert(o, subContext, principal);
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceEvent(TraceEventType.Error, e.HResult, "Error performing sub-query: {0}", e);
-                    throw;
-                }
-                finally
-                {
-                    if (newSubContext)
-                        subContext.Dispose();
-                }
-            });
+                        return this.CacheConvert(o, context, principal);
+                });
         }
 
         /// <summary>
@@ -164,13 +175,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         /// </summary>
         protected virtual IEnumerable<Object> QueryInternal(DataContext context, Expression<Func<TModel, bool>> query, Guid queryId, int offset, int? count, out int totalResults, bool incudeCount = true)
         {
-
 #if DEBUG
             Stopwatch sw = new Stopwatch();
             sw.Start();
+#endif
+
+            SqlStatement domainQuery = null;
             try
             {
-#endif
 
                 // Query has been registered?
                 if (queryId != Guid.Empty && this.m_queryPersistence?.IsRegistered(queryId.ToString()) == true)
@@ -188,7 +200,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 }
 
                 // Domain query
-                SqlStatement domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom();
+                domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom();
                 var expression = m_mapper.MapModelExpression<TModel, TDomain>(query, false);
                 if (expression != null)
                 {
@@ -210,70 +222,86 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                     domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query);
                 }
 
-                domainQuery = this.AppendOrderBy(domainQuery);
-
-                // Query id just get the UUIDs in the db
-                if (queryId != Guid.Empty)
+                // Count = 0 means we're not actually fetching anything so just hit the db
+                if (count != 0)
                 {
-                    ColumnMapping pkColumn = null;
-                    if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
+                    domainQuery = this.AppendOrderBy(domainQuery);
+
+                    // Query id just get the UUIDs in the db
+                    if (queryId != Guid.Empty && count != 0)
                     {
-                        foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
-                            if (!typeof(DbSubTable).IsAssignableFrom(p) && !typeof(IDbVersionedData).IsAssignableFrom(p))
-                            {
-                                pkColumn = TableMapping.Get(p).Columns.SingleOrDefault(o => o.IsPrimaryKey);
-                                break;
-                            }
-                    }
-                    else
-                        pkColumn = TableMapping.Get(typeof(TQueryReturn)).Columns.SingleOrDefault(o => o.IsPrimaryKey);
-
-                    var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
-
-                    var resultKeys = context.Query<Guid>(keyQuery.Build());
-
-                    //ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(a => this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query), null);
-                    // Another check
-                    this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Count(), resultKeys.Select(o => new Identifier<Guid>(o)).Take(1000).ToArray(), query);
-
-                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
-                    {
-                        int ofs = 1000;
-                        var rkeys = o as Guid[];
-                        while (ofs < rkeys.Length)
+                        ColumnMapping pkColumn = null;
+                        if (typeof(CompositeResult).IsAssignableFrom(typeof(TQueryReturn)))
                         {
-                            this.m_queryPersistence?.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
-                            ofs += 1000;
+                            foreach (var p in typeof(TQueryReturn).GenericTypeArguments.Select(o => AdoPersistenceService.GetMapper().MapModelType(o)))
+                                if (!typeof(DbSubTable).IsAssignableFrom(p) && !typeof(IDbVersionedData).IsAssignableFrom(p))
+                                {
+                                    pkColumn = TableMapping.Get(p).Columns.SingleOrDefault(o => o.IsPrimaryKey);
+                                    break;
+                                }
                         }
-                    }, resultKeys.ToArray());
+                        else
+                            pkColumn = TableMapping.Get(typeof(TQueryReturn)).Columns.SingleOrDefault(o => o.IsPrimaryKey);
 
-                    if (incudeCount)
-                        totalResults = (int)resultKeys.Count();
+                        var keyQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query, pkColumn).Build();
+
+                        var resultKeys = context.Query<Guid>(keyQuery.Build());
+
+                        //ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(a => this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Select(o => new Identifier<Guid>(o)).ToArray(), query), null);
+                        // Another check
+                        this.m_queryPersistence?.RegisterQuerySet(queryId.ToString(), resultKeys.Count(), resultKeys.Select(o => new Identifier<Guid>(o)).Take(1000).ToArray(), query);
+
+                        ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(o =>
+                        {
+                            int ofs = 1000;
+                            var rkeys = o as Guid[];
+                            while (ofs < rkeys.Length)
+                            {
+                                this.m_queryPersistence?.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
+                                ofs += 1000;
+                            }
+                        }, resultKeys.ToArray());
+
+                        if (incudeCount)
+                            totalResults = (int)resultKeys.Count();
+                        else
+                            totalResults = 0;
+
+                        var retVal = resultKeys.Skip(offset);
+                        if (count.HasValue)
+                            retVal = retVal.Take(count.Value);
+                        return retVal.OfType<Object>();
+                    }
+                    else if (incudeCount)
+                    {
+                        totalResults = context.Count(domainQuery);
+                        if (totalResults == 0)
+                            return new List<Object>();
+                    }
                     else
                         totalResults = 0;
 
-                    var retVal = resultKeys.Skip(offset);
+                    if (offset > 0)
+                        domainQuery.Offset(offset);
                     if (count.HasValue)
-                        retVal = retVal.Take(count.Value);
-                    return retVal.OfType<Object>();
-                }
-                else if (incudeCount)
-                {
-                    totalResults = context.Count(domainQuery);
-                    if (totalResults == 0)
-                        return new List<Object>();
+                        domainQuery.Limit(count.Value);
+
+                    return this.DomainQueryInternal<TQueryReturn>(context, domainQuery, ref totalResults).OfType<Object>();
                 }
                 else
-                    totalResults = 0;
-
-                if (offset > 0)
-                    domainQuery.Offset(offset);
-                if (count.HasValue)
-                    domainQuery.Limit(count.Value);
-
-                return this.DomainQueryInternal<TQueryReturn>(context, domainQuery, ref totalResults).OfType<Object>();
-#if DEBUG
+                {
+                    totalResults = context.Count(domainQuery);
+                    return new List<Object>();
+                }
             }
+            catch (Exception ex)
+            {
+                if(domainQuery != null)
+                    this.m_tracer.TraceEvent(TraceEventType.Error, ex.HResult, context.GetQueryLiteral(domainQuery.Build()));
+                context.Dispose(); // No longer important
+                throw;
+            }
+#if DEBUG
             finally
             {
                 sw.Stop();

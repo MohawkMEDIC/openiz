@@ -35,6 +35,7 @@ namespace OpenIZ.OrmLite.Providers
     public interface IDbProvider
     {
 
+        
         /// <summary>
         /// Gets the features of the database back-end
         /// </summary>
@@ -43,7 +44,7 @@ namespace OpenIZ.OrmLite.Providers
         /// Trace SQL commands
         /// </summary>
         bool TraceSql { get; set; }
-
+        
         /// <summary>
         /// Readonly (mirror) connection string
         /// </summary>

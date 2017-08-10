@@ -109,7 +109,7 @@ namespace OpenIZ.Core.Services.Impl
 
                 XmlDocument xdoc = new XmlDocument();
                 xdoc.LoadXml(xml);
-                return handler.Create(configSection.ElementInformation, configSection.CurrentConfiguration, xdoc.DocumentElement);
+                return handler.Create(configSection.ElementInformation, this.m_configuration, xdoc.DocumentElement);
 
                 //return this.m_configuration.GetSection(sectionName);
             }

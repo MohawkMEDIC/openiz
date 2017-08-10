@@ -49,6 +49,7 @@ using OpenIZ.Persistence.Data.ADO.Services.Persistence;
 using System.Xml.Serialization;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -57,6 +58,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
     /// </summary>
     public abstract class AdoBasePersistenceService<TData> : IDataPersistenceService<TData>, IStoredQueryDataPersistenceService<TData>, IFastQueryDataPersistenceService<TData>, IAdoPersistenceService where TData : IdentifiedData
     {
+
+        // Current requests
+        private static long m_currentRequests = 0;
 
         // Lock for editing 
         protected object m_synkLock = new object();
@@ -140,7 +144,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     cacheItem.LoadAssociations(context, principal);
                     cacheService?.Add(cacheItem);
                 }
-                    return cacheItem;
+                return cacheItem;
             }
             else
             {
@@ -170,60 +174,80 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             // Persist object
             using (var connection = m_configuration.Provider.GetWriteConnection())
             {
-                connection.Open();
-                using (IDbTransaction tx = connection.BeginTransaction())
-                    try
-                    {
+                try
+                {
+                    this.ThrowIfExceeded();
 
-                        // Disable inserting duplicate classified objects
-                        var existing =data.TryGetExisting(connection, principal, true);
-                        if (existing != null)
+                    connection.Open();
+                    using (IDbTransaction tx = connection.BeginTransaction())
+                        try
                         {
-                            if (m_configuration.AutoUpdateExisting)
+                            // Disable inserting duplicate classified objects
+                            var existing = data.TryGetExisting(connection, principal, true);
+                            if (existing != null)
                             {
-                                this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "INSERT WOULD RESULT IN DUPLICATE CLASSIFIER: UPDATING INSTEAD {0}", data);
-                                data = this.Update(connection, data, principal);
+                                if (m_configuration.AutoUpdateExisting)
+                                {
+                                    this.m_tracer.TraceEvent(TraceEventType.Warning, 0, "INSERT WOULD RESULT IN DUPLICATE CLASSIFIER: UPDATING INSTEAD {0}", data);
+                                    data = this.Update(connection, data, principal);
+                                }
+                                else
+                                    throw new DuplicateNameException(data.Key?.ToString());
                             }
                             else
-                                throw new DuplicateNameException(data.Key?.ToString());
+                            {
+                                this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
+                                data = this.Insert(connection, data, principal);
+                            }
+                            data.LoadState = LoadState.FullLoad; // We just persisted so it is fully loaded
+
+                            if (mode == TransactionMode.Commit)
+                            {
+                                tx.Commit();
+                                foreach (var itm in connection.CacheOnCommit)
+                                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+                            }
+                            else
+                                tx.Rollback();
+
+                            var args = new PostPersistenceEventArgs<TData>(data, principal)
+                            {
+                                Mode = mode
+                            };
+
+                            this.Inserted?.Invoke(this, args);
+
+                            return data;
+
                         }
-                        else
+                        catch (Exception e)
                         {
-                            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "INSERT {0}", data);
-                            data = this.Insert(connection, data, principal);
+                            this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
+
+                            tx?.Rollback();
+                            throw new DataPersistenceException(e.Message, e);
                         }
-                        data.LoadState = LoadState.FullLoad; // We just persisted so it is fully loaded
-
-                        if (mode == TransactionMode.Commit)
+                        finally
                         {
-                            tx.Commit();
-                            foreach (var itm in connection.CacheOnCommit)
-                                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
                         }
-                        else
-                            tx.Rollback();
-
-                        var args = new PostPersistenceEventArgs<TData>(data, principal)
-                        {
-                            Mode = mode
-                        };
-
-                        this.Inserted?.Invoke(this, args);
-
-                        return data;
-
-                    }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
-
-                        tx?.Rollback();
-                        throw new DataPersistenceException(e.Message, e);
-                    }
-                    finally
-                    {
-                    }
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref m_currentRequests);
+                }
             }
+        }
+
+        /// <summary>
+        /// Throw if requests are greater than maximum allowed
+        /// </summary>
+        private void ThrowIfExceeded()
+        {
+            if (AdoPersistenceService.GetConfiguration().MaxRequests == 0 ||
+                Interlocked.Read(ref m_currentRequests) < AdoPersistenceService.GetConfiguration().MaxRequests)
+                Interlocked.Increment(ref m_currentRequests);
+            else
+                throw new LimitExceededException("Data layer restricted maximum system requests");
         }
 
         /// <summary>
@@ -251,61 +275,69 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             // Persist object
             using (var connection = m_configuration.Provider.GetWriteConnection())
             {
-                connection.Open();
-                using (IDbTransaction tx = connection.BeginTransaction())
-                    try
-                    {
-                        //connection.Connection.Open();
+                try
+                {
+                    this.ThrowIfExceeded();
 
-                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
-
-                        data = this.Update(connection, data, principal);
-                        data.LoadState = LoadState.FullLoad; // We just persisted this so it is fully loaded
-
-                        if (mode == TransactionMode.Commit)
+                    connection.Open();
+                    using (IDbTransaction tx = connection.BeginTransaction())
+                        try
                         {
-                            tx.Commit();
-                            foreach (var itm in connection.CacheOnCommit)
-                                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+                            //connection.Connection.Open();
 
+                            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "UPDATE {0}", data);
+
+                            data = this.Update(connection, data, principal);
+                            data.LoadState = LoadState.FullLoad; // We just persisted this so it is fully loaded
+
+                            if (mode == TransactionMode.Commit)
+                            {
+                                tx.Commit();
+                                foreach (var itm in connection.CacheOnCommit)
+                                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+
+                            }
+                            else
+                                tx.Rollback();
+
+                            var args = new PostPersistenceEventArgs<TData>(data, principal)
+                            {
+                                Mode = mode
+                            };
+
+                            this.Updated?.Invoke(this, args);
+
+                            return data;
                         }
-                        else
-                            tx.Rollback();
-
-                        var args = new PostPersistenceEventArgs<TData>(data, principal)
+                        catch (Exception e)
                         {
-                            Mode = mode
-                        };
-
-                        this.Updated?.Invoke(this, args);
-
-                        return data;
-                    }
-                    catch (Exception e)
-                    {
 
 #if DEBUG
                         this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
 #else
-                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e.Message);
+                            this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e.Message);
 #endif
-                        tx?.Rollback();
+                            tx?.Rollback();
 
-						// if the exception is key not found, we want the caller to know
-						// so that a potential insert can take place
-						if (e is KeyNotFoundException)
-	                    {
-		                    throw new KeyNotFoundException(e.Message, e);
-	                    }
+                            // if the exception is key not found, we want the caller to know
+                            // so that a potential insert can take place
+                            if (e is KeyNotFoundException)
+                            {
+                                throw new KeyNotFoundException(e.Message, e);
+                            }
 
-						// if the exception is anything else, we want to throw a data persistence exception
-                        throw new DataPersistenceException(e.Message, e);
+                            // if the exception is anything else, we want to throw a data persistence exception
+                            throw new DataPersistenceException(e.Message, e);
 
-                    }
-                    finally
-                    {
-                    }
-
+                        }
+                        finally
+                        {
+                        }
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref m_currentRequests);
+                }
             }
         }
 
@@ -344,44 +376,52 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             // Obsolete object
             using (var connection = m_configuration.Provider.GetWriteConnection())
             {
-                connection.Open();
-                using (IDbTransaction tx = connection.BeginTransaction())
-                    try
-                    {
-                        //connection.Connection.Open();
+                try
+                {
+                    this.ThrowIfExceeded();
 
-                        this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
-
-                        data = this.Obsolete(connection, data, principal);
-
-                        if (mode == TransactionMode.Commit)
+                    connection.Open();
+                    using (IDbTransaction tx = connection.BeginTransaction())
+                        try
                         {
-                            tx.Commit();
-                            foreach (var itm in connection.CacheOnCommit)
-                                ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(itm.Key.Value);
+                            //connection.Connection.Open();
+
+                            this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "OBSOLETE {0}", data);
+
+                            data = this.Obsolete(connection, data, principal);
+
+                            if (mode == TransactionMode.Commit)
+                            {
+                                tx.Commit();
+                                foreach (var itm in connection.CacheOnCommit)
+                                    ApplicationContext.Current.GetService<IDataCachingService>()?.Remove(itm.Key.Value);
+                            }
+                            else
+                                tx.Rollback();
+
+                            var args = new PostPersistenceEventArgs<TData>(data, principal)
+                            {
+                                Mode = mode
+                            };
+
+                            this.Obsoleted?.Invoke(this, args);
+
+                            return data;
                         }
-                        else
-                            tx.Rollback();
-
-                        var args = new PostPersistenceEventArgs<TData>(data, principal)
+                        catch (Exception e)
                         {
-                            Mode = mode
-                        };
-
-                        this.Obsoleted?.Invoke(this, args);
-
-                        return data;
-                    }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
-                        tx?.Rollback();
-                        throw new DataPersistenceException(e.Message, e);
-                    }
-                    finally
-                    {
-                    }
-
+                            this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e);
+                            tx?.Rollback();
+                            throw new DataPersistenceException(e.Message, e);
+                        }
+                        finally
+                        {
+                        }
+                }
+                finally
+                {
+                    Interlocked.Decrement(ref m_currentRequests);
+                }
             }
         }
 
@@ -418,6 +458,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 using (var connection = m_configuration.Provider.GetReadonlyConnection())
                     try
                     {
+                        this.ThrowIfExceeded();
                         connection.Open();
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "GET {0}", containerId);
 
@@ -454,6 +495,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                         sw.Stop();
                         this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Retrieve took {0} ms", sw.ElapsedMilliseconds);
 #endif
+                        Interlocked.Decrement(ref m_currentRequests);
                     }
             }
         }
@@ -512,6 +554,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             using (var connection = m_configuration.Provider.GetReadonlyConnection())
                 try
                 {
+                    this.ThrowIfExceeded();
                     connection.Open();
 
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "QUERY {0}", query);
@@ -563,6 +606,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                     sw.Stop();
                     this.m_tracer.TraceEvent(TraceEventType.Verbose, 0, "Query {0} took {1} ms", query, sw.ElapsedMilliseconds);
 #endif
+                    Interlocked.Decrement(ref m_currentRequests);
                 }
         }
 
@@ -625,7 +669,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             var retVal = this.QueryInternal(context, query, queryId, offset, count, out totalResults, principal, countResults);
             return retVal;
         }
-       
+
 
         /// <summary>
         /// Insert the object for generic methods
@@ -709,7 +753,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         }
 
 
-#region Event Handler Helpers
+        #region Event Handler Helpers
 
         /// <summary>
         /// Fire retrieving
@@ -740,11 +784,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services
         /// Perform a lean query
         /// </summary>
         public IEnumerable<TData> QueryFast(Expression<Func<TData, bool>> query, Guid queryId, int offset, int? count, IPrincipal authContext, out int totalCount)
-       { 
+        {
             return this.QueryInternal(query, queryId, offset, count, authContext, out totalCount, true);
         }
 
-#endregion
+        #endregion
 
     }
 }

@@ -64,6 +64,12 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                 if(connectionNode.Attributes["autoInsertChildren"] != null)
                     retVal.AutoInsertChildren = bool.Parse(connectionNode.Attributes["autoInsertChildren"].Value);
 
+                if(connectionNode.Attributes["stm"] != null)
+                    retVal.SingleThreadFetch = Boolean.Parse(connectionNode.Attributes["stm"].Value);
+
+                if (connectionNode.Attributes["maxRequests"] != null)
+                    retVal.MaxRequests = Int32.Parse(connectionNode.Attributes["maxRequests"].Value);
+
                 if (connectionNode.Attributes["traceSql"] != null)
                     retVal.TraceSql = Boolean.Parse(connectionNode.Attributes["traceSql"].Value);
                 if (connectionNode.Attributes["provider"] != null)
