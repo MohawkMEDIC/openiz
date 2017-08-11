@@ -363,11 +363,9 @@
   <update insertIfNotExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>b4d155fd-ce2a-4bb3-a3e4-340197a8c452</id>
-      
       <mnemonic>12</mnemonic>
       <codeSystem>eba4f94a-2cad-4bb3-aca7-f4e54eaac4bd</codeSystem>
       <name>
-        
         <language>en</language>
         <value>diphtheria antitoxin</value>
         <phoneticAlgorithm xsi:nil="true" />

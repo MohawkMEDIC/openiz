@@ -135,10 +135,20 @@ namespace OpenIZ.Messaging.FHIR.Util
             {
 
                 List<String> value = new List<string>(fhirQuery.GetValues(kv).Length);
+
+                // Is the name extension?
                 var parmMap = map?.Map.FirstOrDefault(o => o.FhirName == kv);
                 if (parmMap == null)
                     parmMap = s_default.Map.FirstOrDefault(o => o.FhirName == kv);
-                if(parmMap == null) continue;
+                if (parmMap == null && kv == "extension")
+                    parmMap = new QueryParameterMapProperty()
+                    {
+                        FhirName = "extension",
+                        ModelName = "extension",
+                        FhirType = "tag"
+                    };
+                else
+                    continue;
 
                 foreach (var v in fhirQuery.GetValues(kv))
                 {
@@ -217,6 +227,18 @@ namespace OpenIZ.Messaging.FHIR.Util
                             }
                             else
                                 imsiQuery.Add(parmMap.ModelName + ".referenceTerm.term.mnemonic", itm);
+                        }
+                        break;
+                    case "reference":
+                        foreach (var itm in value)
+                        {
+                            if (itm.Contains("/"))
+                            {
+                                var segs = itm.Split('/');
+                                imsiQuery.Add(parmMap.ModelName, segs[1]);
+                            }
+                            else
+                                imsiQuery.Add(parmMap.ModelName, itm);
                         }
                         break;
                     case "tag":
