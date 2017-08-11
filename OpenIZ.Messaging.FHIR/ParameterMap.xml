@@ -142,6 +142,27 @@
     <map fhir="severity" model="relationship[HasComponent].target[ObservationType-Severity].value"/>
   </type>
 
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.MedicationAdministration, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="code" model="participation[Product].player.typeConcept" type="concept"/>
+    <map fhir="effective-time" model="actTime"/>
+    <map fhir="identifier" model="identifier" type="token"/>
+    <map fhir="medication" model="participation[Product|Consumable].player" type="reference"/>
+    <map file="not-given" model="isNegated"/>
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.gender" model="participation[RecordTarget].player.genderConcept" type="concept"/>
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player.dateOfBirth"/>
+    <map fhir="location" model="participation[Location].player" type="reference"/>
+    <map fhir="location.identifier" model="participation[Location].player.identifier" type="identifier"/>
+    <map fhir="location.name" model="participation[Location].player.name.component.value" />
+    <map fhir="performer" model="participation[Authorororiginator|Performer].player" type="reference"/>
+    <map fhir="reason-given" model="reasonConcept" type="concept"/>
+    <map fhir="reason-not-given" model="reasonConcept" type="concept"/>
+    <map fhir="status" model="statusConcept.referenceTerm.value"/>
+    
+  </type>
+  
   <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Location, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
     <map fhir="address" model="address.component.value"/>
     <map fhir="address-city" model="address.component[City].value"/>

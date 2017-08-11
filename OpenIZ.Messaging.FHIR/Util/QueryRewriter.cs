@@ -104,10 +104,7 @@ namespace OpenIZ.Messaging.FHIR.Util
             if (!Int32.TryParse(fhirQuery["_offset"] ?? "0", out offset))
                 throw new ArgumentException("_offset");
             if (fhirQuery["_page"] != null && Int32.TryParse(fhirQuery["_page"], out page))
-            {
                 offset = page * count;
-                count = 100;
-            }
 
             Guid queryId = Guid.Empty;
             if (fhirQuery["_stateid"] != null)
@@ -147,7 +144,7 @@ namespace OpenIZ.Messaging.FHIR.Util
                         ModelName = "extension",
                         FhirType = "tag"
                     };
-                else
+                else if(parmMap == null)
                     continue;
 
                 foreach (var v in fhirQuery.GetValues(kv))

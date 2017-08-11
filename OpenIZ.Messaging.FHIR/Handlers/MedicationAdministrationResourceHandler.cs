@@ -48,13 +48,13 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             var consumableRelationship = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Consumable);
             var productRelationship = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Product);
             if (consumableRelationship != null)
-                retVal.Medication = DataTypeConverter.CreateReference<Medication>(consumableRelationship.LoadProperty<ManufacturedMaterial>("PlayerEntity"), WebOperationContext.Current);
+                retVal.Medication = DataTypeConverter.CreateReference<Medication>(consumableRelationship.LoadProperty<ManufacturedMaterial>("PlayerEntity"), webOperationContext);
             else if (productRelationship != null)
                 retVal.Medication = DataTypeConverter.ToFhirCodeableConcept(productRelationship.LoadProperty<Material>("PlayerEntity").LoadProperty<Concept>("TypeConcept"));
 
             var rct = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
             if (rct != null)
-                retVal.Subject = DataTypeConverter.CreateReference<Patient>(rct.LoadProperty<Entity>("PlayerEntity"), WebOperationContext.Current);
+                retVal.Subject = DataTypeConverter.CreateReference<Patient>(rct.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
 
             // Encounter
             var erService = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
@@ -74,7 +74,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             if (performer != null)
                 retVal.Performer.Add(new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.MedicationPerformer()
                 {
-                    Actor = DataTypeConverter.CreateReference<Practitioner>(performer.LoadProperty<Entity>("PlayerEntity"), WebOperationContext.Current)
+                    Actor = DataTypeConverter.CreateReference<Practitioner>(performer.LoadProperty<Entity>("PlayerEntity"), webOperationContext)
                 });
 
             // Not given
