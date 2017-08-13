@@ -187,7 +187,7 @@ namespace OpenIZ.Core.Services.Impl
 		{
             Regex oidRegex = new Regex("^(\\d+?\\.){1,}\\d+$");
             Uri tryUri = null;
-            if(Uri.TryCreate(codeSystemDomain, UriKind.Absolute, out tryUri) || codeSystemDomain.StartsWith("urn:"))
+            if(codeSystemDomain.StartsWith("http:") || codeSystemDomain.StartsWith("urn:"))
                 return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Url == codeSystemDomain && r.ReferenceTerm.Mnemonic == code));
             else if(oidRegex.IsMatch(codeSystemDomain))
                 return this.FindConcepts(o => o.ReferenceTerms.Any(r => r.ReferenceTerm.CodeSystem.Oid == codeSystemDomain && r.ReferenceTerm.Mnemonic == code));

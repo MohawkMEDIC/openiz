@@ -60,7 +60,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             var erService = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
             int tr = 0;
             var enc = erService.Query(o => o.TargetEntityKey == model.Key && o.RelationshipTypeKey == ActRelationshipTypeKeys.HasComponent, 0, 1, AuthenticationContext.Current.Principal, out tr).FirstOrDefault();
-            if(enc != null)
+            if (enc != null)
             {
                 // TODO: Encounter
             }
@@ -72,16 +72,18 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             var performer = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Performer) ??
                 model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator);
             if (performer != null)
-                retVal.Performer.Add(new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.MedicationPerformer()
+                retVal.Performer = new List<MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.MedicationPerformer>() {
+                    new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.MedicationPerformer()
                 {
                     Actor = DataTypeConverter.CreateReference<Practitioner>(performer.LoadProperty<Entity>("PlayerEntity"), webOperationContext)
-                });
+                }
+                };
 
             // Not given
             retVal.NotGiven = model.IsNegated;
             if (model.ReasonConceptKey.HasValue && model.IsNegated)
                 retVal.ReasonNotGiven = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>("ReasonConcept"));
-            else if(model.ReasonConceptKey.HasValue)
+            else if (model.ReasonConceptKey.HasValue)
                 retVal.ReasonCode = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>("ReasonConcept"));
 
             retVal.Dosage = new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.MedicationDosage()

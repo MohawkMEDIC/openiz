@@ -216,9 +216,24 @@ namespace OpenIZ.Messaging.FHIR.Util
                             {
                                 var segs = itm.Split('|');
 
-                                var refTerm = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindConceptsByReferenceTerm(segs[1], segs[0]).FirstOrDefault();
-                                if(refTerm != null)
-                                    imsiQuery.Add(String.Format("{0}.referenceTerm[{1}].term.mnemonic", parmMap.ModelName, refTerm.LoadProperty<CodeSystem>("CodeSystem").Authority), refTerm.Mnemonic);
+                                string codeSystemUri = segs[0];
+                                CodeSystem codeSystem = null;
+
+                                if (codeSystemUri.StartsWith("urn:oid:"))
+                                {
+                                    codeSystemUri = codeSystemUri.Substring(8);
+                                    codeSystem = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindCodeSystems(o => o.Oid == codeSystemUri ).FirstOrDefault();
+                                }
+                                else if (codeSystemUri.StartsWith("urn:") || codeSystemUri.StartsWith("http:"))
+                                    codeSystem = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindCodeSystems(o => o.Url == codeSystemUri).FirstOrDefault();
+                                else
+                                    codeSystem = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindCodeSystems(o => o.Name == codeSystemUri).FirstOrDefault();
+
+
+                                s_tracer.TraceInformation("Have translated FHIR domain {0} to {1}", codeSystemUri, codeSystem?.Name);
+
+                                if (codeSystem != null)
+                                    imsiQuery.Add(String.Format("{0}.referenceTerm[{1}].term.mnemonic", parmMap.ModelName, codeSystem.Name), segs[1]);
                                 else
                                     imsiQuery.Add(String.Format("{0}.mnemonic", parmMap.ModelName), segs[1]);
                             }
