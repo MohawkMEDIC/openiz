@@ -70,15 +70,15 @@ namespace OpenIZ.Core.Model.Query
 
         }
 
-		/// <summary>
-		/// Builds the linq expression.
-		/// </summary>
-		/// <typeparam name="TModelType">The type of the t model type.</typeparam>
-		/// <param name="httpQueryParameters">The HTTP query parameters.</param>
-		/// <param name="variables">The variables.</param>
-		/// <param name="safeNullable">if set to <c>true</c> [safe nullable].</param>
-		/// <returns>Expression&lt;Func&lt;TModelType, System.Boolean&gt;&gt;.</returns>
-		public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, Dictionary<String, Delegate> variables, bool safeNullable)
+        /// <summary>
+        /// Builds the linq expression.
+        /// </summary>
+        /// <typeparam name="TModelType">The type of the t model type.</typeparam>
+        /// <param name="httpQueryParameters">The HTTP query parameters.</param>
+        /// <param name="variables">The variables.</param>
+        /// <param name="safeNullable">if set to <c>true</c> [safe nullable].</param>
+        /// <returns>Expression&lt;Func&lt;TModelType, System.Boolean&gt;&gt;.</returns>
+        public static Expression<Func<TModelType, bool>> BuildLinqExpression<TModelType>(NameValueCollection httpQueryParameters, Dictionary<String, Delegate> variables, bool safeNullable)
         {
             var expression = BuildLinqExpression<TModelType>(httpQueryParameters, "o", variables, safeNullable);
 
@@ -123,7 +123,7 @@ namespace OpenIZ.Core.Model.Query
 
                     // Update path
                     path += pMember + ".";
-                bool coalesce = false;
+                    bool coalesce = false;
 
                     // Guard token?
                     if (pMember.Contains("[") && pMember.EndsWith("]"))
@@ -144,7 +144,7 @@ namespace OpenIZ.Core.Model.Query
 
                     // Get member cache for data
                     Dictionary<String, PropertyInfo> memberCache = null;
-                    if(!m_memberCache.TryGetValue(accessExpression.Type, out memberCache))
+                    if (!m_memberCache.TryGetValue(accessExpression.Type, out memberCache))
                     {
                         memberCache = new Dictionary<string, PropertyInfo>();
                         lock (m_memberCache)
@@ -191,7 +191,7 @@ namespace OpenIZ.Core.Model.Query
                                 if (!memberCache.ContainsKey(pMember))
                                     memberCache.Add(pMember, backingFor);
                         }
-                        
+
                         if (backingFor != null)
                             memberInfo = backingFor;
                     }
@@ -215,7 +215,7 @@ namespace OpenIZ.Core.Model.Query
                         }
                         accessExpression = Expression.TypeAs(accessExpression, castType);
                     }
-                    if(coalesce)
+                    if (coalesce)
                     {
                         accessExpression = Expression.Coalesce(accessExpression, Expression.New(accessExpression.Type));
                     }
@@ -242,8 +242,8 @@ namespace OpenIZ.Core.Model.Query
                         while (classifierProperty != null && classAttr != null)
                         {
                             guardAccessor = Expression.MakeMemberAccess(guardAccessor, classifierProperty);
-                            
-                            
+
+
                             classAttr = classifierProperty.PropertyType.GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();
                             if (classAttr != null && guard != null)
                                 classifierProperty = classifierProperty.PropertyType.GetRuntimeProperty(classAttr.ClassifierProperty);
@@ -257,8 +257,8 @@ namespace OpenIZ.Core.Model.Query
 
                         // Now make expression
                         Expression guardExpression = null;
-                        if(guard != null)
-                            foreach(var g in guard.Split('|'))
+                        if (guard != null)
+                            foreach (var g in guard.Split('|'))
                             {
                                 var expr = Expression.MakeBinary(ExpressionType.Equal, guardAccessor, Expression.Constant(g));
                                 if (guardExpression == null)
@@ -446,8 +446,8 @@ namespace OpenIZ.Core.Model.Query
                         else if (thisAccessExpression.Type.GetTypeInfo().IsEnum)
                         {
                             int tryParse = 0;
-                            if(Int32.TryParse(pValue, out tryParse))
-                               valueExpr = Expression.Constant(Enum.ToObject(thisAccessExpression.Type, Int32.Parse(pValue)));
+                            if (Int32.TryParse(pValue, out tryParse))
+                                valueExpr = Expression.Constant(Enum.ToObject(thisAccessExpression.Type, Int32.Parse(pValue)));
                             else
                                 valueExpr = Expression.Constant(Enum.Parse(thisAccessExpression.Type, pValue));
 

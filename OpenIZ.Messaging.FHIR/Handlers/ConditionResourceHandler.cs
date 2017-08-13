@@ -88,9 +88,11 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 
 			// Subject
 			var recordTarget = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget);
-			if (recordTarget != null)
-				retVal.Subject = DataTypeConverter.CreateReference<Patient>(recordTarget.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
-
+            if (recordTarget != null)
+            {
+                this.traceSource.TraceInformation("RCT: {0}", recordTarget.PlayerEntityKey);
+                retVal.Subject = DataTypeConverter.CreateReference<Patient>(recordTarget.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
+            }
 			// Onset
 			if (model.StartTime.HasValue || model.StopTime.HasValue)
 				retVal.Onset = new FhirPeriod()

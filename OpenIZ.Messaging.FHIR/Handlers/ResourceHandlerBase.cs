@@ -139,7 +139,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// <param name="parameters">The parameters.</param>
 		/// <returns>Returns the FHIR query result containing the results of the query.</returns>
 		/// <exception cref="System.ArgumentNullException">parameters</exception>
-		public FhirQueryResult Query(System.Collections.Specialized.NameValueCollection parameters)
+		public virtual FhirQueryResult Query(System.Collections.Specialized.NameValueCollection parameters)
 		{
 			if (parameters == null)
 				throw new ArgumentNullException(nameof(parameters));

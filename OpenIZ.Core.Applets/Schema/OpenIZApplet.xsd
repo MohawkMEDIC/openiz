@@ -24,7 +24,6 @@
 	<xs:element name="AppletManifest" type="tns:AppletManifest" nillable="true"/>
 	<xs:complexType name="AppletManifest">
 		<xs:sequence>
-			<xs:element name="data" type="tns:AssetData" minOccurs="0" maxOccurs="1"/>
 			<xs:element name="info" type="tns:AppletInfo" minOccurs="0" maxOccurs="1"/>
       <xs:element name="startup" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="configuration" type="tns:AppletInitialConfiguration" minOccurs="0" maxOccurs="1"/>
@@ -33,47 +32,6 @@
 			<xs:element name="asset" type="tns:AppletAsset" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element name="strings" type="tns:AppletStrings" minOccurs="0" maxOccurs="unbounded"/>
 		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="AssetData">
-		<xs:sequence>
-			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element name="insert" type="tns:AssetDataInsert" minOccurs="0" maxOccurs="1"/>
-				<xs:element name="obsolete" type="tns:AssetDataObsolete" minOccurs="0" maxOccurs="1"/>
-				<xs:element name="update" type="tns:AssetDataUpdate" minOccurs="0" maxOccurs="1"/>
-			</xs:choice>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="AssetDataInsert" mixed="false">
-		<xs:complexContent>
-			<xs:extension base="tns:AssetDataActionBase"/>
-		</xs:complexContent>
-	</xs:complexType>
-	<xs:complexType name="AssetDataActionBase" abstract="true">
-		<xs:sequence>
-			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="q1:Concept" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q2:ConceptSet" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q3:AssigningAuthority" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q4:ConceptClass" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q5:SecurityPolicy" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q6:SecurityRole" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q7:ExtensionType" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q8:IdentifierType" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="q9:Bundle" minOccurs="0" maxOccurs="1"/>
-			</xs:choice>
-		</xs:sequence>
-	</xs:complexType>
-	<xs:complexType name="AssetDataUpdate" mixed="false">
-		<xs:complexContent>
-			<xs:extension base="tns:AssetDataActionBase">
-				<xs:attribute name="insertIfNotExists" type="xs:boolean" use="required"/>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-	<xs:complexType name="AssetDataObsolete" mixed="false">
-		<xs:complexContent>
-			<xs:extension base="tns:AssetDataActionBase"/>
-		</xs:complexContent>
 	</xs:complexType>
 	<xs:complexType name="AppletInfo" mixed="false">
 		<xs:complexContent>

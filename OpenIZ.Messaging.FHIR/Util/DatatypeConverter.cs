@@ -57,6 +57,10 @@ namespace OpenIZ.Messaging.FHIR.Util
 		/// <returns>Returns a reference instance.</returns>
 		public static Reference<TResource> CreateReference<TResource>(IVersionedEntity targetEntity, WebOperationContext context) where TResource : DomainResourceBase, new()
 		{
+            if (targetEntity == null)
+                throw new ArgumentNullException(nameof(targetEntity));
+            else if (context == null)
+                throw new ArgumentNullException(nameof(context));
 			var refer =  Reference.CreateResourceReference(DataTypeConverter.CreateResource<TResource>(targetEntity), context.IncomingRequest.UriTemplateMatch.BaseUri);
             refer.Display = (targetEntity as Entity)?.Names?.FirstOrDefault()?.ToString();
             return refer;
