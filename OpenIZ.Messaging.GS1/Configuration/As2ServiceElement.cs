@@ -69,6 +69,16 @@ namespace OpenIZ.Messaging.GS1.Configuration
             get { return (string)this["password"]; }
             set { this["password"] = value; }
         }
-        
+
+        /// <summary>
+        /// Configuration property for trusted cert
+        /// </summary>
+        [ConfigurationProperty("trustedCert")]
+        public String TrustedCertificate {
+            get { return (string)this["trustedCert"]; }
+            set { this["trustedCert"] = value; }
+        }
+
+
     }
 }

@@ -119,6 +119,8 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
                 this.m_tracer.TraceInfo("Dispatching message {0} to GS1 endpoint", queueMessage.GetType().Name);
                 // First, we're going to create a rest client
                 var restClient = new RestClient(this.m_configuration.Gs1BrokerAddress);
+                if(!String.IsNullOrEmpty(this.m_configuration.Gs1BrokerAddress.UserName))
+                    (restClient.Description.Binding as ServiceClientBindingDescription).Security = new As2BasicClientSecurityDescription(this.m_configuration.Gs1BrokerAddress);
                 var client = new Gs1ServiceClient(restClient);
 
                 if (queueMessage is OrderMessageType)

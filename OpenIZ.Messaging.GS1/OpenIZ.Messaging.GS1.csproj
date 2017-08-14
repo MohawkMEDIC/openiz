@@ -54,6 +54,7 @@
     <Compile Include="Model\eComModel.cs" />
     <Compile Include="Model\Gs1Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Transport\As2BasicClientSecurityDescription.cs" />
     <Compile Include="Transport\As2ServiceClient.cs" />
     <Compile Include="Transport\As2IntegrationService.cs" />
     <Compile Include="StockSubscriber.cs" />

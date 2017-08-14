@@ -343,7 +343,7 @@ namespace OpenIZ.Messaging.GS1.Model
                     {
                         new EntityName(NameUseKeys.Assigned, tradeItem.tradeItemDescription.Value)
                     },
-                    StatusConceptKey = StatusKeys.New,
+                    StatusConceptKey = StatusKeys.Active,
                     QuantityConceptKey = Guid.Parse("a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76"),
                     Quantity = 1
                 };

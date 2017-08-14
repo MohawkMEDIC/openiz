@@ -188,7 +188,9 @@ namespace OpenIZ.Core.Protocol
                 var execProtocols = this.Protocols.Where(o => protocols.Contains(o.Id)).OrderBy(o => o.Name).Distinct().ToList();
 
                 Patient currentProcessing = null;
-                var isCurrentProcessing = this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing);
+                bool isCurrentProcessing = false;
+                if(p.Key.HasValue)
+                    isCurrentProcessing = this.m_patientPromise.TryGetValue(p.Key.Value, out currentProcessing);
                 if (p.Key.HasValue && !isCurrentProcessing)
                 {
                     lock (this.m_patientPromise)

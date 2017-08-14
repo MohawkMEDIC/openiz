@@ -32,6 +32,9 @@ using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using SharpCompress.Compressors.Deflate;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Configuration;
 
 namespace OpenIZ.Core.Http
 {
@@ -103,6 +106,16 @@ namespace OpenIZ.Core.Http
                 {
                     return this.Description.Binding.Security.CertificateValidator.ValidateCertificate(certificate, chain);
                 };
+            else
+                retVal.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) =>
+                {
+                    var configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(OpenIzConstants.OpenIZConfigurationName) as OpenIzConfiguration;
+                    this.traceSource.TraceEvent(TraceEventType.Warning, 0, "Checking for certificate override for {0}", (certificate as X509Certificate2).Thumbprint);
+                    if (configuration.Security.TrustedPublishers.Contains((certificate as X509Certificate2).Thumbprint))
+                        return true;
+                    else return false;
+                };
+
 
             if (this.Description.Binding.Optimize)
                 retVal.Headers[HttpRequestHeader.AcceptEncoding] = "gzip, deflate";
