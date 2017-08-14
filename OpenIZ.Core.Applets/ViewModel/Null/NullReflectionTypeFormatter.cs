@@ -154,15 +154,17 @@ namespace OpenIZ.Core.Applets.ViewModel.Null
                         else
                         {
                             var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
-                            var keyProperty = o.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
-                            var key = keyProperty.GetValue(o);
-                            if (key != null)
+                            if (keyPropertyRef != null)
                             {
-                                value = context.NullContext.LoadRelated(propertyInfo.PropertyType, (Guid)key);
-                                propertyInfo.SetValue(o, value);
-                                loadedProperties = value != null;
+                                var keyProperty = o.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
+                                var key = keyProperty.GetValue(o);
+                                if (key != null)
+                                {
+                                    value = context.NullContext.LoadRelated(propertyInfo.PropertyType, (Guid)key);
+                                    propertyInfo.SetValue(o, value);
+                                    loadedProperties = value != null;
+                                }
                             }
-
                         }
 
                     }
