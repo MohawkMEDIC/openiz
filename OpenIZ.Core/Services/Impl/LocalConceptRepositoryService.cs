@@ -518,16 +518,36 @@ namespace OpenIZ.Core.Services.Impl
 				throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
 			}
 
-			return persistence.Count(o => o.ConceptsXml.Any(c => c == concept.Key), AuthenticationContext.Current.Principal) > 0;
+			return persistence.Count(o => o.Key == set.Key &&  o.ConceptsXml.Any(c => c == concept.Key), AuthenticationContext.Current.Principal) > 0;
 		}
 
-		/// <summary>
-		/// Obsoletes a concept.
+        /// <summary>
+		/// Determine if the concept set contains the specified concept
 		/// </summary>
-		/// <param name="key">The key of the concept to be obsoleted.</param>
-		/// <returns>Returns the obsoleted concept.</returns>
-		/// <exception cref="System.InvalidOperationException">Concept persistence service not found.</exception>
-		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
+		/// <param name="set">The set.</param>
+		/// <param name="concept">The concept.</param>
+		/// <returns><c>true</c> if the specified set is member; otherwise, <c>false</c>.</returns>
+		/// <exception cref="System.InvalidOperationException">ConceptSet persistence service not found.</exception>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+        public bool IsMember(Guid set, Guid concept)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+
+            if (persistence == null)
+            {
+                throw new InvalidOperationException($"{nameof(IDataPersistenceService<ConceptSet>)} not found");
+            }
+
+            return persistence.Count(o => o.Key == set &&  o.ConceptsXml.Any(c => c == concept), AuthenticationContext.Current.Principal) > 0;
+        }
+
+        /// <summary>
+        /// Obsoletes a concept.
+        /// </summary>
+        /// <param name="key">The key of the concept to be obsoleted.</param>
+        /// <returns>Returns the obsoleted concept.</returns>
+        /// <exception cref="System.InvalidOperationException">Concept persistence service not found.</exception>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.AdministerConceptDictionary)]
 		public Concept ObsoleteConcept(Guid key)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();

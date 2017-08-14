@@ -104,6 +104,8 @@
     <map fhir="subject.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
     <map fhir="subject" model="participation[RecordTarget].player" type="reference"/>
     <map fhir="type" model="typeConcept" type="concept" />
+    <amp fhir="substance" model="relationship[RefersTo].target.participation[Product|Consumable].player" type="reference"/>
+    <map fhir="substance.type" model="relationship[RefersTo].target.participation[Product|Consumable].player.typeConcept" type="concept"/>
   </type>
 
   <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.AllergyIntolerance, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
