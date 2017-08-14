@@ -19,6 +19,8 @@ using OpenIZ.Core.Model.Constants;
 using System.Net;
 using System.IO;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Persistence.Diagnostics.Email
 {
@@ -114,7 +116,8 @@ namespace OpenIZ.Persistence.Diagnostics.Email
                 foreach (var itm in this.m_configuration.Recipients)
                     bugMessage.To.Add(itm);
                 bugMessage.Subject = $"ISSUE #{issueId}";
-                bugMessage.Body = storageData.Note;
+                bugMessage.Body = $"{storageData.Note} - From - {storageData.LoadProperty<SecurityUser>("CreatedBy")?.UserName}";
+
 
                 // Add attachments
                 foreach (var itm in storageData.Attachments)

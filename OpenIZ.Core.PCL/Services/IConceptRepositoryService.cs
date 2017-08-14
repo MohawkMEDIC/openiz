@@ -260,12 +260,19 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		bool IsMember(ConceptSet set, Concept concept);
 
-		/// <summary>
-		/// Obsoletes a concept.
-		/// </summary>
-		/// <param name="key">The key of the concept to be obsoleted.</param>
-		/// <returns>Returns the obsoleted concept.</returns>
-		Concept ObsoleteConcept(Guid key);
+
+        /// <summary>
+        /// Returns true if the concept <paramref name="concept"/> is a member of set <paramref name="set"/>
+        /// </summary>
+        bool IsMember(Guid set, Guid concept);
+
+
+        /// <summary>
+        /// Obsoletes a concept.
+        /// </summary>
+        /// <param name="key">The key of the concept to be obsoleted.</param>
+        /// <returns>Returns the obsoleted concept.</returns>
+        Concept ObsoleteConcept(Guid key);
 
 		/// <summary>
 		/// Obsoletes a concept class.
