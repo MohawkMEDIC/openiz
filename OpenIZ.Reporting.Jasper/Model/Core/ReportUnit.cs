@@ -1,25 +1,26 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: justi
+ *
+ * User: khannan
  * Date: 2017-4-4
  */
+
+using OpenIZ.Reporting.Jasper.Model.Reference;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using OpenIZ.Reporting.Jasper.Model.Reference;
 
 namespace OpenIZ.Reporting.Jasper.Model.Core
 {
@@ -35,7 +36,6 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		/// </summary>
 		public ReportUnit()
 		{
-
 		}
 
 		/// <summary>
@@ -53,6 +53,13 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		public string ControlsLayout { get; set; }
 
 		/// <summary>
+		/// Gets or sets the data source reference.
+		/// </summary>
+		/// <value>The data source reference.</value>
+		[XmlElement("dataSourceReference")]
+		public DataSourceReference DataSourceReference { get; set; }
+
+		/// <summary>
 		/// Gets or sets the input control references.
 		/// </summary>
 		/// <value>The input control references.</value>
@@ -67,20 +74,6 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		public string InputControlRenderingView { get; set; }
 
 		/// <summary>
-		/// Gets or sets the report rendering view.
-		/// </summary>
-		/// <value>The report rendering view.</value>
-		[XmlElement("reportRenderingView")]
-		public string ReportRenderingView { get; set; }
-
-		/// <summary>
-		/// Gets or sets the data source reference.
-		/// </summary>
-		/// <value>The data source reference.</value>
-		[XmlElement("dataSourceReference")]
-		public DataSourceReference DataSourceReference { get; set; }
-
-		/// <summary>
 		/// Gets or sets the JR XML.
 		/// </summary>
 		/// <value>The JR XML.</value>
@@ -88,17 +81,24 @@ namespace OpenIZ.Reporting.Jasper.Model.Core
 		public JrXmlFileReference JrXmlFileReference { get; set; }
 
 		/// <summary>
-		/// Gets or sets the resources.
-		/// </summary>
-		/// <value>The resources.</value>
-		[XmlArray("resources")]
-		public List<ResourceFileReference> Resources { get; set; }
-
-		/// <summary>
 		/// Gets or sets the query reference.
 		/// </summary>
 		/// <value>The query reference.</value>
 		[XmlElement("queryReference")]
 		public QueryReference QueryReference { get; set; }
+
+		/// <summary>
+		/// Gets or sets the report rendering view.
+		/// </summary>
+		/// <value>The report rendering view.</value>
+		[XmlElement("reportRenderingView")]
+		public string ReportRenderingView { get; set; }
+
+		/// <summary>
+		/// Gets or sets the resources.
+		/// </summary>
+		/// <value>The resources.</value>
+		[XmlArray("resources")]
+		public List<ResourceFileReference> Resources { get; set; }
 	}
 }
