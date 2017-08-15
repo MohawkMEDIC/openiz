@@ -968,14 +968,21 @@ namespace OpenIZ.Reporting.Jasper
 				}
 				else
 				{
-					identifiedData = new Entity
-					{
-						Key = Guid.Parse(dictionary[keyPropertyName].ToString())
-					};
 
-					if (valuePropertyName != null && dictionary.ContainsKey(valuePropertyName))
+					// attempt to retrieve via the persistence service
+					identifiedData = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>().Get(new Identifier<Guid>(Guid.Parse(dictionary[keyPropertyName].ToString())), AuthenticationContext.Current.Principal, true);
+
+					if (identifiedData == null)
 					{
-						((Entity)identifiedData).Names.Add(new EntityName(NameUseKeys.OfficialRecord, dictionary[valuePropertyName].ToString()));
+						identifiedData = new Entity
+						{
+							Key = Guid.Parse(dictionary[keyPropertyName].ToString())
+						};
+
+						if (valuePropertyName != null && dictionary.ContainsKey(valuePropertyName))
+						{
+							((Entity)identifiedData).Names.Add(new EntityName(NameUseKeys.OfficialRecord, dictionary[valuePropertyName].ToString()));
+						}
 					}
 				}
 			}
