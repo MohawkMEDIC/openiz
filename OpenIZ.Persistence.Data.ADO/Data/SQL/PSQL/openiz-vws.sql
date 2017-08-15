@@ -48,7 +48,7 @@ select
 	coalesce(typ_cd.mnemonic, 'Other') as typ, 
 	array_to_string(array_agg(phon_val_tbl.val), ' ') as val
 from ent_name_tbl inner join ent_name_cmp_tbl using (name_id) 
-	inner join phon_val_tbl using (val_id) 
+	inner join phon_val_tbl using (val_seq_id) 
 	left join cd_cur_vrsn_vw as use_cd on (use_cd_id = use_cd.cd_id)
 	left join cd_cur_vrsn_vw as typ_cd on (typ_cd_id = typ_cd.cd_id) 
 where obslt_vrsn_seq_id is null 
@@ -63,7 +63,7 @@ select
 	coalesce(typ_cd.mnemonic, 'Other') as typ, 
 	array_to_string(array_agg(ent_addr_cmp_val_tbl.val), ' ') as val
 from ent_addr_tbl inner join ent_addr_cmp_tbl using (addr_id) 
-	inner join ent_addr_cmp_val_tbl using (val_id) 
+	inner join ent_addr_cmp_val_tbl using (val_seq_id) 
 	left join cd_cur_vrsn_vw as use_cd on (use_cd_id = use_cd.cd_id)
 	left join cd_cur_vrsn_vw as typ_cd on (typ_cd_id = typ_cd.cd_id) 
 where obslt_vrsn_seq_id is null 
