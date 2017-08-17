@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:TalendMetadata="http://www.talend.org/metadata/connection/2010" xmlns:orgomg.cwm.resource.relational="http:///orgomg/cwm/resource/relational.ecore" xmlns:relational="http://www.talend.org/cwm/resource/relational/2010">
-  <TalendMetadata:DatabaseConnection xmi:id="_kRyWEBvAEeeSapef53_EIQ" name="openIzWarehouse" id="_eMADkBvAEeeSapef53_EIQ" label="openIzWarehouse" dataPackage="_kSzpwBvAEeeSapef53_EIQ" DatabaseType="PostgreSQL" DriverClass="org.postgresql.Driver" URL="jdbc:postgresql://localhost:5432/openiz_dw" dbVersionString="V9_X" Port="5432" Username="postgres" Password="CNlsM2hQx/yKsFREJf9l+Q==" ServerName="localhost" DatasourceName="" FileFieldName="" SID="openiz_dw" SqlSynthax="SQL Syntax" DbmsId="postgres_id" ProductId="POSTGRESQL" AdditionalParams="" StandardSQL="true" SQLMode="false" UiSchema="public">
-    <taggedValue xmi:id="_kRyWERvAEeeSapef53_EIQ" tag="Is Conn Need Reload" value="false"/>
+  <TalendMetadata:DatabaseConnection xmi:id="_kRyWEBvAEeeSapef53_EIQ" name="openIzWarehouse" id="_eMADkBvAEeeSapef53_EIQ" label="openIzWarehouse" dataPackage="_kSzpwBvAEeeSapef53_EIQ _XbOVsIJ-EeeKB854f75Idg" DatabaseType="PostgreSQL" DriverClass="org.postgresql.Driver" URL="jdbc:postgresql://localhost:5432/openiz-dw" dbVersionString="V9_X" Port="5432" Username="postgres" Password="CNlsM2hQx/yKsFREJf9l+Q==" ServerName="localhost" DatasourceName="" FileFieldName="" SID="openiz-dw" SqlSynthax="SQL Syntax" DbmsId="postgres_id" ProductId="POSTGRESQL" AdditionalParams="" StandardSQL="true" SQLMode="false" UiSchema="public">
+    <taggedValue xmi:id="_kRyWERvAEeeSapef53_EIQ" tag="Is Conn Need Reload" value="true"/>
     <taggedValue xmi:id="_kSZaEBvAEeeSapef53_EIQ" tag="package filter" value=""/>
     <taggedValue xmi:id="_kSZaERvAEeeSapef53_EIQ" tag="Status" value=""/>
     <taggedValue xmi:id="_kSZaEhvAEeeSapef53_EIQ" tag="Version" value="0.1"/>
@@ -10,7 +10,7 @@
     <taggedValue xmi:id="_kSZaFRvAEeeSapef53_EIQ" tag="Author" value=""/>
     <taggedValue xmi:id="_kSZaFhvAEeeSapef53_EIQ" tag="otherParameter"/>
     <taggedValue xmi:id="_kSmOYBvAEeeSapef53_EIQ" tag="DB ProductName" value="PostgreSQL"/>
-    <taggedValue xmi:id="_kSmOYRvAEeeSapef53_EIQ" tag="DB ProductVersion" value="9.3.16"/>
+    <taggedValue xmi:id="_kSmOYRvAEeeSapef53_EIQ" tag="DB ProductVersion" value="9.2.4"/>
     <taggedValue xmi:id="_kSmOYhvAEeeSapef53_EIQ" tag="DB IdentifierQuoteString" value="&quot;"/>
     <parameters xmi:id="_kRyWEhvAEeeSapef53_EIQ" key="CONN_PARA_KEY_USERNAME" value="postgres"/>
     <parameters xmi:id="_kRmyEBvPEeeSapef53_EIQ" key="CONN_PARA_KEY_MAPRDB_TABLE_NS_MAPPING" value=""/>
@@ -812,7 +812,7 @@
           <initialValue xsi:type="relational:TdExpression" xmi:id="_KBPLSiRXEeet4pb_ZQ7qxA" language="COLUMN_DEF"/>
           <sqlDataType xmi:id="_KBPLSyRXEeet4pb_ZQ7qxA" name="TEXT" numericPrecisionRadix="10" javaDataType="12" nullable="columnNullable"/>
         </feature>
-        <feature xsi:type="relational:TdColumn" xmi:id="_Zksr8xvBEeeSapef53_EIQ" name="type_mnemonic" label="type_mnemonic" length="32" sourceType="VARCHAR" talendType="id_String">
+        <feature xsi:type="relational:TdColumn" xmi:id="_Zksr8xvBEeeSapef53_EIQ" name="type_mnemonic" label="type_mnemonic" length="64" sourceType="VARCHAR" talendType="id_String">
           <taggedValue xmi:id="_Zksr9BvBEeeSapef53_EIQ" tag="Comment" value=""/>
           <initialValue xsi:type="relational:TdExpression" xmi:id="_Zksr9RvBEeeSapef53_EIQ" language="COLUMN_DEF"/>
           <sqlDataType xmi:id="_Zksr9hvBEeeSapef53_EIQ" name="VARCHAR" numericPrecisionRadix="10" javaDataType="12" nullable="columnNullable"/>
@@ -822,10 +822,15 @@
           <initialValue xsi:type="relational:TdExpression" xmi:id="_Zksr-RvBEeeSapef53_EIQ" language="COLUMN_DEF"/>
           <sqlDataType xmi:id="_Zksr-hvBEeeSapef53_EIQ" name="UUID" numericPrecisionRadix="10" javaDataType="1111" nullable="columnNullable"/>
         </feature>
-        <feature xsi:type="relational:TdColumn" xmi:id="_Zksr-xvBEeeSapef53_EIQ" name="tel" label="tel" length="32" sourceType="VARCHAR" talendType="id_String">
+        <feature xsi:type="relational:TdColumn" xmi:id="_Zksr-xvBEeeSapef53_EIQ" name="tel" label="tel" length="64" sourceType="VARCHAR" talendType="id_String">
           <taggedValue xmi:id="_Zksr_BvBEeeSapef53_EIQ" tag="Comment" value=""/>
           <initialValue xsi:type="relational:TdExpression" xmi:id="_Zksr_RvBEeeSapef53_EIQ" language="COLUMN_DEF"/>
           <sqlDataType xmi:id="_Zksr_hvBEeeSapef53_EIQ" name="VARCHAR" numericPrecisionRadix="10" javaDataType="12" nullable="columnNullable"/>
+        </feature>
+        <feature xsi:type="relational:TdColumn" xmi:id="_N33t6IJKEee6b9FZmRBH7w" name="trg_pop" label="trg_pop" length="20" sourceType="NUMERIC" talendType="id_BigDecimal">
+          <taggedValue xmi:id="_N33t6YJKEee6b9FZmRBH7w" tag="Comment" value=""/>
+          <initialValue xsi:type="relational:TdExpression" xmi:id="_N33t6oJKEee6b9FZmRBH7w" language="COLUMN_DEF"/>
+          <sqlDataType xmi:id="_N33t64JKEee6b9FZmRBH7w" name="NUMERIC" numericPrecisionRadix="10" javaDataType="2" nullable="columnNullable"/>
         </feature>
       </ownedElement>
       <ownedElement xsi:type="relational:TdTable" xmi:id="_Zk4SARvBEeeSapef53_EIQ" name="fac_plc_ded_sdl_tbl" id="_Zk4SABvBEeeSapef53_EIQ" label="fac_plc_ded_sdl_tbl" tableType="TABLE">
@@ -992,6 +997,37 @@
           <sqlDataType xmi:id="__A4m0yUbEeeILvjCcrHmTw" name="VARCHAR" numericPrecisionRadix="10" javaDataType="12" nullable="columnNullable"/>
         </feature>
       </ownedElement>
+      <ownedElement xsi:type="relational:TdTable" xmi:id="_sKw08YKAEeeKB854f75Idg" name="usr_tbl" id="_sKw08IKAEeeKB854f75Idg" label="usr_tbl" tableType="TABLE">
+        <taggedValue xmi:id="_sKw08oKAEeeKB854f75Idg" tag="Comment" value=""/>
+        <feature xsi:type="relational:TdColumn" xmi:id="_sKw084KAEeeKB854f75Idg" name="ent_id" label="ent_id" length="2147483647" sourceType="UUID" talendType="id_Object" key="true" nullable="false">
+          <taggedValue xmi:id="_sKw09IKAEeeKB854f75Idg" tag="Comment" value=""/>
+          <initialValue xsi:type="relational:TdExpression" xmi:id="_sKw09YKAEeeKB854f75Idg" language="COLUMN_DEF"/>
+          <sqlDataType xmi:id="_sKw09oKAEeeKB854f75Idg" name="UUID" numericPrecisionRadix="10" javaDataType="1111"/>
+        </feature>
+        <feature xsi:type="relational:TdColumn" xmi:id="_sKw094KAEeeKB854f75Idg" name="usr_name" label="usr_name" length="256" sourceType="VARCHAR" talendType="id_String" nullable="false">
+          <taggedValue xmi:id="_sKw0-IKAEeeKB854f75Idg" tag="Comment" value=""/>
+          <initialValue xsi:type="relational:TdExpression" xmi:id="_sKw0-YKAEeeKB854f75Idg" language="COLUMN_DEF"/>
+          <sqlDataType xmi:id="_sKw0-oKAEeeKB854f75Idg" name="VARCHAR" numericPrecisionRadix="10" javaDataType="12"/>
+        </feature>
+        <feature xsi:type="relational:TdColumn" xmi:id="_sKw0-4KAEeeKB854f75Idg" name="usr_class" label="usr_class" length="32" sourceType="VARCHAR" talendType="id_String" nullable="false">
+          <taggedValue xmi:id="_sKw0_IKAEeeKB854f75Idg" tag="Comment" value=""/>
+          <initialValue xsi:type="relational:TdExpression" xmi:id="_sKw0_YKAEeeKB854f75Idg" language="COLUMN_DEF"/>
+          <sqlDataType xmi:id="_sKw0_oKAEeeKB854f75Idg" name="VARCHAR" numericPrecisionRadix="10" javaDataType="12"/>
+        </feature>
+        <feature xsi:type="relational:TdColumn" xmi:id="_sKw0_4KAEeeKB854f75Idg" name="last_login_timr" label="last_login_timr" length="35" precision="6" sourceType="TIMESTAMPTZ" talendType="id_Date" pattern="&quot;dd-MM-yyyy&quot;">
+          <taggedValue xmi:id="_sKw1AIKAEeeKB854f75Idg" tag="Comment" value=""/>
+          <initialValue xsi:type="relational:TdExpression" xmi:id="_sKw1AYKAEeeKB854f75Idg" language="COLUMN_DEF"/>
+          <sqlDataType xmi:id="_sKw1AoKAEeeKB854f75Idg" name="TIMESTAMPTZ" numericPrecision="6" numericPrecisionRadix="10" javaDataType="93" nullable="columnNullable"/>
+        </feature>
+        <feature xsi:type="relational:TdColumn" xmi:id="_sKw1A4KAEeeKB854f75Idg" name="fac_id" label="fac_id" length="2147483647" sourceType="UUID" talendType="id_Object">
+          <taggedValue xmi:id="_sKw1BIKAEeeKB854f75Idg" tag="Comment" value=""/>
+          <initialValue xsi:type="relational:TdExpression" xmi:id="_sKw1BYKAEeeKB854f75Idg" language="COLUMN_DEF"/>
+          <sqlDataType xmi:id="_sKw1BoKAEeeKB854f75Idg" name="UUID" numericPrecisionRadix="10" javaDataType="1111" nullable="columnNullable"/>
+        </feature>
+      </ownedElement>
     </ownedElement>
+  </orgomg.cwm.resource.relational:Catalog>
+  <orgomg.cwm.resource.relational:Catalog xmi:id="_XbOVsIJ-EeeKB854f75Idg" name="openiz-dw" dataManager="_kRyWEBvAEeeSapef53_EIQ">
+    <ownedElement xsi:type="orgomg.cwm.resource.relational:Schema" xmi:id="_XbOVsYJ-EeeKB854f75Idg" name="public"/>
   </orgomg.cwm.resource.relational:Catalog>
 </xmi:XMI>

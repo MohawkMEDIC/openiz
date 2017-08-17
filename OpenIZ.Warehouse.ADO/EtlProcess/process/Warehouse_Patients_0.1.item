@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<talendfile:ProcessType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.talend.org/mapper" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" defaultContext="Default" jobType="Standard">
+<talendfile:ProcessType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:TalendMapper="http://www.talend.org/mapper" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" defaultContext="Default" jobType="Standard">
   <context confirmationNeeded="false" name="Default">
-    <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
+    <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz-dw"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Address for warehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
+    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
@@ -14,7 +14,7 @@
     <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Address for warehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
@@ -24,7 +24,7 @@
     <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Address for warehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
@@ -85,7 +85,7 @@
     <elementParameter field="CHECK" name="ON_METERCATCHER_FLAG" value="false"/>
     <elementParameter field="CHECK" name="ON_CONSOLE_FLAG" value="false" show="false"/>
     <elementParameter field="CHECK" name="ON_FILES_FLAG" value="false" show="false"/>
-    <elementParameter field="DIRECTORY" name="FILE_PATH" value="&quot;C:/Program Files/TalendETL/workspace/.metadata&quot;" show="false"/>
+    <elementParameter field="DIRECTORY" name="FILE_PATH" value="&quot;C:/Users/justin/Documents/workspace/.metadata&quot;" show="false"/>
     <elementParameter field="TEXT" name="FILENAME_STATS" value="&quot;stats_file.txt&quot;" show="false"/>
     <elementParameter field="TEXT" name="FILENAME_LOGS" value="&quot;logs_file.txt&quot;" show="false"/>
     <elementParameter field="TEXT" name="FILENAME_METTER" value="&quot;meter_file.txt&quot;" show="false"/>
@@ -132,50 +132,9 @@
     <routinesParameter id="_vfMjIBuTEeeSapef53_EIQ" name="TalendDataGenerator"/>
     <routinesParameter id="_vfWUIBuTEeeSapef53_EIQ" name="TalendDate"/>
     <routinesParameter id="_vfgFIBuTEeeSapef53_EIQ" name="TalendString"/>
+    <routinesParameter id="_YFOYMIG-EeeT-qPSauScIg" name="TalendStringUtil"/>
   </parameters>
-  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="64">
-    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_1" show="false"/>
-    <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="V9_X"/>
-    <elementParameter field="TEXT" name="HOST" value="context.dbServer"/>
-    <elementParameter field="TEXT" name="TYPE" value="POSTGRESQL" show="false"/>
-    <elementParameter field="TEXT" name="PORT" value="&quot;5432&quot;"/>
-    <elementParameter field="TEXT" name="DBNAME" value="context.dbName"/>
-    <elementParameter field="TEXT" name="SCHEMA_DB" value="&quot;public&quot;"/>
-    <elementParameter field="TEXT" name="USER" value="context.dbUser"/>
-    <elementParameter field="PASSWORD" name="PASS" value="8pW6Nmy2kudlVOAHVDEwwM+CQSjQ3LVP"/>
-    <elementParameter field="ENCODING_TYPE" name="ENCODING" value="&quot;ISO-8859-15&quot;" show="false"/>
-    <elementParameter field="TECHNICAL" name="ENCODING:ENCODING_TYPE" value="ISO-8859-15"/>
-    <elementParameter field="CHECK" name="USE_SHARED_CONNECTION" value="false"/>
-    <elementParameter field="TEXT" name="SHARED_CONNECTION_NAME" value="" show="false"/>
-    <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime"/>
-    <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false"/>
-    <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
-    <elementParameter field="CHECK" name="AUTO_COMMIT" value="false"/>
-    <elementParameter field="TEXT" name="LABEL" value="OpenIZ DB"/>
-    <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
-  </node>
-  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="256">
-    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_2" show="false"/>
-    <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="V9_X"/>
-    <elementParameter field="TEXT" name="HOST" value="context.dwServer"/>
-    <elementParameter field="TEXT" name="TYPE" value="POSTGRESQL" show="false"/>
-    <elementParameter field="TEXT" name="PORT" value="&quot;5432&quot;"/>
-    <elementParameter field="TEXT" name="DBNAME" value="context.dwName"/>
-    <elementParameter field="TEXT" name="SCHEMA_DB" value="&quot;public&quot;"/>
-    <elementParameter field="TEXT" name="USER" value="context.dwUser"/>
-    <elementParameter field="PASSWORD" name="PASS" value="8pW6Nmy2kueIyPHWi+ujKgpthJgE5Nmw"/>
-    <elementParameter field="ENCODING_TYPE" name="ENCODING" value="&quot;ISO-8859-15&quot;" show="false"/>
-    <elementParameter field="TECHNICAL" name="ENCODING:ENCODING_TYPE" value="ISO-8859-15"/>
-    <elementParameter field="CHECK" name="USE_SHARED_CONNECTION" value="false"/>
-    <elementParameter field="TEXT" name="SHARED_CONNECTION_NAME" value="" show="false"/>
-    <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime"/>
-    <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false"/>
-    <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
-    <elementParameter field="CHECK" name="AUTO_COMMIT" value="false"/>
-    <elementParameter field="TEXT" name="LABEL" value="OpenIZ Warehouse"/>
-    <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
-  </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="416">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="608">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_1" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -284,7 +243,7 @@
       <column comment="" defaultValue="" key="false" length="2147483647" name="fac_id" nullable="true" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="416" posY="416">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="416" posY="608">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_1" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -327,7 +286,7 @@
       </column>
       <additionalProperties key="Comment" value=""/>
     </metadata>
-    <nodeData xsi:type="MapperData">
+    <nodeData xsi:type="TalendMapper:MapperData">
       <uiProperties/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputPatients">
@@ -370,7 +329,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="576" posY="416">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="576" posY="608">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_1" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -723,8 +682,8 @@
       </column>
       <additionalProperties key="Comment" value=""/>
     </metadata>
-    <nodeData xsi:type="MapperData">
-      <uiProperties shellMaximized="true"/>
+    <nodeData xsi:type="TalendMapper:MapperData">
+      <uiProperties/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputPersons">
         <mapperTableEntries name="psn_id" expression="row13.ent_id " type="id_Object"/>
@@ -1122,8 +1081,8 @@
       </column>
       <additionalProperties key="Comment" value=""/>
     </metadata>
-    <nodeData xsi:type="MapperData">
-      <uiProperties shellMaximized="true"/>
+    <nodeData xsi:type="TalendMapper:MapperData">
+      <uiProperties/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputExistingPatients">
         <mapperTableEntries name="psn_id" expression="row15.ent_id " type="id_Object"/>
@@ -1485,7 +1444,84 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="256">
+  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="64">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_1" show="false"/>
+    <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="V9_X"/>
+    <elementParameter field="TEXT" name="HOST" value="context.dbServer"/>
+    <elementParameter field="TEXT" name="TYPE" value="POSTGRESQL" show="false"/>
+    <elementParameter field="TEXT" name="PORT" value="&quot;5432&quot;"/>
+    <elementParameter field="TEXT" name="DBNAME" value="context.dbName"/>
+    <elementParameter field="TEXT" name="SCHEMA_DB" value="&quot;public&quot;"/>
+    <elementParameter field="TEXT" name="USER" value="context.dbUser"/>
+    <elementParameter field="PASSWORD" name="PASS" value="8pW6Nmy2kudlVOAHVDEwwM+CQSjQ3LVP"/>
+    <elementParameter field="ENCODING_TYPE" name="ENCODING" value="&quot;ISO-8859-15&quot;" show="false"/>
+    <elementParameter field="TECHNICAL" name="ENCODING:ENCODING_TYPE" value="ISO-8859-15"/>
+    <elementParameter field="CHECK" name="USE_SHARED_CONNECTION" value="false"/>
+    <elementParameter field="TEXT" name="SHARED_CONNECTION_NAME" value="" show="false"/>
+    <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime"/>
+    <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false"/>
+    <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
+    <elementParameter field="CHECK" name="AUTO_COMMIT" value="false"/>
+    <elementParameter field="TEXT" name="LABEL" value="OpenIZ DB"/>
+    <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
+  </node>
+  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="256">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_2" show="false"/>
+    <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="V9_X"/>
+    <elementParameter field="TEXT" name="HOST" value="context.dwServer"/>
+    <elementParameter field="TEXT" name="TYPE" value="POSTGRESQL" show="false"/>
+    <elementParameter field="TEXT" name="PORT" value="&quot;5432&quot;"/>
+    <elementParameter field="TEXT" name="DBNAME" value="context.dwName"/>
+    <elementParameter field="TEXT" name="SCHEMA_DB" value="&quot;public&quot;"/>
+    <elementParameter field="TEXT" name="USER" value="context.dwUser"/>
+    <elementParameter field="PASSWORD" name="PASS" value="8pW6Nmy2kueIyPHWi+ujKgpthJgE5Nmw"/>
+    <elementParameter field="ENCODING_TYPE" name="ENCODING" value="&quot;ISO-8859-15&quot;" show="false"/>
+    <elementParameter field="TECHNICAL" name="ENCODING:ENCODING_TYPE" value="ISO-8859-15"/>
+    <elementParameter field="CHECK" name="USE_SHARED_CONNECTION" value="false"/>
+    <elementParameter field="TEXT" name="SHARED_CONNECTION_NAME" value="" show="false"/>
+    <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime"/>
+    <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false"/>
+    <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
+    <elementParameter field="CHECK" name="AUTO_COMMIT" value="false"/>
+    <elementParameter field="TEXT" name="LABEL" value="OpenIZ Warehouse"/>
+    <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
+  </node>
+  <node componentName="tPostgresqlRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="192" posY="-128">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlRow_1" show="false"/>
+    <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
+    <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
+    <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="PRIOR_TO_V9" show="false"/>
+    <elementParameter field="TEXT" name="HOST" value="&quot;&quot;" show="false"/>
+    <elementParameter field="TEXT" name="PORT" value="&quot;5432&quot;" show="false"/>
+    <elementParameter field="TEXT" name="DBNAME" value="&quot;&quot;" show="false"/>
+    <elementParameter field="TEXT" name="SCHEMA_DB" value="&quot;&quot;" show="false"/>
+    <elementParameter field="TEXT" name="TYPE" value="PostgreSQL" show="false"/>
+    <elementParameter field="TEXT" name="USER" value="&quot;&quot;" show="false"/>
+    <elementParameter field="PASSWORD" name="PASS" value="0RMsyjmybrE=" show="false"/>
+    <elementParameter field="DBTABLE" name="TABLE" value="&quot;&quot;"/>
+    <elementParameter field="QUERYSTORE_TYPE" name="QUERYSTORE" value="&quot;&quot;"/>
+    <elementParameter field="TECHNICAL" name="QUERYSTORE:REPOSITORY_QUERYSTORE_TYPE" value="" show="false"/>
+    <elementParameter field="TECHNICAL" name="QUERYSTORE:QUERYSTORE_TYPE" value="BUILT_IN"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;SET CONSTRAINTS ALL DEFERRED&quot;"/>
+    <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime" show="false"/>
+    <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false" show="false"/>
+    <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
+    <elementParameter field="CHECK" name="DIE_ON_ERROR" value="false"/>
+    <elementParameter field="CHECK" name="PROPAGATE_RECORD_SET" value="false"/>
+    <elementParameter field="COLUMN_LIST" name="RECORD_SET_COLUMN" value="" show="false"/>
+    <elementParameter field="CHECK" name="USE_PREPAREDSTATEMENT" value="false"/>
+    <elementParameter field="TABLE" name="SET_PREPAREDSTATEMENT_PARAMETERS" show="false"/>
+    <elementParameter field="ENCODING_TYPE" name="ENCODING" value="&quot;ISO-8859-15&quot;" show="false"/>
+    <elementParameter field="TECHNICAL" name="ENCODING:ENCODING_TYPE" value="ISO-8859-15"/>
+    <elementParameter field="TEXT" name="COMMIT_EVERY" value="10000" show="false"/>
+    <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
+    <metadata connector="FLOW" name="tPostgresqlRow_1"/>
+    <metadata connector="REJECT" name="REJECT">
+      <column defaultValue="" key="false" length="255" name="errorCode" nullable="true" precision="0" sourceType="" type="id_String" originalLength="-1" usefulColumn="true"/>
+      <column defaultValue="" key="false" length="255" name="errorMessage" nullable="true" precision="0" sourceType="" type="id_String" originalLength="-1" usefulColumn="true"/>
+    </metadata>
+  </node>
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="224" posY="416">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_4" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -1502,7 +1538,7 @@
     <elementParameter field="TECHNICAL" name="QUERYSTORE:REPOSITORY_QUERYSTORE_TYPE" value="" show="false"/>
     <elementParameter field="TECHNICAL" name="QUERYSTORE:QUERYSTORE_TYPE" value="BUILT_IN"/>
     <elementParameter field="GUESS_SCHEMA" name="GUESS_SCHEMA" value="&quot;&quot;"/>
-    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;with parent_rel as (&#xD;&#xA;&#x9;select * from ent_rel_tbl where rel_typ_cd_id = 'bfcbb345-86db-43ba-b47e-e7411276ac7c' and obslt_vrsn_seq_id is null&#xD;&#xA;)&#xD;&#xA;select plc_cur_vrsn_vw.*, parent.ent_id as parent_id, type.mnemonic as type_mnemonic, tel.tel_val from plc_cur_vrsn_vw &#xD;&#xA;inner join cd_cur_vrsn_vw as type on (type.cd_id = plc_cur_vrsn_vw.typ_cd_id)&#xD;&#xA;left join parent_rel on (plc_cur_vrsn_vw.ent_id = parent_rel.src_ent_id) &#xD;&#xA;left join plc_cur_vrsn_vw as parent on (parent_rel.trg_ent_id = parent.ent_id)&#xD;&#xA;left join ent_cur_tel_vw as tel on (tel.ent_id = plc_cur_vrsn_vw.ent_id)&#xD;&#xA;where&#xD;&#xA;plc_cur_vrsn_vw.cls_cd_id = 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c'&#xD;&#xA;order by vrsn_seq_id&quot;&#xD;&#xA;"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;with parent_rel as (&#xD;&#xA;&#x9;select * from ent_rel_tbl where rel_typ_cd_id = 'bfcbb345-86db-43ba-b47e-e7411276ac7c' and obslt_vrsn_seq_id is null&#xD;&#xA;)&#xD;&#xA;select plc_cur_vrsn_vw.*, parent.ent_id as parent_id, type.mnemonic as type_mnemonic, tel.tel_val from plc_cur_vrsn_vw &#xD;&#xA;left join cd_cur_vrsn_vw as type on (type.cd_id = plc_cur_vrsn_vw.typ_cd_id)&#xD;&#xA;left join parent_rel on (plc_cur_vrsn_vw.ent_id = parent_rel.src_ent_id) &#xD;&#xA;left join plc_cur_vrsn_vw as parent on (parent_rel.trg_ent_id = parent.ent_id)&#xD;&#xA;left join ent_cur_tel_vw as tel on (tel.ent_id = plc_cur_vrsn_vw.ent_id)&#xD;&#xA;where&#xD;&#xA;plc_cur_vrsn_vw.cls_cd_id = 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c'&#xD;&#xA;order by vrsn_seq_id&quot;&#xD;&#xA;"/>
     <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime" show="false"/>
     <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false" show="false"/>
     <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
@@ -1568,18 +1604,18 @@
       <column comment="" defaultValue="" key="false" length="2147483647" name="typ_cd_id" nullable="true" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
       <column comment="" key="false" length="35" name="crt_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
       <column comment="" defaultValue="" key="false" length="2147483647" name="crt_usr_id" nullable="true" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
-      <column comment="" defaultValue="" key="false" length="35" name="obslt_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
+      <column comment="" key="false" length="35" name="obslt_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
       <column comment="" defaultValue="" key="false" length="2147483647" name="obslt_usr_id" nullable="true" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
-      <column comment="" defaultValue="" key="false" length="64" name="sts_cs" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
+      <column comment="" key="false" length="64" name="sts_cs" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
       <column comment="" defaultValue="" key="false" length="1" name="mob_ind" nullable="true" pattern="" precision="0" sourceType="BOOL" type="id_Boolean" originalLength="-1" usefulColumn="true"/>
       <column comment="" defaultValue="" key="false" length="17" name="lat" nullable="true" pattern="" precision="17" sourceType="FLOAT8" type="id_Double" originalLength="-1" usefulColumn="true"/>
       <column comment="" defaultValue="" key="false" length="17" name="lng" nullable="true" pattern="" precision="17" sourceType="FLOAT8" type="id_Double" originalLength="-1" usefulColumn="true"/>
       <column comment="" defaultValue="" key="false" length="2147483647" name="parent_id" nullable="true" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
-      <column comment="" defaultValue="" key="false" length="64" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
-      <column comment="" defaultValue="" key="false" length="256" name="tel_val" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
+      <column comment="" key="false" length="64" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
+      <column comment="" key="false" length="256" name="tel_val" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="448" posY="256">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="384" posY="416">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_3" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -1614,7 +1650,7 @@
       <column key="false" length="2147483647" name="sts_cs" nullable="true" pattern="" precision="0" sourceType="TEXT" type="id_String" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
-      <column key="false" length="32" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" usefulColumn="true">
+      <column key="false" length="64" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
       <column key="false" length="2147483647" name="parent_id" nullable="true" pattern="" precision="0" sourceType="UUID" type="id_Object" usefulColumn="true">
@@ -1625,8 +1661,8 @@
       </column>
       <additionalProperties key="Comment" value=""/>
     </metadata>
-    <nodeData xsi:type="MapperData">
-      <uiProperties/>
+    <nodeData xsi:type="TalendMapper:MapperData">
+      <uiProperties shellMaximized="true"/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputFacilities">
         <mapperTableEntries name="fac_id" expression="row4.ent_id " type="id_Object"/>
@@ -1637,7 +1673,7 @@
         <mapperTableEntries name="obslt_utc" expression="row4.obslt_utc" type="id_Date" nullable="true"/>
         <mapperTableEntries name="sts_cs" expression="row4.sts_cs" type="id_String" nullable="true"/>
         <mapperTableEntries name="type_mnemonic" expression="row4.type_mnemonic" type="id_String" nullable="true"/>
-        <mapperTableEntries name="parent_id" expression="row4.parent_id" type="id_Object" nullable="true"/>
+        <mapperTableEntries name="parent_id" expression="row4.parent_id " type="id_Object" nullable="true"/>
         <mapperTableEntries name="tel" expression="row4.tel_val " type="id_String" nullable="true"/>
       </outputTables>
       <inputTables sizeState="INTERMEDIATE" name="row4" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE">
@@ -1669,7 +1705,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="256">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="544" posY="416">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_3" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -1684,8 +1720,6 @@
     <elementParameter field="DBTABLE" name="TABLE" value="&quot;fac_tbl&quot;"/>
     <elementParameter field="CLOSED_LIST" name="TABLE_ACTION" value="NONE"/>
     <elementParameter field="CLOSED_LIST" name="DATA_ACTION" value="INSERT_OR_UPDATE"/>
-    <elementParameter field="TECHNICAL" name="SCHEMA_FLOW:SCHEMA_TYPE" value="REPOSITORY" show="false"/>
-    <elementParameter field="TECHNICAL" name="SCHEMA_FLOW:REPOSITORY_SCHEMA_TYPE" value="_eMADkBvAEeeSapef53_EIQ - fac_tbl" show="false"/>
     <elementParameter field="CHECK" name="USE_SPATIAL_OPTIONS" value="false" show="false"/>
     <elementParameter field="CHECK" name="SPATIAL_INDEX" value="false" show="false"/>
     <elementParameter field="CHECK" name="GEOMETRY_COLUMNS" value="false" show="false"/>
@@ -1780,7 +1814,7 @@
       <column key="false" length="2147483647" name="sts_cs" nullable="true" pattern="" precision="0" sourceType="TEXT" type="id_String" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
-      <column key="false" length="32" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" usefulColumn="true">
+      <column key="false" length="64" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
       <column key="false" length="2147483647" name="parent_id" nullable="true" pattern="" precision="0" sourceType="UUID" type="id_Object" usefulColumn="true">
@@ -1813,7 +1847,7 @@
       <column key="false" length="2147483647" name="sts_cs" nullable="true" pattern="" precision="0" sourceType="TEXT" type="id_String" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
-      <column key="false" length="32" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" usefulColumn="true">
+      <column key="false" length="64" name="type_mnemonic" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
       <column key="false" length="2147483647" name="parent_id" nullable="true" pattern="" precision="0" sourceType="UUID" type="id_Object" usefulColumn="true">
@@ -1827,7 +1861,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="320">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="9" offsetLabelY="0" posX="224" posY="480">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_5" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -1870,7 +1904,7 @@
       <column comment="" key="false" length="35" name="stop_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="512">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="768">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_6" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -1967,7 +2001,7 @@
       <column comment="" defaultValue="" key="false" length="2147483647" name="facility" nullable="true" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="448" posY="512">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="448" posY="768">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_4" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -2034,7 +2068,7 @@
       </column>
       <additionalProperties key="Comment" value=""/>
     </metadata>
-    <nodeData xsi:type="MapperData">
+    <nodeData xsi:type="TalendMapper:MapperData">
       <uiProperties/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputVillages">
@@ -2087,7 +2121,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="512">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="768">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_5" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2234,7 +2268,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="608">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="864">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_7" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2277,7 +2311,7 @@
       <column comment="" key="false" length="35" name="stop_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tFilterRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="576" posY="608">
+  <node componentName="tFilterRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="576" posY="864">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tFilterRow_1" show="false"/>
     <elementParameter field="CLOSED_LIST" name="LOGICAL_OP" value="&amp;&amp;"/>
     <elementParameter field="TABLE" name="CONDITIONS">
@@ -2364,7 +2398,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="768" posY="608">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="768" posY="864">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_6" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2489,7 +2523,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="704">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="1024">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_8" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -2589,7 +2623,7 @@
       <column comment="" key="false" length="64" name="qty1" nullable="true" originalDbColumnName="qty" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="448" posY="704">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="448" posY="1024">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_5" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -2632,7 +2666,7 @@
       </column>
       <additionalProperties key="Comment" value=""/>
     </metadata>
-    <nodeData xsi:type="MapperData">
+    <nodeData xsi:type="TalendMapper:MapperData">
       <uiProperties/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputMaterials">
@@ -2677,7 +2711,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="640" posY="704">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="-4" offsetLabelY="-32" posX="640" posY="1024">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_7" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2824,7 +2858,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="800">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="1120">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_9" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2867,7 +2901,7 @@
       <column comment="" key="false" length="35" name="stop_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlCommit" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="896" posY="896">
+  <node componentName="tPostgresqlCommit" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="896" posY="1056">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlCommit_1" show="false"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
     <elementParameter field="CHECK" name="CLOSE" value="false"/>
@@ -2904,7 +2938,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="896">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="1248">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_10" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -3010,7 +3044,7 @@
       <column comment="" key="false" length="64" name="gtin" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="-2" offsetLabelY="-3" posX="448" posY="896">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="-2" offsetLabelY="-3" posX="448" posY="1248">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_6" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -3062,7 +3096,7 @@
       </column>
       <additionalProperties key="Comment" value=""/>
     </metadata>
-    <nodeData xsi:type="MapperData">
+    <nodeData xsi:type="TalendMapper:MapperData">
       <uiProperties/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputManufacturedMaterials">
@@ -3112,7 +3146,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="896">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="1248">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_8" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -3292,7 +3326,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="-5" offsetLabelY="3" posX="320" posY="992">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="-5" offsetLabelY="3" posX="320" posY="1344">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_11" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -3335,12 +3369,6 @@
       <column comment="" key="false" length="35" name="stop_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <connection connectorName="SUBJOB_OK" label="OnSubjobOk" lineStyle="1" metaname="tPostgresqlConnection_1" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlConnection_1" target="tPostgresqlInput_3">
-    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk1" show="false"/>
-  </connection>
-  <connection connectorName="SUBJOB_OK" label="OnSubjobOk" lineStyle="1" metaname="tPostgresqlConnection_2" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlConnection_2" target="tPostgresqlConnection_1">
-    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk2" show="false"/>
-  </connection>
   <connection connectorName="FLOW" label="row1" lineStyle="0" metaname="tPostgresqlInput_1" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlInput_1" target="tMap_1">
     <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="row1" show="false"/>
@@ -3391,6 +3419,15 @@
     <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="row17" show="false"/>
   </connection>
+  <connection connectorName="SUBJOB_OK" label="OnSubjobOk" lineStyle="1" metaname="tPostgresqlConnection_1" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlConnection_1" target="tPostgresqlRow_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk1" show="false"/>
+  </connection>
+  <connection connectorName="SUBJOB_OK" label="OnSubjobOk" lineStyle="1" metaname="tPostgresqlConnection_2" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlConnection_2" target="tPostgresqlConnection_1">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk2" show="false"/>
+  </connection>
+  <connection connectorName="SUBJOB_OK" label="OnSubjobOk" lineStyle="1" metaname="tPostgresqlRow_1" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlRow_1" target="tPostgresqlInput_12">
+    <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnSubjobOk3" show="false"/>
+  </connection>
   <connection connectorName="FLOW" label="row4" lineStyle="0" metaname="tPostgresqlInput_4" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlInput_4" target="tMap_3">
     <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="row4" show="false"/>
@@ -3399,7 +3436,7 @@
     <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="outputFacilities" show="false"/>
   </connection>
-  <connection connectorName="COMPONENT_OK" label="OnComponentOk" lineStyle="3" metaname="tPostgresqlOutput_3" offsetLabelX="-8" offsetLabelY="-38" source="tPostgresqlOutput_3" target="tPostgresqlInput_1">
+  <connection connectorName="COMPONENT_OK" label="OnComponentOk" lineStyle="3" metaname="tPostgresqlOutput_3" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlOutput_3" target="tPostgresqlInput_1">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="OnComponentOk4" show="false"/>
   </connection>
   <connection connectorName="FLOW" label="row5" lineStyle="8" metaname="tPostgresqlInput_5" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlInput_5" target="tMap_3">
@@ -3459,16 +3496,6 @@
     <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="row12" show="false"/>
   </connection>
-  <subjob>
-    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_1" show="false"/>
-    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="92;131;150" show="false"/>
-    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="207;226;236"/>
-  </subjob>
-  <subjob>
-    <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_2" show="false"/>
-    <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="92;131;150" show="false"/>
-    <elementParameter field="COLOR" name="SUBJOB_COLOR" value="207;226;236"/>
-  </subjob>
   <subjob>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_1" show="false"/>
     <elementParameter field="COLOR" name="SUBJOB_TITLE_COLOR" value="92;131;150" show="false"/>
