@@ -10,12 +10,13 @@
     <taggedValue xmi:id="_cuSvdBvAEeeSapef53_EIQ" tag="Author" value=""/>
     <taggedValue xmi:id="_cuSvdRvAEeeSapef53_EIQ" tag="otherParameter"/>
     <taggedValue xmi:id="_cviFkBvAEeeSapef53_EIQ" tag="DB ProductName" value="PostgreSQL"/>
-    <taggedValue xmi:id="_cviFkRvAEeeSapef53_EIQ" tag="DB ProductVersion" value="9.3.16"/>
+    <taggedValue xmi:id="_cviFkRvAEeeSapef53_EIQ" tag="DB ProductVersion" value="9.2.4"/>
     <taggedValue xmi:id="_cviFkhvAEeeSapef53_EIQ" tag="DB IdentifierQuoteString" value="&quot;"/>
     <queries xmi:id="_oG07cCYoEee5UZ2tUrkc1g">
       <query xmi:id="_oG1igCYoEee5UZ2tUrkc1g" properties="deleted&#xA;&#xA;true&#xA;&#xA;" id="_oG07cSYoEee5UZ2tUrkc1g" label="psn_cur_vrsn_qry" value="select psn_cur_vrsn_vw.*, tel.use_cs as tel_use, tel.tel_val as tel_val, id.id_val, id.nsid, id.oid from psn_cur_vrsn_vw&#xD;&#xA;&#x9;natural left join ent_cur_tel_vw as tel&#xD;&#xA;&#x9;natural left join ent_cur_id_vw as id"/>
     </queries>
     <parameters xmi:id="_ctAWARvAEeeSapef53_EIQ" key="CONN_PARA_KEY_USERNAME" value="postgres"/>
+    <parameters xmi:id="_Xx_lAIKAEeeKB854f75Idg" key="CONN_PARA_KEY_MAPRDB_TABLE_NS_MAPPING" value=""/>
   </TalendMetadata:DatabaseConnection>
   <orgomg.cwm.resource.relational:Catalog xmi:id="_cv-KcBvAEeeSapef53_EIQ" name="openiz" dataManager="_cs198BvAEeeSapef53_EIQ">
     <ownedElement xsi:type="orgomg.cwm.resource.relational:Schema" xmi:id="_cv-KcRvAEeeSapef53_EIQ" name="public">
