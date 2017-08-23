@@ -111,7 +111,7 @@ namespace OpenIZ.Persistence.Data.ADO.Security
                     var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
 
                     var passwordHash = hashingService.EncodePassword(password);
-                    var fnResult = dataContext.FirstOrDefault<CompositeResult<DbSecurityUser, FunctionErrorCode>>("auth_usr", userName, passwordHash, 3);
+                    var fnResult = dataContext.FirstOrDefault<CompositeResult<DbSecurityUser, FunctionErrorCode>>("auth_usr", userName, passwordHash, 5);
 
 	                var user = fnResult.Object1;
 

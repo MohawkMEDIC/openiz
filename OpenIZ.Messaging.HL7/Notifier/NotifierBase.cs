@@ -30,6 +30,8 @@ using System.Diagnostics;
 using System.Linq;
 using OpenIZ.Core.Security;
 using TS = MARC.Everest.DataTypes.TS;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Messaging.HL7.Notifier
 {
@@ -76,12 +78,17 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				address.AddressType.Value = MessageUtil.GetCode(addressUse.Value, CodeSystemKeys.PostalAddressUse);
 			}
 
-			address.CensusTract.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.CensusTract).Select(c => c.Value));
+            // TODO: Is the CT a UUID? if so we need to get the CT-ID (public id) from the place which the CT represents
+			//address.CensusTract.Value = string.Join(" ", entityAddress.LoadCollection<EntityAddressComponent>("Component").Where(c => c.ComponentTypeKey == AddressComponentKeys.CensusTract).Select(c => c.Value));
 			address.City.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.City).Select(c => c.Value));
 			address.Country.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Country).Select(c => c.Value));
 			address.StateOrProvince.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.State).Select(c => c.Value));
 			address.StreetAddress.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.StreetAddressLine).Select(c => c.Value));
-			address.ZipOrPostalCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Select(c => c.Value));
+			address.CountyParishCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.County).Select(c => c.Value));
+			address.OtherDesignation.Value = string.Join(" ",
+                entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.AdditionalLocator).Union(
+                entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Precinct)).Select(c => c.Value));
+            address.ZipOrPostalCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Select(c => c.Value));
 		}
 
 		/// <summary>
@@ -113,6 +120,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 				case "undifferentiated":
 				case "ae94a782-1485-4241-9bca-5b09db2156bf":
+                default:
 					pid.Sex.Value = "U";
 					break;
 			}
@@ -168,22 +176,15 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			tracer.TraceEvent(TraceEventType.Verbose, 0, "Start updating PID segment");
 
-			if (patient.GenderConcept?.Key != null)
+			if (patient.GenderConceptKey.HasValue)
 			{
-				UpdateGender(patient.GenderConcept?.Key.ToString(), pid);
-			}
-			else if (patient.GenderConcept?.Mnemonic != null)
-			{
-				UpdateGender(patient.GenderConcept?.Mnemonic, pid);
-			}
-			else if (patient.GenderConceptKey.HasValue)
-			{
-				UpdateGender(patient.GenderConceptKey.Value.ToString(), pid);
+				UpdateGender(patient.GenderConceptKey.ToString(), pid);
 			}
 
 			if (patient.MultipleBirthOrder.HasValue)
 			{
-				pid.BirthOrder.Value = patient.MultipleBirthOrder.ToString();
+                if(patient.MultipleBirthOrder != 0)
+				    pid.BirthOrder.Value = patient.MultipleBirthOrder.ToString();
 				pid.MultipleBirthIndicator.Value = "Y";
 			}
 
@@ -198,31 +199,41 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				pid.PatientDeathIndicator.Value = "Y";
 			}
 
-			foreach (var address in patient.Addresses)
+			foreach (var address in patient.LoadCollection<EntityAddress>("Addresses"))
 			{
 				NotifierBase.UpdateAD(address, pid.GetPatientAddress(pid.PatientAddressRepetitionsUsed));
 			}
 
-			for (var i = 0; i < patient.Identifiers.Count(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null); i++)
+            var pids = patient.LoadCollection<EntityIdentifier>("Identifiers").Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null).ToArray();
+
+            for (var i = 0; i < pids.Length; i++)
 			{
-				var patientIdentifier = patient.Identifiers.Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null).ToArray()[i];
+                var patientIdentifier = pids[i];
 
 				pid.GetPatientIdentifierList(i).ID.Value = patientIdentifier.Value;
+				pid.GetPatientIdentifierList(i).AssigningAuthority.NamespaceID.Value = patientIdentifier.Authority.DomainName;
 				pid.GetPatientIdentifierList(i).AssigningAuthority.UniversalID.Value = patientIdentifier.Authority.Oid;
 				pid.GetPatientIdentifierList(i).AssigningAuthority.UniversalIDType.Value = "ISO";
 				pid.GetPatientIdentifierList(i).IdentifierTypeCode.Value = "PI";
 
 			}
 
-			foreach (var personLanguage in patient.LanguageCommunication.Where(l => l.IsPreferred))
+            // Create the PI for the patient key
+            var lastPid = pid.PatientIdentifierListRepetitionsUsed;
+            pid.GetPatientIdentifierList(lastPid).ID.Value = patient.Key.ToString();
+            pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.AssigningAuthority?.Oid;
+            pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalIDType.Value = "ISO";
+            pid.GetPatientIdentifierList(lastPid).IdentifierTypeCode.Value = "PI";
+
+            foreach (var personLanguage in patient.LoadCollection<PersonLanguageCommunication>("LanguageCommunication").Where(l => l.IsPreferred))
 			{
 				pid.PrimaryLanguage.Identifier.Value = personLanguage.LanguageCode;
 				//pid.PrimaryLanguage.NameOfCodingSystem.Value = "ISO639-1";
 			}
 
-			foreach (var mother in patient.Relationships.Where(r => (r.RelationshipTypeKey == EntityRelationshipTypeKeys.Mother ||
+			foreach (var mother in patient.LoadCollection<EntityRelationship>("Relationships").Where(r => (r.RelationshipTypeKey == EntityRelationshipTypeKeys.Mother ||
 																	r.RelationshipTypeKey == EntityRelationshipTypeKeys.NaturalMother) &&
-																	r.TargetEntity is Person).Select(relationship => relationship.TargetEntity as Person))
+																	r.LoadProperty<Entity>("TargetEntity") is Person).Select(relationship => relationship.TargetEntity as Person))
 			{
 				mother.Identifiers.ForEach(c =>
 				{
@@ -238,7 +249,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				});
 			}
 
-			foreach (var name in patient.Names)
+			foreach (var name in patient.LoadCollection<EntityName>("Names"))
 			{
 				NotifierBase.UpdateXPN(name, pid.GetPatientName(pid.PatientNameRepetitionsUsed));
 			}
@@ -257,7 +268,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			tracer.TraceEvent(TraceEventType.Verbose, 0, "Adding names");
 
 			name.NameTypeCode.Value = MessageUtil.GetCode(entityName.NameUseKey.Value, CodeSystemKeys.EntityNameUse);
-			name.DegreeEgMD.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Suffix).Select(c => c.Value));
+			name.DegreeEgMD.Value = string.Join(" ", entityName.LoadCollection<EntityNameComponent>("Component").Where(c => c.ComponentTypeKey == NameComponentKeys.Suffix).Select(c => c.Value));
 			name.FamilyLastName.FamilyName.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Family).Select(c => c.Value));
 			name.GivenName.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Given).Select(c => c.Value));
 			name.PrefixEgDR.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Prefix).Select(c => c.Value));

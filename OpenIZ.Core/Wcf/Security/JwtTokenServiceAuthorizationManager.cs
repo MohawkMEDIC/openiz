@@ -67,6 +67,8 @@ namespace OpenIZ.Core.Wcf.Security
         /// </summary>
         public override bool CheckAccess(OperationContext operationContext)
         {
+            RemoteEndpointMessageProperty remoteEndpoint = (RemoteEndpointMessageProperty)operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name];
+
             try
             {
                 this.m_traceSource.TraceInformation("CheckAccess");
@@ -120,10 +122,19 @@ namespace OpenIZ.Core.Wcf.Security
 
                 return base.CheckAccess(operationContext);
             }
-            catch(UnauthorizedAccessException) { throw; }
-            catch(UnauthorizedRequestException) { throw; }
+            catch(UnauthorizedAccessException e) {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "JWT Token Error (From: {0}) : {1}", remoteEndpoint?.Address, e);
+
+                throw;
+            }
+            catch(UnauthorizedRequestException e) {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "JWT Token Error (From: {0}) : {1}", remoteEndpoint?.Address, e);
+
+                throw;
+            }
             catch(Exception e)
             {
+                this.m_traceSource.TraceEvent(TraceEventType.Error, e.HResult, "JWT Token Error (From: {0}) : {1}", remoteEndpoint?.Address, e);
                 throw new SecurityTokenException(e.Message, e);
             }
         }

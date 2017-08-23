@@ -339,7 +339,7 @@ namespace OpenIZ.BusinessRules.JavaScript
                 catch (Exception e)
                 {
                     this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, this.ProduceLiteral(data), e);
-                    throw new BusinessRulesExecutionException($"Error running business rule {action} for {this.ProduceLiteral(data)}", e);
+                    throw new BusinessRulesExecutionException($"Error running business rule {action} for {this.ProduceLiteral(data)} - {e.Message}", e);
                 }
         }
 
