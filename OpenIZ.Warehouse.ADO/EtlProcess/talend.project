@@ -138,6 +138,8 @@
       <relatedItems xmi:id="_OmHriINpEeejnduJsD6mrQ" id="_eMADkBvAEeeSapef53_EIQ - qty_obs_tbl" version="Latest" type="schema"/>
       <relatedItems xmi:id="_OmHriYNpEeejnduJsD6mrQ" id="_eMADkBvAEeeSapef53_EIQ - sbadm_tbl" version="Latest" type="schema"/>
       <relatedItems xmi:id="_OmHrioNpEeejnduJsD6mrQ" id="_eMADkBvAEeeSapef53_EIQ - enc_tbl" version="Latest" type="schema"/>
+      <relatedItems xmi:id="_EIPEcIeUEeejnduJsD6mrQ" id="_eMADkBvAEeeSapef53_EIQ - psn_tbl" version="Latest" type="schema"/>
+      <relatedItems xmi:id="_eeF_0IhCEeejnduJsD6mrQ" id="_eMADkBvAEeeSapef53_EIQ - pvd_tbl" version="Latest" type="schema"/>
     </ItemsRelations>
     <ItemsRelations xmi:id="_OmHri4NpEeejnduJsD6mrQ">
       <baseItem xmi:id="_OmHrjINpEeejnduJsD6mrQ" id="_GkJgIBvOEeeSapef53_EIQ" version="0.1" type="job"/>
