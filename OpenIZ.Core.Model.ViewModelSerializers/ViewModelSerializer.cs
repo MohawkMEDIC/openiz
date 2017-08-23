@@ -124,7 +124,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -377,7 +377,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -648,7 +648,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -905,7 +905,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -1165,7 +1165,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -1437,7 +1437,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -1645,7 +1645,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -1993,7 +1993,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -2774,7 +2774,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -3687,7 +3687,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -4170,7 +4170,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -4920,7 +4920,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -5895,7 +5895,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -6768,7 +6768,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -7634,7 +7634,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -8451,7 +8451,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -8906,7 +8906,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -9109,7 +9109,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -9345,7 +9345,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -9581,7 +9581,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -9871,7 +9871,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -10133,7 +10133,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -10760,7 +10760,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             }
             if (context.ShouldSerialize("id")) {
                 if ((_strong.Key == null)) {
-                }
+                 }
                 else {
                     context.JsonContext.WritePropertyUtil(w, "id", _strong.Key, context);
                 }
@@ -10769,7 +10769,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -11695,7 +11695,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -12565,7 +12565,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -13398,7 +13398,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -13848,7 +13848,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -14436,7 +14436,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -14914,7 +14914,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -15176,7 +15176,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -15536,7 +15536,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -15980,7 +15980,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -16341,7 +16341,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -16617,7 +16617,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -16895,7 +16895,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -17140,7 +17140,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -17375,7 +17375,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -17675,7 +17675,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -17980,7 +17980,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -18237,7 +18237,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -18496,7 +18496,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -18761,7 +18761,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -18981,7 +18981,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -19231,7 +19231,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -19493,7 +19493,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -19734,7 +19734,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -19984,7 +19984,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -20294,7 +20294,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -20609,7 +20609,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -20915,7 +20915,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -21203,7 +21203,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -21512,7 +21512,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -21777,7 +21777,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -22323,7 +22323,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -22825,7 +22825,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -23071,7 +23071,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -23298,7 +23298,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -23526,7 +23526,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -24117,7 +24117,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -24966,7 +24966,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -25875,7 +25875,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -26785,7 +26785,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -27696,7 +27696,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -28583,7 +28583,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -29072,7 +29072,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
             if ((_loaded 
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue))) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         
@@ -29764,7 +29764,7 @@ namespace OpenIZ.Core.Model.Json.Formatter {
                         && ((OpenIZ.Core.Model.LoadState.New != _strong.LoadState) 
                         && _strong.Key.HasValue)) 
                         && _strong.VersionKey.HasValue)) {
-                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService)))).Add(_strong);
+                ((OpenIZ.Core.Services.IDataCachingService)(OpenIZ.Core.ApplicationServiceContext.Current.GetService(typeof(OpenIZ.Core.Services.IDataCachingService))))?.Add(_strong);
             }
         }
         

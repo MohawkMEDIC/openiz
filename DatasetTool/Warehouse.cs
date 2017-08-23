@@ -144,14 +144,15 @@ namespace OizDevTool
                         plc.Extensions.Add(stockPolicyExtension);
                     }
                     else
-                        stockPolicyObject = (stockPolicyExtension.GetValue() as dynamic[]).Select(o => new
+                        stockPolicyObject = (stockPolicyExtension.GetValue() as dynamic[]).GroupBy(o=>o["MaterialEntityId"]).Select(o => new
                         {
-                            MaterialEntityId = Guid.Parse(o["MaterialEntityId"].ToString()),
-                            ReorderQuantity = (int)(o["ReorderQuantity"]),
-                            SafetyQuantity = (int)(o["SafetyQuantity"]),
-                            AMC = (int)(o["AMC"]),
-                            Multiplier = (int)(o["Multiplier"])
+                            MaterialEntityId = Guid.Parse(o.FirstOrDefault()["MaterialEntityId"].ToString()),
+                            ReorderQuantity = (int?)(o.FirstOrDefault()["ReorderQuantity"] ) ?? 0,
+                            SafetyQuantity = (int?)(o.FirstOrDefault()["SafetyQuantity"]) ?? 0,
+                            AMC = (int?)(o.FirstOrDefault()["AMC"] ) ?? 0,
+                            Multiplier = (int?)(o.FirstOrDefault()["Multiplier"]) ?? 0
                         }).ToArray();
+
 
 
                     // Now we want to calculate each amc
