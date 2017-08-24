@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.1" encoding="UTF-8"?>
 <talendfile:ProcessType xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:TalendMapper="http://www.talend.org/mapper" xmlns:talendfile="platform:/resource/org.talend.model/model/TalendFile.xsd" defaultContext="Default" jobType="Standard">
   <context confirmationNeeded="false" name="Default">
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
     <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz-dw"/>
+    <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
     <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
@@ -159,16 +159,14 @@
   </node>
   <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="96" posY="352">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_2" show="false"/>
-    <elementParameter field="TECHNICAL" name="PROPERTY:PROPERTY_TYPE" value="REPOSITORY"/>
-    <elementParameter field="TECHNICAL" name="PROPERTY:REPOSITORY_PROPERTY_TYPE" value="_eMADkBvAEeeSapef53_EIQ" show="false"/>
     <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="V9_X"/>
-    <elementParameter field="TEXT" name="HOST" value="&quot;localhost&quot;"/>
+    <elementParameter field="TEXT" name="HOST" value="context.dwServer"/>
     <elementParameter field="TEXT" name="TYPE" value="POSTGRESQL" show="false"/>
     <elementParameter field="TEXT" name="PORT" value="&quot;5432&quot;"/>
-    <elementParameter field="TEXT" name="DBNAME" value="&quot;openiz-dw&quot;"/>
+    <elementParameter field="TEXT" name="DBNAME" value="context.dwName"/>
     <elementParameter field="TEXT" name="SCHEMA_DB" value="&quot;public&quot;"/>
-    <elementParameter field="TEXT" name="USER" value="&quot;postgres&quot;"/>
-    <elementParameter field="PASSWORD" name="PASS" value="NrE2x5vAkVTo4I4wi1Afkw=="/>
+    <elementParameter field="TEXT" name="USER" value="context.dwUser"/>
+    <elementParameter field="PASSWORD" name="PASS" value="8pW6Nmy2kueIyPHWi+ujKgpthJgE5Nmw"/>
     <elementParameter field="ENCODING_TYPE" name="ENCODING" value="&quot;ISO-8859-15&quot;" show="false"/>
     <elementParameter field="TECHNICAL" name="ENCODING:ENCODING_TYPE" value="ISO-8859-15"/>
     <elementParameter field="CHECK" name="USE_SHARED_CONNECTION" value="false"/>
