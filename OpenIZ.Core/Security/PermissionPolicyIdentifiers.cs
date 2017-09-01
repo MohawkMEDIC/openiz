@@ -129,6 +129,11 @@ namespace OpenIZ.Core.Security
         public const string ReadClinicalData = "1.3.6.1.4.1.33349.3.1.5.9.2.2.3";
 
         /// <summary>
+        /// Allows the exporting of clinical data
+        /// </summary>
+        public const string ExportClinicalData = "1.3.6.1.4.1.33349.3.1.5.9.2.2.4";
+
+        /// <summary>
         /// Indicates the user can elevate themselves (Break the glass)
         /// </summary>
         public const string ElevateClinicalData = "1.3.6.1.4.1.33349.3.1.5.9.2.3";
