@@ -170,7 +170,6 @@
       <relatedItems xmi:id="_OmHrpYNpEeejnduJsD6mrQ" id="Mathematical" version="Latest" type="routine"/>
       <relatedItems xmi:id="_OmHrpoNpEeejnduJsD6mrQ" id="Relational" version="Latest" type="routine"/>
       <relatedItems xmi:id="_OmHrp4NpEeejnduJsD6mrQ" id="TalendStringUtil" version="Latest" type="routine"/>
-      <relatedItems xmi:id="_OmHrqINpEeejnduJsD6mrQ" id="_eMADkBvAEeeSapef53_EIQ - fac_mat_ldgr_tbl" version="Latest" type="schema"/>
     </ItemsRelations>
     <migrationTask xmi:id="_XkBIkIG-EeeT-qPSauScIg" id="org.talend.designer.core.ui.preferences.migration.ChangeMysqlVersionForProjectSetting" breaks="5.2.0" version="5.1.3" status="ok"/>
     <migrationTask xmi:id="_XkBIkYG-EeeT-qPSauScIg" id="org.talend.designer.core.ui.preferences.migration.ChangeOracleVersionForProjectSetting" breaks="5.2.0" version="5.2.1" status="ok"/>

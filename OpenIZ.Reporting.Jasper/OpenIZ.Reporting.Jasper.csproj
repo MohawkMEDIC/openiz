@@ -37,6 +37,7 @@
       <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\StringValueAttribute.cs" />
+    <Compile Include="Configuration\JasperConfiguration.cs" />
+    <Compile Include="Configuration\JasperConfigurationSectionHandler.cs" />
     <Compile Include="Extensions\StringValueExtensions.cs" />
     <Compile Include="JasperReportExecutor.cs" />
     <Compile Include="Model\Collection\Item.cs" />
