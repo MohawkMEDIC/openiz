@@ -12,21 +12,21 @@
   </context>
   <context confirmationNeeded="false" name="Production">
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
-    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
-    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
   </context>
   <context confirmationNeeded="false" name="Testing">
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
-    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
-    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
   </context>
@@ -324,6 +324,7 @@
       <column comment="" key="false" length="128" name="usr_name" nullable="false" pattern="" precision="0" sourceType="VARCHAR" type="id_String" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
+      <column comment="" key="true" length="2147483647" name="ref_id" nullable="false" pattern="" precision="0" sourceType="" type="id_Object" originalLength="2147483647" usefulColumn="true"/>
       <additionalProperties key="Comment" value=""/>
     </metadata>
     <nodeData xsi:type="TalendMapper:MapperData">
@@ -341,6 +342,7 @@
         <mapperTableEntries name="qty" expression="row1.qty == null ? 0 : row1.qty " type="id_Double"/>
         <mapperTableEntries name="tx_desc" expression="row1.tx_desc " type="id_String"/>
         <mapperTableEntries name="usr_name" expression="row4.usr_name " type="id_String"/>
+        <mapperTableEntries name="ref_id" expression="java.util.UUID.randomUUID()" type="id_Object"/>
       </outputTables>
       <inputTables sizeState="INTERMEDIATE" name="row1" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE">
         <mapperTableEntries name="fac_id" type="id_Object"/>
@@ -361,6 +363,7 @@
         <mapperTableEntries name="qty" type="id_Integer" nullable="true"/>
         <mapperTableEntries name="tx_desc" expression="" type="id_String" nullable="true"/>
         <mapperTableEntries name="crt_usr_id" expression="" type="id_Object" nullable="true"/>
+        <mapperTableEntries name="ref_id" type="id_Object"/>
       </inputTables>
       <inputTables sizeState="INTERMEDIATE" name="row4" matchingMode="UNIQUE_MATCH" lookupMode="LOAD_ONCE">
         <mapperTableEntries name="usr_id" expression="row2.crt_usr_id " type="id_Object" operator="="/>
@@ -383,8 +386,6 @@
     <elementParameter field="DBTABLE" name="TABLE" value="&quot;fac_mat_ldgr_tbl&quot;"/>
     <elementParameter field="CLOSED_LIST" name="TABLE_ACTION" value="TRUNCATE"/>
     <elementParameter field="CLOSED_LIST" name="DATA_ACTION" value="INSERT_OR_UPDATE"/>
-    <elementParameter field="TECHNICAL" name="SCHEMA_FLOW:SCHEMA_TYPE" value="REPOSITORY" show="false"/>
-    <elementParameter field="TECHNICAL" name="SCHEMA_FLOW:REPOSITORY_SCHEMA_TYPE" value="_eMADkBvAEeeSapef53_EIQ - fac_mat_ldgr_tbl" show="false"/>
     <elementParameter field="CHECK" name="USE_SPATIAL_OPTIONS" value="false" show="false"/>
     <elementParameter field="CHECK" name="SPATIAL_INDEX" value="false" show="false"/>
     <elementParameter field="CHECK" name="GEOMETRY_COLUMNS" value="false" show="false"/>
@@ -400,6 +401,11 @@
     <elementParameter field="TABLE" name="ADD_COLS"/>
     <elementParameter field="CHECK" name="USE_FIELD_OPTIONS" value="false"/>
     <elementParameter field="TABLE" name="FIELD_OPTIONS" show="false">
+      <elementValue elementRef="SCHEMA_COLUMN" value="ref_id"/>
+      <elementValue elementRef="UPDATE_KEY" value="false"/>
+      <elementValue elementRef="DELETE_KEY" value="false"/>
+      <elementValue elementRef="UPDATABLE" value="true"/>
+      <elementValue elementRef="INSERTABLE" value="true"/>
       <elementValue elementRef="SCHEMA_COLUMN" value="fac_id"/>
       <elementValue elementRef="UPDATE_KEY" value="false"/>
       <elementValue elementRef="DELETE_KEY" value="false"/>
@@ -463,6 +469,7 @@
     <elementParameter field="TEXT" name="LABEL" value="Output Stock balances"/>
     <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
     <metadata connector="FLOW" label="fac_mat_ldgr_tbl" name="tPostgresqlOutput_1">
+      <column comment="" key="true" length="2147483647" name="ref_id" nullable="false" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="2147483647" usefulColumn="true"/>
       <column comment="" key="true" length="2147483647" name="fac_id" nullable="false" pattern="" precision="0" sourceType="UUID" type="id_Object" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
@@ -499,6 +506,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
     <metadata connector="REJECT" label="fac_mat_ldgr_tbl" name="REJECT">
+      <column comment="" key="true" length="2147483647" name="ref_id" nullable="false" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="2147483647" usefulColumn="true"/>
       <column comment="" key="true" length="2147483647" name="fac_id" nullable="false" pattern="" precision="0" sourceType="UUID" type="id_Object" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
@@ -594,6 +602,8 @@
     <elementParameter field="CHECK" name="PRINT_COLNAMES" value="false"/>
     <elementParameter field="CHECK" name="USE_FIXED_LENGTH" value="false"/>
     <elementParameter field="TABLE" name="LENGTHS" show="false">
+      <elementValue elementRef="SCHEMA_COLUMN" value="ref_id"/>
+      <elementValue elementRef="LENGTH" value="10"/>
       <elementValue elementRef="SCHEMA_COLUMN" value="fac_id"/>
       <elementValue elementRef="LENGTH" value="10"/>
       <elementValue elementRef="SCHEMA_COLUMN" value="mmat_id"/>
@@ -625,6 +635,7 @@
     <elementParameter field="TEXT" name="SCHEMA_OPT_NUM" value="100" show="false"/>
     <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
     <metadata connector="FLOW" label="fac_mat_ldgr_tbl" name="tLogRow_1">
+      <column comment="" key="true" length="2147483647" name="ref_id" nullable="false" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="2147483647" usefulColumn="true"/>
       <column comment="" key="true" length="2147483647" name="fac_id" nullable="false" pattern="" precision="0" sourceType="UUID" type="id_Object" usefulColumn="true">
         <additionalField key="Comment" value=""/>
       </column>
@@ -680,7 +691,7 @@
     <elementParameter field="TECHNICAL" name="QUERYSTORE:REPOSITORY_QUERYSTORE_TYPE" value="" show="false"/>
     <elementParameter field="TECHNICAL" name="QUERYSTORE:QUERYSTORE_TYPE" value="BUILT_IN"/>
     <elementParameter field="GUESS_SCHEMA" name="GUESS_SCHEMA" value="&quot;&quot;"/>
-    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;select loc_ptcpt.ent_id as fac_id, cons_ptcpt.ent_id as mmat_id, act_tbl.crt_utc, cons_ptcpt.qty, coalesce(reason_cs, type_cs) as tx_desc, crt_usr_id  from act_ptcpt_tbl as cons_ptcpt natural join act_cur_vrsn_vw as act_tbl inner join act_ptcpt_tbl as loc_ptcpt on (act_tbl.act_id = loc_ptcpt.act_id and loc_ptcpt.rol_cd_id = '61848557-D78D-40E5-954F-0B9C97307A04') where cons_ptcpt.rol_cd_id = 'A5CAC7F7-E3B7-4DD8-872C-DB0E7FCC2D84'&quot;"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;select loc_ptcpt.ent_id as fac_id, cons_ptcpt.ent_id as mmat_id, act_tbl.crt_utc, cons_ptcpt.qty, coalesce(reason_cs, type_cs) as tx_desc, crt_usr_id, cons_ptcpt.act_id from act_ptcpt_tbl as cons_ptcpt natural join act_cur_vrsn_vw as act_tbl inner join act_ptcpt_tbl as loc_ptcpt on (act_tbl.act_id = loc_ptcpt.act_id and loc_ptcpt.rol_cd_id = '61848557-D78D-40E5-954F-0B9C97307A04') where cons_ptcpt.rol_cd_id = 'A5CAC7F7-E3B7-4DD8-872C-DB0E7FCC2D84'&quot;"/>
     <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime" show="false"/>
     <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false" show="false"/>
     <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
@@ -703,6 +714,8 @@
       <elementValue elementRef="TRIM" value="false"/>
       <elementValue elementRef="SCHEMA_COLUMN" value="crt_usr_id"/>
       <elementValue elementRef="TRIM" value="false"/>
+      <elementValue elementRef="SCHEMA_COLUMN" value="ref_id"/>
+      <elementValue elementRef="TRIM" value="false"/>
     </elementParameter>
     <elementParameter field="TEXT" name="LABEL" value="Input Stock Balances"/>
     <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
@@ -713,6 +726,7 @@
       <column comment="" defaultValue="" key="false" length="10" name="qty" nullable="true" pattern="" precision="0" sourceType="INT4" type="id_Integer" originalLength="-1" usefulColumn="true"/>
       <column comment="" key="false" length="64" name="tx_desc" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
       <column comment="" defaultValue="" key="true" length="2147483647" name="crt_usr_id" nullable="true" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
+      <column comment="" key="true" length="2147483647" name="ref_id" nullable="false" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="2147483647" usefulColumn="true"/>
     </metadata>
   </node>
   <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="512" posY="96">
@@ -766,6 +780,11 @@
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="row1" show="false"/>
   </connection>
   <connection connectorName="FLOW" label="out1" lineStyle="0" metaname="out1" offsetLabelX="0" offsetLabelY="0" source="tMap_1" target="tPostgresqlOutput_1">
+    <elementParameter field="TABLE" name="TRACES_CONNECTION_FILTER" show="false">
+      <elementValue elementRef="TRACE_COLUMN" value="ref_id"/>
+      <elementValue elementRef="TRACE_COLUMN_CHECKED" value="true"/>
+      <elementValue elementRef="TRACE_COLUMN_CONDITION" value=""/>
+    </elementParameter>
     <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="out1" show="false"/>
   </connection>
@@ -784,6 +803,11 @@
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="row3" show="false"/>
   </connection>
   <connection connectorName="FLOW" label="row2" lineStyle="8" metaname="tPostgresqlInput_1" offsetLabelX="0" offsetLabelY="0" source="tPostgresqlInput_1" target="tMap_1">
+    <elementParameter field="TABLE" name="TRACES_CONNECTION_FILTER" show="false">
+      <elementValue elementRef="TRACE_COLUMN" value="ref_id"/>
+      <elementValue elementRef="TRACE_COLUMN_CHECKED" value="true"/>
+      <elementValue elementRef="TRACE_COLUMN_CONDITION" value=""/>
+    </elementParameter>
     <elementParameter field="CHECK" name="MONITOR_CONNECTION" value="false"/>
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="row2" show="false"/>
   </connection>
