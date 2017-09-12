@@ -61,9 +61,9 @@ namespace OpenIZ.Messaging.GS1.Transport.AS2
         {
             String boundary = String.Format("------{0:N}", Guid.NewGuid());
             if (this.m_configuration.UseAS2MimeEncoding)
-                this.Client.Post<MultipartAttachment, object>("order", String.Format("multipart/form-data; boundary={0}", boundary), this.CreateAttachment(orderType));
+                this.Client.Post<MultipartAttachment, object>("orderRequest", String.Format("multipart/form-data; boundary={0}", boundary), this.CreateAttachment(orderType));
             else
-                this.Client.Post<OrderMessageType, object>("order", "application/xml", orderType);
+                this.Client.Post<OrderMessageType, object>("orderRequest", "application/xml", orderType);
         }
 
         /// <summary>
