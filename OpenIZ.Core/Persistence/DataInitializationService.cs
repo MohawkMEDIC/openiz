@@ -189,8 +189,9 @@ namespace OpenIZ.Core.Persistence
                         else if (!(itm is DataInsert))
                             typeof(IDataPersistenceService).GetMethod(itm.ActionName, new Type[] { typeof(Object) }).Invoke(idpInstance, new object[] { target });
                     }
-                    catch
+                    catch(Exception e)
                     {
+                        this.m_traceSource.TraceEvent(TraceEventType.Verbose, e.HResult, "There was an issue in the dataset file {0} : {1} ", ds.Id, e);
                         if (!itm.IgnoreErrors)
                             throw;
                     }

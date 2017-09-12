@@ -3,8 +3,15 @@
   <update insertIfNotExists="true">
     <ExtensionType xmlns="http://openiz.org/model">
       <id>77B53CBA-C32F-442B-B7A7-ED08184A0FA5</id>
-      <handlerClass>OpenIZ.Core.Model.Extensions.BinaryExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <handlerClass>OpenIZ.Core.Extensions.BinaryExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
       <name>http://openiz.org/extensions/core/jpegPhoto</name>
+    </ExtensionType>
+  </update>
+  <update insertIfNotExists="true">
+    <ExtensionType xmlns="http://openiz.org/model">
+      <id>B944E7A9-8225-4E33-BB5B-3C3BC3DFA802</id>
+      <handlerClass>OpenIZ.Core.Extensions.DateExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <name>http://openiz.org/extensions/core/originalDate</name>
     </ExtensionType>
   </update>
 </dataset>

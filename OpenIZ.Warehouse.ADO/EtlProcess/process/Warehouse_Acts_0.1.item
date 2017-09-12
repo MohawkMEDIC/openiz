@@ -14,25 +14,25 @@
     <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
   </context>
   <context confirmationNeeded="false" name="Testing">
     <contextParameter comment="Name of the warehouse database" name="dwName" prompt="dwName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz_dw"/>
     <contextParameter comment="Server address of warehouse" name="dwServer" prompt="dwServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="Server username for warehouse" name="dwUser" prompt="dwUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password for the datawarehouse" name="dwPassword" prompt="dwPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
     <contextParameter comment="Name of the database primary server" name="dbName" prompt="dbName?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="openiz"/>
     <contextParameter comment="Server of the primary openiz database" name="dbServer" prompt="dbServer?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="localhost"/>
     <contextParameter comment="User of the primary openiz db" name="dbUser" prompt="dbUser?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
-    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value=""/>
+    <contextParameter comment="Password of the primary openizdb" name="dbPassword" prompt="dbPassword?" promptNeeded="false" repositoryContextId="_Heun0CR7Eeea06Gx0iDT9A" type="id_String" value="postgres"/>
   </context>
   <parameters>
     <elementParameter field="TEXT" name="SCREEN_OFFSET_X" value="0" show="false"/>
-    <elementParameter field="TEXT" name="SCREEN_OFFSET_Y" value="384" show="false"/>
+    <elementParameter field="TEXT" name="SCREEN_OFFSET_Y" value="736" show="false"/>
     <elementParameter field="TEXT" name="REPOSITORY_CONNECTION_ID" value="" show="false"/>
     <elementParameter field="TEXT" name="OOZIE_PROPERTY_TYPENAME" value="" show="false"/>
     <elementParameter field="TEXT" name="OOZIE_HADOOP_DISTRIBUTION" value="" show="false"/>
@@ -151,7 +151,7 @@
     <elementParameter field="TECHNICAL" name="QUERYSTORE:REPOSITORY_QUERYSTORE_TYPE" value="" show="false"/>
     <elementParameter field="TECHNICAL" name="QUERYSTORE:QUERYSTORE_TYPE" value="BUILT_IN"/>
     <elementParameter field="GUESS_SCHEMA" name="GUESS_SCHEMA" value="&quot;&quot;"/>
-    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;&#xD;&#xA;WITH RecordTarget AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '3f92dbee-a65e-434f-98ce-841feeb02e3f' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Author AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'f0cb3faf-435d-4704-9217-b884f757bc14' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Product AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '99e77288-cb09-4050-a8cf-385513f32f0a' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Consumable AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'a5cac7f7-e3b7-4dd8-872c-db0e7fcc2d84' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Location AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '61848557-d78d-40e5-954f-0b9c97307a04' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Encounter AS (&#xD;&#xA;&#x9;SELECT * FROM act_rel_tbl WHERE rel_typ_cd_id = '78b9540f-438b-4b6f-8d83-aaf4979dbc64' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;)&#xD;&#xA;SELECT SBADM_CUR_VRSN_VW.*, RecordTarget.ent_id AS RecordTarget_Id, Author.ent_id AS Author_Id, Product.ent_id AS Product_Id, Location.ent_id AS Location_Id, Consumable.ent_id AS Consumable_Id, Encounter.src_act_id AS Encounter_Id FROM SBADM_CUR_VRSN_VW&#xD;&#xA;&#x9;INNER JOIN RecordTarget ON (RecordTarget.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Author ON (Author.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Product ON (Product.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Location ON (Location.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Consumable ON (Consumable.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Encounter ON (Encounter.trg_act_id = SBADM_CUR_VRSN_VW.act_id)&quot;"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;&#xD;&#xA;WITH RecordTarget AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '3f92dbee-a65e-434f-98ce-841feeb02e3f' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Author AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'f0cb3faf-435d-4704-9217-b884f757bc14' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Product AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '99e77288-cb09-4050-a8cf-385513f32f0a' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Consumable AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'a5cac7f7-e3b7-4dd8-872c-db0e7fcc2d84' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Location AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '61848557-d78d-40e5-954f-0b9c97307a04' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Encounter AS (&#xD;&#xA;&#x9;SELECT * FROM act_rel_tbl WHERE rel_typ_cd_id = '78b9540f-438b-4b6f-8d83-aaf4979dbc64' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;)&#xD;&#xA;SELECT SBADM_CUR_VRSN_VW.*, RecordTarget.ent_id AS RecordTarget_Id, Author.ent_id AS Author_Id, Product.ent_id AS Product_Id, Location.ent_id AS Location_Id, Consumable.ent_id AS Consumable_Id, Encounter.src_act_id AS Encounter_Id FROM SBADM_CUR_VRSN_VW&#xD;&#xA;&#x9;INNER JOIN RecordTarget ON (RecordTarget.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Author ON (Author.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Product ON (Product.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Location ON (Location.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Consumable ON (Consumable.act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Encounter ON (Encounter.trg_act_id = SBADM_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;WHERE SBADM_CUR_VRSN_VW.STS_CD_ID = 'afc33800-8225-4061-b168-bacc09cdbae3'&#xD;&#xA;&quot;"/>
     <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime" show="false"/>
     <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false" show="false"/>
     <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
@@ -721,7 +721,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="160">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="64">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_3" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -738,7 +738,7 @@
     <elementParameter field="TECHNICAL" name="QUERYSTORE:REPOSITORY_QUERYSTORE_TYPE" value="" show="false"/>
     <elementParameter field="TECHNICAL" name="QUERYSTORE:QUERYSTORE_TYPE" value="BUILT_IN"/>
     <elementParameter field="GUESS_SCHEMA" name="GUESS_SCHEMA" value="&quot;&quot;"/>
-    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;WITH RecordTarget AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '3f92dbee-a65e-434f-98ce-841feeb02e3f' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Author AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'f0cb3faf-435d-4704-9217-b884f757bc14' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Location AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '61848557-d78d-40e5-954f-0b9c97307a04' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;)&#xD;&#xA;SELECT PAT_ENC_CUR_VRSN_VW.*, RecordTarget.ent_id AS RecordTarget_Id, Author.ent_id AS Author_Id, Location.ent_id AS Location_Id&#xD;&#xA;&#x9;FROM PAT_ENC_CUR_VRSN_VW&#xD;&#xA;&#x9;INNER JOIN RecordTarget ON (RecordTarget.act_id = PAT_ENC_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Author ON (Author.act_id = PAT_ENC_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Location ON (Location.act_id = PAT_ENC_CUR_VRSN_VW.act_id)&#xD;&#xA;&quot;"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;WITH RecordTarget AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '3f92dbee-a65e-434f-98ce-841feeb02e3f' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Author AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'f0cb3faf-435d-4704-9217-b884f757bc14' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Location AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '61848557-d78d-40e5-954f-0b9c97307a04' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;)&#xD;&#xA;SELECT PAT_ENC_CUR_VRSN_VW.*, RecordTarget.ent_id AS RecordTarget_Id, Author.ent_id AS Author_Id, Location.ent_id AS Location_Id&#xD;&#xA;&#x9;FROM PAT_ENC_CUR_VRSN_VW&#xD;&#xA;&#x9;INNER JOIN RecordTarget ON (RecordTarget.act_id = PAT_ENC_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Author ON (Author.act_id = PAT_ENC_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Location ON (Location.act_id = PAT_ENC_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;WHERE PAT_ENC_CUR_VRSN_VW.STS_CD_ID = 'afc33800-8225-4061-b168-bacc09cdbae3'&#xD;&#xA;&quot;"/>
     <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime" show="false"/>
     <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false" show="false"/>
     <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
@@ -830,7 +830,7 @@
       <column comment="" defaultValue="" key="false" length="-1" name="location_id" nullable="true" pattern="" precision="-1" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="448" posY="160">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="448" posY="64">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_2" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -937,7 +937,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="704" posY="160">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="704" posY="64">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_2" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -1128,7 +1128,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="64">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="288" posY="-32">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_4" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -1188,7 +1188,7 @@
     <elementParameter field="TECHNICAL" name="QUERYSTORE:REPOSITORY_QUERYSTORE_TYPE" value="" show="false"/>
     <elementParameter field="TECHNICAL" name="QUERYSTORE:QUERYSTORE_TYPE" value="BUILT_IN"/>
     <elementParameter field="GUESS_SCHEMA" name="GUESS_SCHEMA" value="&quot;&quot;"/>
-    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;&#xD;&#xA;WITH RecordTarget AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '3f92dbee-a65e-434f-98ce-841feeb02e3f' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Author AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'f0cb3faf-435d-4704-9217-b884f757bc14' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Location AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '61848557-d78d-40e5-954f-0b9c97307a04' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Encounter AS (&#xD;&#xA;&#x9;SELECT * FROM act_rel_tbl WHERE rel_typ_cd_id = '78b9540f-438b-4b6f-8d83-aaf4979dbc64' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;)&#xD;&#xA;SELECT QOBS_CUR_VRSN_VW.*, RecordTarget.ent_id AS RecordTarget_Id, Author.ent_id AS Author_Id, Location.ent_id AS Location_Id, Encounter.src_act_id AS encounter_id&#xD;&#xA;&#x9;FROM QOBS_CUR_VRSN_VW&#xD;&#xA;&#x9;INNER JOIN RecordTarget ON (RecordTarget.act_id = QOBS_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Author ON (Author.act_id = QOBS_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Location ON (Location.act_id = QOBS_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Encounter ON (Encounter.trg_act_id = QOBS_CUR_VRSN_VW.act_id)&quot;"/>
+    <elementParameter field="MEMO_SQL" name="QUERY" value="&quot;&#xD;&#xA;WITH RecordTarget AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '3f92dbee-a65e-434f-98ce-841feeb02e3f' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Author AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = 'f0cb3faf-435d-4704-9217-b884f757bc14' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Location AS (&#xD;&#xA;&#x9;SELECT * FROM act_ptcpt_tbl WHERE rol_cd_id = '61848557-d78d-40e5-954f-0b9c97307a04' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;), Encounter AS (&#xD;&#xA;&#x9;SELECT * FROM act_rel_tbl WHERE rel_typ_cd_id = '78b9540f-438b-4b6f-8d83-aaf4979dbc64' AND obslt_vrsn_seq_id IS NULL&#xD;&#xA;)&#xD;&#xA;SELECT QOBS_CUR_VRSN_VW.*, RecordTarget.ent_id AS RecordTarget_Id, Author.ent_id AS Author_Id, Location.ent_id AS Location_Id, Encounter.src_act_id AS encounter_id&#xD;&#xA;&#x9;FROM QOBS_CUR_VRSN_VW&#xD;&#xA;&#x9;INNER JOIN RecordTarget ON (RecordTarget.act_id = QOBS_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Author ON (Author.act_id = QOBS_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Location ON (Location.act_id = QOBS_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;LEFT JOIN Encounter ON (Encounter.trg_act_id = QOBS_CUR_VRSN_VW.act_id)&#xD;&#xA;&#x9;WHERE QOBS_CUR_VRSN_VW.STS_CD_ID = 'afc33800-8225-4061-b168-bacc09cdbae3'&#xD;&#xA;&quot;"/>
     <elementParameter field="LABEL" name="NOTE" value="This option only applies when deploying and running in the Talend Runtime" show="false"/>
     <elementParameter field="CHECK" name="SPECIFY_DATASOURCE_ALIAS" value="false" show="false"/>
     <elementParameter field="TEXT" name="DATASOURCE_ALIAS" value="&quot;&quot;" show="false"/>
@@ -1683,7 +1683,7 @@
     <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
     <metadata connector="FLOW" name="tPostgresqlCommit_1"/>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="384" posY="-96">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="384" posY="-448">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_9" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -1780,7 +1780,7 @@
       <column comment="" key="false" length="256" name="oid" nullable="true" pattern="" precision="0" sourceType="VARCHAR" type="id_String" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="-320">
+  <node componentName="tPostgresqlRow" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="-672">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlRow_1" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -1815,7 +1815,7 @@
       <column defaultValue="" key="false" length="255" name="errorMessage" nullable="true" precision="0" sourceType="" type="id_String" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="-224">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="256" posY="-576">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_7" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -1907,7 +1907,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="416" posY="-320">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="416" posY="-672">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_8" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -1999,7 +1999,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tJoin" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="480" posY="-128">
+  <node componentName="tJoin" componentVersion="0.101" offsetLabelX="0" offsetLabelY="0" posX="480" posY="-480">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tJoin_1" show="false"/>
     <elementParameter field="CHECK" name="USE_LOOKUP_COLS" value="false"/>
     <elementParameter field="TABLE" name="LOOKUP_COLS" show="false"/>
@@ -2059,7 +2059,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-320">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-672">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_10" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2102,7 +2102,7 @@
       <column comment="" key="false" length="35" name="stop_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-192">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-544">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_4" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -2210,12 +2210,12 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-128">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-480">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_5" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
     <elementParameter field="DIRECTORY" name="TEMPORARY_DATA_DIRECTORY" value=""/>
-    <elementParameter field="IMAGE" name="PREVIEW" value="_hYDVkBvQEeeSapef53_EIQ-tMap_2-PREVIEW.bmp"/>
+    <elementParameter field="IMAGE" name="PREVIEW" value="_DsKuMCUVEeea06Gx0iDT9A-tMap_5-PREVIEW.bmp"/>
     <elementParameter field="CHECK" name="DIE_ON_ERROR" value="true" show="false"/>
     <elementParameter field="CHECK" name="LKUP_PARALLELIZE" value="false" show="false"/>
     <elementParameter field="CHECK" name="ENABLE_AUTO_CONVERT_TYPE" value="false" show="false"/>
@@ -2305,7 +2305,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="704" posY="-128">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="704" posY="-480">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_4" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2474,7 +2474,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="736" posY="-192">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="736" posY="-544">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_5" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2643,7 +2643,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-32">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-384">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_11" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -2686,7 +2686,7 @@
       <column comment="" key="false" length="35" name="stop_utc" nullable="true" pattern="" precision="6" sourceType="TIMESTAMP" type="id_Date" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="64" posY="320">
+  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="128" posY="-544">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_1" show="false"/>
     <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="V9_X"/>
     <elementParameter field="TEXT" name="HOST" value="context.dbServer"/>
@@ -2707,7 +2707,7 @@
     <elementParameter field="TEXT" name="LABEL" value="OpenIZ DB"/>
     <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
   </node>
-  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="96" posY="160">
+  <node componentName="tPostgresqlConnection" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="128" posY="-640">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlConnection_2" show="false"/>
     <elementParameter field="CLOSED_LIST" name="DB_VERSION" value="V9_X"/>
     <elementParameter field="TEXT" name="HOST" value="context.dwServer"/>
@@ -2728,7 +2728,7 @@
     <elementParameter field="TEXT" name="LABEL" value="Warehouse Connection"/>
     <elementParameter field="TEXT" name="CONNECTION_FORMAT" value="row"/>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="864" posY="-32">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="448" posY="-128">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_12" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_1"/>
@@ -2816,7 +2816,7 @@
       <column comment="" defaultValue="" key="false" length="2147483647" name="fac_id" nullable="false" pattern="" precision="0" sourceType="POINT" type="id_Object" originalLength="-1" usefulColumn="true"/>
     </metadata>
   </node>
-  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="1024" posY="-32">
+  <node componentName="tMap" componentVersion="2.1" offsetLabelX="0" offsetLabelY="0" posX="608" posY="-128">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tMap_6" show="false"/>
     <elementParameter field="EXTERNAL" name="MAP" value=""/>
     <elementParameter field="CLOSED_LIST" name="LINK_STYLE" value="AUTO"/>
@@ -2863,7 +2863,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
     <nodeData xsi:type="TalendMapper:MapperData">
-      <uiProperties shellMaximized="true"/>
+      <uiProperties/>
       <varTables sizeState="INTERMEDIATE" name="Var" minimized="true"/>
       <outputTables sizeState="INTERMEDIATE" name="outputProviders">
         <mapperTableEntries name="pvd_id" expression="row9.ent_id " type="id_Object"/>
@@ -2904,7 +2904,7 @@
       </inputTables>
     </nodeData>
   </node>
-  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="1184" posY="-32">
+  <node componentName="tPostgresqlOutput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="768" posY="-128">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlOutput_6" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
@@ -3062,7 +3062,7 @@
       <additionalProperties key="Comment" value=""/>
     </metadata>
   </node>
-  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="960" posY="-192">
+  <node componentName="tPostgresqlInput" componentVersion="0.102" offsetLabelX="0" offsetLabelY="0" posX="544" posY="-288">
     <elementParameter field="TEXT" name="UNIQUE_NAME" value="tPostgresqlInput_13" show="false"/>
     <elementParameter field="CHECK" name="USE_EXISTING_CONNECTION" value="true"/>
     <elementParameter field="COMPONENT_LIST" name="CONNECTION" value="tPostgresqlConnection_2"/>
