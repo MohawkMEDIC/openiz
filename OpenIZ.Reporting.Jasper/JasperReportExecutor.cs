@@ -51,6 +51,7 @@ using System.Security.Authentication;
 using System.Security.Permissions;
 using System.Text;
 using System.Xml.Serialization;
+using OpenIZ.Reporting.Jasper.Configuration;
 using ReportParameter = OpenIZ.Core.Model.RISI.ReportParameter;
 
 namespace OpenIZ.Reporting.Jasper
@@ -77,10 +78,20 @@ namespace OpenIZ.Reporting.Jasper
 		private const string JasperResourcesPath = "/rest_v2/resources";
 
 		/// <summary>
+		/// The folder path.
+		/// </summary>
+		private readonly string FolderPath;
+
+		/// <summary>
 		/// The configuration.
 		/// </summary>
 		// HACK: this should actually say 'openiz.reporting.jasper' not 'openiz.reporting.core'
 		private static readonly ReportingConfiguration configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.reporting.core") as ReportingConfiguration;
+
+		/// <summary>
+		/// The jasper configuration.
+		/// </summary>
+		private static readonly JasperConfiguration JasperConfiguration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.reporting.jasper") as JasperConfiguration;
 
 		/// <summary>
 		/// The jasper report path.
@@ -139,6 +150,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			this.Authenticated += OnAuthenticated;
 			this.ReportUri = new Uri(this.Configuration.Address);
+			this.FolderPath = JasperConfiguration.ReportPath;
 		}
 
 		/// <summary>
@@ -509,7 +521,15 @@ namespace OpenIZ.Reporting.Jasper
 		{
 			this.Authenticate(this.username, this.password);
 
-			var response = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}?type=reportUnit").Result;
+			var url = $"{this.ReportUri}{JasperResourcesPath}?type=reportUnit";
+
+			if (!string.IsNullOrEmpty(FolderPath) && !string.IsNullOrWhiteSpace(FolderPath))
+			{
+				this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Mapping folder path: {this.FolderPath}");
+				url += $"&folderUri={FolderPath}";
+			}
+
+			var response = client.GetAsync(url).Result;
 
 			tracer.TraceEvent(TraceEventType.Information, 0, $"Jasper report server response: {response.Content}");
 

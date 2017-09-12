@@ -79,17 +79,17 @@ namespace OpenIZ.Messaging.HL7.Subscriber
 				// HACK: need to revisit bundle BRE
 				ApplicationContext.Current.Started += (o, e) =>
 				{
-					ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>().Inserted += (sender, instance) =>
+					ApplicationContext.Current.GetService<IRepositoryService<Bundle>>().DataCreated += (sender, instance) =>
 					{
-						foreach (var patient in instance.Data.Item.OfType<Patient>())
+						foreach (var patient in instance.Objects.OfType<Bundle>().SelectMany(p=>p.Item.OfType<Patient>()))
 						{
 							ApplicationContext.Current.GetService<IClientRegistryNotificationService>()?.NotifyRegister(new NotificationEventArgs<Patient>(patient));
 						}
 					};
 
-					ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>().Updated += (sender, instance) =>
+					ApplicationContext.Current.GetService<IRepositoryService<Bundle>>().DataUpdated += (sender, instance) =>
 					{
-						foreach (var patient in instance.Data.Item.OfType<Patient>())
+						foreach (var patient in instance.Objects.OfType<Bundle>().SelectMany(p=>p.Item.OfType<Patient>()))
 						{
 							ApplicationContext.Current.GetService<IClientRegistryNotificationService>()?.NotifyUpdate(new NotificationEventArgs<Patient>(patient));
 						}

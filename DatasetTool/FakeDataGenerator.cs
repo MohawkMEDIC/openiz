@@ -31,6 +31,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Services.Daemons;
 using OpenIZ.Core.Services.Impl;
 using OpenIZ.Protocol.Xml;
 using OpenIZ.Protocol.Xml.Model;
@@ -69,10 +70,17 @@ namespace OizDevTool
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalPlaceRepositoryService));
 			ApplicationContext.Current.AddServiceProvider(typeof(LocalActRepositoryService));
 			ApplicationServiceContext.Current = ApplicationContext.Current;
-			//cp.Repository = new SeederProtocolRepositoryService();
-			ApplicationContext.Current.Start();
 
-			int tr = 0;
+            ApplicationContext.Current.RemoveServiceProvider(typeof(AppletBusinessRulesDaemon));
+    
+            //cp.Repository = new SeederProtocolRepositoryService();
+            ApplicationContext.Current.Start();
+
+            foreach (var i in ApplicationContext.Current.Configuration.ServiceProviders.Where(o => o.GetInterfaces().Any(i => i.Name.StartsWith("IBusinessRules"))).ToArray())
+                ApplicationContext.Current.RemoveServiceProvider(i);
+            //ApplicationContext.Current.Configuration.ServiceProviders.RemoveAll(o => o.GetInterfaces().Any(i => i.Name.StartsWith("IBusinessRules")));
+
+            int tr = 0;
 			Console.WriteLine("Adding minimal loading places...");
 
             IEnumerable<Place> places = null;
@@ -89,67 +97,71 @@ namespace OizDevTool
 
             places = places.Union((ApplicationContext.Current.GetService<IPlaceRepositoryService>() as IFastQueryRepositoryService).FindFast<Place>(o => o.StatusConceptKey == StatusKeys.Active && o.ClassConceptKey != EntityClassKeys.ServiceDeliveryLocation, 0, Int32.Parse(parameters.FacilityCount ?? "1000"), out tr, Guid.Empty));
 
-            WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 4);
+            WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount);
 			Random r = new Random();
 
-			int npatients = 0;
+            int npatients = 0;
 			Console.WriteLine("Generating Patients...");
 
             DateTime startTime = DateTime.Now;
 
 			WaitCallback genFunc = (s) =>
 			{
-				AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+                try
+                {
+                    AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 
-				var patient = GeneratePatient(maxAge, parameters.BarcodeAuth, places, r);
+                    var patient = GeneratePatient(maxAge, parameters.BarcodeAuth, places, r);
 
-				if (patient == null)
-					return;
+                    if (patient == null)
+                        return;
 
-				var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-				// Insert
-				int pPatient = Interlocked.Increment(ref npatients);
+                    var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                    // Insert
+                    int pPatient = Interlocked.Increment(ref npatients);
 
-                var ips = (((double)(DateTime.Now - startTime).Ticks / pPatient) * (populationSize - pPatient));
-                var remaining = new TimeSpan((long)ips);
+                    var ips = (((double)(DateTime.Now - startTime).Ticks / pPatient) * (populationSize - pPatient));
+                    var remaining = new TimeSpan((long)ips);
 
-                patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
-				Console.WriteLine("#{2:#,###,###}({4:0%} - ETA:{5}): {0} ({1:#0} mo) [{3}]", patient.Identifiers.First().Value, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient, places.FirstOrDefault(p => p.Key == patient.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey).Names.FirstOrDefault().ToString(), (float)pPatient / populationSize, remaining.ToString("hh'h 'mm'm 'ss's'"));
+                    patient = persistence.Insert(patient, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+                    Console.WriteLine("#{2:#,###,###}({4:0%} - ETA:{5}): {0} ({1:#0} mo) [{3}]", patient.Identifiers.First().Value, DateTime.Now.Subtract(patient.DateOfBirth.Value).TotalDays / 30, pPatient, places.FirstOrDefault(p => p.Key == patient.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey).Names.FirstOrDefault().ToString(), (float)pPatient / populationSize, remaining.ToString("hh'h 'mm'm 'ss's'"));
 
-				// Schedule
-				if (!parameters.PatientOnly)
-				{
-					var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now).Select(o => o.Copy() as Act);
+                    // Schedule
+                    if (!parameters.PatientOnly)
+                    {
+                        var acts = ApplicationContext.Current.GetService<ICarePlanService>().CreateCarePlan(patient).Action.Where(o => o.ActTime <= DateTime.Now).Select(o => o.Copy() as Act);
 
-					Bundle bundle = new Bundle();
+                        Bundle bundle = new Bundle();
 
-					foreach (var act in acts)
-					{
-						if (act.Key.Value.ToByteArray()[0] > 200) continue;
-						act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
-						act.StatusConceptKey = StatusKeys.Completed;
-						act.ActTime = act.ActTime.AddDays(r.Next(0, 5));
-						act.StartTime = null;
-						act.StopTime = null;
-						if (act is QuantityObservation)
-							(act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
-						else
-						{
-							act.Tags.AddRange(new ActTag[]
-							{
-								new ActTag("catchmentIndicator", "True"),
-								new ActTag("hasRunAdjustment", "True")
-							});
-							act.Participations.Add(new ActParticipation(ActParticipationKey.Location, patient.Relationships.First(l => l.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey));
-						}
+                        foreach (var act in acts)
+                        {
+                            if (act.Key.Value.ToByteArray()[0] > 200) continue;
+                            act.MoodConceptKey = ActMoodKeys.Eventoccurrence;
+                            act.StatusConceptKey = StatusKeys.Completed;
+                            act.ActTime = act.ActTime.AddDays(r.Next(0, 5));
+                            act.StartTime = null;
+                            act.StopTime = null;
+                            if (act is QuantityObservation)
+                                (act as QuantityObservation).Value = (r.Next((int)(act.ActTime - patient.DateOfBirth.Value).TotalDays, (int)(act.ActTime - patient.DateOfBirth.Value).TotalDays + 10) / 10) + 4;
+                            else
+                            {
+                                act.Tags.AddRange(new ActTag[]
+                                {
+                                new ActTag("catchmentIndicator", "True"),
+                                new ActTag("hasRunAdjustment", "True")
+                                });
+                                act.Participations.Add(new ActParticipation(ActParticipationKey.Location, patient.Relationships.First(l => l.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation).TargetEntityKey));
+                            }
 
-						// Persist the act
-						bundle.Item.Add(act);
-					}
-					Console.WriteLine("\t {0} acts", bundle.Item.Count());
+                            // Persist the act
+                            bundle.Item.Add(act);
+                        }
+                        Console.WriteLine("\t {0} acts", bundle.Item.Count());
 
-					ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(bundle);
-				}
+                        ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(bundle);
+                    }
+                }
+                catch { }
 			};
 			genFunc(null);
 
