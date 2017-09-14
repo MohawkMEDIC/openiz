@@ -137,7 +137,7 @@ namespace OizDevTool
 		{
 			// Load the file
 			var parms = new ParameterParser<InstallParameters>().Parse(args);
-
+            ApplicationContext.Current.Start();
 			var dsi = new DataInitializationService();
 			var ds = DatasetInstall.Load(parms.DatasetFile);
 			Console.WriteLine("Will install dataset {0} ({1} objects)...", ds.Action.Count, ds.Id);
