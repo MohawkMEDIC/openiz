@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Open Immunize"
-#define MyAppVersion "0.9.7.4"
+#define MyAppVersion "0.9.8.0"
 #define MyAppPublisher "Mohawk College mHealth & eHealth Development and Innovation Centre"
 #define MyAppURL "http://openiz.org"
 
@@ -218,12 +218,13 @@ Source: ..\bin\Release\SeedData.xml; DestDir: {app}; Components: tools\dev
 ; Data Stuff
 Source: ..\bin\release\data\*.dataset; DestDir: {app}\data; Components: msg\imsi
 Source: ..\bin\release\applets\*.pak; DestDir: {app}\applets; Components: msg\ami
-Source: ..\..\medicsvccore\MARC.HI.EHRS.QM.Persistence.Data\SQL\PSQL9\*.sql; DestDir: {app}\sql;  Components: msg
+Source: ..\..\servicecore\MARC.HI.EHRS.QM.Persistence.Data\SQL\PSQL9\*.sql; DestDir: {app}\sql;  Components: msg
 ; ADO Stuff
 Source: ..\bin\release\OpenIZ.Warehouse.ADO.dll; DestDir: {app}; Components: db\ado
 Source: ..\bin\release\OpenIZ.Persistence.Data.ADO.dll; DestDir: {app}; Components: db\ado
 Source: ..\bin\release\OpenIZ.OrmLite.dll; DestDir: {app}; Components: db\ado
 Source: ..\OpenIZ.Persistence.Data.ADO\Data\SQL\PSQL\*.sql; DestDir: {app}\sql; Components: db\ado
+Source: ..\OpenIZ.Warehouse.ADO\Data\SQL\PSQL\*.sql; DestDir: {app}\sql; Components: db\ado
 
 ; MSSQL Stuff
 Source: ..\bin\release\OpenIZ.Persistence.Data.MSSQL.dll; DestDir: {app}; Components: db\mssql
