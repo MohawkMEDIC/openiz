@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Name Use Codes" xmlns="http://openiz.org/data">
-  <insert>
+  <insert updateIfExists="true">
     <CodeSystem xmlns="http://openiz.org/model">
       <id>288CD8E6-F0A7-4045-8927-1B68384363DC</id>
       <name>FHIR Name Use Codes</name>
@@ -8,7 +8,7 @@
       <url>http://hl7.org/fhir/name-use</url>
     </CodeSystem>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>5C209379-E27D-48F7-8EA7-512E50A1E8FC</id>
       <mnemonic>usual</mnemonic>
@@ -21,26 +21,13 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>685E1580-96D9-4E92-A4E7-A8098469E637</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>usual</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>5C209379-E27D-48F7-8EA7-512E50A1E8FC</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Usual</value>
-      </name>
-      <conceptSet>8DF14280-3D05-45A6-BFAE-15B63DFC379F</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>a87a6d21-2ca6-4aea-88f3-6135cceb58d1</source>
+      <term>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>22668261-525D-430E-8478-06A513981ADF</id>
       <mnemonic>official</mnemonic>
@@ -53,26 +40,13 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>E207437D-1A7E-4F33-9A86-0EB01311E5CD</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>official</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>22668261-525D-430E-8478-06A513981ADF</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Official</value>
-      </name>
-      <conceptSet>8DF14280-3D05-45A6-BFAE-15B63DFC379F</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>1ec9583a-b019-4baa-b856-b99caf368656</source>
+      <term>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>9A68D9C0-61EB-4CAD-AA11-A83773C7DE79</id>
       <mnemonic>temp</mnemonic>
@@ -86,12 +60,12 @@
   </insert>
   <insert>
     <ConceptReferenceTerm xmlns="http://openiz.org/model">
-      <source>05f2d190-f9b0-43a9-8e21-6039d3dc126e</source>
+      <source>87964bff-e442-481d-9749-69b2a84a1fbe</source>
       <term>9A68D9C0-61EB-4CAD-AA11-A83773C7DE79</term>
       <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
     </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>991816A4-2010-4415-9FEF-98EE2E47EFB9</id>
       <mnemonic>nickname</mnemonic>
@@ -104,26 +78,13 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>9E2B9F02-B2D0-4FD6-B325-1AC46C02F0D3</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>nickname</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>991816A4-2010-4415-9FEF-98EE2E47EFB9</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Nickname</value>
-      </name>
-      <conceptSet>8DF14280-3D05-45A6-BFAE-15B63DFC379F</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>c31564ef-ca8d-4528-85a8-88245fcef344</source>
+      <term>9A68D9C0-61EB-4CAD-AA11-A83773C7DE79</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>A4336569-4BA6-4C64-8C99-7FC2968D94F6</id>
       <mnemonic>anonymous</mnemonic>
@@ -136,26 +97,13 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>CEB37A93-B261-4D3F-82B2-EA98846A62A5</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>anonymous</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>A4336569-4BA6-4C64-8C99-7FC2968D94F6</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Anonymous</value>
-      </name>
-      <conceptSet>8DF14280-3D05-45A6-BFAE-15B63DFC379F</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>95e6843a-26ff-4046-b6f4-eb440d4b85f7</source>
+      <term>9A68D9C0-61EB-4CAD-AA11-A83773C7DE79</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>2BA2F6EB-5D96-4D57-8FB9-7ED194F22E66</id>
       <mnemonic>old</mnemonic>
@@ -169,12 +117,12 @@
   </insert>
   <insert>
     <ConceptReferenceTerm xmlns="http://openiz.org/model">
-      <source>b0296ffc-ad5d-4666-87ae-c5965fa18eb3</source>
+      <source>3efd3b6e-02d5-4cc9-9088-ef8f31e32efa</source>
       <term>2BA2F6EB-5D96-4D57-8FB9-7ED194F22E66</term>
       <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
     </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>63240A70-980E-49A6-93AB-C6088F5A907E</id>
       <mnemonic>maiden</mnemonic>
@@ -187,23 +135,10 @@
     </ReferenceTerm>
   </insert>
   <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>92159ED9-29F2-453A-B4F0-9A6FE84C01FC</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>maiden</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>63240A70-980E-49A6-93AB-C6088F5A907E</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Maiden</value>
-      </name>
-      <conceptSet>8DF14280-3D05-45A6-BFAE-15B63DFC379F</conceptSet>
-    </Concept>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>0674c1c8-963a-4658-aff9-8cdcd308fa68</source>
+      <term>2BA2F6EB-5D96-4D57-8FB9-7ED194F22E66</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
   </insert>
 </dataset>

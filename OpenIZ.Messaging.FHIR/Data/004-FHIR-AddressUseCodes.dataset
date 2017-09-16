@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Address Use Codes" xmlns="http://openiz.org/data">
-  <insert>
+  <insert updateIfExists="true">
     <CodeSystem xmlns="http://openiz.org/model">
       <id>ADB20623-BB4C-422C-8793-AE8ED8546AFD</id>
       <name>FHIR Address Use Codes</name>
@@ -8,7 +8,7 @@
       <url>http://hl7.org/fhir/address-use</url>
     </CodeSystem>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>724CA96D-2BDF-4D83-A270-F3DE6DDDEE25</id>
       <mnemonic>home</mnemonic>
@@ -20,27 +20,14 @@
       </name>
     </ReferenceTerm>
   </insert>
-  <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>999C2779-321D-402E-A94E-354896FA00B0</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>FHIRAddressUse-home</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>724CA96D-2BDF-4D83-A270-F3DE6DDDEE25</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Home</value>
-      </name>
-      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
-    </Concept>
+  <insert updateIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>493c3e9d-4f65-4e4d-9582-c9008f4f2eb4</source>
+			<relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      <term>724CA96D-2BDF-4D83-A270-F3DE6DDDEE25</term>
+    </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>8E38B058-AB80-46E3-9F30-20251BB2A423</id>
       <mnemonic>work</mnemonic>
@@ -52,27 +39,14 @@
       </name>
     </ReferenceTerm>
   </insert>
-  <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>5788A71E-7847-48F9-BE72-6DF46A5CF4A5</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>FHIRAddressUse-work</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>8E38B058-AB80-46E3-9F30-20251BB2A423</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Work</value>
-      </name>
-      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
-    </Concept>
+  <insert updateIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>eaa6f08e-bb8e-4457-9dc0-3a1555fadf5c</source>
+			<relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      <term>8E38B058-AB80-46E3-9F30-20251BB2A423</term>
+    </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>0CA87CA1-6219-46B3-B63A-8E53C759F28C</id>
       <mnemonic>temp</mnemonic>
@@ -84,27 +58,14 @@
       </name>
     </ReferenceTerm>
   </insert>
-  <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>05F2D190-F9B0-43A9-8E21-6039D3DC126E</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>FHIRAddressUse-temp</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>0CA87CA1-6219-46B3-B63A-8E53C759F28C</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Temp</value>
-      </name>
-      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
-    </Concept>
+  <insert updateIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>cef6ea31-a097-4f59-8723-a38c727c6597</source>
+			<relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      <term>0CA87CA1-6219-46B3-B63A-8E53C759F28C</term>
+    </ConceptReferenceTerm>
   </insert>
-  <insert>
+  <insert updateIfExists="true">
     <ReferenceTerm xmlns="http://openiz.org/model">
       <id>62AF5472-681C-4C71-8D6C-D398B2EEE69D</id>
       <mnemonic>old</mnemonic>
@@ -116,24 +77,11 @@
       </name>
     </ReferenceTerm>
   </insert>
-  <insert>
-    <Concept xmlns="http://openiz.org/model">
-      <id>B0296FFC-AD5D-4666-87AE-C5965FA18EB3</id>
-      <version xsi:nil="true" />
-      <sequence xsi:nil="true" />
-      <isReadonly>false</isReadonly>
-      <mnemonic>FHIRAddressUse-old</mnemonic>
-      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
-      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
-      <referenceTerm>
-        <term>62AF5472-681C-4C71-8D6C-D398B2EEE69D</term>
-        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
-      </referenceTerm>
-      <name>
-        <language>en</language>
-        <value>Old/Incorrect</value>
-      </name>
-      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
-    </Concept>
+  <insert updateIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>f3132fc0-aadd-40b7-b875-961c40695389</source>
+			<relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      <term>62AF5472-681C-4C71-8D6C-D398B2EEE69D</term>
+    </ConceptReferenceTerm>
   </insert>
 </dataset>

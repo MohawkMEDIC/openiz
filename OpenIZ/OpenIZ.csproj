@@ -101,6 +101,10 @@
     <EmbeddedResource Include="License.rtf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="Data\demo\990-demo.concepts.dataset" />
+    <None Include="Data\demo\991-demo.facilities.dataset" />
+    <None Include="Data\demo\992-demo.places.dataset" />
+    <None Include="Data\demo\994-demo.manufactured-materials.dataset" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZ.licenseheader">
