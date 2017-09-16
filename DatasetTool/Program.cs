@@ -53,7 +53,6 @@ namespace OizDevTool
                 if (!consoleParms.CustomConfig)
                 {
                     Console.WriteLine("Using openiz config");
-
                     ApplicationContext.Current.AddServiceProvider(typeof(FileConfigurationService));
                 }
                 else

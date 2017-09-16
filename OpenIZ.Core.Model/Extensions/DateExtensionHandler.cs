@@ -47,8 +47,19 @@ namespace OpenIZ.Core.Extensions
         /// </summary>
         public object DeSerialize(byte[] extensionData)
         {
-            Int64 tickData = BitConverter.ToInt64(extensionData, 0);
-            return new DateTime(tickData, DateTimeKind.Utc);
+            if (extensionData.Length == 8)
+            {
+                Int64 tickData = BitConverter.ToInt64(extensionData, 0);
+                return new DateTime(tickData, DateTimeKind.Utc);
+            }
+            else
+            {
+                string sdata = Encoding.UTF8.GetString(extensionData, 0, extensionData.Length);
+                DateTime dt = DateTime.MinValue;
+                if (DateTime.TryParse(sdata, out dt))
+                    return dt;
+                throw new InvalidOperationException("Cannot parse data");
+            }
         }
 
         /// <summary>
