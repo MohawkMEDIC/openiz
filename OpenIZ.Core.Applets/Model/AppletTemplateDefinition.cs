@@ -32,6 +32,13 @@ namespace OpenIZ.Core.Applets.Model
     [XmlType(nameof(AppletTemplateDefinition), Namespace = "http://openiz.org/applet")]
     public class AppletTemplateDefinition
     {
+
+        /// <summary>
+        /// Public
+        /// </summary>
+        [XmlAttribute("public")]
+        public bool Public { get; set; }
+
         /// <summary>
         /// Gets or sets the mnemonic
         /// </summary>
@@ -43,6 +50,12 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         [XmlElement("form")]
         public String Form { get; set; }
+
+        /// <summary>
+        /// Gets or sets the form
+        /// </summary>
+        [XmlElement("view")]
+        public String View { get; set; }
 
         /// <summary>
         /// Gets or sets the definition

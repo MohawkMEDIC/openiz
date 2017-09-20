@@ -258,7 +258,7 @@ namespace OpenIZ.Core.Persistence
                     }
                     catch (Exception ex)
                     {
-                        this.m_traceSource.TraceEvent(TraceEventType.Error, ex.HResult, "Error applying {0}: {1}", f, ex);
+                        this.m_traceSource.TraceEvent(TraceEventType.Verbose, ex.HResult, "Error applying {0}: {1}", f, ex);
                         throw;
                     }
                 }
