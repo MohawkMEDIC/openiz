@@ -1009,7 +1009,7 @@ namespace OizDevTool
                     }
 
                     if (!parms.LiveMigration || parms.SingleTransaction)
-                        resultSet.Action.AddRange(childData.Select(o => new DataInsert() { Element = o }));
+                        resultSet.Action.AddRange(childData.Select(o => new DataInsert() { Element = o, SkipIfExists = true, IgnoreErrors = true }));
                     else
                     {
                         bundlePersister.Insert(new Bundle() { Item = childData }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
