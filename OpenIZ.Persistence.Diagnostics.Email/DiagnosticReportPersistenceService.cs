@@ -116,7 +116,7 @@ namespace OpenIZ.Persistence.Diagnostics.Email
                 foreach (var itm in this.m_configuration.Recipients)
                     bugMessage.To.Add(itm);
                 bugMessage.Subject = $"ISSUE #{issueId}";
-                bugMessage.Body = $"{storageData.Note} - From - {storageData.LoadProperty<SecurityUser>("CreatedBy")?.UserName}";
+                bugMessage.Body = $"{storageData.Note} - UN - {storageData.LoadProperty<SecurityUser>("CreatedBy")?.UserName}";
 
 
                 // Add attachments
