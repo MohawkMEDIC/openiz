@@ -21,6 +21,7 @@
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Data;
 using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
@@ -48,6 +49,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Authentication;
+using System.Security.Claims;
 using System.Security.Permissions;
 using System.Text;
 using System.Xml.Serialization;
@@ -412,7 +414,9 @@ namespace OpenIZ.Reporting.Jasper
 
 			this.Authenticate(this.username, this.password);
 
-			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId);
+			var userId = OpenIZ.Core.ExtensionMethods.GetUserId(AuthenticationContext.Current.Principal.Identity);
+
+			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Userid", Guid.Parse(userId).ToString())});
 
 			var count = 0;
 
@@ -426,8 +430,9 @@ namespace OpenIZ.Reporting.Jasper
 					Description = inputControl.Description,
 					ReportDefinition = reportDefinition,
 					Name = inputControl.Label,
+					IsHidden = inputControl.Visible,
 					IsNullable = inputControl.Mandatory,
-					ReportDefinitionKey = reportDefinition.Key.Value
+					ReportDefinitionKey = reportDefinition.Key.Value,
 				};
 
 				if (inputControl.DataType != null)
@@ -939,11 +944,26 @@ namespace OpenIZ.Reporting.Jasper
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="resourceUri">The resource URI.</param>
+		/// <param name="parameters">The parameters.</param>
 		/// <returns>Returns the resource.</returns>
 		/// <exception cref="System.InvalidOperationException">Unable to lookup resource</exception>
-		private T LookupResource<T>(string resourceUri) where T : ResourceBase, new()
+		private T LookupResource<T>(string resourceUri, IEnumerable<KeyValuePair<string, string>> parameters = null) where T : ResourceBase, new()
 		{
-			var resourceResponse = client.GetAsync($"{this.ReportUri}{JasperResourcesPath}{resourceUri}").Result;
+			var url = $"{this.ReportUri}{JasperResourcesPath}{resourceUri}";
+
+			if (parameters?.Count() == 1)
+			{
+				url += "?" + parameters.First().Key + "=" + parameters.First().Value;
+			}
+			else
+			{
+				if (parameters?.Any() == true)
+				{
+					url = parameters.Aggregate(url, (current, parameter) => current + $"&{parameter.Key}={parameter.Value}");
+				}
+			}
+
+			var resourceResponse = client.GetAsync(url).Result;
 
 			if (!resourceResponse.IsSuccessStatusCode)
 			{

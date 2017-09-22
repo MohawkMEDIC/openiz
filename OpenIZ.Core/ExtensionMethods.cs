@@ -17,9 +17,16 @@
  * User: justi
  * Date: 2016-8-2
  */
+
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 
 namespace OpenIZ.Core
@@ -68,6 +75,39 @@ namespace OpenIZ.Core
 		public static IConceptRepositoryService GetConceptService(this ApplicationContext me)
 		{
 			return me.GetService<IConceptRepositoryService>();
+		}
+
+		/// <summary>
+		/// Gets the user identifier for a given identity.
+		/// </summary>
+		/// <returns>Returns a string which represents the users identifier, or null if unable to retrieve the users identifier.</returns>
+		public static string GetUserId(IIdentity source)
+		{
+			return GetUserId<string>(source);
+		}
+
+		/// <summary>
+		/// Gets the user identifier for a given identity.
+		/// </summary>
+		/// <typeparam name="T">The type of the identifier of the user.</typeparam>
+		/// <returns>Returns the users identifier, or null if unable to retrieve the users identifier.</returns>
+		public static T GetUserId<T>(IIdentity source) where T : IConvertible
+		{
+			if (source == null)
+			{
+				throw new ArgumentNullException(nameof(source), "Value cannot be null");
+			}
+
+			var userId = default(T);
+
+			var nameIdentifierClaimValue = (source as ClaimsIdentity)?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+			if (nameIdentifierClaimValue != null)
+			{
+				userId = (T)Convert.ChangeType(nameIdentifierClaimValue, typeof(T), CultureInfo.InvariantCulture);
+			}
+
+			return userId;
 		}
 
 		/// <summary>

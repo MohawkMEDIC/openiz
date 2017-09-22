@@ -107,6 +107,13 @@ namespace OpenIZ.Core.Model.RISI
 		public string Description { get; set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating whether this parameter is hidden.
+		/// </summary>
+		/// <value><c>true</c> if this parameter is hidden; otherwise, <c>false</c>.</value>
+		[XmlAttribute("isHidden"), JsonProperty("isHidden")]
+		public bool IsHidden { get; set; }
+
+		/// <summary>
 		/// Gets or sets whether the report parameter is nullable.
 		/// </summary>
 		[XmlAttribute("isNullable"), JsonProperty("isNullable")]
