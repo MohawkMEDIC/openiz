@@ -32,6 +32,7 @@
   <property name="product_id" type="uuid" attributes="index"/>
   <property name="sequence_id" type="int" />
   <property name="dose_seq" type="int"/>
+  <property name="fulfilled" type="bool"/>
   <sqp name="bymonth">
     <property name="location_id" type="uuid"/>
     <property name="product_id" type="uuid"/>
@@ -80,7 +81,7 @@
     <sql provider="sqlite">
       <![CDATA[SELECT DISTINCT patient_id FROM oizcp]]>
     </sql>
-    <sql provider="pgsql">
+    <sql provider="npgsql">
       <![CDATA[SELECT DISTINCT patient_id FROM oizcp]]>
     </sql>
   </sqp>
