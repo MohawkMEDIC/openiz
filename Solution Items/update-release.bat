@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 for %%d in (*.dll) do (
 		echo %%d
-               copy ..\..\medicsvccore\bin\release\%%d .\
+               copy ..\..\servicecore\bin\release\%%d .\
 )
 for %%d in (*.pdb) do (
 		echo %%d

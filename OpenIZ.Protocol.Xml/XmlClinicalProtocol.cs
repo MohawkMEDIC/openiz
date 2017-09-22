@@ -142,7 +142,8 @@ namespace OpenIZ.Protocol.Xml
 
 
                 // Evaluate eligibility
-                if (this.Definition.When?.Evaluate(patient, s_callbacks) == false)
+                if (this.Definition.When?.Evaluate(patient, s_callbacks) == false &&
+                    !parameters.ContainsKey("ignoreEntry"))
                 {
                     this.m_tracer.TraceInfo("{0} does not meet criteria for {1}", patient, this.Id);
                     return new List<Act>();
@@ -151,7 +152,9 @@ namespace OpenIZ.Protocol.Xml
                 List<Act> retVal = new List<Act>();
 
                 // Rules
+                int step = 0;
                 foreach (var rule in this.Definition.Rules)
+                {
                     for (var index = 0; index < rule.Repeat; index++)
                     {
 
@@ -176,7 +179,7 @@ namespace OpenIZ.Protocol.Xml
                         }
 
                         // TODO: Variable initialization 
-                        if (rule.When.Evaluate(patient, s_callbacks))
+                        if (rule.When.Evaluate(patient, s_callbacks) && !parameters.ContainsKey("ignoreWhen"))
                         {
                             var acts = rule.Then.Evaluate(patient, s_callbacks);
                             retVal.AddRange(acts);
@@ -187,15 +190,17 @@ namespace OpenIZ.Protocol.Xml
                                 {
                                     ProtocolKey = this.Id,
                                     Protocol = this.GetProtocolData(),
-                                    Sequence = index
+                                    Sequence = step
                                 });
 
                         }
                         else
                             this.m_tracer.TraceInfo("{0} does not meet criteria for rule {1}.{2}", patient, this.Name, rule.Name ?? rule.Id);
 
-                    }
+                        step++;
 
+                    }
+                }
 
                 // Now we want to add the stuff to the patient
                 lock (triggerPatient)
