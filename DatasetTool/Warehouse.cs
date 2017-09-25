@@ -375,15 +375,27 @@ namespace OizDevTool
                                 {
                                     patientClone.Participations.RemoveAll(o => o.ActKey == s.Key);
                                     // Run protocol 
-                                    var tempPlan = careplanService.CreateCarePlan(patientClone, false, new Dictionary<String, Object>() { { "isBackground", true }, { "ignoreEntry", true } }, itm.Key);
-                                    if (tempPlan.Action.Count == 0) continue;
-                                    var candidate = tempPlan.Action.Where(o => o.Protocols.FirstOrDefault().Sequence == s.Protocols.FirstOrDefault().Sequence);
-                                    if (candidate.Count() != 1)
+                                    IEnumerable<Act> candidate; 
+                                    if (itm.Key == Guid.Empty) // There is no protocol identifier
                                     {
-                                        candidate = tempPlan.Action.OfType<SubstanceAdministration>().Where(o => o.SequenceId == (s as SubstanceAdministration)?.SequenceId);
+                                        var tempPlan = careplanService.CreateCarePlan(patientClone, false, new Dictionary<String, Object>() { { "isBackground", true }, { "ignoreEntry", true } });
+                                        if (tempPlan.Action.Count == 0) continue;
+                                        candidate = tempPlan.Action.OfType<SubstanceAdministration>().Where(o => o.SequenceId == (s as SubstanceAdministration)?.SequenceId &&
+                                                                                                             o.Participations.FirstOrDefault(pt=>pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey == s.Participations.FirstOrDefault(pt=>pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey);
                                         if (candidate.Count() != 1) continue;
-
                                     }
+                                    else
+                                    {
+                                        var tempPlan = careplanService.CreateCarePlan(patientClone, false, new Dictionary<String, Object>() { { "isBackground", true }, { "ignoreEntry", true } }, itm.Key);
+                                        if (tempPlan.Action.Count == 0) continue;
+                                        candidate = tempPlan.Action.Where(o => o.Protocols.FirstOrDefault().Sequence == s.Protocols.FirstOrDefault().Sequence);
+                                        if (candidate.Count() != 1)
+                                        {
+                                            candidate = tempPlan.Action.OfType<SubstanceAdministration>().Where(o => o.SequenceId == (s as SubstanceAdministration)?.SequenceId);
+                                            if (candidate.Count() != 1) continue;
+                                        }
+                                    }
+
                                     var planned = candidate.FirstOrDefault();
 
                                     warehousePlan.Add(new

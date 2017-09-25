@@ -148,6 +148,8 @@ namespace OpenIZ.Messaging.GS1
                     despatchAdvice = new Ecom_DocumentReferenceType()
                     {
                         entityIdentification = originalOrder.Identifiers.FirstOrDefault()?.Value ?? originalOrder.Key.Value.ToString(),
+                        creationDateTime = originalOrder.ActTime.DateTime,
+                        creationDateTimeSpecified = true,
                         contentOwner = new Ecom_PartyIdentificationType()
                         {
                             additionalPartyIdentification = originalOrder.Identifiers.Count > 0 ? new AdditionalPartyIdentificationType[]
