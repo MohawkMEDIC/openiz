@@ -126,6 +126,11 @@ namespace OpenIZ.Reporting.Jasper
 		private readonly string username;
 
 		/// <summary>
+		/// The user identifier key for sending the user id to Jasper Reports.
+		/// </summary>
+		private const string UserIdKey = "Userid";
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="JasperReportExecutor" /> class.
 		/// </summary>
 		/// <exception cref="System.InvalidOperationException">Non username and password authentication methods are not supported for Jasper Reports</exception>
@@ -416,7 +421,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			var userId = OpenIZ.Core.ExtensionMethods.GetUserId(AuthenticationContext.Current.Principal.Identity);
 
-			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("Userid", Guid.Parse(userId).ToString())});
+			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>(UserIdKey, Guid.Parse(userId).ToString())});
 
 			var count = 0;
 
@@ -430,10 +435,16 @@ namespace OpenIZ.Reporting.Jasper
 					Description = inputControl.Description,
 					ReportDefinition = reportDefinition,
 					Name = inputControl.Label,
-					IsHidden = inputControl.Visible,
+					IsHidden = !inputControl.Visible,
 					IsNullable = inputControl.Mandatory,
 					ReportDefinitionKey = reportDefinition.Key.Value,
 				};
+
+				// if the parameter is the user id, set the user id value as the current user id
+				if (reportParameter.Name == UserIdKey)
+				{
+					reportParameter.Value = Guid.Parse(OpenIZ.Core.ExtensionMethods.GetUserId(AuthenticationContext.Current.Principal.Identity)).ToByteArray();
+				}
 
 				if (inputControl.DataType != null)
 				{
@@ -482,6 +493,18 @@ namespace OpenIZ.Reporting.Jasper
 
 					try
 					{
+						// set the user id
+						if (query.Value.Contains("${Userid}") || query.Value.Contains("$P{Userid}"))
+						{
+							var securityUserId = Guid.Parse(OpenIZ.Core.ExtensionMethods.GetUserId(AuthenticationContext.Current.Principal.Identity));
+
+							var totalCount = 0;
+
+							var userEntityId = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Query(c => c.SecurityUserKey == securityUserId, 0, 1, AuthenticationContext.Current.Principal, out totalCount)?.FirstOrDefault()?.Key;
+
+							query.Value = query.Value.Replace("${Userid}", $"'{userEntityId}'::uuid");
+							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'::uuid");
+						}
 						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
 					}
 					catch (Exception e)
