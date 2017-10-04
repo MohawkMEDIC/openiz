@@ -42,6 +42,7 @@
     <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
     <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
     <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
+    <map fhir="patient.location.identifier" model="participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target.identifier" type="identifier"/>
     <map fhir="in-catchment" model="tag[catchmentIndicator].value"/>
     <map fhir="is-outreach" model="relationship[HasComponent].source.tag[outreach]"/>
     <map fhir="is-backEntry" model="tag[backEntry].value"/>

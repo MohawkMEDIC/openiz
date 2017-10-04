@@ -28,7 +28,7 @@ namespace OpenIZ.OrmLite.Attributes
     /// <summary>
     /// Instructs the query planner to always join another reference table when executing queries
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class AlwaysJoinAttribute : Attribute
     {
         

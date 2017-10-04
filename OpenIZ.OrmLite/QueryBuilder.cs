@@ -137,6 +137,9 @@ namespace OpenIZ.OrmLite
 
                 Stack<TableMapping> fkStack = new Stack<TableMapping>();
                 fkStack.Push(tableMap);
+
+                List<JoinFilterAttribute> joinFilters = new List<JoinFilterAttribute>();
+
                 // Always join tables?
                 do
                 {
@@ -145,7 +148,21 @@ namespace OpenIZ.OrmLite
                     {
                         var fkTbl = TableMapping.Get(jt.ForeignKey.Table);
                         var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
-                        selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name}) ");
+                        selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name} ");
+
+                        foreach(var flt in jt.JoinFilters.Union(joinFilters).GroupBy(o=>o.PropertyName).ToArray())
+                        {
+                            var fltCol = fkTbl.GetColumn(flt.Key);
+                            if (fltCol == null)
+                                joinFilters.AddRange(flt);
+                            else
+                            {
+                                selectStatement.And($"({String.Join(" OR ", flt.Select(o => $"{tablePrefix}{fltCol.Table.TableName}.{fltCol.Name} = '{o.Value}'"))})");
+                                joinFilters.RemoveAll(o=>flt.Contains(o));
+                            }
+                        }
+
+                        selectStatement.Append(")");
                         if (!scopedTables.Contains(fkTbl))
                             fkStack.Push(fkTbl);
                         scopedTables.Add(fkAtt.Table);
@@ -241,6 +258,9 @@ namespace OpenIZ.OrmLite
                         SqlStatement subQueryStatement = new SqlStatement(this.m_provider);
 
                         var subTableColumn = linkColumn;
+                        var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
+                        string existsClause = String.Empty;
+
                         if (linkColumn == null)
                         {
                             var tableWithJoin = scopedTables.Select(o => o.AssociationWith(subTableMap)).FirstOrDefault(o=>o != null);
@@ -249,10 +269,13 @@ namespace OpenIZ.OrmLite
                             subTableColumn = subTableMap.GetColumn(targetColumn.ForeignKey.Column);
                             // The sub-query statement needs to be joined as well 
                             var lnkPfx = IncrementSubQueryAlias(tablePrefix);
-                            subQueryStatement.Append($"SELECT {lnkPfx}{tableWithJoin.TableName}.{linkColumn.Name} FROM {tableWithJoin.TableName} AS {lnkPfx}{tableWithJoin.TableName} WHERE {lnkPfx}{tableWithJoin.TableName}.{targetColumn.Name} IN (");
+                            subQueryStatement.Append($"SELECT {lnkPfx}{tableWithJoin.TableName}.{linkColumn.Name} FROM {tableWithJoin.TableName} AS {lnkPfx}{tableWithJoin.TableName} WHERE ");
+                            existsClause = $"{lnkPfx}{tableWithJoin.TableName}.{targetColumn.Name}";
                             //throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
                         }
-                            
+                        else
+                            existsClause = $"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name}";
+
                         var guardConditions = queryParms.GroupBy(o => this.m_extractionRegex.Match(o.Key).Groups[GuardRegexGroup].Value);
                         foreach (var guardClause in guardConditions)
                         {
@@ -281,20 +304,20 @@ namespace OpenIZ.OrmLite
                             // Generate method
                             var prefix = IncrementSubQueryAlias(tablePrefix);
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[])});
-                            subQueryStatement.Append("(");
+                            subQueryStatement.Append($" {existsClause} IN (");
                             subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
                             subQueryStatement.Append(")");
 
                             // TODO: Check if limiting the the query is better
                             if (guardConditions.Last().Key != guardClause.Key)
-                                subQueryStatement.Append(" INTERSECT ");
+                                subQueryStatement.Append(" AND ");
                         }
 
+
                         if (subTableColumn != linkColumn)
-                            subQueryStatement.Append(")");
-                        
-                        var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
-                        whereClause.And($"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name} IN (").Append(subQueryStatement).Append(")");
+                            whereClause.And($"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name} IN (").Append(subQueryStatement).Append(")");
+                        else
+                            whereClause.And(subQueryStatement);
 
                     }
                     else // this table points at other

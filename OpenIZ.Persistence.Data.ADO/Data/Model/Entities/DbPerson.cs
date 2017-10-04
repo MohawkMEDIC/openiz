@@ -21,6 +21,7 @@ using System;
 
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.OrmLite.Attributes;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 {
@@ -30,12 +31,29 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 	[Table("psn_tbl")]
 	public class DbPerson : DbEntitySubTable
 	{
+        /// <summary>
+        /// Parent key
+        /// </summary>
+        [JoinFilter(PropertyName = nameof(DbEntity.ClassConceptKey), Value = EntityClassKeyStrings.Person)]
+        [JoinFilter(PropertyName = nameof(DbEntity.ClassConceptKey), Value = EntityClassKeyStrings.Patient)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
 
-		/// <summary>
-		/// Gets or sets the date of birth.
-		/// </summary>
-		/// <value>The date of birth.</value>
-		[Column("dob")]
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the date of birth.
+        /// </summary>
+        /// <value>The date of birth.</value>
+        [Column("dob")]
 		public DateTime? DateOfBirth {
 			get;
 			set;

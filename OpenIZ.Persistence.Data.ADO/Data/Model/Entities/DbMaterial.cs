@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2017-1-14
  */
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
@@ -32,11 +33,29 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 	public class DbMaterial : DbEntitySubTable
     {
 
-		/// <summary>
-		/// Gets or sets the quantity of an entity within its container.
-		/// </summary>
-		/// <value>The quantity.</value>
-		[Column("qty")]
+        /// <summary>
+        /// Parent key filter
+        /// </summary>
+        [JoinFilter(PropertyName = nameof(DbEntity.ClassConceptKey), Value = EntityClassKeyStrings.Material)]
+        [JoinFilter(PropertyName = nameof(DbEntity.ClassConceptKey), Value = EntityClassKeyStrings.ManufacturedMaterial)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
+
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the quantity of an entity within its container.
+        /// </summary>
+        /// <value>The quantity.</value>
+        [Column("qty")]
 		public decimal Quantity {
 			get;
 			set;
