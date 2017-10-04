@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2017-1-14
  */
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
@@ -33,6 +34,23 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     [Table("pat_enc_tbl")]
     public class DbPatientEncounter : DbActSubTable
     {
+
+        /// <summary>
+        /// Parent key
+        /// </summary>
+        [JoinFilter(PropertyName = nameof(DbAct.ClassConceptKey), Value = ActClassKeyStrings.Encounter)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
+
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
 
         /// <summary>
         /// Identifies the manner in which the patient was discharged

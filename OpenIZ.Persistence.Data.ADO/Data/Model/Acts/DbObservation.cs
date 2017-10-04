@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2017-1-14
  */
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
@@ -34,6 +35,23 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     [Table("obs_tbl")]
     public class DbObservation : DbActSubTable
     {
+
+        /// <summary>
+        /// Parent key
+        /// </summary>
+        [JoinFilter(PropertyName = nameof(DbAct.ClassConceptKey), Value = ActClassKeyStrings.Observation)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
+
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the interpretation concept

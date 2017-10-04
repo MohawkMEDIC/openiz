@@ -24,7 +24,7 @@ namespace OpenIZ.Core.Model.Constants
     /// <summary>
 	/// Entity class concept keys
 	/// </summary>
-	internal static class EntityClassKeyStrings
+	public static class EntityClassKeyStrings
     {
         /// <summary>
         /// Animal
@@ -131,6 +131,7 @@ namespace OpenIZ.Core.Model.Constants
     /// <summary>
     /// Entity class concept keys
     /// </summary>
+    // TODO: Refactor these
     public static class EntityClassKeys
 	{
 		/// <summary>

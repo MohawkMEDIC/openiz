@@ -28,7 +28,7 @@ namespace OpenIZ.OrmLite.Attributes
 	/// <summary>
 	/// Represents an attribute for marking columns as not null.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property)]
+	[AttributeUsage(AttributeTargets.Property, Inherited = true)]
 	public class NotNullAttribute : Attribute
 	{
 		/// <summary>

@@ -306,7 +306,10 @@ namespace OpenIZ.OrmLite
             {
                 var pIndex = sql.IndexOf("?");
                 retVal.Remove(pIndex, 1);
-                retVal.Insert(pIndex, qList[parmId++]);
+                var obj = qList[parmId++];
+                if (obj is String || obj is Guid || obj is Guid? || obj is DateTime || obj is DateTimeOffset)
+                    obj = $"'{obj}'";
+                retVal.Insert(pIndex, obj);
                 sql = retVal.ToString();
             }
             return retVal.ToString();
