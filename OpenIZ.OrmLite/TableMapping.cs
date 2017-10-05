@@ -38,6 +38,9 @@ namespace OpenIZ.OrmLite
         // Tabl mappings 
         private static Dictionary<Type, TableMapping> m_tableMappings = new Dictionary<Type, TableMapping>();
 
+        // Primary key cache
+        private IEnumerable<ColumnMapping> m_primaryKey = null;
+
         /// <summary>
         /// ORM type model
         /// </summary>
@@ -52,6 +55,19 @@ namespace OpenIZ.OrmLite
         /// Column mappings
         /// </summary>
         public IEnumerable<ColumnMapping> Columns { get; private set; }
+
+        /// <summary>
+        /// Gets the primary key field
+        /// </summary>
+        public IEnumerable<ColumnMapping> PrimaryKey
+        {
+            get
+            {
+                if(this.m_primaryKey == null)
+                    this.m_primaryKey = this.Columns.Where(o => o.IsPrimaryKey);
+                return this.m_primaryKey;
+            }
+        }
 
         /// <summary>
         /// Private ctor for table mapping
