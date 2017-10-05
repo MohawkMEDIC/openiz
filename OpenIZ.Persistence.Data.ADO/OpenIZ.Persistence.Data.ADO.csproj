@@ -70,6 +70,7 @@
       <DependentUpon>ucAdoPersistence.cs</DependentUpon>
     </Compile>
     <Compile Include="Data\Extensions\DataModelExtensions.cs" />
+    <Compile Include="Data\Hax\ConceptQueryHack.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbActVersion.cs" />
     <Compile Include="Data\Model\Acts\DbAct.cs" />

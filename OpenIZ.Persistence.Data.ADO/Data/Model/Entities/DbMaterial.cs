@@ -110,11 +110,22 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Entities
 	{
 
         /// <summary>
-        /// Gets or sets the parent key
+        /// Parent key filter
         /// </summary>
-        [Column("ent_vrsn_id"), ForeignKey(typeof(DbMaterial), nameof(DbMaterial.ParentKey)), PrimaryKey, AlwaysJoin]
-        public override Guid ParentKey { get; set; }
+        [Column("ent_vrsn_id"), ForeignKey(typeof(DbMaterial), nameof(DbMaterial.ParentKey)), PrimaryKey, AlwaysJoin, JoinFilter(PropertyName = nameof(DbEntity.ClassConceptKey), Value = EntityClassKeyStrings.ManufacturedMaterial)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
 
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
+              
         /// <summary>
         /// Gets or sets the lot number.
         /// </summary>
