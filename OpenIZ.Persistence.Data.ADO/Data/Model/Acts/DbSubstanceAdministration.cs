@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2017-1-14
  */
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
 using System;
@@ -33,6 +34,24 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Acts
     [Table("sub_adm_tbl")]
     public class DbSubstanceAdministration : DbActSubTable
     {
+
+        /// <summary>
+        /// Parent key
+        /// </summary>
+        [JoinFilter(PropertyName = nameof(DbAct.ClassConceptKey), Value = ActClassKeyStrings.SubstanceAdministration)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
+
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the route of administration
         /// </summary>

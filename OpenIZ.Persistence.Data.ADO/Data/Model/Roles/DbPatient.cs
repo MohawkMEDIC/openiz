@@ -22,6 +22,8 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Roles
 {
@@ -32,11 +34,28 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Roles
 	public class DbPatient : DbPersonSubTable
 	{
 
-		/// <summary>
-		/// Gets or sets the gender concept
-		/// </summary>
-		/// <value>The gender concept.</value>
-		[Column("gndr_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
+        /// <summary>
+        /// Parent key
+        /// </summary>
+        [JoinFilter(PropertyName = nameof(DbEntity.ClassConceptKey), Value = EntityClassKeyStrings.Patient)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
+
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the gender concept
+        /// </summary>
+        /// <value>The gender concept.</value>
+        [Column("gndr_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid GenderConceptKey {
 			get;
 			set;

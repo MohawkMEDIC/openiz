@@ -28,7 +28,7 @@ namespace OpenIZ.OrmLite.Attributes
     /// <summary>
     /// Represents a foreign key
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class ForeignKeyAttribute : Attribute
     {
         /// <summary>

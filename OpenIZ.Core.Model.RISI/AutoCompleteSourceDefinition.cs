@@ -21,6 +21,7 @@
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Entities;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Core.Model.RISI
 {
@@ -28,6 +29,7 @@ namespace OpenIZ.Core.Model.RISI
 	/// Represents an auto complete source definition.
 	/// </summary>
 	[XmlInclude(typeof(Place))]
+	[XmlInclude(typeof(Concept))]
 	[XmlInclude(typeof(Material))]
 	[XmlInclude(typeof(Organization))]
 	[JsonObject(nameof(AutoCompleteSourceDefinition))]

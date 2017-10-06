@@ -29,7 +29,7 @@ namespace OpenIZ.OrmLite.Attributes
     /// <summary>
     /// Tags the primary key of column
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class PrimaryKeyAttribute : Attribute
     {
     }
