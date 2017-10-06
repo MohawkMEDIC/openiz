@@ -276,6 +276,10 @@ namespace OpenIZ.OrmLite
                                         guardCondition.Append(".");
                                 }
                                 subQuery.Add(new KeyValuePair<string, object>(guardCondition.ToString(), guardClause.Key.Split('|')));
+
+                                // Filter by effective version
+                                if(typeof(IVersionedAssociation).IsAssignableFrom(clsModel))
+                                    subQuery.Add(new KeyValuePair<string, object>("obsoleteVersionSequence", new String[] { "null" }));
                             }
 
                             // Generate method
