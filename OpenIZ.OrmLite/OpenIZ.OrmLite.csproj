@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AssociativeTableAttribute.cs" />
+    <Compile Include="Attributes\JoinFilterAttribute.cs" />
     <Compile Include="Attributes\NotNullAttribute.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Attributes\AlwaysJoinAttribute.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="DataContext.Command.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="IAdoLoadedData.cs" />
+    <Compile Include="IQueryBuilderHack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\IDbProvider.cs" />
     <Compile Include="Providers\PostgreSQLProvider.cs" />

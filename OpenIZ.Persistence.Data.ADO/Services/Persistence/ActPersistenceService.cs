@@ -43,20 +43,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// </summary>
     public class ActPersistenceService : VersionedDataPersistenceService<Core.Model.Acts.Act, DbActVersion, DbAct>
     {
-        private const String ControlAct = "B35488CE-B7CD-4DD4-B4DE-5F83DC55AF9F";
-        private const String SubstanceAdministration = "932A3C7E-AD77-450A-8A1F-030FC2855450";
-        private const String Condition = "1987C53C-7AB8-4461-9EBC-0D428744A8C0";
-        private const String Registration = "6BE8D358-F591-4A3A-9A57-1889B0147C7E";
-        private const String Observation = "28D022C6-8A8B-47C4-9E6A-2BC67308739E";
-        private const String Inform = "192F1768-D39E-409D-87BE-5AFD0EE0D1FE";
-        private const String Encounter = "54B52119-1709-4098-8911-5DF6D6C84140";
-        private const String Battery = "676DE278-64AA-44F2-9B69-60D61FC1F5F5";
-        private const String Act = "D874424E-C692-4FD8-B94E-642E1CBF83E9";
-        private const String Procedure = "8CC5EF0D-3911-4D99-937F-6CFDC2A27D55";
-        private const String CareProvision = "1071D24E-6FE9-480F-8A20-B1825AE4D707";
-        private const String AccountManagement = "CA44A469-81D7-4484-9189-CA1D55AFECBC";
-        private const String Supply = "A064984F-9847-4480-8BEA-DDDF64B3C77C";
-
+       
         /// <summary>
         /// To model instance
         /// </summary>
@@ -88,7 +75,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             // 
             switch (dbAct.ClassConceptKey.ToString().ToUpper())
             {
-                case ControlAct:
+                case ActClassKeyStrings.ControlAct:
                     retVal = new ControlActPersistenceService().ToModelInstance(
                                 (dataInstance as CompositeResult)?.Values.OfType<DbControlAct>().FirstOrDefault() ?? context.FirstOrDefault<DbControlAct>(o => o.ParentKey == dbActVersion.VersionKey),
                                 dbActVersion,
@@ -96,7 +83,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                                 context,
                                 principal);
                     break;
-                case SubstanceAdministration:
+                case ActClassKeyStrings.SubstanceAdministration:
                     retVal = new SubstanceAdministrationPersistenceService().ToModelInstance(
                                 (dataInstance as CompositeResult)?.Values.OfType<DbSubstanceAdministration>().FirstOrDefault() ?? context.FirstOrDefault<DbSubstanceAdministration>(o => o.ParentKey == dbActVersion.VersionKey),
                                 dbActVersion,
@@ -104,7 +91,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                                 context,
                                 principal);
                     break;
-                case Observation:
+                case ActClassKeyStrings.Observation:
                     var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.VersionKey);
                     if (dbObs == null)
                     {
@@ -151,7 +138,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                                 break;
                         }
                     break;
-                case Encounter:
+                case ActClassKeyStrings.Encounter:
                     retVal = new EncounterPersistenceService().ToModelInstance(
                                 (dataInstance as CompositeResult)?.Values.OfType<DbPatientEncounter>().FirstOrDefault() ?? context.FirstOrDefault<DbPatientEncounter>(o => o.ParentKey == dbActVersion.VersionKey),
                                 dbActVersion,
@@ -159,7 +146,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                                 context,
                                 principal);
                     break;
-                case Condition:
+                case ActClassKeyStrings.Condition:
                 default:
                     retVal = this.ToModelInstance<Core.Model.Acts.Act>(dbActVersion, dbAct, context, principal);
                     break;
@@ -183,13 +170,13 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             if (!dbActVersion.ObsoletionTime.HasValue)
                 switch (dbAct.ClassConceptKey.ToString().ToUpper())
                 {
-                    case ControlAct:
+                    case ActClassKeyStrings.ControlAct:
                         retVal = cache?.GetCacheItem<ControlAct>(dbAct.Key);
                         break;
-                    case SubstanceAdministration:
+                    case ActClassKeyStrings.SubstanceAdministration:
                         retVal = cache?.GetCacheItem<SubstanceAdministration>(dbAct.Key);
                         break;
-                    case Observation:
+                    case ActClassKeyStrings.Observation:
                         var dbObs = (dataInstance as CompositeResult)?.Values.OfType<DbObservation>().FirstOrDefault() ?? context.FirstOrDefault<DbObservation>(o => o.ParentKey == dbActVersion.VersionKey);
                         if (dbObs != null)
                             switch (dbObs.ValueType)
@@ -205,10 +192,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                                     break;
                             }
                         break;
-                    case Encounter:
+                    case ActClassKeyStrings.Encounter:
                         retVal = cache?.GetCacheItem<PatientEncounter>(dbAct.Key);
                         break;
-                    case Condition:
+                    case ActClassKeyStrings.Condition:
                     default:
                         retVal = cache?.GetCacheItem<Act>(dbAct.Key);
                         break;
@@ -416,11 +403,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             switch (data.ClassConceptKey.ToString().ToUpper())
             {
-                case ControlAct:
+                case ActClassKeyStrings.ControlAct:
                     return new ControlActPersistenceService().InsertInternal(context, data.Convert<ControlAct>(), principal);
-                case SubstanceAdministration:
+                case ActClassKeyStrings.SubstanceAdministration:
                     return new SubstanceAdministrationPersistenceService().InsertInternal(context, data.Convert<SubstanceAdministration>(), principal);
-                case Observation:
+                case ActClassKeyStrings.Observation:
                     switch (data.GetType().Name)
                     {
                         case "TextObservation":
@@ -432,9 +419,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         default:
                             return this.InsertCoreProperties(context, data, principal);
                     }
-                case Encounter:
+                case ActClassKeyStrings.Encounter:
                     return new EncounterPersistenceService().InsertInternal(context, data.Convert<PatientEncounter>(), principal);
-                case Condition:
+                case ActClassKeyStrings.Condition:
                 default:
                     return this.InsertCoreProperties(context, data, principal);
 
@@ -448,11 +435,11 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             switch (data.ClassConceptKey.ToString().ToUpper())
             {
-                case ControlAct:
+                case ActClassKeyStrings.ControlAct:
                     return new ControlActPersistenceService().UpdateInternal(context, data.Convert<ControlAct>(), principal);
-                case SubstanceAdministration:
+                case ActClassKeyStrings.SubstanceAdministration:
                     return new SubstanceAdministrationPersistenceService().UpdateInternal(context, data.Convert<SubstanceAdministration>(), principal);
-                case Observation:
+                case ActClassKeyStrings.Observation:
                     switch (data.GetType().Name)
                     {
                         case "TextObservation":
@@ -464,9 +451,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         default:
                             return this.UpdateCoreProperties(context, data, principal);
                     }
-                case Encounter:
+                case ActClassKeyStrings.Encounter:
                     return new EncounterPersistenceService().UpdateInternal(context, data.Convert<PatientEncounter>(), principal);
-                case Condition:
+                case ActClassKeyStrings.Condition:
                 default:
                     return this.UpdateCoreProperties(context, data, principal);
 

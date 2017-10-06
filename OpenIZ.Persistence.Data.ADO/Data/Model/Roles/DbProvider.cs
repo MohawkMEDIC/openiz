@@ -20,6 +20,8 @@
 using System;
 using OpenIZ.OrmLite.Attributes;
 using OpenIZ.Persistence.Data.ADO.Data.Model.Concepts;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Persistence.Data.ADO.Data.Model.Entities;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Model.Roles
 {
@@ -30,11 +32,28 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Model.Roles
 	public class DbProvider : DbPersonSubTable
     {
 
-		/// <summary>
-		/// Gets or sets the specialty.
-		/// </summary>
-		/// <value>The specialty.</value>
-		[Column("spec_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
+        /// <summary>
+        /// Parent key
+        /// </summary>
+        [JoinFilter(PropertyName = nameof(DbEntity.ClassConceptKey), Value = EntityClassKeyStrings.Provider)]
+        public override Guid ParentKey
+        {
+            get
+            {
+                return base.ParentKey;
+            }
+
+            set
+            {
+                base.ParentKey = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the specialty.
+        /// </summary>
+        /// <value>The specialty.</value>
+        [Column("spec_cd_id"), ForeignKey(typeof(DbConcept), nameof(DbConcept.Key))]
 		public Guid Specialty {
 			get;
 			set;

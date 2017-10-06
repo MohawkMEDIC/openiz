@@ -291,6 +291,20 @@ namespace OpenIZ.Core.Model.Map
         }
 
         /// <summary>
+        /// Gets the model type for the specified domain type
+        /// </summary>
+        public Type MapDomainType(Type domainType)
+        {
+            ClassMap classMap = this.m_mapFile.Class.FirstOrDefault(o=>o.DomainType == domainType);
+            if (classMap == null)
+                return domainType;
+            Type modelType = classMap.ModelType;
+            if (domainType == null)
+                throw new InvalidOperationException(String.Format("Cannot find class {0}", classMap.DomainClass));
+            return modelType;
+        }
+
+        /// <summary>
         /// Create a traversal expression for a lambda expression
         /// </summary>
         public Expression CreateLambdaMemberAdjustmentExpression(Expression rootExpression, ParameterExpression lambdaParameterExpression)

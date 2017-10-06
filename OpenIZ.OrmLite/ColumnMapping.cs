@@ -20,6 +20,7 @@
 using OpenIZ.OrmLite.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace OpenIZ.OrmLite
@@ -59,6 +60,11 @@ namespace OpenIZ.OrmLite
         public ForeignKeyAttribute ForeignKey { get; private set; }
 
         /// <summary>
+        /// Join filters
+        /// </summary>
+        public List<JoinFilterAttribute> JoinFilters { get; private set; }
+
+        /// <summary>
         /// The table mapping which this column belongs to
         /// </summary>
         public TableMapping Table { get; private set; }
@@ -86,6 +92,7 @@ namespace OpenIZ.OrmLite
             this.IsNonNull = pi.GetCustomAttribute<NotNullAttribute>() != null;
             this.Table = table;
             this.IsAlwaysJoin = pi.GetCustomAttribute<AlwaysJoinAttribute>() != null;
+            this.JoinFilters = pi.GetCustomAttributes<JoinFilterAttribute>().ToList();
         }
 
         /// <summary>

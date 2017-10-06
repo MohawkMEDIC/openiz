@@ -157,6 +157,13 @@ namespace OizDevTool
 
             Assembly loadedAssembly = Assembly.LoadFile(parms.Assembly);
             var type = loadedAssembly.ExportedTypes.FirstOrDefault(o => o.Name == parms.Contract && o.IsInterface);
+            if(type == null)
+            {
+                Console.WriteLine("Could not find contract: {0}\r\nAvailable Interfaces:", parms.Contract);
+                foreach (var v in loadedAssembly.ExportedTypes.Where(o => o.IsInterface).Select(o => o.Name))
+                    Console.WriteLine("\t{0}", v);
+                return;
+            }
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(parms.XmlDocFile ?? Path.ChangeExtension(parms.Assembly, "xml"));
 
@@ -273,6 +280,7 @@ namespace OizDevTool
         /// </summary>
         private static void CreateAssemblyDoc(XmlSchemaSimpleType xmlSchemaSimpleType, Type type, XmlDocument xmlDoc)
         {
+            Console.WriteLine("Generating {0}...", xmlSchemaSimpleType.Name);
 
 
 
@@ -283,6 +291,8 @@ namespace OizDevTool
         /// </summary>
         private static void CreateAssemblyDoc(XmlSchemaComplexType schemaType, Type type, XmlDocument docComments)
         {
+            Console.WriteLine("Generating {0}...", schemaType.Name);
+
             if (type == null) return;
             var typeDoc = docComments.SelectSingleNode(String.Format("//*[local-name() = 'member'][@name = 'T:{0}']", type.FullName));
             if (typeDoc == null) return;

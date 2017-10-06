@@ -28,7 +28,7 @@ namespace OpenIZ.OrmLite.Attributes
     /// <summary>
     /// Represents an attribute for marking columns
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, Inherited = true)]
     public class ColumnAttribute : Attribute
     {
         /// <summary>

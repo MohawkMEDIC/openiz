@@ -34,10 +34,61 @@ using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using OpenIZ.OrmLite.Providers;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.OrmLite
 {
 
+    /// <summary>
+    /// Represents the query predicate
+    /// </summary>
+    public class QueryPredicate
+    {
+        // Regex to extract property, guards and cast
+        public static readonly Regex ExtractionRegex = new Regex(@"^(\w*?)(\[(.*?)\])?(\@(\w*))?(\.(.*))?$");
+
+        private const int PropertyRegexGroup = 1;
+        private const int GuardRegexGroup = 3;
+        private const int CastRegexGroup = 5;
+        private const int SubPropertyRegexGroup = 7;
+
+        /// <summary>
+        /// Gets or sets the path
+        /// </summary>
+        public String Path { get; private set; }
+
+        /// <summary>
+        /// Sub-path
+        /// </summary>
+        public String SubPath { get; private set; }
+
+        /// <summary>
+        /// Cast instruction
+        /// </summary>
+        public String CastAs { get; private set; }
+
+        /// <summary>
+        /// Guard condition
+        /// </summary>
+        public String Guard { get; private set; }
+
+        /// <summary>
+        /// Parse a condition
+        /// </summary>
+        public static QueryPredicate Parse(String condition)
+        {
+            var matches = ExtractionRegex.Match(condition);
+            if (!matches.Success) return null;
+
+            return new QueryPredicate()
+            {
+                Path = matches.Groups[PropertyRegexGroup].Value,
+                CastAs = matches.Groups[CastRegexGroup].Value,
+                Guard = matches.Groups[GuardRegexGroup].Value,
+                SubPath = matches.Groups[SubPropertyRegexGroup].Value
+            };
+        }
+    }
     /// <summary>
     /// Query builder for model objects
     /// </summary>
@@ -76,29 +127,26 @@ namespace OpenIZ.OrmLite
     /// </example>
     public class QueryBuilder
     {
-        // Regex to extract property, guards and cast
-        private readonly Regex m_extractionRegex = new Regex(@"^(\w*?)(\[(.*?)\])?(\@(\w*))?(\.(.*))?$");
 
         // Join cache
         private Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>> s_joinCache = new Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>>();
 
+        // A list of hacks injected into this query builder
+        private List<IQueryBuilderHack> m_hacks = new List<IQueryBuilderHack>();
+
         // Mapper
         private ModelMapper m_mapper;
         private IDbProvider m_provider;
-
-        private const int PropertyRegexGroup = 1;
-        private const int GuardRegexGroup = 3;
-        private const int CastRegexGroup = 5;
-        private const int SubPropertyRegexGroup = 7;
-
+       
         /// <summary>
         /// Represents model mapper
         /// </summary>
         /// <param name="mapper"></param>
-        public QueryBuilder(ModelMapper mapper, IDbProvider provider)
+        public QueryBuilder(ModelMapper mapper, IDbProvider provider, params IQueryBuilderHack[] hacks)
         {
             this.m_mapper = mapper;
             this.m_provider = provider;
+            this.m_hacks = hacks.ToList();
         }
         
         /// <summary>
@@ -137,6 +185,9 @@ namespace OpenIZ.OrmLite
 
                 Stack<TableMapping> fkStack = new Stack<TableMapping>();
                 fkStack.Push(tableMap);
+
+                List<JoinFilterAttribute> joinFilters = new List<JoinFilterAttribute>();
+
                 // Always join tables?
                 do
                 {
@@ -145,7 +196,21 @@ namespace OpenIZ.OrmLite
                     {
                         var fkTbl = TableMapping.Get(jt.ForeignKey.Table);
                         var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
-                        selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name}) ");
+                        selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name} ");
+
+                        foreach(var flt in jt.JoinFilters.Union(joinFilters).GroupBy(o=>o.PropertyName).ToArray())
+                        {
+                            var fltCol = fkTbl.GetColumn(flt.Key);
+                            if (fltCol == null)
+                                joinFilters.AddRange(flt);
+                            else
+                            {
+                                selectStatement.And($"({String.Join(" OR ", flt.Select(o => $"{tablePrefix}{fltCol.Table.TableName}.{fltCol.Name} = '{o.Value}'"))})");
+                                joinFilters.RemoveAll(o=>flt.Contains(o));
+                            }
+                        }
+
+                        selectStatement.Append(")");
                         if (!scopedTables.Contains(fkTbl))
                             fkStack.Push(fkTbl);
                         scopedTables.Add(fkAtt.Table);
@@ -199,20 +264,14 @@ namespace OpenIZ.OrmLite
                 workingParameters.RemoveAt(0);
 
                 // Match the regex and process
-                var matches = this.m_extractionRegex.Match(parm.Key);
-                if (!matches.Success) throw new ArgumentOutOfRangeException(parm.Key);
-
-                // First we want to collect all the working parameters 
-                string propertyPath = matches.Groups[PropertyRegexGroup].Value,
-                    castAs = matches.Groups[CastRegexGroup].Value,
-                    guard = matches.Groups[GuardRegexGroup].Value,
-                    subProperty = matches.Groups[SubPropertyRegexGroup].Value;
-
-                // Next, we want to construct the 
-                var otherParms = workingParameters.Where(o => this.m_extractionRegex.Match(o.Key).Groups[PropertyRegexGroup].Value == propertyPath).ToArray();
+                var propertyPredicate = QueryPredicate.Parse(parm.Key);
+                if (propertyPredicate == null) throw new ArgumentOutOfRangeException(parm.Key);
+               
+                // Next, we want to construct the other parms
+                var otherParms = workingParameters.Where(o => QueryPredicate.Parse(o.Key).Path == propertyPredicate.Path).ToArray();
 
                 // Remove the working parameters if the column is FK then all parameters
-                if (otherParms.Any() || !String.IsNullOrEmpty(guard) || !String.IsNullOrEmpty(subProperty))
+                if (otherParms.Any() || !String.IsNullOrEmpty(propertyPredicate.Guard) || !String.IsNullOrEmpty(propertyPredicate.SubPath))
                 {
                     foreach (var o in otherParms)
                         workingParameters.Remove(o);
@@ -222,8 +281,8 @@ namespace OpenIZ.OrmLite
                     IEnumerable<KeyValuePair<String, Object>> queryParms = new List<KeyValuePair<String, Object>>() { parm }.Union(otherParms);
 
                     // Grab the appropriate builder
-                    var subProp = typeof(TModel).GetXmlProperty(propertyPath, true);
-                    if (subProp == null) throw new MissingMemberException(propertyPath);
+                    var subProp = typeof(TModel).GetXmlProperty(propertyPredicate.Path, true);
+                    if (subProp == null) throw new MissingMemberException(propertyPredicate.Path);
 
                     // Link to this table in the other?
                     // Is this a collection?
@@ -235,12 +294,15 @@ namespace OpenIZ.OrmLite
                         var subTableMap = TableMapping.Get(subTableType);
                         var linkColumns = subTableMap.Columns.Where(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
                         //var linkColumn = linkColumns.Count() > 1 ? linkColumns.FirstOrDefault(o=>o.SourceProperty.Name == "SourceKey") : linkColumns.FirstOrDefault();
-                        var linkColumn = linkColumns.Count() > 1 ? linkColumns.FirstOrDefault(o => subProperty.StartsWith("source") ? o.SourceProperty.Name != "SourceKey" : o.SourceProperty.Name == "SourceKey") : linkColumns.FirstOrDefault();
+                        var linkColumn = linkColumns.Count() > 1 ? linkColumns.FirstOrDefault(o => propertyPredicate.SubPath.StartsWith("source") ? o.SourceProperty.Name != "SourceKey" : o.SourceProperty.Name == "SourceKey") : linkColumns.FirstOrDefault();
 
                         // Link column is null, is there an assoc attrib?
                         SqlStatement subQueryStatement = new SqlStatement(this.m_provider);
 
                         var subTableColumn = linkColumn;
+                        var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
+                        string existsClause = String.Empty;
+
                         if (linkColumn == null)
                         {
                             var tableWithJoin = scopedTables.Select(o => o.AssociationWith(subTableMap)).FirstOrDefault(o=>o != null);
@@ -249,14 +311,19 @@ namespace OpenIZ.OrmLite
                             subTableColumn = subTableMap.GetColumn(targetColumn.ForeignKey.Column);
                             // The sub-query statement needs to be joined as well 
                             var lnkPfx = IncrementSubQueryAlias(tablePrefix);
-                            subQueryStatement.Append($"SELECT {lnkPfx}{tableWithJoin.TableName}.{linkColumn.Name} FROM {tableWithJoin.TableName} AS {lnkPfx}{tableWithJoin.TableName} WHERE {lnkPfx}{tableWithJoin.TableName}.{targetColumn.Name} IN (");
+                            subQueryStatement.Append($"SELECT {lnkPfx}{tableWithJoin.TableName}.{linkColumn.Name} FROM {tableWithJoin.TableName} AS {lnkPfx}{tableWithJoin.TableName} WHERE ");
+                            existsClause = $"{lnkPfx}{tableWithJoin.TableName}.{targetColumn.Name}";
                             //throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
                         }
-                            
-                        var guardConditions = queryParms.GroupBy(o => this.m_extractionRegex.Match(o.Key).Groups[GuardRegexGroup].Value);
+                        else
+                            existsClause = $"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name}";
+
+                        var guardConditions = queryParms.GroupBy(o => QueryPredicate.Parse(o.Key).Guard);
+
+                        int nGuards = 0;
                         foreach (var guardClause in guardConditions)
                         {
-                            var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(this.m_extractionRegex.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value)).ToList();
+                            var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(QueryPredicate.Parse(o.Key).SubPath, o.Value)).ToList();
 
                             // TODO: GUARD CONDITION HERE!!!!
                             if(!String.IsNullOrEmpty(guardClause.Key))
@@ -285,31 +352,32 @@ namespace OpenIZ.OrmLite
                             // Generate method
                             var prefix = IncrementSubQueryAlias(tablePrefix);
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[])});
-                            subQueryStatement.Append("(");
+                            subQueryStatement.And($" {existsClause} IN (");
+                            nGuards++;
+                            existsClause = $"{prefix}{subTableColumn.Table.TableName}.{subTableColumn.Name}";
                             subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
-                            subQueryStatement.Append(")");
-
-                            // TODO: Check if limiting the the query is better
-                            if (guardConditions.Last().Key != guardClause.Key)
-                                subQueryStatement.Append(" INTERSECT ");
+                                                       
                         }
 
-                        if (subTableColumn != linkColumn)
+                        // Unwind guards
+                        while(nGuards-- > 0)
                             subQueryStatement.Append(")");
-                        
-                        var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
-                        whereClause.And($"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name} IN (").Append(subQueryStatement).Append(")");
+
+                        if (subTableColumn != linkColumn)
+                            whereClause.And($"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name} IN (").Append(subQueryStatement).Append(")");
+                        else
+                            whereClause.And(subQueryStatement);
 
                     }
-                    else // this table points at other
+                    else if(!this.m_hacks.Any(o=>o.HackQuery(this, selectStatement, whereClause, subProp, tablePrefix, propertyPredicate, parm.Value, scopedTables))) // this table points at other
                     {
-                        var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(this.m_extractionRegex.Match(o.Key).Groups[SubPropertyRegexGroup].Value, o.Value)).ToList();
+                        var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(QueryPredicate.Parse(o.Key).SubPath, o.Value)).ToList();
 
                         if (!subQuery.Any(o => o.Key == "obsoletionTime") && typeof(IBaseEntityData).IsAssignableFrom(subProp.PropertyType))
                             subQuery.Add(new KeyValuePair<string, object>("obsoletionTime", "null"));
 
                         TableMapping tableMapping = null;
-                        var subPropKey = typeof(TModel).GetXmlProperty(propertyPath);
+                        var subPropKey = typeof(TModel).GetXmlProperty(propertyPredicate.Path);
 
                         // Get column info
                         PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(typeof(TModel), o.OrmType, subPropKey); })?.FirstOrDefault(o => o != null);
@@ -331,14 +399,14 @@ namespace OpenIZ.OrmLite
                         //var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
                         //SqlStatement subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                         SqlStatement subQueryStatement = null;
-                        if (String.IsNullOrEmpty(castAs))
+                        if (String.IsNullOrEmpty(propertyPredicate.CastAs))
                         {
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
                             subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                         }
                         else // we need to cast!
                         {
-                            var castAsType = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType("OpenIZ.Core.Model", castAs);
+                            var castAsType = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType("OpenIZ.Core.Model", propertyPredicate.CastAs);
 
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { castAsType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
                             subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
@@ -352,7 +420,7 @@ namespace OpenIZ.OrmLite
 
                 }
                 else
-                    whereClause.And(CreateWhereCondition<TModel>(propertyPath, parm.Value, tablePrefix, scopedTables));
+                    whereClause.And(CreateWhereCondition(typeof(TModel), propertyPredicate.Path, parm.Value, tablePrefix, scopedTables));
 
             }
 
@@ -390,19 +458,18 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
-        /// Create a single where condition based on the property info
+        /// Create a where condition
         /// </summary>
-        public SqlStatement CreateWhereCondition<TModel>(String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables)
-        {
-
+        public SqlStatement CreateWhereCondition(Type tmodel, String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables)
+        { 
             SqlStatement retVal = new SqlStatement(this.m_provider);
 
             // Map the type
             var tableMapping = scopedTables.First();
-            var propertyInfo = typeof(TModel).GetXmlProperty(propertyPath);
+            var propertyInfo = tmodel.GetXmlProperty(propertyPath);
             if (propertyInfo == null)
                 throw new ArgumentOutOfRangeException(propertyPath);
-            PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(typeof(TModel), o.OrmType, propertyInfo); }).FirstOrDefault(o => o != null);
+            PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(tmodel, o.OrmType, propertyInfo); }).FirstOrDefault(o => o != null);
 
             // Now map the property path
             var tableAlias = $"{tablePrefix}{tableMapping.TableName}";
