@@ -220,6 +220,19 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                             return data;
 
                         }
+                        catch(DbException e)
+                        {
+
+#if DEBUG
+                            this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
+#else
+                            this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e.Message);
+#endif
+                            tx?.Rollback();
+
+                            this.TranslateDbException(e);
+                            throw;
+                        }
                         catch (Exception e)
                         {
                             this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
@@ -309,13 +322,26 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
                             return data;
                         }
-                        catch (Exception e)
+                        catch (DbException e)
                         {
 
 #if DEBUG
                         this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
 #else
                             this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e.Message);
+#endif
+                            tx?.Rollback();
+
+                            this.TranslateDbException(e);
+                            throw;
+                        }
+                        catch (Exception e)
+                        {
+
+#if DEBUG
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0} -- {1}", e, this.ObjectToString(data));
+#else
+                        this.m_tracer.TraceEvent(TraceEventType.Error, 0, "Error : {0}", e.Message);
 #endif
                             tx?.Rollback();
 
@@ -337,6 +363,65 @@ namespace OpenIZ.Persistence.Data.ADO.Services
                 finally
                 {
                     Interlocked.Decrement(ref m_currentRequests);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Translates a DB exception to an appropriate OpenIZ exception
+        /// </summary>
+        private void TranslateDbException(DbException e)
+        {
+            if (e.Data["SqlState"] != null)
+            {
+                switch (e.Data["SqlState"].ToString())
+                {
+                    case "O9001": // OpenIZ => Data Validation Error
+                        throw new DetectedIssueException(new List<DetectedIssue>() {
+                                        new DetectedIssue()
+                                        {
+                                            Priority = DetectedIssuePriorityType.Error,
+                                            Text = e.Message
+                                        }
+                                    });
+                    case "O9002": // OpenIZ => Codification error
+                        throw new DetectedIssueException(new List<DetectedIssue>() {
+                                        new DetectedIssue()
+                                        {
+                                            Priority = DetectedIssuePriorityType.Error,
+                                            Text = e.Message
+                                        },
+                                        new DetectedIssue()
+                                        {
+                                            Priority = DetectedIssuePriorityType.Informational,
+                                            Text = "HINT: Select a code that is from the correct concept set or add the selected code to the concept set"
+                                        }
+                                    });
+                    case "23502": // PGSQL - NOT NULL 
+                    case "23503": // PGSQL - FK VIOLATION
+                    case "23505": // PGSQL - UQ VIOLATION
+                        throw new DetectedIssueException(new List<DetectedIssue>() {
+                                        new DetectedIssue() {
+                                            Priority = DetectedIssuePriorityType.Error,
+                                            Text = e.Message
+                                        }
+                                    });
+                    case "23514": // PGSQL - CK VIOLATION
+                        throw new DetectedIssueException(new List<DetectedIssue>()
+                        {
+                            new DetectedIssue()
+                            {
+                                Priority = DetectedIssuePriorityType.Error,
+                                Text = e.Message
+                            },
+                            new DetectedIssue()
+                            {
+                                Priority = DetectedIssuePriorityType.Informational,
+                                Text = "HINT: The code you're using may be incorrect for the given context"
+                            }
+                        });
+                    default:
+                        throw new DataPersistenceException(e.Message, e);
                 }
             }
         }

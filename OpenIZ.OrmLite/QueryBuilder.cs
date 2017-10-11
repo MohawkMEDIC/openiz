@@ -439,6 +439,7 @@ namespace OpenIZ.OrmLite
                 }
             }
             retVal.Append(selectStatement.Where(whereClause));
+            
             return retVal;
         }
 
