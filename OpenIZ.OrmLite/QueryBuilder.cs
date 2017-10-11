@@ -300,7 +300,6 @@ namespace OpenIZ.OrmLite
                         SqlStatement subQueryStatement = new SqlStatement(this.m_provider);
 
                         var subTableColumn = linkColumn;
-                        var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
                         string existsClause = String.Empty;
 
                         if (linkColumn == null)
@@ -315,7 +314,10 @@ namespace OpenIZ.OrmLite
                             existsClause = $"{lnkPfx}{tableWithJoin.TableName}.{targetColumn.Name}";
                             //throw new InvalidOperationException($"Cannot find foreign key reference to table {tableMap.TableName} in {subTableMap.TableName}");
                         }
-                        else
+
+                        var localTable = scopedTables.Where(o => o.GetColumn(linkColumn.ForeignKey.Column) != null).FirstOrDefault();
+                        
+                        if(String.IsNullOrEmpty(existsClause))
                             existsClause = $"{tablePrefix}{localTable.TableName}.{localTable.GetColumn(linkColumn.ForeignKey.Column).Name}";
 
                         var guardConditions = queryParms.GroupBy(o => QueryPredicate.Parse(o.Key).Guard);
