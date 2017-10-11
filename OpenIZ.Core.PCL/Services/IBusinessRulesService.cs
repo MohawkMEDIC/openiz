@@ -116,5 +116,6 @@ namespace OpenIZ.Core.Services
 		/// </summary>
 		[XmlAttribute("type"), JsonProperty("type")]
 		public Guid TypeKey { get; set; }
-	}
+
+    }
 }

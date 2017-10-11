@@ -170,8 +170,14 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 this.ProgressChanged?.Invoke(this, new ProgressChangedEventArgs((float)(i + 1) / data.Item.Count, itm));
 
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(DataContext), itm.GetType(), typeof(IPrincipal) });
-
-                data.Item[i] = mi.Invoke(svc, new object[] { context, itm, principal }) as IdentifiedData;
+                try
+                {
+                    data.Item[i] = mi.Invoke(svc, new object[] { context, itm, principal }) as IdentifiedData;
+                }
+                catch(TargetInvocationException e)
+                {
+                    throw e.InnerException;
+                }
             }
 
             // Cache items

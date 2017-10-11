@@ -269,6 +269,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\SQL\PSQL\openiz-vws.sql" />
+    <Content Include="Data\SQL\Updates\20171011-PSQL.sql" />
     <Content Include="Data\SQL\Updates\20171003-PSQL.sql" />
     <Content Include="Data\SQL\Updates\20170913-PSQL.sql" />
   </ItemGroup>
