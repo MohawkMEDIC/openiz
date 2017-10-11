@@ -106,7 +106,9 @@ namespace OpenIZ.Core.Persistence
 
                     try
                     {
-                        this.ProgressChanged?.Invoke(this, new Services.ProgressChangedEventArgs(i++ / (float)ds.Action.Count, ds.Id));
+                        this.ProgressChanged?.Invoke(this, new Services.ProgressChangedEventArgs(i++ / (float)ds.Action.Count, itm.Element.ToString()));
+                        if (ApplicationContext.Current.GetService<IDataCachingService>()?.Size > 10000) // Probably a good idea to clear memcache
+                            ApplicationContext.Current.GetService<IDataCachingService>().Clear();
 
                         // IDP Type
                         Type idpType = typeof(IDataPersistenceService<>);

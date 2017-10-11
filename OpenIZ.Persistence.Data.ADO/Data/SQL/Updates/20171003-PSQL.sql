@@ -8,6 +8,7 @@
  BEGIN TRANSACTION ;
 
 CREATE INDEX ent_addr_cmp_typ_cd_idx ON ent_addr_cmp_tbl(typ_cd_id);
+CREATE INDEX act_ptcpt_rol_cd_idx ON act_ptcpt_tbl(rol_cd_id);
 
  -- GET THE SCHEMA VERSION
 CREATE OR REPLACE FUNCTION GET_SCH_VRSN() RETURNS VARCHAR(10) AS

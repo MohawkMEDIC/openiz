@@ -141,13 +141,40 @@ namespace OizDevTool
 			var dsi = new DataInitializationService();
 			var ds = DatasetInstall.Load(parms.DatasetFile);
 			Console.WriteLine("Will install dataset {0} ({1} objects)...", ds.Action.Count, ds.Id);
+
+            dsi.ProgressChanged += (o, e) =>
+            {
+                Console.CursorLeft = 4;
+                Console.Write("{0} ({1:0%})", e.State, e.Progress);
+            };
+
 			dsi.InstallDataset(ds);
 		}
 
-		/// <summary>
-		/// Will layout the object in a referentially proper way
+        /// <summary>
+		/// Installs the specified dataset into the IMS database
 		/// </summary>
-		private static void LayoutObject(IdentifiedData obj, DatasetInstall dsOutput, bool insert = false)
+		/// <param name="args"></param>
+		[Description("Shows statistics from the specified dataset")]
+        [Example("Count statistics from dataset", "--dataset=my-dictionary.dataset")]
+        [ParameterClass(typeof(InstallParameters))]
+        public static void Stats(string[] args)
+        {
+            // Load the file
+            var parms = new ParameterParser<InstallParameters>().Parse(args);
+            ApplicationContext.Current.Start();
+            var ds = DatasetInstall.Load(parms.DatasetFile);
+            Console.WriteLine("Statistics for {0} ({1} objects)...", ds.Action.Count, ds.Id);
+            foreach(var gc in ds.Action?.GroupBy(o=>o.Element?.GetType()))
+            {
+                Console.WriteLine("{0} - {1} items", gc.Key, gc.Count());
+            }
+        }
+
+        /// <summary>
+        /// Will layout the object in a referentially proper way
+        /// </summary>
+        private static void LayoutObject(IdentifiedData obj, DatasetInstall dsOutput, bool insert = false)
 		{
 			// Add myself
 			if (!insert)
