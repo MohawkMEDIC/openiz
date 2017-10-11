@@ -84,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleParameters.cs" />
+    <None Include="Applets\org.openiz.templates.pak">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\000-IndustryTypes.dataset">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -80,5 +80,15 @@ namespace OpenIZ.Core.Services
 		/// Removes an object from the cache
 		/// </summary>
 		void Remove(Guid key);
+
+        /// <summary>
+        /// Clear all keys in the cache
+        /// </summary>
+        void Clear();
+
+        /// <summary>
+        /// Gets the current size of the cache
+        /// </summary>
+        long Size { get; }
 	}
 }

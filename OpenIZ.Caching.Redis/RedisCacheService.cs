@@ -364,7 +364,6 @@ public TData GetCacheItem<TData>(Guid key) where TData : IdentifiedData
 
                 this.m_connection = ConnectionMultiplexer.Connect(configuration);
                 this.m_subscriber = this.m_connection.GetSubscriber();
-
                 // Look for non-cached types
                 foreach (var itm in typeof(IdentifiedData).Assembly.GetTypes().Where(o => o.GetCustomAttribute<NonCachedAttribute>() != null || o.GetCustomAttribute<XmlRootAttribute>() == null))
                     this.m_nonCached.Add(itm);
@@ -418,6 +417,24 @@ public TData GetCacheItem<TData>(Guid key) where TData : IdentifiedData
             this.m_connection = null;
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        /// <summary>
+        /// Clear the cache
+        /// </summary>
+        public void Clear()
+        {
+            this.m_connection.GetServer(this.m_configuration.Servers.First()).FlushAllDatabases();
+        }
+
+        /// <summary>
+        /// Size of the database
+        /// </summary>
+        public long Size {
+            get
+            {
+                return this.m_connection.GetServer(this.m_configuration.Servers.First()).DatabaseSize();
+            }
         }
     }
 }

@@ -281,5 +281,18 @@ namespace OpenIZ.Caching.Memory
                 this.Removed?.Invoke(this, new DataCacheEventArgs(exist));
             }
         }
+
+        /// <summary>
+        /// Clear the memory cache
+        /// </summary>
+        public void Clear()
+        {
+            MemoryCache.Current.Clear();
+        }
+
+        /// <summary>
+        /// Get the size of the cache in entries
+        /// </summary>
+        public long Size {  get { return MemoryCache.Current.GetSize(); } }
     }
 }

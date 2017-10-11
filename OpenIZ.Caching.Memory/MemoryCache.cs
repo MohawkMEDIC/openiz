@@ -143,10 +143,9 @@ namespace OpenIZ.Caching.Memory
         /// <summary>
         /// Gets the size of the current cache
         /// </summary>
-        public int GetSize(Type t)
+        public int GetSize()
         {
             this.ThrowIfDisposed();
-
             return this.m_entryTable.Count;
 
         }
@@ -168,7 +167,7 @@ namespace OpenIZ.Caching.Memory
                 return;
 
             CacheEntry candidate = null;
-            if (this.m_entryTable.TryGetValue(idData.Key.Value, out candidate))
+            if (this.m_entryTable.TryGetValue(idData.Key.Value, out candidate) && candidate != null)
             {
                 if ((candidate.Data as IIdentifiedEntity).LoadState <= idData.LoadState)
                     candidate.Update(data as IdentifiedData);
@@ -178,6 +177,8 @@ namespace OpenIZ.Caching.Memory
                 {
                     if (!m_entryTable.ContainsKey(idData.Key.Value))
                         this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
+                    else
+                        this.m_entryTable[idData.Key.Value] = new CacheEntry(DateTime.Now, data as IdentifiedData);
                 }
 		}
 
@@ -192,7 +193,7 @@ namespace OpenIZ.Caching.Memory
            
 
             CacheEntry candidate = null;
-            if (this.m_entryTable.TryGetValue(key.Value, out candidate))
+            if (this.m_entryTable.TryGetValue(key.Value, out candidate) && candidate != null)
             {
                 candidate.Touch();
                 return candidate.Data;
