@@ -34,11 +34,17 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 	/// </summary>
 	public class AllergyIntoleranceResourceHandler : RepositoryResourceHandlerBase<AllergyIntolerance, CodedObservation>
 	{
+        /// <summary>
+        /// Map coded allergy intolerance resource to FHIR
+        /// </summary>
 		protected override AllergyIntolerance MapToFhir(CodedObservation model, WebOperationContext webOperationContext)
 		{
 			throw new NotImplementedException();
 		}
 
+        /// <summary>
+        /// Map allergy intolerance from FHIR to a coded observation
+        /// </summary>
 		protected override CodedObservation MapToModel(AllergyIntolerance resource, WebOperationContext webOperationContext)
 		{
 			throw new NotImplementedException();
