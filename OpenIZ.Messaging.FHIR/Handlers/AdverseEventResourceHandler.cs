@@ -106,6 +106,9 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             return retVal;
         }
 
+        /// <summary>
+        /// Map adverse events to the model 
+        /// </summary>
         protected override Act MapToModel(AdverseEvent resource, WebOperationContext webOperationContext)
         {
             throw new NotImplementedException();
