@@ -19,8 +19,7 @@ CREATE AGGREGATE public.FIRST (
         basetype = anyelement,
         stype    = anyelement
 );
-
-
+ 
  -- GET THE SCHEMA VERSION
 CREATE OR REPLACE FUNCTION GET_SCH_VRSN() RETURNS VARCHAR(10) AS
 $$

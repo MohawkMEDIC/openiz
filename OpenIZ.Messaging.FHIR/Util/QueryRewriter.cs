@@ -79,11 +79,21 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// </summary>
         static QueryRewriter()
         {
-            using (Stream s = typeof(QueryRewriter).Assembly.GetManifestResourceStream("OpenIZ.Messaging.FHIR.ParameterMap.xml"))
-            {
+            Stream s = null;
+            try {
+                var externMap = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "ParameterMap.Fhir.xml");
+                if (File.Exists(externMap))
+                    s = File.OpenRead(externMap);
+                else
+                    s = typeof(QueryRewriter).Assembly.GetManifestResourceStream("OpenIZ.Messaging.FHIR.ParameterMap.xml");
                 XmlSerializer xsz = new XmlSerializer(typeof(QueryParameterMap));
                 s_map = xsz.Deserialize(s) as QueryParameterMap;
                 s_default = s_map.Map.FirstOrDefault(o => o.SourceType == typeof(ResourceBase));
+            }
+            finally
+            {
+                s?.Close();
+                s?.Dispose();
             }
         }
 
