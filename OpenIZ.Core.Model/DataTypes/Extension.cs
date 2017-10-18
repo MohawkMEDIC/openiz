@@ -131,7 +131,7 @@ namespace OpenIZ.Core.Model.DataTypes
             }
             set { }
         }
-        
+         
         /// <summary>
         /// Gets or sets the extension type
         /// </summary>
