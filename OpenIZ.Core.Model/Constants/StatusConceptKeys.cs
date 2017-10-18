@@ -39,7 +39,7 @@ namespace OpenIZ.Core.Model.Constants
 		/// <summary>
 		/// Indicates that the data is new, and may require additional verification or actions
 		/// </summary>
-		public static readonly Guid New = Guid.Parse("stoc");
+		public static readonly Guid New = Guid.Parse("C34FCBF1-E0FE-4989-90FD-0DC49E1B9685");
 
 		/// <summary>
 		/// Indicates that the entity or act never existed, and was entered in error
