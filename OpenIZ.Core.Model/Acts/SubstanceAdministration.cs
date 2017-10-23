@@ -72,7 +72,6 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the key for route
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("route"), JsonProperty("route")]
         public Guid? RouteKey
         {
@@ -91,7 +90,6 @@ namespace OpenIZ.Core.Model.Acts
         /// Gets or sets the key for dosing unit
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        
         [XmlElement("doseUnit"), JsonProperty("doseUnit")]
         public Guid? DoseUnitKey
         {
