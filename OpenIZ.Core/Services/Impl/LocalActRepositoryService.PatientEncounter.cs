@@ -41,14 +41,14 @@ namespace OpenIZ.Core.Services.Impl
 	/// <seealso cref="Services.IRepositoryService{PatientEncounter}" />
 	/// <seealso cref="Services.IRepositoryService{CodedObservation}" />
 	/// <seealso cref="Services.IRepositoryService{TextObservation}" />
-	public partial class LocalActRepositoryService
-	{
-		/// <summary>
-		/// Finds the specified data.
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <returns>Returns a list of identified data.</returns>
-		public IEnumerable<PatientEncounter> Find(Expression<Func<PatientEncounter, bool>> query)
+	public partial class LocalActRepositoryService : IRepositoryService<PatientEncounter>
+    {
+        /// <summary>
+        /// Finds the specified data.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>Returns a list of identified data.</returns>
+        public IEnumerable<PatientEncounter> Find(Expression<Func<PatientEncounter, bool>> query)
 		{
 			int tr = 0;
 			return this.Find<PatientEncounter>(query, 0, null, out tr);
