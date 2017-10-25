@@ -366,7 +366,15 @@
     <property modelName="DoseUnitKey" domainName="DoseUnitConceptKey"/>
     <property modelName="VersionKey" domainName="ParentKey"/>
   </class>
-
+  
+  <class modelClass="OpenIZ.Core.Model.Acts.Procedure, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbProcedure, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
+    <property modelName="MethodKey" domainName="MethodConceptKey"/>
+    <property modelName="ApproachSiteKey" domainName="ApproachSiteConceptKey"/>
+    <property modelName="TargetSiteKey" domainName="TargetSiteConceptKey"/>
+    <property modelName="VersionKey" domainName="ParentKey"/>
+  </class>
+  
   <class modelClass="OpenIZ.Core.Model.Acts.PatientEncounter, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Persistence.Data.ADO.Data.Model.Acts.DbPatientEncounter, OpenIZ.Persistence.Data.ADO, Version=0.5.0.0">
     <property modelName="VersionKey" domainName="ParentKey"/>

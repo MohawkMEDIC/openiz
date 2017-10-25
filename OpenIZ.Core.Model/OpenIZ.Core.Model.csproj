@@ -44,6 +44,7 @@
     <Compile Include="Acts\ControlAct.cs" />
     <Compile Include="Acts\Observation.cs" />
     <Compile Include="Acts\PatientEncounter.cs" />
+    <Compile Include="Acts\Procedure.cs" />
     <Compile Include="Acts\Protocol.cs" />
     <Compile Include="Acts\SubstanceAdministration.cs" />
     <Compile Include="Attributes\AutoLoadAttribute.cs" />
