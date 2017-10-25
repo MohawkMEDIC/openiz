@@ -77,6 +77,7 @@
     <Compile Include="ResourceHandler\PatientEncounterResourceHandler.cs" />
     <Compile Include="ResourceHandler\PersonResourceHandler.cs" />
     <Compile Include="ResourceHandler\ObservationResourceHandlers.cs" />
+    <Compile Include="ResourceHandler\ProcedureResourceHandler.cs" />
     <Compile Include="ResourceHandler\ReferenceTermResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptReferenceTermResourceHandler.cs" />
     <Compile Include="ResourceHandler\ConceptResourceHandler.cs" />
