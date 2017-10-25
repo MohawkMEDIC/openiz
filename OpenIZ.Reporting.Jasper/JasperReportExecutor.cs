@@ -579,12 +579,12 @@ namespace OpenIZ.Reporting.Jasper
 
 			// HACK: remove existing reports to ensure we have the latest reports
 			// otherwise we'd need logic to reconcile which reports have been removed, updated etc.
-			var existingReports = reportDefinitionPersistenceService.Query(r => true, AuthenticationContext.Current.Principal);
+			//var existingReports = reportDefinitionPersistenceService.Query(r => true, AuthenticationContext.Current.Principal);
 
-			foreach (var reportDefinition in existingReports)
-			{
-				reportDefinitionPersistenceService.Obsolete(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			}
+			//foreach (var reportDefinition in existingReports)
+			//{
+			//	reportDefinitionPersistenceService.Obsolete(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			//}
 
 			var reports = new List<ReportDefinition>();
 
@@ -645,17 +645,26 @@ namespace OpenIZ.Reporting.Jasper
 
 				var existingReport = reportDefinitionPersistenceService.Query(r => r.CorrelationId == report.CorrelationId, 0, 1, AuthenticationContext.Current.Principal, out totalResults).FirstOrDefault();
 
+				// does the report already exist?
 				if (existingReport == null)
 				{
 					reportDefinitionPersistenceService.Insert(report, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 				}
 				else
 				{
+					// make sure the keys for the report formats map back to the report definition itself
+					report.Formats.ForEach(r => r.ReportDefinitionKey = existingReport.Key.Value);
+
+					// make sure the keys for the report parameters map back to the report definition itself
+					report.Parameters.ForEach(r => r.ReportDefinitionKey = existingReport.Key.Value);
+
+					// update the existing report information
 					existingReport.Formats = report.Formats;
 					existingReport.Parameters = report.Parameters;
 					existingReport.Description = report.Description;
 					existingReport.Name = report.Name;
 
+					// update the report definition
 					reportDefinitionPersistenceService.Update(existingReport, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 				}
 			}
