@@ -184,7 +184,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             foreach (var itm in data.Item)
             {
                 itm.LoadState = LoadState.FullLoad;
-                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
+                context.AddCacheCommit(itm);
             }
             return data;
         }
