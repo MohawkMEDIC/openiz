@@ -271,15 +271,23 @@ namespace OpenIZ.Caching.Redis
                 if (this.m_connection == null || data == null || !data.Key.HasValue ||
                     (data as BaseEntityData)?.ObsoletionTime.HasValue == true ||
                     this.m_nonCached.Contains(data.GetType()))
+                {
+                    this.m_tracer.TraceVerbose("Skipping caching of {0} (OBS:{1}, NCC:{2})",
+                        data, (data as BaseEntityData)?.ObsoletionTime.HasValue == true, this.m_nonCached.Contains(data.GetType()));
                     return;
+                }
 
                 // Only add data which is an entity, act, or relationship
                 //if (data is Act || data is Entity || data is ActRelationship || data is ActParticipation || data is EntityRelationship || data is Concept)
                 //{
                 // Add
+
                 var redisDb = this.m_connection.GetDatabase();
                 var existing = redisDb.KeyExists(data.Key.Value.ToString());
                 redisDb.HashSet(data.Key.Value.ToString(), this.SerializeObject(data));
+#if DEBUG
+                this.m_tracer.TraceVerbose("HashSet {0} (EXIST: {1}; @: {2})", data, existing, new System.Diagnostics.StackTrace(true).GetFrame(1));
+#endif 
 
                 this.EnsureCacheConsistency(new DataCacheEventArgs(data));
                 if (existing)
