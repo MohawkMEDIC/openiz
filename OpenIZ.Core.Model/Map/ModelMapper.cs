@@ -381,7 +381,9 @@ namespace OpenIZ.Core.Model.Map
             }
             catch (Exception e)
             {
+#if VERBOSE_DEBUG
                 Debug.WriteLine("Error converting {0}. {1}", expression, e);
+#endif 
                 throw;
             }
         }

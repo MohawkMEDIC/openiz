@@ -34,15 +34,17 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public partial class LocalActRepositoryService
-	{
+	public partial class LocalActRepositoryService : IRepositoryService<QuantityObservation>,
+        IRepositoryService<CodedObservation>,
+        IRepositoryService<TextObservation>
+    {
 
-		/// <summary>
-		/// Finds the specified data.
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <returns>Returns a list of identified data.</returns>
-		public IEnumerable<QuantityObservation> Find(Expression<Func<QuantityObservation, bool>> query)
+        /// <summary>
+        /// Finds the specified data.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>Returns a list of identified data.</returns>
+        public IEnumerable<QuantityObservation> Find(Expression<Func<QuantityObservation, bool>> query)
 		{
 			int tr = 0;
 			return this.Find<QuantityObservation>(query, 0, null, out tr);

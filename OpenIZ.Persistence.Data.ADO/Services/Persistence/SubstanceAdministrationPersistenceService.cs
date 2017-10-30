@@ -68,7 +68,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
         {
             if(data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context, principal) as Concept;
             if (data.Route != null) data.Route = data.Route?.EnsureExists(context, principal) as Concept;
-            else
+            else if(!data.RouteKey.HasValue)
                 data.RouteKey = NullReasonKeys.NoInformation;
 
             // JF: Correct dose unit key

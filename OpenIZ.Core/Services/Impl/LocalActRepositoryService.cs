@@ -46,11 +46,6 @@ namespace OpenIZ.Core.Services.Impl
 	/// <seealso cref="Services.IRepositoryService{TextObservation}" />
 	public partial class LocalActRepositoryService : IActRepositoryService, 
         IRepositoryService<Act>,
-        IRepositoryService<SubstanceAdministration>,
-        IRepositoryService<QuantityObservation>,
-        IRepositoryService<PatientEncounter>,
-        IRepositoryService<CodedObservation>,
-        IRepositoryService<TextObservation>,
         IPersistableQueryRepositoryService,
         IFastQueryRepositoryService
 	{

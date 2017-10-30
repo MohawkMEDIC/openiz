@@ -52,13 +52,7 @@ namespace OpenIZ.Core.Model.Entities
 		/// Gets the security user account associated with this person if applicable
 		/// </summary>
 		[XmlIgnore, JsonIgnore, DataIgnore]
-		public SecurityUser AsSecurityUser
-		{
-			get
-			{
-				return EntitySource.Current.Get<UserEntity>(this.Key, this.VersionKey)?.SecurityUser;
-			}
-		}
+		public virtual SecurityUser AsSecurityUser { get { return null; } }
 
 		/// <summary>
 		/// Gets or sets the person's date of birth
