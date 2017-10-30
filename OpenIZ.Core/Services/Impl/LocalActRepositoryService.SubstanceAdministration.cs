@@ -34,15 +34,15 @@ namespace OpenIZ.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public partial class LocalActRepositoryService
-	{
+	public partial class LocalActRepositoryService : IRepositoryService<SubstanceAdministration>
+    {
 
-		/// <summary>
-		/// Finds a list of substance administrations.
-		/// </summary>
-		/// <param name="query">The query.</param>
-		/// <returns>Returns a list of identified data.</returns>
-		public IEnumerable<SubstanceAdministration> Find(Expression<Func<SubstanceAdministration, bool>> query)
+        /// <summary>
+        /// Finds a list of substance administrations.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>Returns a list of identified data.</returns>
+        public IEnumerable<SubstanceAdministration> Find(Expression<Func<SubstanceAdministration, bool>> query)
 		{
 			int tr = 0;
 			return this.Find<SubstanceAdministration>(query, 0, null, out tr);

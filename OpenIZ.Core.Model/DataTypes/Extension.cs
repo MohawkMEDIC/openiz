@@ -131,25 +131,7 @@ namespace OpenIZ.Core.Model.DataTypes
             }
             set { }
         }
-
-        /// <summary>
-        /// Gets or sets the extension type key
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        [XmlElement("extensionType"), JsonProperty("extensionType")]
-        public Guid? ExtensionTypeKey
-        {
-            get { return this.m_extensionTypeKey; }
-            set
-            {
-                if (this.m_extensionTypeKey != value)
-                {
-                    this.m_extensionTypeKey = value;
-                    this.m_extensionType = null;
-                }
-            }
-        }
-
+         
         /// <summary>
         /// Gets or sets the extension type
         /// </summary>
@@ -167,6 +149,24 @@ namespace OpenIZ.Core.Model.DataTypes
             {
                 this.m_extensionType = value;
                 this.m_extensionTypeKey = value?.Key;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the extension type key
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [XmlElement("extensionType"), JsonProperty("extensionType")]
+        public Guid? ExtensionTypeKey
+        {
+            get { return this.m_extensionTypeKey; }
+            set
+            {
+                if (this.m_extensionTypeKey != value)
+                {
+                    this.m_extensionTypeKey = value;
+                    this.m_extensionType = null;
+                }
             }
         }
 

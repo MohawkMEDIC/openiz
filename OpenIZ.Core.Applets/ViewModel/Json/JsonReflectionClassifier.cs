@@ -73,10 +73,13 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         {
             Dictionary<String, IList> retVal = new Dictionary<string, IList>();
 
-			// copy for the enumeration check
-	        var copy = new object[data.Count];
-
-			data.CopyTo(copy, 0);
+            // copy for the enumeration check
+            object[] copy;
+            lock (data.SyncRoot)
+            {
+                copy = new object[data.Count];
+                data.CopyTo(copy, 0);
+            }
 
             foreach(var itm in copy)
             {

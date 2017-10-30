@@ -141,6 +141,7 @@
     <Compile Include="Services\Impl\FileSystemQueueService.cs" />
     <Compile Include="Services\Impl\LocalActRepositoryService.PatientEncounter.cs" />
     <Compile Include="Services\Impl\LocalActRepositoryService.Observation.cs" />
+    <Compile Include="Services\Impl\LocalActRepositoryService.Procedure.cs" />
     <Compile Include="Services\Impl\LocalActRepositoryService.SubstanceAdministration.cs" />
     <Compile Include="Services\Impl\LocalActRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalAlertRepositoryService.cs" />
