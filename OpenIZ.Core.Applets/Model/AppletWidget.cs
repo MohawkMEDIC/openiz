@@ -27,13 +27,66 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Applets.Model
 {
+
     /// <summary>
-    /// Represents a panel. A panel is a special pointer which has a title and content which can be rendered.
+    /// Identifies the scope of the panel
     /// </summary>
-    [XmlType(nameof(AppletPanel), Namespace = "http://openiz.org/applet")]
-    [JsonObject]
-    public class AppletPanel
+    [XmlType(nameof(AppletWidgetScope), Namespace = "http://openiz.org/applet")]
+    public enum AppletWidgetScope
     {
+        [XmlEnum("patient")]
+        Patient,
+        [XmlEnum("place")]
+        Facility,
+        [XmlEnum("user")]
+        User
+    }
+
+    /// <summary>
+    /// Identifies the type which the widget is
+    /// </summary>
+    [XmlType(nameof(AppletWidgetType), Namespace = "http://openiz.org/applet")]
+    public enum AppletWidgetType
+    {
+        /// <summary>
+        /// The extension is a panel which is added to a panel container
+        /// </summary>
+        [XmlEnum("panel")]
+        Panel,
+        /// <summary>
+        /// The extension is a tab
+        /// </summary>
+        [XmlEnum("tab")]
+        Tab
+    }
+    /// <summary>
+    /// Represents a widget. A widget is a special pointer which has a title and content which can be rendered
+    /// in a container 
+    /// </summary>
+    [XmlType(nameof(AppletWidget), Namespace = "http://openiz.org/applet")]
+    [JsonObject]
+    public class AppletWidget
+    {
+        /// <summary>
+        /// Gets or sets the scope where the widget can be used
+        /// </summary>
+        [XmlAttribute("scope")]
+        [JsonProperty("scope")]
+        public AppletWidgetScope Scope { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type of widget
+        /// </summary>
+        [XmlAttribute("type")]
+        [JsonProperty("type")]
+        public AppletWidgetType Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets hthe name of the widget
+        /// </summary>
+        [XmlAttribute("name")]
+        [JsonProperty("name")]
+        public String Name { get; set; }
 
         /// <summary>
         /// Gets the main titles of the panel
@@ -45,11 +98,10 @@ namespace OpenIZ.Core.Applets.Model
         /// <summary>
         /// Gets or sets the content to show in the panel
         /// </summary>
-        [XmlElement("contentRef", Type = typeof(String))]
-        [XmlElement("contentHtml", Type = typeof(AppletAssetHtml))]
-        [JsonIgnore]
-        public Object PanelAsset { get; set; }
-
+        [XmlAttribute("asset")]
+        [JsonProperty("asset")]
+        public String Asset { get; set; }
+        
         /// <summary>
         /// Gets or sets the icon file reference
         /// </summary>
@@ -67,6 +119,31 @@ namespace OpenIZ.Core.Applets.Model
         [XmlElement("description")]
         [JsonProperty("description")]
         public List<LocaleString> Descriptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the applets required policies for a user to run
+        /// </summary>
+        [XmlElement("demand")]
+        [JsonProperty("demand")]
+        public List<String> Policies
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Controller name
+        /// </summary>
+        [XmlElement("controller")]
+        [JsonProperty("controller")]
+        public String Controller { get; set; }
+
+        /// <summary>
+        /// Controller source code
+        /// </summary>
+        [XmlElement("controller-src")]
+        [JsonProperty("controller_src")]
+        public String ControllerHref { get; set; }
 
         /// <summary>
         /// Gets the specified name

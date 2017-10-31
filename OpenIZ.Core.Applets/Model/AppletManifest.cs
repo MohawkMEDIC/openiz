@@ -164,8 +164,8 @@ namespace OpenIZ.Core.Applets.Model
         /// <summary>
         /// Gets or sets the applet panels
         /// </summary>
-        [XmlElement("panel")]
-        public List<AppletPanel> Panels
+        [XmlElement("widget")]
+        public List<AppletWidget> Widgets
         {
             get;
             set;
