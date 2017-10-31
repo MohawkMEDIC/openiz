@@ -547,7 +547,7 @@ namespace OpenIZ.Core.Applets
                 {
                     Html = new XElement(sourceAsset.Html),
                     Layout = sourceAsset.Layout,
-                    Script = new List<String>(sourceAsset.Script),
+                    Script = new List<AssetScriptReference>(sourceAsset.Script),
                     Titles = new List<LocaleString>(sourceAsset.Titles),
                     Style = new List<string>(sourceAsset.Style)
                 };
@@ -851,11 +851,11 @@ namespace OpenIZ.Core.Applets
             if (isUiContainer) // IS A UI CONTAINER = ANGULAR UI REQUIRES ALL CONTROLLERS BE LOADED
                 return this.ViewStateAssets.SelectMany(o => this.GetInjectionHeaders(o, false)).Distinct(new XElementEquityComparer()).ToList();
             else
-                foreach (var itm in htmlAsset.Script)
+                foreach (var itm in htmlAsset.Script.Where(o=>o.IsStatic))
                 {
-                    var incAsset = this.ResolveAsset(itm, asset);
+                    var incAsset = this.ResolveAsset(itm.Reference, asset);
                     if (incAsset != null)
-                        headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
+                        headerInjection.AddRange(new ScriptBundleContent(itm.Reference).HeaderElement);
                     else
                         throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
                 }
