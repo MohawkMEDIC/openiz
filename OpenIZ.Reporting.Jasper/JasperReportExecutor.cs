@@ -577,15 +577,6 @@ namespace OpenIZ.Reporting.Jasper
 				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
 			}
 
-			// HACK: remove existing reports to ensure we have the latest reports
-			// otherwise we'd need logic to reconcile which reports have been removed, updated etc.
-			//var existingReports = reportDefinitionPersistenceService.Query(r => true, AuthenticationContext.Current.Principal);
-
-			//foreach (var reportDefinition in existingReports)
-			//{
-			//	reportDefinitionPersistenceService.Obsolete(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
-			//}
-
 			var reports = new List<ReportDefinition>();
 
 			foreach (var resourceLookup in resources.ResourceLookups)
@@ -670,7 +661,19 @@ namespace OpenIZ.Reporting.Jasper
 			}
 
 			// load the reports from the database.
-			var dbReports = reportDefinitionPersistenceService.Query(r => r.Key != null, AuthenticationContext.Current.Principal);
+			var dbReports = reportDefinitionPersistenceService.Query(r => r.Key != null, AuthenticationContext.Current.Principal).ToList();
+
+			// find the reports which have been removed from the jasper server
+			var reportsToRemove = dbReports.Except(reports, new ReportDefinitionEqualityComparer()).ToList();
+
+			// update the db reports list
+			dbReports = dbReports.Except(reportsToRemove).ToList();
+
+			// delete the reports from the db which no longer exist on the jasper server
+			foreach (var reportDefinition in reportsToRemove)
+			{
+				reportDefinitionPersistenceService.Obsolete(reportDefinition, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+			}
 
 			return new RisiCollection<ReportDefinition>(dbReports);
 		}
