@@ -26,6 +26,7 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Applets.Model
 {
+    
     /// <summary>
     /// Applet template definition
     /// </summary>
@@ -75,6 +76,11 @@ namespace OpenIZ.Core.Applets.Model
         [XmlElement("oid")]
         public String Oid { get; set; }
 
+        /// <summary>
+        /// Identifies allowed content (templates) which can be embedded in this template
+        /// </summary>
+        [XmlElement("allowComponent")]
+        public List<String> AllowComponent { get; set; }
 
         /// <summary>
         /// The content loaded

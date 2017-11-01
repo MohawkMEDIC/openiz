@@ -65,7 +65,7 @@ namespace OpenIZ.Core.Applets.Model
     /// </summary>
     [XmlType(nameof(AppletWidget), Namespace = "http://openiz.org/applet")]
     [JsonObject]
-    public class AppletWidget
+    public class AppletWidget : AppletAssetHtml
     {
         /// <summary>
         /// Gets or sets the scope where the widget can be used
@@ -82,26 +82,27 @@ namespace OpenIZ.Core.Applets.Model
         public AppletWidgetType Type { get; set; }
 
         /// <summary>
-        /// Gets or sets hthe name of the widget
+        /// Gets or sets the name of the widget
         /// </summary>
         [XmlAttribute("name")]
         [JsonProperty("name")]
         public String Name { get; set; }
 
         /// <summary>
-        /// Gets the main titles of the panel
+        /// Gets or sets the controller
         /// </summary>
-        [XmlElement("title")]
-        [JsonProperty("title")]
-        public List<LocaleString> Titles { get; set; }
+        [XmlElement("controller")]
+        [JsonProperty("controller")]
+        public String Controller { get; set; }
 
         /// <summary>
-        /// Gets or sets the content to show in the panel
+        /// Gets the main titles of the panel
         /// </summary>
-        [XmlAttribute("asset")]
-        [JsonProperty("asset")]
-        public String Asset { get; set; }
-        
+        [XmlElement("description")]
+        [JsonProperty("description")]
+        public List<LocaleString> Description { get; set; }
+
+
         /// <summary>
         /// Gets or sets the icon file reference
         /// </summary>
@@ -114,57 +115,13 @@ namespace OpenIZ.Core.Applets.Model
         }
 
         /// <summary>
-        /// Gets or sets the description
-        /// </summary>
-        [XmlElement("description")]
-        [JsonProperty("description")]
-        public List<LocaleString> Descriptions { get; set; }
-
-        /// <summary>
-        /// Gets or sets the applets required policies for a user to run
-        /// </summary>
-        [XmlElement("demand")]
-        [JsonProperty("demand")]
-        public List<String> Policies
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Controller name
-        /// </summary>
-        [XmlElement("controller")]
-        [JsonProperty("controller")]
-        public String Controller { get; set; }
-
-        /// <summary>
-        /// Controller source code
-        /// </summary>
-        [XmlElement("controller-src")]
-        [JsonProperty("controller_src")]
-        public String ControllerHref { get; set; }
-
-        /// <summary>
-        /// Gets the specified name
-        /// </summary>
-        public String GetTitle(String language, bool returnNuetralIfNotFound = true)
-        {
-            var str = this.Titles?.Find(o => o.Language == language);
-            if (str == null && returnNuetralIfNotFound)
-                str = this.Titles?.Find(o => o.Language == null);
-            return str?.Value;
-        }
-
-
-        /// <summary>
         /// Gets the specified decription
         /// </summary>
         public String GetDescription(String language, bool returnNuetralIfNotFound = true)
         {
-            var str = this.Descriptions?.Find(o => o.Language == language);
+            var str = this.Description?.Find(o => o.Language == language);
             if (str == null && returnNuetralIfNotFound)
-                str = this.Descriptions?.Find(o => o.Language == null);
+                str = this.Description?.Find(o => o.Language == null);
             return str?.Value;
         }
     }
