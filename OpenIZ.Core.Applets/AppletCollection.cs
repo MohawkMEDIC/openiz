@@ -133,6 +133,7 @@ namespace OpenIZ.Core.Applets
         private static Dictionary<String, AppletTemplateDefinition> s_templateCache = new Dictionary<string, AppletTemplateDefinition>();
         private static Dictionary<String, ViewModelDescription> s_viewModelCache = new Dictionary<string, ViewModelDescription>();
         private static List<AppletAsset> s_viewStateAssets = null;
+        private static List<AppletWidget> s_widgetAssets = null;
 
         private static Object s_syncLock = new object();
 
@@ -262,6 +263,20 @@ namespace OpenIZ.Core.Applets
                 return s_viewStateAssets;
             }
         }
+
+        /// <summary>
+        /// Gets a list of all widgets for all loaded applets
+        /// </summary>
+        public List<AppletWidget> WidgetAssets
+        {
+            get
+            {
+                if (s_widgetAssets == null)
+                    s_widgetAssets = this.m_appletManifest.SelectMany(m => m.Assets).Select(a => ((a.Content == null && this.Resolver != null ? this.Resolver(a) : a.Content) as AppletWidget)).Where(o=>o != null).ToList();
+                return s_widgetAssets;
+            }
+        }
+
 
         /// <summary>
         /// Return true if the collection is readonly

@@ -28,13 +28,13 @@ using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Applets.Model
 {
-	/// <summary>
-	/// Applet package used for installations only
-	/// </summary>
-	[XmlType(nameof(AppletPackage), Namespace = "http://openiz.org/applet")]
+    /// <summary>
+    /// Applet package used for installations only
+    /// </summary>
+    [XmlType(nameof(AppletPackage), Namespace = "http://openiz.org/applet")]
     [XmlRoot(nameof(AppletPackage), Namespace = "http://openiz.org/applet")]
-	public class AppletPackage
-	{
+    public class AppletPackage
+    {
 
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         public static AppletPackage Load(Stream resourceStream)
         {
-            using (GZipStream gzs = new GZipStream(resourceStream,  CompressionMode.Decompress))
+            using (GZipStream gzs = new GZipStream(resourceStream, CompressionMode.Decompress))
             {
                 var amfst = s_xsz.Deserialize(gzs) as AppletPackage;
                 return amfst;
@@ -73,20 +73,22 @@ namespace OpenIZ.Core.Applets.Model
         /// Applet reference metadata
         /// </summary>
         [XmlElement("info")]
-		public AppletInfo Meta {
-			get;
-			set;
-		}
+        public AppletInfo Meta
+        {
+            get;
+            set;
+        }
 
-		/// <summary>
-		/// Gets or ses the manifest to be installed
-		/// </summary>
-		/// <value>The manifest.</value>
-		[XmlElement("manifest")]
-		public byte[] Manifest {
-			get;
-			set;
-		}
+        /// <summary>
+        /// Gets or ses the manifest to be installed
+        /// </summary>
+        /// <value>The manifest.</value>
+        [XmlElement("manifest")]
+        public byte[] Manifest
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// The pak version
@@ -111,7 +113,7 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         public AppletManifest Unpack()
         {
-            switch(this.Compression)
+            switch (this.Compression)
             {
                 case "lzma":
                     using (MemoryStream ms = new MemoryStream(this.Manifest))
@@ -125,6 +127,9 @@ namespace OpenIZ.Core.Applets.Model
                     using (MemoryStream ms = new MemoryStream(this.Manifest))
                     using (GZipStream dfs = new GZipStream(ms, CompressionMode.Decompress))
                         return AppletManifest.Load(dfs);
+                case "none":
+                    using (MemoryStream ms = new MemoryStream(this.Manifest))
+                        return AppletManifest.Load(ms);
                 default:
                     using (MemoryStream ms = new MemoryStream(this.Manifest))
                     using (DeflateStream dfs = new DeflateStream(ms, CompressionMode.Decompress))
