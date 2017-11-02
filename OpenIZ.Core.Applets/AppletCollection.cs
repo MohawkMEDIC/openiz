@@ -133,6 +133,7 @@ namespace OpenIZ.Core.Applets
         private static Dictionary<String, AppletTemplateDefinition> s_templateCache = new Dictionary<string, AppletTemplateDefinition>();
         private static Dictionary<String, ViewModelDescription> s_viewModelCache = new Dictionary<string, ViewModelDescription>();
         private static List<AppletAsset> s_viewStateAssets = null;
+        private static List<AppletWidget> s_widgetAssets = null;
 
         private static Object s_syncLock = new object();
 
@@ -262,6 +263,20 @@ namespace OpenIZ.Core.Applets
                 return s_viewStateAssets;
             }
         }
+
+        /// <summary>
+        /// Gets a list of all widgets for all loaded applets
+        /// </summary>
+        public List<AppletWidget> WidgetAssets
+        {
+            get
+            {
+                if (s_widgetAssets == null)
+                    s_widgetAssets = this.m_appletManifest.SelectMany(m => m.Assets).Select(a => ((a.Content == null && this.Resolver != null ? this.Resolver(a) : a.Content) as AppletWidget)).Where(o=>o != null).ToList();
+                return s_widgetAssets;
+            }
+        }
+
 
         /// <summary>
         /// Return true if the collection is readonly
@@ -547,7 +562,7 @@ namespace OpenIZ.Core.Applets
                 {
                     Html = new XElement(sourceAsset.Html),
                     Layout = sourceAsset.Layout,
-                    Script = new List<String>(sourceAsset.Script),
+                    Script = new List<AssetScriptReference>(sourceAsset.Script),
                     Titles = new List<LocaleString>(sourceAsset.Titles),
                     Style = new List<string>(sourceAsset.Style)
                 };
@@ -851,11 +866,11 @@ namespace OpenIZ.Core.Applets
             if (isUiContainer) // IS A UI CONTAINER = ANGULAR UI REQUIRES ALL CONTROLLERS BE LOADED
                 return this.ViewStateAssets.SelectMany(o => this.GetInjectionHeaders(o, false)).Distinct(new XElementEquityComparer()).ToList();
             else
-                foreach (var itm in htmlAsset.Script)
+                foreach (var itm in htmlAsset.Script.Where(o=>o.IsStatic != false))
                 {
-                    var incAsset = this.ResolveAsset(itm, asset);
+                    var incAsset = this.ResolveAsset(itm.Reference, asset);
                     if (incAsset != null)
-                        headerInjection.AddRange(new ScriptBundleContent(itm).HeaderElement);
+                        headerInjection.AddRange(new ScriptBundleContent(itm.Reference).HeaderElement);
                     else
                         throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
                 }

@@ -94,6 +94,9 @@ namespace OpenIZ.Core.Applets.Model
                         case "gzip":
                             compressStream = new GZipStream(ms, SharpCompress.Compressors.CompressionMode.Compress, leaveOpen: true);
                             break;
+                        case "none":
+                            compressStream = ms;
+                            break;
                         default:
                             compressStream = new DeflateStream(ms, SharpCompress.Compressors.CompressionMode.Compress, leaveOpen: true);
                             break;
@@ -156,16 +159,6 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         [XmlElement("menuItem")]
         public List<AppletMenu> Menus
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the applet panels
-        /// </summary>
-        [XmlElement("panel")]
-        public List<AppletPanel> Panels
         {
             get;
             set;

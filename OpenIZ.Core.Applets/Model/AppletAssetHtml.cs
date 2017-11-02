@@ -43,7 +43,7 @@ namespace OpenIZ.Core.Applets.Model
         public AppletAssetHtml()
         {
             this.Bundle = new List<string>();
-            this.Script = new List<string>();
+            this.Script = new List<AssetScriptReference>();
             this.Style = new List<string>();
         }
 
@@ -81,7 +81,7 @@ namespace OpenIZ.Core.Applets.Model
         /// Gets or sets the script
         /// </summary>
         [XmlElement("script")]
-        public List<String> Script { get; set; }
+        public List<AssetScriptReference> Script { get; set; }
 
         /// <summary>
         /// Gets or sets the script
