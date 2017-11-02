@@ -42,5 +42,10 @@ namespace OpenIZ.Core.Applets.Model
         [XmlElement("controller")]
         public string Controller { get; set; }
 
+        /// <summary>
+        /// Gets or sets the controller source
+        /// </summary>
+        [XmlElement("script")]
+        public string ControllerScript { get; set; }
     }
 }

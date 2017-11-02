@@ -2,7 +2,6 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Open Immunize"
-#define MyAppVersion "0.9.8.0"
 #define MyAppPublisher "Mohawk College mHealth & eHealth Development and Innovation Centre"
 #define MyAppURL "http://openiz.org"
 
@@ -13,7 +12,7 @@
 AppId={{E2A094E4-0E7E-4C21-9283-4F169DB35C12}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
+AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -89,9 +88,9 @@ Name: tools\migration; Description: GIIS Migration Tooling; Types: full
 [Files]
 #ifdef BUNDLED
 #ifdef x64
-Source: .\installsupp\postgresql-9.2.4-1-windows-x64.exe; DestDir: {tmp}; Flags:dontcopy
+Source: .\installsupp\postgresql-9.4.14-1-windows-x64.exe; DestDir: {tmp}; Flags:dontcopy
 #else
-Source: .\installsupp\postgresql-9.2.4-1-windows.exe; DestDir: {tmp}; Flags:dontcopy
+Source: .\installsupp\postgresql-9.4.14-1-windows.exe; DestDir: {tmp}; Flags:dontcopy
 #endif
 #endif
 
@@ -478,11 +477,11 @@ begin
   #ifdef BUNDLED
     if (chkInstallPSQL.Checked) then begin
 	#ifdef x64
-      ExtractTemporaryFile('postgresql-9.2.4-1-windows-x64.exe');
-      if Exec(ExpandConstant('{tmp}\postgresql-9.2.4-1-windows-x64.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename PostgreSQLCR --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+      ExtractTemporaryFile('postgresql-9.4.14-1-windows-x64.exe');
+      if Exec(ExpandConstant('{tmp}\postgresql-9.4.14-1-windows-x64.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename psql_openiz --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
 	#else
-      ExtractTemporaryFile('postgresql-9.2.4-1-windows.exe');
-      if Exec(ExpandConstant('{tmp}\postgresql-9.2.4-1-windows.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename PostgreSQLCR --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+      ExtractTemporaryFile('postgresql-9.4.14-1-windows.exe');
+      if Exec(ExpandConstant('{tmp}\postgresql-9.4.14-1-windows.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename  psql_openiz --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
 	#endif
           // handle success if necessary; ResultCode contains the exit code
           if not (ResultCode = 0) then begin
@@ -528,13 +527,13 @@ var
   lblSU, lblSUPwd, lblDescription : TLabel;
   
 begin
-  Page := CreateCustomPage( PreviousPageId, ExpandConstant('Install PostgreSQL'), ExpandConstant('Setup can install PostgreSQL 9.2'));
+  Page := CreateCustomPage( PreviousPageId, ExpandConstant('Install PostgreSQL'), ExpandConstant('Setup can install PostgreSQL 9.4'));
   
   // Select mode
   lblDescription := TLabel.Create(Page);
 	with lblDescription do begin
 		Parent := Page.Surface;
-		Caption := ExpandConstant('Setup can install Enterprise DB''s Windows version of PostgreSQL 9.2.4 on this computer. You do not need to do this if you have another computer running PostgreSQL 9.1 or higher.');
+		Caption := ExpandConstant('Setup can install Enterprise DB''s Windows version of PostgreSQL 9.4.14 on this computer. You do not need to do this if you have another computer running PostgreSQL 9.4 or higher.');
     WordWrap := true;
 		Left := ScaleX(5);
 		Top := ScaleY(8);
@@ -546,7 +545,7 @@ begin
 	chkInstallPSQL := TCheckBox.Create(Page);
 	with chkInstallPSQL do begin
 		Parent := Page.Surface;
-		Caption := ExpandConstant('Install PostgreSQL 9.2.4');
+		Caption := ExpandConstant('Install PostgreSQL 9.4.14');
 		Left := ScaleX(5);
 		Top := ScaleY(60);
 		Width := ScaleX(348);

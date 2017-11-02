@@ -510,7 +510,7 @@ namespace OpenIZ.Core.Applets
         /// <summary>
         /// Render asset content
         /// </summary>
-        public byte[] RenderAssetContent(AppletAsset asset, string preProcessLocalization = null)
+        public byte[] RenderAssetContent(AppletAsset asset, string preProcessLocalization = null, bool staticScriptRefs = true)
         {
 
             // First, is there an object already
