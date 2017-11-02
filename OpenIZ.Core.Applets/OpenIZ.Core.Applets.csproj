@@ -52,13 +52,14 @@
   <ItemGroup>
     <Compile Include="AppletCollection.cs" />
     <Compile Include="BindingExpressionVisitor.cs" />
-    <Compile Include="Model\AppletPanel.cs" />
+    <Compile Include="Model\AppletWidget.cs" />
     <Compile Include="Model\AppletStrings.cs" />
     <Compile Include="Model\AppletTemplateDefinition.cs" />
     <Compile Include="Model\AppletView.cs" />
     <Compile Include="Model\AppletViewModelDefinition.cs" />
     <Compile Include="Model\AppletViewState.cs" />
     <Compile Include="Model\AssetData.cs" />
+    <Compile Include="Model\AssetScriptReference.cs" />
     <Compile Include="RenderBundle.cs" />
     <Compile Include="Model\AppletAsset.cs" />
     <Compile Include="Model\AppletAssetHtml.cs" />
@@ -111,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ViewModel\Default.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Schema\AppletAssets.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

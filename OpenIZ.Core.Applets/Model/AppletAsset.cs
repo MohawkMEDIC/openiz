@@ -91,6 +91,7 @@ namespace OpenIZ.Core.Applets.Model
 		[XmlElement("contentBin", Type = typeof(byte[]))]
 		[XmlElement("contentXml", Type = typeof(XElement))]
         [XmlElement("contentHtml", Type = typeof(AppletAssetHtml))]
+        [XmlElement("widgetHtml", Type = typeof(AppletWidget))]
 		public Object Content {
 			get;
 			set;
