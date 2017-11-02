@@ -866,7 +866,7 @@ namespace OpenIZ.Core.Applets
             if (isUiContainer) // IS A UI CONTAINER = ANGULAR UI REQUIRES ALL CONTROLLERS BE LOADED
                 return this.ViewStateAssets.SelectMany(o => this.GetInjectionHeaders(o, false)).Distinct(new XElementEquityComparer()).ToList();
             else
-                foreach (var itm in htmlAsset.Script.Where(o=>o.IsStatic))
+                foreach (var itm in htmlAsset.Script.Where(o=>o.IsStatic != false))
                 {
                     var incAsset = this.ResolveAsset(itm.Reference, asset);
                     if (incAsset != null)
