@@ -14,7 +14,27 @@ namespace OpenIZ.Core.Applets.Model
         /// True if the reference is static
         /// </summary>
         [XmlAttribute("static")]
-        public bool IsStatic { get; set; }
+        [JsonProperty("static")]
+        public string IsStaticString
+        {
+            get
+            {
+                return this.IsStatic.ToString();
+            }
+            set
+            {
+                if (value == null)
+                    this.IsStatic = null;
+                else
+                    this.IsStatic = bool.Parse(value);
+            }
+        }
+
+        /// <summary>
+        /// Static
+        /// </summary>
+        [XmlIgnore]
+        public bool? IsStatic { get; set; }
 
         /// <summary>
         /// Reference itself
