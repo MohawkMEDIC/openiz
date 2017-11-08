@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using MARC.HI.EHRS.SVC.Core.Wcf;
 using OpenIZ.Messaging.IMSI.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Behavior
 
             // Add the inspector for the messaging
             endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new ImsiMessageInspector());
+            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new LogMessageInspector());
+
             // Apply to each operation the IMSI formatter
             foreach (var op in endpoint.Contract.Operations)
             {

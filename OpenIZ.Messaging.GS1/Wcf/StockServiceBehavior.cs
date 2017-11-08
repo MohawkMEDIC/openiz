@@ -43,7 +43,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
     /// <summary>
     /// Stock service behavior
     /// </summary>
-    [ServiceBehavior(Name = "GS1BMS_Behavior", ConfigurationName = "GS1BMS")]
+    [ServiceBehavior(Name = "GS1BMS_Behavior", ConfigurationName = "GS1BMS", InstanceContextMode = InstanceContextMode.PerCall)]
     public class StockServiceBehavior : IStockService
     {
 
