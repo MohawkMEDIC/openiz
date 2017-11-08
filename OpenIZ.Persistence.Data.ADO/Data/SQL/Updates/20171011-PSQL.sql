@@ -62,6 +62,11 @@ INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('455F1772-F580-47E8-86BD-B5CE25D351F9', '61fcbf42-b5e0-4fb5-9392-108a5c6dbec7', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_organization_manufactures_manufacturedMaterialOnly');
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('455F1772-F580-47E8-86BD-B5CE25D351F9', '21ab7873-8ef3-4d78-9c19-4582b3c40631', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_organization_manufactures_manufacturedMaterialOnly');
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('455F1772-F580-47E8-86BD-B5CE25D351F9', '79dd4f75-68e8-4722-a7f5-8bc2e08f5cd6', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_organization_manufactures_manufacturedMaterialOnly');
+INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('455F1772-F580-47E8-86BD-B5CE25D351F9', '4d1a5c28-deb7-411e-b75f-d524f90dfa63', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_organization_manufactures_manufacturedMaterialOnly');
+
+-- RULE 10. -> SDL IS VALID BETWEEN PATIENTS AND LOCATIONS
+INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'bacd9c6f-3fa9-481e-9636-37457962804d', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_organization_manufactures_manufacturedMaterialOnly');
+INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('41baf7aa-5ffd-4421-831f-42d4ab3de38a', 'bacd9c6f-3fa9-481e-9636-37457962804d', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_organization_manufactures_manufacturedMaterialOnly');
 
 -- RULE 10. -> ONLY SDLS CAN OWN STOCK
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('117da15c-0864-4f00-a987-9b9854cba44e', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'fafec286-89d5-420b-9085-054aca9d1eef', 'err_organization_manufactures_manufacturedMaterialOnly');
@@ -72,6 +77,9 @@ INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err
 	FROM cd_set_mem_vw
 	WHERE set_mnemonic = 'FamilyMember';
 	
+
+-- RULE 12. -> Materials may use other Materials
+INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('08fff7d9-bac7-417b-b026-c9bee52f4a37', 'd39073be-0f8f-440e-b8c8-7034cc138a95', 'd39073be-0f8f-440e-b8c8-7034cc138a95', 'err_materials_associate_materials');
 
 -- TRIGGER - ENSURE THAT ANY VALUE INSERTED INTO THE ENT_REL_TBL HAS THE PROPER PARENT
 CREATE OR REPLACE FUNCTION trg_vrfy_ent_rel_tbl () RETURNS TRIGGER AS $$

@@ -18,6 +18,7 @@
  * Date: 2016-11-30
  */
 using MARC.HI.EHRS.SVC.Core.Services;
+using MARC.HI.EHRS.SVC.Core.Wcf;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Wcf;
 using OpenIZ.Core.Wcf.Behavior;
@@ -129,6 +130,7 @@ namespace OpenIZ.Messaging.GS1
 				{
 					this.traceSource.TraceInformation("Starting GS1 on {0}...", endpoint.Address);
                     endpoint.EndpointBehaviors.Add(new WcfErrorEndpointBehavior());
+                    endpoint.EndpointBehaviors.Add(new WcfLoggingEndpointBehavior());
                 }
 				// Start the webhost
 				this.webHost.Open();
