@@ -104,8 +104,29 @@ namespace OpenIZ.Core.Model.Query
                     case ExpressionType.Convert:
                     case ExpressionType.TypeAs:
                         return node;
+                    case ExpressionType.Not:
+                        return this.VisitUnary((UnaryExpression)node);
                     default:
                         return this.Visit(node);
+                }
+            }
+
+            /// <summary>
+            /// Visit unary expression
+            /// </summary>
+            protected override Expression VisitUnary(UnaryExpression node)
+            {
+                switch(node.NodeType)
+                {
+                    case ExpressionType.Not:
+                        var parmName = this.ExtractPath(node.Operand, true);
+                        if (!parmName.EndsWith("]"))
+                            throw new InvalidOperationException("Only guard conditions can (i.e. Any statements) support unary NOT");
+
+                        this.AddCondition(parmName, "null");
+                        return null;
+                    default:
+                        throw new NotSupportedException("Unary expressions cannot be represented as key/value pair filters");
                 }
             }
 
@@ -118,21 +139,21 @@ namespace OpenIZ.Core.Model.Query
                 {
                     case "Contains":
                         {
-                            var parmName = this.ExtractPath(node.Object);
+                            var parmName = this.ExtractPath(node.Object, false);
                             object parmValue = this.ExtractValue(node.Arguments[0]);
                             this.AddCondition(parmName, "~" + parmValue.ToString());
                             return null;
                         }
                     case "StartsWith":
                         {
-                            var parmName = this.ExtractPath(node.Object);
+                            var parmName = this.ExtractPath(node.Object, false);
                             object parmValue = this.ExtractValue(node.Arguments[0]);
                             this.AddCondition(parmName, "^" + parmValue.ToString());
                             return null;
                         }
                     case "Any":
                         {
-                            var parmName = this.ExtractPath(node.Arguments[0]);
+                            var parmName = this.ExtractPath(node.Arguments[0], false);
                             // Process lambda
                             var result = new List<KeyValuePair<string, object>>();
                             var subQueryExpressionVisitor = new HttpQueryExpressionVisitor(result);
@@ -188,7 +209,7 @@ namespace OpenIZ.Core.Model.Query
                 this.Visit(node.Left);
                 this.Visit(node.Right);
 
-                String parmName = this.ExtractPath(node.Left);
+                String parmName = this.ExtractPath(node.Left, false);
                 Object parmValue = this.ExtractValue(node.Right);
 
                 // Not able to map
@@ -197,7 +218,7 @@ namespace OpenIZ.Core.Model.Query
                 {
                     // Special exists method call - i.e. HAS X
                     var mci = (node.Left as MethodCallExpression);
-                    parmName = this.ExtractPath(mci.Arguments[0]);
+                    parmName = this.ExtractPath(mci.Arguments[0], false);
                     var cci = node.Right is ConstantExpression;
                     this.AddCondition(parmName, cci ? "null" : "!null");
                 }
@@ -279,12 +300,12 @@ namespace OpenIZ.Core.Model.Query
             /// </summary>
             /// <returns>The path.</returns>
             /// <param name="access">Access.</param>
-            protected String ExtractPath(Expression access)
+            protected String ExtractPath(Expression access, bool fromUnary)
             {
                 if (access.NodeType == ExpressionType.MemberAccess)
                 {
                     MemberExpression memberExpr = access as MemberExpression;
-                    String path = this.ExtractPath(memberExpr.Expression); // get the chain if required
+                    String path = this.ExtractPath(memberExpr.Expression, fromUnary); // get the chain if required
                     if (memberExpr.Expression.Type.GetTypeInfo().IsGenericType && memberExpr.Expression.Type.GetGenericTypeDefinition() == typeof(Nullable<>))
                         return path;
 
@@ -316,9 +337,10 @@ namespace OpenIZ.Core.Model.Query
                     //CallExpression callExpr = access as MemberExpression;
                     MethodCallExpression callExpr = access as MethodCallExpression;
 
-                    if (callExpr.Method.Name == "Where")
+                    if (callExpr.Method.Name == "Where" ||
+                        fromUnary && callExpr.Method.Name == "Any")
                     {
-                        String path = this.ExtractPath(callExpr.Arguments[0]); // get the chain if required
+                        String path = this.ExtractPath(callExpr.Arguments[0], false); // get the chain if required
                         var guardExpression = callExpr.Arguments[1] as LambdaExpression;
                         // Where should be a guard so we just grab the unary equals only!
                         var binaryExpression = guardExpression.Body as BinaryExpression;
@@ -330,17 +352,18 @@ namespace OpenIZ.Core.Model.Query
                         return String.Format("{0}[{1}]", path, guardString);
 
                     }
+                    
                 }
                 else if(access.NodeType == ExpressionType.Convert ||
                     access.NodeType == ExpressionType.ConvertChecked)
                 {
                     UnaryExpression ua = (UnaryExpression)access;
-                    return this.ExtractPath(ua.Operand);
+                    return this.ExtractPath(ua.Operand, false);
                 } 
                 else if(access.NodeType == ExpressionType.TypeAs)
                 {
                     UnaryExpression ua = (UnaryExpression)access;
-                    return String.Format("{0}@{1}", this.ExtractPath(ua.Operand), ua.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName);
+                    return String.Format("{0}@{1}", this.ExtractPath(ua.Operand, false), ua.Type.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName);
                 }
                 return null;
             }
