@@ -84,6 +84,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// </summary>
         public void IssueDespatchAdvice(DespatchAdviceMessageType advice)
         {
+            if (advice == null || advice.despatchAdvice == null)
+                throw new InvalidOperationException("Invalid message sent");
             // TODO: Validate the standard header
             // Loop 
             Bundle orderTransaction = new Bundle();
