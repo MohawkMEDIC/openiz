@@ -33,6 +33,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openAppInfoxmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -68,7 +69,6 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.cbxThread = new System.Windows.Forms.ToolStripComboBox();
-            this.openAppInfoxmlToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -112,7 +112,7 @@
             this.openFileToolStripMenuItem,
             this.openAppInfoxmlToolStripMenuItem});
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem1.Text = "Open";
             // 
             // openFileToolStripMenuItem
@@ -123,15 +123,24 @@
             this.openFileToolStripMenuItem.Text = "Open Log File...";
             this.openFileToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
+            // openAppInfoxmlToolStripMenuItem
+            // 
+            this.openAppInfoxmlToolStripMenuItem.Name = "openAppInfoxmlToolStripMenuItem";
+            this.openAppInfoxmlToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.A)));
+            this.openAppInfoxmlToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
+            this.openAppInfoxmlToolStripMenuItem.Text = "Open AppInfo.xml...";
+            this.openAppInfoxmlToolStripMenuItem.Click += new System.EventHandler(this.openAppInfoxmlToolStripMenuItem_Click);
+            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(100, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             // 
             // statusStrip1
@@ -425,15 +434,6 @@
             this.cbxThread.Name = "cbxThread";
             this.cbxThread.Size = new System.Drawing.Size(201, 23);
             this.cbxThread.SelectedIndexChanged += new System.EventHandler(this.cbxThread_SelectedIndexChanged);
-            // 
-            // openAppInfoxmlToolStripMenuItem
-            // 
-            this.openAppInfoxmlToolStripMenuItem.Name = "openAppInfoxmlToolStripMenuItem";
-            this.openAppInfoxmlToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.A)));
-            this.openAppInfoxmlToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
-            this.openAppInfoxmlToolStripMenuItem.Text = "Open AppInfo.xml...";
-            this.openAppInfoxmlToolStripMenuItem.Click += new System.EventHandler(this.openAppInfoxmlToolStripMenuItem_Click);
             // 
             // frmMain
             // 

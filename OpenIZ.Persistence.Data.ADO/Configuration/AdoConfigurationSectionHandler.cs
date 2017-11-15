@@ -67,6 +67,11 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
                 if(connectionNode.Attributes["stm"] != null)
                     retVal.SingleThreadFetch = Boolean.Parse(connectionNode.Attributes["stm"].Value);
 
+                if (connectionNode.Attributes["allowPreparedStatements"] != null)
+                    retVal.PrepareStatements = Boolean.Parse(connectionNode.Attributes["allowPreparedStatements"].Value);
+                else
+                    retVal.PrepareStatements = true;
+
                 if (connectionNode.Attributes["maxRequests"] != null)
                     retVal.MaxRequests = Int32.Parse(connectionNode.Attributes["maxRequests"].Value);
 

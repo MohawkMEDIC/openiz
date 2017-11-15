@@ -438,7 +438,7 @@ namespace OizDevTool
                 Participations = new List<ActParticipation>()
                 {
                     new ActParticipation(ActParticipationKey.RecordTarget, patient.Key.Value),
-                    userEntityMap[o.ModifiedBy] != Guid.Empty ? new ActParticipation(ActParticipationKey.Authororiginator, userEntityMap[o.ModifiedBy]) : null
+                    userEntityMap.ContainsKey(o.ModifiedBy) && userEntityMap[o.ModifiedBy] != Guid.Empty ? new ActParticipation(ActParticipationKey.Authororiginator, userEntityMap[o.ModifiedBy]) : null
                 }
             }).ToList();
 
@@ -839,7 +839,8 @@ namespace OizDevTool
             var materials = (materialPersister as IFastQueryDataPersistenceService<OpenIZ.Core.Model.Entities.Material>).QueryFast(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_ITEM"), Guid.Empty, 0, null, AuthenticationContext.AnonymousPrincipal, out tr);
 
             Console.WriteLine("Map OpenIZ Users...");
-            userEntityMap = User.GetUserList().ToDictionary(o => o.Id, o => uePersister.Query(u => u.SecurityUser.UserName == o.Username, AuthenticationContext.AnonymousPrincipal).FirstOrDefault()?.Key.Value ?? Guid.Empty);
+            if(!parms.SkipUsers)
+                userEntityMap = User.GetUserList().ToDictionary(o => o.Id, o => uePersister.Query(u => u.SecurityUser.UserName == o.Username, AuthenticationContext.AnonymousPrincipal).FirstOrDefault()?.Key.Value ?? Guid.Empty);
 
             GT_MALE = conceptPersister.Query(o => o.Mnemonic == "Male", AuthenticationContext.SystemPrincipal).FirstOrDefault().Key.Value;
             GT_FEMALE = conceptPersister.Query(o => o.Mnemonic == "Female", AuthenticationContext.SystemPrincipal).FirstOrDefault().Key.Value;
@@ -849,7 +850,12 @@ namespace OizDevTool
 
             Console.WriteLine("Map OpenIZ Places...");
             placeEntityMap = places.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_PLCID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_PLCID").Value), o => o.Key.Value);
-            facilityMap = facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID")).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID").Value), o => o.Key.Value);
+
+            foreach (var i in facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID" && i.ObsoleteVersionSequenceId == null)).GroupBy(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID" && i.ObsoleteVersionSequenceId == null).Value)).Where(o => o.Count() > 1))
+                Console.WriteLine("Error: {0} is duplicated for facility {1}",
+                    i.Key, String.Join(",", i.Select(o => o.Key.ToString())));
+
+            facilityMap = facilities.Where(o => o.Identifiers.Any(i => i.Authority.DomainName == "GIIS_FACID" && i.ObsoleteVersionSequenceId == null)).ToDictionary(o => Int32.Parse(o.Identifiers.First(i => i.Authority.DomainName == "GIIS_FACID" && i.ObsoleteVersionSequenceId == null).Value), o => o.Key.Value);
 
             foreach (var giisHf in HealthFacility.GetHealthFacilityList())
             {

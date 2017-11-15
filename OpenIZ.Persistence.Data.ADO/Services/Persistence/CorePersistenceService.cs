@@ -299,6 +299,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 if(domainQuery != null)
                     this.m_tracer.TraceEvent(TraceEventType.Error, ex.HResult, context.GetQueryLiteral(domainQuery.Build()));
                 context.Dispose(); // No longer important
+
                 throw;
             }
 #if DEBUG
