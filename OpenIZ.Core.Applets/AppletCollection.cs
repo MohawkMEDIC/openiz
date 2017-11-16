@@ -839,6 +839,46 @@ namespace OpenIZ.Core.Applets
 
         }
 
+
+        /// <summary>
+        /// Injection for HTML headers
+        /// </summary>
+        public List<AssetScriptReference> GetLazyScripts(AppletAsset asset)
+        {
+            var htmlAsset = asset.Content as AppletAssetHtml;
+            if (htmlAsset == null && this.Resolver != null)
+                htmlAsset = this.Resolver(asset) as AppletAssetHtml;
+
+            // Insert scripts & Styles
+            List<AssetScriptReference> scriptRefs = new List<AssetScriptReference>();
+            if (htmlAsset == null)
+                return scriptRefs;
+
+            scriptRefs.AddRange(htmlAsset.Script.Where(o => o.IsStatic == false));
+
+            // Content - SSI
+            var includes = htmlAsset.Html.DescendantNodes().OfType<XComment>().Where(o => o?.Value?.Trim().StartsWith("#include virtual=\"") == true).ToList();
+            foreach (var inc in includes)
+            {
+                String assetName = inc.Value.Trim().Substring(18); // HACK: Should be a REGEX
+                if (assetName.EndsWith("\""))
+                    assetName = assetName.Substring(0, assetName.Length - 1);
+                if (assetName == "content")
+                    continue;
+                var includeAsset = this.ResolveAsset(assetName, asset);
+                if (includeAsset != null)
+                    scriptRefs.AddRange(this.GetLazyScripts(includeAsset));
+            }
+
+            // Re-write
+            foreach (var itm in scriptRefs.Where(o => o.Reference.StartsWith("~")))
+            {
+                itm.Reference = String.Format("/{0}/{1}", asset.Manifest.Info.Id, itm.Reference.Substring(2));
+                //itm.Value = itm.Value.Replace(APPLET_SCHEME, this.AppletBase).Replace(ASSET_SCHEME, this.AssetBase).Replace(DRAWABLE_SCHEME, this.DrawableBase);
+            }
+            return scriptRefs.Distinct(new AssetScriptReferenceEqualityComparer()).ToList();
+        }
+
         /// <summary>
         /// Injection for HTML headers
         /// </summary>
@@ -934,6 +974,28 @@ namespace OpenIZ.Core.Applets
         public ReadonlyAppletCollection AsReadonly()
         {
             return new ReadonlyAppletCollection(this);
+        }
+
+        /// <summary>
+        /// Asset script reference comparer
+        /// </summary>
+        private class AssetScriptReferenceEqualityComparer : IEqualityComparer<AssetScriptReference>
+        {
+            /// <summary>
+            /// Equality comparer
+            /// </summary>
+            public bool Equals(AssetScriptReference x, AssetScriptReference y)
+            {
+                return x.Reference?.Equals(y.Reference) == true;
+            }
+
+            /// <summary>
+            /// Get hash code
+            /// </summary>
+            public int GetHashCode(AssetScriptReference obj)
+            {
+                return obj.Reference.GetHashCode();
+            }
         }
 
         /// <summary>

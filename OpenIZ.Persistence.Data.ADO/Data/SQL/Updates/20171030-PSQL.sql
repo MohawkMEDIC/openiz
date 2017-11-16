@@ -1,5 +1,5 @@
 ﻿/** 
- * <update id="20171030-01" applyRange="0.2.0.7-0.9.9.0"  invariantName="npgsql">
+ * <update id="20171030-01" applyRange="0.2.0.7-0.9.9.2"  invariantName="npgsql">
  *	<summary>Adds the Procedure table to the OpenIZ schema</summary>
  *	<remarks></remarks>
  * </update>
@@ -111,7 +111,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GET_SCH_VRSN() RETURNS VARCHAR(10) AS
 $$
 BEGIN
-	RETURN '0.9.9.0';
+	RETURN '0.9.9.2';
 END;
 $$ LANGUAGE plpgsql;
 

@@ -53,5 +53,5 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("0.9.9.*")][assembly: AssemblyInformationalVersion("Fredericton CTP1")]
 [assembly: AssemblyVersion("0.9.9.*")]
 [assembly: AssemblyInformationalVersion("Fredericton CTP1")]
-[assembly: AssemblyFileVersion("0.9.9.0")]
+[assembly: AssemblyFileVersion("0.9.9.2")]
 [assembly: InternalsVisibleTo("OpenIZ.Messaging.HL7.Test")]
