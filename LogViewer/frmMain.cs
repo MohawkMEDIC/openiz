@@ -76,6 +76,7 @@ namespace LogViewer
                     o.Message
                 })).ToArray()
             );
+            this.toolStripStatusLabel1.Text = $"Showing {lsvEvents.Items.Count} results";
         }
 
         private void Filter()

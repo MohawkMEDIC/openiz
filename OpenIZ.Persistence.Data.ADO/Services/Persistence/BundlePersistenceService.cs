@@ -153,7 +153,8 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             data = this.ReorganizeForInsert(data);
             this.m_tracer.TraceInformation("After reorganization has {0} objects...", data.Item.Count);
 
-            context.PrepareStatements = true;
+            if(AdoPersistenceService.GetConfiguration().PrepareStatements)
+                context.PrepareStatements = true;
             for(int i  = 0; i < data.Item.Count; i++)
             {
                 var itm = data.Item[i];

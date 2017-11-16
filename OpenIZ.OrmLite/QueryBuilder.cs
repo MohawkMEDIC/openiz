@@ -352,9 +352,16 @@ namespace OpenIZ.OrmLite
                             }
 
                             // Generate method
+                            subQuery.RemoveAll(o => String.IsNullOrEmpty(o.Key));
                             var prefix = IncrementSubQueryAlias(tablePrefix);
                             var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[])});
-                            subQueryStatement.And($" {existsClause} IN (");
+
+                            // Sub path is specified
+                            if (String.IsNullOrEmpty(propertyPredicate.SubPath) && "null".Equals(parm.Value))
+                                subQueryStatement.And($" {existsClause} NOT IN (");
+                            else
+                                subQueryStatement.And($" {existsClause} IN (");
+
                             nGuards++;
                             existsClause = $"{prefix}{subTableColumn.Table.TableName}.{subTableColumn.Name}";
                             subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);

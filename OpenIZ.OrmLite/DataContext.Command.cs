@@ -730,6 +730,7 @@ namespace OpenIZ.OrmLite
                             return this.ReaderToCollection<TModel>(rdr).ToList();
 
                     }
+
                     finally
                     {
 #if DBPERF

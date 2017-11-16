@@ -53,7 +53,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
     /// <summary>
     /// Represents the administrative contract interface.
     /// </summary>
-    [ServiceBehavior(ConfigurationName = "AMI")]
+    [ServiceBehavior(ConfigurationName = "AMI", InstanceContextMode = InstanceContextMode.PerCall)]
     public partial class AmiBehavior : IAmiContract
     {
         // Trace source

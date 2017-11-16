@@ -66,20 +66,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     /// <summary>
     /// Data implementation
     /// </summary>
-    [ServiceBehavior(ConfigurationName = "IMSI")]
+    [ServiceBehavior(ConfigurationName = "IMSI", InstanceContextMode = InstanceContextMode.PerCall)]
     public class ImsiServiceBehavior : IImsiServiceContract
     {
         // Trace source
         private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
-
-        // Lock object
-        private object m_lockObject = new object();
-
-        /// <summary>
-        /// Load cache
-        /// </summary>
-        private Dictionary<Object, Object> m_loadCache = new Dictionary<Object, Object>();
-
+       
         /// <summary>
         /// Ping the server
         /// </summary>
