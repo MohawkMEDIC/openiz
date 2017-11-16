@@ -61,6 +61,7 @@ namespace OpenIZ.Core.Services.Impl
             {
                 var idp = ApplicationContext.Current.GetService<IDataPersistenceService<ActTag>>();
                 var existing = idp.Query(o => o.SourceEntityKey == sourceKey && o.TagKey == tag.TagKey, AuthenticationContext.Current.Principal).FirstOrDefault();
+                tag.SourceEntityKey = tag.SourceEntityKey ?? sourceKey;
                 if (existing != null)
                 {
                     existing.Value = tag.Value;

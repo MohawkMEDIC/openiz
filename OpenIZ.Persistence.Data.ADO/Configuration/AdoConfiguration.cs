@@ -84,5 +84,10 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration
         /// Gets a list of data corrections to apply
         /// </summary>
         public List<String> DataCorrectionKeys { get; set; }
+
+        /// <summary>
+        /// True if statements should be prepared
+        /// </summary>
+        public bool PrepareStatements { get; set; }
     }
 }

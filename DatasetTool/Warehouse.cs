@@ -108,13 +108,14 @@ namespace OizDevTool
             DateTime startDate = DateTime.Now.AddMonths(-3);
 
             int tr = 1, ofs = 0;
-            
-            while(ofs < tr) {
+
+            while (ofs < tr)
+            {
                 IEnumerable<Place> places = null;
-                if(String.IsNullOrEmpty(parms.Name))
+                if (String.IsNullOrEmpty(parms.Name))
                     places = placeService.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation, ofs, 100, AuthenticationContext.Current.Principal, out tr);
                 else
-                    places = placeService.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation && o.Names.Any(n=>n.Component.Any(c=>c.Value.Contains(parms.Name))) , ofs, 100, AuthenticationContext.Current.Principal, out tr);
+                    places = placeService.Query(o => o.ClassConceptKey == EntityClassKeys.ServiceDeliveryLocation && o.Names.Any(n => n.Component.Any(c => c.Value.Contains(parms.Name))), ofs, 100, AuthenticationContext.Current.Principal, out tr);
 
                 foreach (var plc in places)
                 {
@@ -125,7 +126,7 @@ namespace OizDevTool
 
                     // Now we want to group by consumable
                     int t = 0;
-                    
+
                     var groupedConsumables = consumablePtcpts.GroupBy(o => o.PlayerEntityKey).Select(o => new
                     {
                         ManufacturedMaterialKey = o.Key,
@@ -133,7 +134,7 @@ namespace OizDevTool
                         MaterialKey = matlService.QueryFast(m => m.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance && r.TargetEntityKey == o.Key), Guid.Empty, 0, 1, AuthenticationContext.Current.Principal, out t)?.FirstOrDefault()?.Key
                     }).ToList();
 
-                    foreach (var i in groupedConsumables.Where(o => !o.MaterialKey.HasValue)) 
+                    foreach (var i in groupedConsumables.Where(o => !o.MaterialKey.HasValue))
                         Console.WriteLine("MMAT {0} is not linked to any MAT", i.ManufacturedMaterialKey);
 
                     groupedConsumables.RemoveAll(o => !o.MaterialKey.HasValue);
@@ -153,12 +154,12 @@ namespace OizDevTool
                         plc.Extensions.Add(stockPolicyExtension);
                     }
                     else
-                        stockPolicyObject = (stockPolicyExtension.GetValue() as dynamic[]).GroupBy(o=>o["MaterialEntityId"]).Select(o => new
+                        stockPolicyObject = (stockPolicyExtension.GetValue() as dynamic[]).GroupBy(o => o["MaterialEntityId"]).Select(o => new
                         {
                             MaterialEntityId = Guid.Parse(o.FirstOrDefault()["MaterialEntityId"].ToString()),
-                            ReorderQuantity = (int?)(o.FirstOrDefault()["ReorderQuantity"] ) ?? 0,
+                            ReorderQuantity = (int?)(o.FirstOrDefault()["ReorderQuantity"]) ?? 0,
                             SafetyQuantity = (int?)(o.FirstOrDefault()["SafetyQuantity"]) ?? 0,
-                            AMC = (int?)(o.FirstOrDefault()["AMC"] ) ?? 0,
+                            AMC = (int?)(o.FirstOrDefault()["AMC"]) ?? 0,
                             Multiplier = (int?)(o.FirstOrDefault()["Multiplier"]) ?? 0
                         }).ToArray();
 
@@ -209,9 +210,69 @@ namespace OizDevTool
                 }
                 ofs += 100;
             }
-           
+
 
             return 1;
+        }
+
+        /// <summary>
+        /// Re-sets the original dates on all acts that don't have them
+        /// </summary>
+        [Description("Add the originalDate tag to acts which don't have them")]
+        public static int AddOriginalDateTag(string[] argv)
+        {
+            ApplicationContext.Current.Start();
+            ApplicationServiceContext.Current = ApplicationContext.Current;
+            AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+            EntitySource.Current = new EntitySource(new PersistenceServiceEntitySource());
+            var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+            var planService = ApplicationContext.Current.GetService<ICarePlanService>();
+            var actPersistence = ApplicationContext.Current.GetService<IStoredQueryDataPersistenceService<SubstanceAdministration>>();
+            var tagService = ApplicationContext.Current.GetService<ITagPersistenceService>();
+
+            var oizcpDm = warehouseService.GetDatamart("oizcp");
+            if (oizcpDm == null) {
+                Console.WriteLine("OIZCP datamart does not exist!");
+                return -1;
+            }
+
+            WaitThreadPool wtp = new WaitThreadPool();
+
+            Guid queryId = Guid.NewGuid();
+            int tr = 0, ofs = 0;
+            var acts = actPersistence.Query(o => !o.Tags.Any(t => t.TagKey == "originalDate"), queryId, 0, 100, AuthenticationContext.SystemPrincipal, out tr);
+            while(ofs < tr)
+            {
+                foreach(var itm in acts)
+                {
+                    wtp.QueueUserWorkItem((o) =>
+                    {
+                        var act = o as Act;
+
+                        Console.WriteLine("Set originalDate for {0}", act.Key);
+
+                        AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
+
+                        var actProtocol = act.LoadCollection<ActProtocol>("Protocols").FirstOrDefault();
+                        if (actProtocol != null) {
+                            // Get the original date
+                            var warehouseObj = warehouseService.AdhocQuery(oizcpDm.Id, new { protocol_id = actProtocol.ProtocolKey, sequence_id = actProtocol.Sequence });
+                            if (warehouseObj.Any())
+                            {
+                                DateTime originalDate = warehouseObj.FirstOrDefault().act_date;
+                                var originalEpochTime = (originalDate.ToUniversalTime().Ticks - 621355968000000000) / 10000000;
+                                tagService.Save(act.Key.Value, new ActTag("originalDate", originalEpochTime.ToString()));
+                            }
+                        }
+                    }, itm);
+                }
+                ofs += 100;
+                acts = actPersistence.Query(o => !o.Tags.Any(t => t.TagKey == "originalDate"), queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr);
+
+            }
+
+            wtp.WaitOne();
+            return 0;
         }
 
         /// <summary>
@@ -261,7 +322,7 @@ namespace OizDevTool
             var lastRefresh = DateTime.Parse(parms.Since ?? "0001-01-01");
 
             // Should we calculate?
-            
+
             var warehousePatients = warehouseService.StoredQuery(dataMart.Id, "consistency", new { });
             Guid queryId = Guid.NewGuid();
             int tr = 1, ofs = 0, calc = 0, tq = 0;
@@ -300,7 +361,7 @@ namespace OizDevTool
                         {
                             var ips = (((double)(DateTime.Now - start).Ticks / calc) * (tq - calc));
                             Console.CursorLeft = 0;
-                            Console.Write("    Calculating care plan {0}/{1} <<Scan: {4} ({5:0%})>> ({2:0%}) [ETA: {3}] {6:0.##} R/S ", calc, tq, (float)calc / tq, new TimeSpan((long)ips).ToString("hh'h 'mm'm 'ss's'"), ofs, (float)ofs/tr, ((double)calc / (double)(DateTime.Now - start).TotalSeconds));
+                            Console.Write("    Calculating care plan {0}/{1} <<Scan: {4} ({5:0%})>> ({2:0%}) [ETA: {3}] {6:0.##} R/S ", calc, tq, (float)calc / tq, new TimeSpan((long)ips).ToString("hh'h 'mm'm 'ss's'"), ofs, (float)ofs / tr, ((double)calc / (double)(DateTime.Now - start).TotalSeconds));
                         }
 
                         var data = p; //  ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
@@ -329,7 +390,7 @@ namespace OizDevTool
                             act_date = o.ActTime.DateTime.Date,
                             product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
                             sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
-                            dose_seq = (o as SubstanceAdministration)?.SequenceId, 
+                            dose_seq = (o as SubstanceAdministration)?.SequenceId,
                             fulfilled = false
                         }));
 
@@ -338,7 +399,7 @@ namespace OizDevTool
                             fulfillCalc = fulfillCalc.Where(o => typeFilter.Contains(o.LoadProperty<Act>("Act").TypeConceptKey ?? Guid.Empty));
 
                         // Are there care plan items existing that dont exist in the calculated care plan, if so that means that the patient has completed steps and we need to indicate that
-                        if (existing.Any(o=>!o.fulfilled)) // != true is needed because it can be null.
+                        if (existing.Any(o => !o.fulfilled)) // != true is needed because it can be null.
                         {
                             var fulfilled = existing.Where(o => !warehousePlan.Any(pl => pl.protocol_id == o.protocol_id && pl.sequence_id == o.sequence_id));
                             warehousePlan.AddRange(fulfilled.Select(o => new
@@ -359,29 +420,29 @@ namespace OizDevTool
                                 fulfilled = true
                             }));
                         }
-                        else if(
+                        else if (
                         !parms.NoFulfill &&
                         fulfillCalc.Any()) // not calculated anything but there are steps previously done, this is a little more complex
                         {
                             // When something is not yet calculated what we have to do is strip away each act done as part of the protocol and re-calculate when that action was supposed to occur
                             // For example: We calculate PCV we strip away PCV2 and re-run the plan to get the proposal of PCV3 then strip away PCV1 and re-run the plan to get the proposal of PCV2
                             var acts = fulfillCalc.Select(o => o.LoadProperty<Act>("Act"));
-                            foreach(var itm in acts.GroupBy(o=>o.LoadCollection<ActProtocol>("Protocols").FirstOrDefault()?.ProtocolKey ?? Guid.Empty))
+                            foreach (var itm in acts.GroupBy(o => o.LoadCollection<ActProtocol>("Protocols").FirstOrDefault()?.ProtocolKey ?? Guid.Empty))
                             {
                                 var steps = itm.OrderByDescending(o => o.LoadCollection<ActProtocol>("Protocols").FirstOrDefault()?.Sequence);
                                 var patientClone = data.Clone() as Patient;
                                 patientClone.Participations = new List<ActParticipation>(data.Participations);
-                                foreach(var s in steps)
+                                foreach (var s in steps)
                                 {
                                     patientClone.Participations.RemoveAll(o => o.ActKey == s.Key);
                                     // Run protocol 
-                                    IEnumerable<Act> candidate; 
+                                    IEnumerable<Act> candidate;
                                     if (itm.Key == Guid.Empty) // There is no protocol identifier
                                     {
                                         var tempPlan = careplanService.CreateCarePlan(patientClone, false, new Dictionary<String, Object>() { { "isBackground", true }, { "ignoreEntry", true } });
                                         if (tempPlan.Action.Count == 0) continue;
                                         candidate = tempPlan.Action.OfType<SubstanceAdministration>().Where(o => o.SequenceId == (s as SubstanceAdministration)?.SequenceId &&
-                                                                                                             o.Participations.FirstOrDefault(pt=>pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey == s.Participations.FirstOrDefault(pt=>pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey);
+                                                                                                             o.Participations.FirstOrDefault(pt => pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey == s.Participations.FirstOrDefault(pt => pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey);
                                         if (candidate.Count() != 1) continue;
                                     }
                                     else
@@ -412,7 +473,7 @@ namespace OizDevTool
                                         act_date = planned.ActTime.DateTime.Date,
                                         product_id = planned.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
                                         sequence_id = planned.Protocols.FirstOrDefault()?.Sequence,
-                                        dose_seq = (planned as SubstanceAdministration)?.SequenceId, 
+                                        dose_seq = (planned as SubstanceAdministration)?.SequenceId,
                                         fulfilled = true
                                     });
                                 }

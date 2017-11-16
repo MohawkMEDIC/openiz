@@ -147,6 +147,7 @@ namespace OpenIZ.OrmLite.Providers
             }
             else
                 conn.ConnectionString = this.ReadonlyConnectionString;
+
             return new DataContext(this, conn, true);
         }
 

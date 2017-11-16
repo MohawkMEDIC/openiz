@@ -18,6 +18,7 @@
  * Date: 2016-8-2
  */
 
+using MARC.HI.EHRS.SVC.Core.Wcf;
 using System;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -46,9 +47,10 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 		public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
 		{
 			endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new AmiMessageInspector());
+            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(new LogMessageInspector());
 
-			// Apply to each operation the AMI formatter
-			foreach (var op in endpoint.Contract.Operations)
+            // Apply to each operation the AMI formatter
+            foreach (var op in endpoint.Contract.Operations)
 			{
 				op.OperationBehaviors.Add(new AmiSerializerOperationBehavior());
 			}

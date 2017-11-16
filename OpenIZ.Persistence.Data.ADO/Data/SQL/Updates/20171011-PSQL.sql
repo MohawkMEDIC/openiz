@@ -72,7 +72,6 @@ INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err
 	FROM cd_set_mem_vw
 	WHERE set_mnemonic = 'FamilyMember';
 	
-
 -- TRIGGER - ENSURE THAT ANY VALUE INSERTED INTO THE ENT_REL_TBL HAS THE PROPER PARENT
 CREATE OR REPLACE FUNCTION trg_vrfy_ent_rel_tbl () RETURNS TRIGGER AS $$
 DECLARE 
