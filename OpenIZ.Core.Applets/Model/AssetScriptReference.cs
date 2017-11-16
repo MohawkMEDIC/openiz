@@ -19,7 +19,7 @@ namespace OpenIZ.Core.Applets.Model
         {
             get
             {
-                return this.IsStatic.ToString();
+                return (this.IsStatic ?? true).ToString();
             }
             set
             {
