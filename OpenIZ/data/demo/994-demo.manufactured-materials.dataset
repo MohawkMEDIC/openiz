@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="Manufactured Materials from GIIS" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <Organization xmlns="http://openiz.org/model">
+      <id>ee4029cd-479b-43c5-ab96-183b9236d47b</id>
+      <classConcept>7c08bd55-4d42-49cd-92f8-6388d6c4183f</classConcept>
+      <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
+        <component>
+          <source xsi:nil="true" />
+          <type xsi:nil="true" />
+          <value>Dilbert Vaccine Manufacturers</value>
+          <phoneticAlgorithm xsi:nil="true" />
+        </component>
+      </name>
+    </Organization>
+  </update>
+  <update insertIfNotExists="true">
+    <ManufacturedMaterial xmlns="http://openiz.org/model">
+      <id>ee65f5f2-5e07-498b-880f-98f9a428f008</id>
+      <classConcept>fafec286-89d5-420b-9085-054aca9d1eef</classConcept>
+      <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <typeConcept>6549730D-EBBE-4700-8052-3DD3F390213F</typeConcept>
+      <identifier>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <value>DB30940343</value>
+        <authority>
+          <name>GS1 Global Trade Identification Number (GTIN)</name>
+          <domainName>GTIN</domainName>
+          <oid>1.3.160</oid>
+          <assigningDevice xsi:nil="true" />
+        </authority>
+      </identifier>
+      <relationship>
+        <source>6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B</source>
+        <target>ee65f5f2-5e07-498b-880f-98f9a428f008</target>
+        <relationshipType>AC45A740-B0C7-4425-84D8-B3F8A41FEF9F</relationshipType>
+        <inversionInd>false</inversionInd>
+      </relationship>
+      <relationship>
+        <source>ee4029cd-479b-43c5-ab96-183b9236d47b</source>
+        <target>ee65f5f2-5e07-498b-880f-98f9a428f008</target>
+        <relationshipType>6780DF3B-AFBD-44A3-8627-CBB3DC2F02F6</relationshipType>
+      </relationship>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <use>a87a6d21-2ca6-4aea-88f3-6135cceb58d1</use>
+        <component>
+          <source xsi:nil="true" />
+          <type xsi:nil="true" />
+          <value>MR (Dilbert Vaccine Manufacturers)</value>
+        </component>
+      </name>
+      <expiryDate>2018-06-26T00:00:00</expiryDate>
+      <isAdministrative>false</isAdministrative>
+      <lotNumber>XXY-1234567889757</lotNumber>
+    </ManufacturedMaterial>
+  </update>
+  <update insertIfNotExists="true">
+    <ManufacturedMaterial xmlns="http://openiz.org/model">
+      <id>ee857f39-5e07-498b-880f-98f9a428f008</id>
+      <classConcept>fafec286-89d5-420b-9085-054aca9d1eef</classConcept>
+      <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <typeConcept>1185DEF1-6AD4-4995-B67A-406DB08945B5</typeConcept>
+      <identifier>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <value>DB450983209</value>
+        <authority>
+          <name>GS1 Global Trade Identification Number (GTIN)</name>
+          <domainName>GTIN</domainName>
+          <oid>1.3.160</oid>
+          <assigningDevice xsi:nil="true" />
+        </authority>
+      </identifier>
+      <relationship>
+        <source>E829C3D1-5243-474E-A2D6-BA35D99610C4</source>
+        <target>ee857f39-5e07-498b-880f-98f9a428f008</target>
+        <relationshipType>AC45A740-B0C7-4425-84D8-B3F8A41FEF9F</relationshipType>
+        <inversionInd>false</inversionInd>
+      </relationship>
+      <relationship>
+        <source>ee4029cd-479b-43c5-ab96-183b9236d47b</source>
+        <target>ee857f39-5e07-498b-880f-98f9a428f008</target>
+        <relationshipType>6780DF3B-AFBD-44A3-8627-CBB3DC2F02F6</relationshipType>
+      </relationship>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <use>a87a6d21-2ca6-4aea-88f3-6135cceb58d1</use>
+        <component>
+          <source xsi:nil="true" />
+          <type xsi:nil="true" />
+          <value>PCV13 (Dilbert Vaccine Manufacturers)</value>
+        </component>
+      </name>
+      <expiryDate>2018-06-26T00:00:00</expiryDate>
+      <isAdministrative>false</isAdministrative>
+      <lotNumber>YFD-230984230984</lotNumber>
+    </ManufacturedMaterial>
+  </update>
+  <update insertIfNotExists="true">
+    <ManufacturedMaterial xmlns="http://openiz.org/model">
+      <id>ee039483-5e07-498b-880f-98f9a428f008</id>
+      <classConcept>fafec286-89d5-420b-9085-054aca9d1eef</classConcept>
+      <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <typeConcept>c7f4980b-e338-4363-83f7-2b3d38933e7e</typeConcept>
+      <identifier>
+        <value>DB5940569485</value>
+        <authority>
+          <name>GS1 Global Trade Identification Number (GTIN)</name>
+          <domainName>GTIN</domainName>
+          <oid>1.3.160</oid>
+          <assigningDevice xsi:nil="true" />
+        </authority>
+      </identifier>
+      <relationship>
+        <source>790be5ca-d07d-46c6-8fa0-9d4f5adf388c</source>
+        <target>ee039483-5e07-498b-880f-98f9a428f008</target>
+        <relationshipType>AC45A740-B0C7-4425-84D8-B3F8A41FEF9F</relationshipType>
+        <inversionInd>false</inversionInd>
+      </relationship>
+      <relationship>
+        <source>ee4029cd-479b-43c5-ab96-183b9236d47b</source>
+        <target>ee039483-5e07-498b-880f-98f9a428f008</target>
+        <relationshipType>6780DF3B-AFBD-44A3-8627-CBB3DC2F02F6</relationshipType>
+      </relationship>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <use>a87a6d21-2ca6-4aea-88f3-6135cceb58d1</use>
+        <component>
+          <source xsi:nil="true" />
+          <type xsi:nil="true" />
+          <value>OPV (Dilbert Vaccine Manufacturers)</value>
+        </component>
+      </name>
+      <expiryDate>2018-06-26T00:00:00</expiryDate>
+      <isAdministrative>false</isAdministrative>
+      <lotNumber>DFR-9432809850943</lotNumber>
+    </ManufacturedMaterial>
+  </update>
+</dataset>

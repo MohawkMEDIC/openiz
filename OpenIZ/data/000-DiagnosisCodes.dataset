@@ -1,0 +1,1255 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data" id="Causes of death">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>f7a5cbd8-5425-415e-8308-d14b94f56917</id>
+
+      <name>ICD10</name>
+      <oid>2.16.840.1.113883.6.3</oid>
+      <authority>I10</authority>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>55b9ff1b-3692-475c-b482-051e91ab5f76</id>
+
+      <mnemonic>B05</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Measles</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>492b83d3-5aa7-4167-b1ed-e6b69bce790d</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Measles</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>55b9ff1b-3692-475c-b482-051e91ab5f76</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Measles</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0ba67bcf-4316-43d6-9039-caf7540cd0a5</id>
+
+      <mnemonic>J96</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>"Respiratory failure, not elsewhere classified"</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>bb3d3dd9-57b7-4f11-8dfc-afc25c24b57c</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Respiratoryfailure</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>0ba67bcf-4316-43d6-9039-caf7540cd0a5</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Respiratory failure, not elsewhere classified</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>eb0bb5bf-c137-4d98-ac16-7d239de108d1</id>
+
+      <mnemonic>B06</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Rubella [German measles]</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>fad791b4-ed06-471c-8164-8178da9d6229</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Rubella</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>eb0bb5bf-c137-4d98-ac16-7d239de108d1</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Rubella [German measles]</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b57825a9-6426-4096-9068-832ad1a6bab7</id>
+
+      <mnemonic>D57</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Sickle-cell disorders</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>c37b0d8f-d24b-477f-8fe2-c2668f7a3a57</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-SickleCellDisorder</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>b57825a9-6426-4096-9068-832ad1a6bab7</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Sickle-cell disorder</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>030c8eb6-163a-4546-bed6-47065f9050b3</id>
+
+      <mnemonic>B03</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Smallpox</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>deaa7e88-0002-49f0-a1a2-a66ec227a095</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Smallpox</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>030c8eb6-163a-4546-bed6-47065f9050b3</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Smallpox</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>125494ee-daf9-4569-95a8-83308057885a</id>
+
+      <mnemonic>Q05</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Spina bifida</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>bb11467e-d047-4355-8be0-667e705c61ca</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Spinabifida</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>125494ee-daf9-4569-95a8-83308057885a</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Spina bifida</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>4ca3d9f4-8731-4083-8a73-0b3ff9624951</id>
+
+      <mnemonic>A77</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Spotted fever [tick-borne rickettsioses]</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>2da32653-631a-445c-9d01-87f7c0dc9202</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-SpottedFever</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>4ca3d9f4-8731-4083-8a73-0b3ff9624951</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Spotted fever [tick-borne rickettsioses]</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>27ccc951-ee72-4993-a4b2-c3d1b83e546b</id>
+
+      <mnemonic>I46.1</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>"Sudden cardiac death, so described"</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>081a27fc-62e4-41a3-a918-968b8044eddb</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-SuddenCardiacFailure</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>27ccc951-ee72-4993-a4b2-c3d1b83e546b</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Sudden cardiac death</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f04d5502-e2c3-4e5a-a81f-841b896f40be</id>
+
+      <mnemonic>R95</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Sudden infant death syndrome</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>771d0e05-fb0b-4112-87ec-3db08b311d6f</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-SuddenInfantDeathSyndrome</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>f04d5502-e2c3-4e5a-a81f-841b896f40be</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Sudden infant death syndrome</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>a4622ffd-4e43-4b44-985e-cdcba2fecc4d</id>
+
+      <mnemonic>U01</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Terrorism (homicide)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>bb5fdc99-ee4b-44b7-aab0-7d5e0e6d9233</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Terrorism</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>a4622ffd-4e43-4b44-985e-cdcba2fecc4d</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Terrorism</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e0486390-31e5-414a-855a-fba7fc2961ce</id>
+
+      <mnemonic>K71</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Toxic liver disease</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>bd7670bb-4bbf-40fe-9c81-d499291bc2e9</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-ToxicLiverDisease</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>e0486390-31e5-414a-855a-fba7fc2961ce</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Toxic liver disease</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b0f627e3-3158-4115-969f-955984a4ed31</id>
+
+      <mnemonic>A48.3</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Toxic shock syndrome</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>8f23776e-a017-4eb8-89f8-38ade0375b84</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-ToxicShockSyndrome</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>b0f627e3-3158-4115-969f-955984a4ed31</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Toxic shock syndrome</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f15257d2-bde8-4e46-aa24-ef6270f0053b</id>
+
+      <mnemonic>V01.1</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Traffic accident</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>7ce7b255-a9be-46f3-b6f8-739dd2e7825c</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-TrafficAccident</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>f15257d2-bde8-4e46-aa24-ef6270f0053b</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Traffic accident</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>759ac7dc-2023-47ca-840c-a9c1cb3d9418</id>
+
+      <mnemonic>J22</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified acute lower respiratory infection</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>2ed8094f-1335-417e-8f34-ffe78349281e</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-AcuteLowerRespiratoryInfection</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>759ac7dc-2023-47ca-840c-a9c1cb3d9418</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Acute lower respiratory infection</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ac76752d-140c-4e51-a74d-46012b4fde6d</id>
+
+      <mnemonic>W74</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified drowning and submersion</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>3d0846ba-024a-41f2-945e-d6ba28514750</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Drowning</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>ac76752d-140c-4e51-a74d-46012b4fde6d</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Drowning</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b8c1a4d4-94db-4bb0-b1ff-8c145fb2b4ea</id>
+
+      <mnemonic>Y34</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>"Unspecified event, undetermined intent"</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>d4dc5f54-2fbb-4883-8127-342a81f4f5f8</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-OtherEvent</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>b8c1a4d4-94db-4bb0-b1ff-8c145fb2b4ea</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Other Event</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>c34f3c03-116e-45d9-8fdf-ba5c4d904497</id>
+
+      <mnemonic>W19</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified fall</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>cae8f58d-bd26-49f0-813d-dfd06290f9ff</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Fall</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>c34f3c03-116e-45d9-8fdf-ba5c4d904497</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Fall / fell</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>bdbc10da-5359-4aa8-bad5-9413a838fe7f</id>
+
+      <mnemonic>B54</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified malaria</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>78787c6f-9d98-405c-8968-7612cd633305</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Malaria</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>bdbc10da-5359-4aa8-bad5-9413a838fe7f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Malaria (Unspecified kind)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>946be914-e530-451e-a18c-24648a14fb36</id>
+
+      <mnemonic>B89</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified parasitic disease</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>46514fce-69d7-40dc-96f7-88fb8bcbe6b5</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-ParasiticDisease</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>946be914-e530-451e-a18c-24648a14fb36</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Unspecified parasitic disease</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5b3abfd0-d9f7-455a-9d6d-1dedda61a078</id>
+
+      <mnemonic>N19</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified renal failure</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>d8e38fca-d26a-454d-8ae4-8be2a64bb232</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-RenalFailure</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>5b3abfd0-d9f7-455a-9d6d-1dedda61a078</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Renal failure</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3b34a2b8-1a1a-46e8-9691-f56518675007</id>
+
+      <mnemonic>A64</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified sexually transmitted disease</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>9237e880-2232-4d73-909a-97cb8fa4d8c7</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-SexuallyTransmittedDisease</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>3b34a2b8-1a1a-46e8-9691-f56518675007</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Unspecified sexually transmitted disease</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>2774c33f-609c-4ff3-9e8c-c8e38c5e5b02</id>
+
+      <mnemonic>A86</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified viral encephalitis</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>5b78e4d9-5e39-454d-ae5e-d9daf85a8e05</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-UnspecifiedViralEncephalitis</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>2774c33f-609c-4ff3-9e8c-c8e38c5e5b02</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Unspecified viral encephalitis</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7b0ccedc-8ca8-41d1-b39c-8ac59ad454fc</id>
+
+      <mnemonic>A99</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified viral hemorrhagic fever</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>c5c58c9a-d918-46f2-8804-24d888544729</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-ViralHemorrhagicFever</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>7b0ccedc-8ca8-41d1-b39c-8ac59ad454fc</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Unspecified viral hemorrhagic fever</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e71a5064-f3a2-4ef3-b38d-ca2253d374eb</id>
+
+      <mnemonic>A89</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Unspecified viral infection of central nervous system</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>52aa7eba-827e-4561-bc38-374e466bc3de</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-ViralinfectionOfCentralNervousSystem</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>e71a5064-f3a2-4ef3-b38d-ca2253d374eb</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Unspecified viral infection of central nervous system</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>dfc6b2a7-b4e6-415f-88c9-551205c1eb77</id>
+
+      <mnemonic>B01</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Varicella [chickenpox]</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>922db980-b5f7-4948-9d2d-2ce146593acb</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-Varicella</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>dfc6b2a7-b4e6-415f-88c9-551205c1eb77</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Varicella [chickenpox]</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3888b81f-c95b-4fcf-a9ec-a7cf9bff1fed</id>
+
+      <mnemonic>A87</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>Viral meningitis</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>38e762a6-fc26-48ae-8d02-13ad8720fdb0</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-ViralMeningitis</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>3888b81f-c95b-4fcf-a9ec-a7cf9bff1fed</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Viral meningitis</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b3cb13b5-1852-48a6-b5ef-d22179061d7a</id>
+
+      <mnemonic>A92.3</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+
+
+        <language>en</language>
+        <value>West Nile fever</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>23b96fe9-e6b5-4575-ad1f-c13b79c51ab9</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-WestNileFever</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>b3cb13b5-1852-48a6-b5ef-d22179061d7a</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>West Nile fever</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>97672f59-c2a1-42e4-8567-1776df347c9e</id>
+      <mnemonic>A37</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Whooping cough</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>cd55c946-69bc-42f5-9ec1-8b06fa61187c</id>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-WhoopingCough</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>97672f59-c2a1-42e4-8567-1776df347c9e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Whooping cough</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>719f1353-9ed6-4a58-8ed9-6087d1f6a73b</id>
+      <mnemonic>A95</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Yellow fever</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>af4f29f1-aecd-4739-9aef-95c953924d57</id>
+
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Diagnosis-YellowFever</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>719f1353-9ed6-4a58-8ed9-6087d1f6a73b</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Yellow fever</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>F117854F-C49B-4D39-AF4E-63557A428B4E</id>
+      <mnemonic>R50.9</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Fever of other and unknown origin - Uspecified</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>E5022EB2-3CCB-4456-AD5B-793B1E0A23A3</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>DiagnosisCode-UnspecifiedFever</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>F117854F-C49B-4D39-AF4E-63557A428B4E</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Fever (Unspecified Type)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>E7912218-2E3D-42ED-B689-1BD27B912656</id>
+      <mnemonic>G82.0</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Flaccid paraplegia</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>B6431BD9-C488-4B2E-A48F-DEA95E109C98</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>DiagnosisCode-FlaccidParaplegia</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>E7912218-2E3D-42ED-B689-1BD27B912656</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Acute Flaccid Paralysis (AFP)</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>BD7FCC27-4F5D-47E9-AD90-8E4A4A70E3E9</id>
+      <mnemonic>A33</mnemonic>
+      <codeSystem>f7a5cbd8-5425-415e-8308-d14b94f56917</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Tetanus neonatorum</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>CD7FD476-CF97-41E1-AB96-9F06CB92C56B</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>DiagnosisCode-NoenatalTetanus</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>92cdea39-b9a3-4a5b-bc88-a6646c74240d</conceptClass>
+      <referenceTerm>
+        <term>BD7FCC27-4F5D-47E9-AD90-8E4A4A70E3E9</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Neonatal Tetanus</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>D6CBE607-51E3-49CC-9B20-CB2A2D3C586E</id>
+      <name>Diagnosis Codes</name>
+      <mnemonic>DiagnosisCode</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.51</oid>
+      <url>http://openiz.org/conceptset/DiagnosisCode</url>
+      <concept>492b83d3-5aa7-4167-b1ed-e6b69bce790d</concept>
+      <concept>bb3d3dd9-57b7-4f11-8dfc-afc25c24b57c</concept>
+      <concept>fad791b4-ed06-471c-8164-8178da9d6229</concept>
+      <concept>c37b0d8f-d24b-477f-8fe2-c2668f7a3a57</concept>
+      <concept>deaa7e88-0002-49f0-a1a2-a66ec227a095</concept>
+      <concept>bb11467e-d047-4355-8be0-667e705c61ca</concept>
+      <concept>2da32653-631a-445c-9d01-87f7c0dc9202</concept>
+      <concept>081a27fc-62e4-41a3-a918-968b8044eddb</concept>
+      <concept>771d0e05-fb0b-4112-87ec-3db08b311d6f</concept>
+      <concept>bb5fdc99-ee4b-44b7-aab0-7d5e0e6d9233</concept>
+      <concept>bd7670bb-4bbf-40fe-9c81-d499291bc2e9</concept>
+      <concept>8f23776e-a017-4eb8-89f8-38ade0375b84</concept>
+      <concept>7ce7b255-a9be-46f3-b6f8-739dd2e7825c</concept>
+      <concept>2ed8094f-1335-417e-8f34-ffe78349281e</concept>
+      <concept>3d0846ba-024a-41f2-945e-d6ba28514750</concept>
+      <concept>d4dc5f54-2fbb-4883-8127-342a81f4f5f8</concept>
+      <concept>cae8f58d-bd26-49f0-813d-dfd06290f9ff</concept>
+      <concept>78787c6f-9d98-405c-8968-7612cd633305</concept>
+      <concept>46514fce-69d7-40dc-96f7-88fb8bcbe6b5</concept>
+      <concept>d8e38fca-d26a-454d-8ae4-8be2a64bb232</concept>
+      <concept>9237e880-2232-4d73-909a-97cb8fa4d8c7</concept>
+      <concept>5b78e4d9-5e39-454d-ae5e-d9daf85a8e05</concept>
+      <concept>c5c58c9a-d918-46f2-8804-24d888544729</concept>
+      <concept>52aa7eba-827e-4561-bc38-374e466bc3de</concept>
+      <concept>922db980-b5f7-4948-9d2d-2ce146593acb</concept>
+      <concept>38e762a6-fc26-48ae-8d02-13ad8720fdb0</concept>
+      <concept>23b96fe9-e6b5-4575-ad1f-c13b79c51ab9</concept>
+      <concept>cd55c946-69bc-42f5-9ec1-8b06fa61187c</concept>
+      <concept>af4f29f1-aecd-4739-9aef-95c953924d57</concept>
+      <concept>CD7FD476-CF97-41E1-AB96-9F06CB92C56B</concept>
+      <concept>E5022EB2-3CCB-4456-AD5B-793B1E0A23A3</concept>
+      <concept>B6431BD9-C488-4B2E-A48F-DEA95E109C98</concept>
+    </ConceptSet>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>fb4a6286-6783-473c-a3a9-863bd58f1015</id>
+
+      <name>Causes of Death</name>
+      <mnemonic>CauseOfDeath</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.44</oid>
+      <url>http://openiz.org/conceptset/CauseOfDeath</url>
+      <concept>492b83d3-5aa7-4167-b1ed-e6b69bce790d</concept>
+      <concept>bb3d3dd9-57b7-4f11-8dfc-afc25c24b57c</concept>
+      <concept>fad791b4-ed06-471c-8164-8178da9d6229</concept>
+      <concept>c37b0d8f-d24b-477f-8fe2-c2668f7a3a57</concept>
+      <concept>deaa7e88-0002-49f0-a1a2-a66ec227a095</concept>
+      <concept>bb11467e-d047-4355-8be0-667e705c61ca</concept>
+      <concept>2da32653-631a-445c-9d01-87f7c0dc9202</concept>
+      <concept>081a27fc-62e4-41a3-a918-968b8044eddb</concept>
+      <concept>771d0e05-fb0b-4112-87ec-3db08b311d6f</concept>
+      <concept>bb5fdc99-ee4b-44b7-aab0-7d5e0e6d9233</concept>
+      <concept>bd7670bb-4bbf-40fe-9c81-d499291bc2e9</concept>
+      <concept>8f23776e-a017-4eb8-89f8-38ade0375b84</concept>
+      <concept>7ce7b255-a9be-46f3-b6f8-739dd2e7825c</concept>
+      <concept>2ed8094f-1335-417e-8f34-ffe78349281e</concept>
+      <concept>3d0846ba-024a-41f2-945e-d6ba28514750</concept>
+      <concept>d4dc5f54-2fbb-4883-8127-342a81f4f5f8</concept>
+      <concept>cae8f58d-bd26-49f0-813d-dfd06290f9ff</concept>
+      <concept>78787c6f-9d98-405c-8968-7612cd633305</concept>
+      <concept>46514fce-69d7-40dc-96f7-88fb8bcbe6b5</concept>
+      <concept>d8e38fca-d26a-454d-8ae4-8be2a64bb232</concept>
+      <concept>9237e880-2232-4d73-909a-97cb8fa4d8c7</concept>
+      <concept>5b78e4d9-5e39-454d-ae5e-d9daf85a8e05</concept>
+      <concept>c5c58c9a-d918-46f2-8804-24d888544729</concept>
+      <concept>52aa7eba-827e-4561-bc38-374e466bc3de</concept>
+      <concept>922db980-b5f7-4948-9d2d-2ce146593acb</concept>
+      <concept>38e762a6-fc26-48ae-8d02-13ad8720fdb0</concept>
+      <concept>23b96fe9-e6b5-4575-ad1f-c13b79c51ab9</concept>
+      <concept>cd55c946-69bc-42f5-9ec1-8b06fa61187c</concept>
+      <concept>af4f29f1-aecd-4739-9aef-95c953924d57</concept>
+      <concept>CD7FD476-CF97-41E1-AB96-9F06CB92C56B</concept>
+      <concept>E5022EB2-3CCB-4456-AD5B-793B1E0A23A3</concept>
+      <concept>B6431BD9-C488-4B2E-A48F-DEA95E109C98</concept>
+    </ConceptSet>
+  </update>
+</dataset>

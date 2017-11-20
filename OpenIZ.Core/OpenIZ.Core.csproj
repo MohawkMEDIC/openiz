@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DB9BC05E-45F1-4F96-A161-F36BDECAF566}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenIZ.Core</RootNamespace>
+    <AssemblyName>OpenIZ.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\OpenIZ.Core.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Configuration, Version=2.0.0.40976, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Core, Version=2.0.0.39574, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Core.Timer">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.Timer.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress">
+      <HintPath>..\Solution Items\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=4.0.20622.1351, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Serialization" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Configuration\ServiceTool.cs" />
+    <Compile Include="Configuration\UI\CoreConfigurationPanel.cs" />
+    <Compile Include="Configuration\UI\ServiceConfigurationPanel.cs" />
+    <Compile Include="Configuration\UI\ucCoreSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\UI\ucCoreSettings.Designer.cs">
+      <DependentUpon>ucCoreSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration\UI\ucServiceSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Configuration\UI\ucServiceSettings.designer.cs">
+      <DependentUpon>ucServiceSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Diagnostics\DiagnosticExtensions.cs" />
+    <Compile Include="Diagnostics\LogTraceWriter.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Configuration\ConfigurationSectionHandler.cs" />
+    <Compile Include="Configuration\OpenIZBasicAuthorization.cs" />
+    <Compile Include="Configuration\OpenIzClaimsAuthorization.cs" />
+    <Compile Include="Configuration\OpenIZSecurityConfiguration.cs" />
+    <Compile Include="Http\DefaultRestClient.cs" />
+    <Compile Include="Http\ServiceClientDescription.cs" />
+    <Compile Include="Model\EntityLoader\PersistenceServiceEntitySource.cs" />
+    <Compile Include="Model\ModelExtensions.cs" />
+    <Compile Include="Configuration\OpenIZConfiguration.cs" />
+    <Compile Include="OpenIZConstants.cs" />
+    <Compile Include="Persistence\DataInitializationService.cs" />
+    <Compile Include="Persistence\DatasetInstall.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Query\MemoryQueryPersistenceService.cs" />
+    <Compile Include="ResultsDetails\UnrecognizedSenderResultDetail.cs" />
+    <Compile Include="ResultsDetails\UnrecognizedTargetDomainResultDetail.cs" />
+    <Compile Include="Security\ApplicationPrincipal.cs" />
+    <Compile Include="Security\Audit\AuditDaemonService.cs" />
+    <Compile Include="Security\Audit\AuditUtil.cs" />
+    <Compile Include="Security\Claims\PurposeOfUseClaimHandler.cs" />
+    <Compile Include="Security\Claims\IClaimTypeHandler.cs" />
+    <Compile Include="Security\DefaultTfaRelayService.cs" />
+    <Compile Include="Security\DeviceIdentity.cs" />
+    <Compile Include="Security\DevicePrincipal.cs" />
+    <Compile Include="Security\LocalPasswordValidationService.cs" />
+    <Compile Include="Security\Permission\PolicyPermissionAttribute.cs" />
+    <Compile Include="Security\AuthenticationContext.cs" />
+    <Compile Include="Security\ILocalPolicy.cs" />
+    <Compile Include="Security\IPolicyHandler.cs" />
+    <Compile Include="Security\LocalPolicyDecisionService.cs" />
+    <Compile Include="Security\LocalPolicyEnforcementService.cs" />
+    <Compile Include="Security\Claims\OpenIzClaimTypes.cs" />
+    <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
+    <Compile Include="Security\SecurityUtils.cs" />
+    <Compile Include="Security\PasswordHashingServices.cs" />
+    <Compile Include="Security\TwoFactorSecretGenerators.cs" />
+    <Compile Include="Services\Daemons\AppletBusinessRulesDaemon.cs" />
+    <Compile Include="Services\IApplicationIdentityProviderService.cs" />
+    <Compile Include="Services\IFastQueryDataPersistenceService.cs" />
+    <Compile Include="Services\IDeviceIdentityProviderService.cs" />
+    <Compile Include="Services\IIdentityRefreshProviderService.cs" />
+    <Compile Include="Services\Impl\FileSystemQueueService.cs" />
+    <Compile Include="Services\Impl\LocalActRepositoryService.PatientEncounter.cs" />
+    <Compile Include="Services\Impl\LocalActRepositoryService.Observation.cs" />
+    <Compile Include="Services\Impl\LocalActRepositoryService.Procedure.cs" />
+    <Compile Include="Services\Impl\LocalActRepositoryService.SubstanceAdministration.cs" />
+    <Compile Include="Services\Impl\LocalActRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalAlertRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalAppletManagerService.cs" />
+    <Compile Include="Services\Impl\LocalAssigningAuthorityRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalBatchRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalEntityRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalEntityRepositoryServiceBase.cs" />
+    <Compile Include="Services\Impl\LocalIdentifierTypeRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalMaterialRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalMetadataRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalOrganizationRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalPatientRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalPersonRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalPlaceRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalProviderRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalServiceManager.cs" />
+    <Compile Include="Services\Impl\LocalStockManagementRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
+    <Compile Include="Services\Impl\FileConfigurationService.cs" />
+    <Compile Include="Services\Impl\ThreadPoolService.cs" />
+    <Compile Include="Services\IPersistentQueueService.cs" />
+    <Compile Include="Services\IStoredQueryDataPersistenceService.cs" />
+    <Compile Include="Services\ITfaRelayService.cs" />
+    <Compile Include="Wcf\Behavior\WcfErrorEndpointBehavior.cs" />
+    <Compile Include="Wcf\Compression\BZip2CompressionScheme.cs" />
+    <Compile Include="Wcf\Compression\CompressionBodyWriter.cs" />
+    <Compile Include="Wcf\Compression\CompressionUtil.cs" />
+    <Compile Include="Wcf\Compression\DeflateCompressionScheme.cs" />
+    <Compile Include="Wcf\Compression\GzipCompressionScheme.cs" />
+    <Compile Include="Wcf\Compression\ICompressionScheme.cs" />
+    <Compile Include="Wcf\Compression\LzmaCompressionScheme.cs" />
+    <Compile Include="Wcf\IApiEndpointProvider.cs" />
+    <Compile Include="Wcf\Security\BasicAuthorizationAccessPolicy.cs" />
+    <Compile Include="Wcf\Security\BasicAuthorizationCredentialValidator.cs" />
+    <Compile Include="Wcf\Security\JwtTokenAuthorizationPolicy.cs" />
+    <Compile Include="Wcf\Security\JwtTokenServiceAuthorizationManager.cs" />
+    <Compile Include="Services\Impl\LocalConceptRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalSecurityRepositoryService.cs" />
+    <Compile Include="Wcf\Serialization\WcfErrorHandler.cs" />
+    <Compile Include="Wcf\Serialization\RawBodyWriter.cs" />
+    <Compile Include="Wcf\Serialization\WcfMessageDispatchFormatter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Security\Wcf\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
+    <None Include="Schema\OpenIZDataSet.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.BusinessRules.JavaScript\OpenIZ.BusinessRules.JavaScript.csproj">
+      <Project>{3BFD6EE6-0267-4D82-BE7D-9B48B2F6F3D4}</Project>
+      <Name>OpenIZ.BusinessRules.JavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Alert\OpenIZ.Core.Alert.csproj">
+      <Project>{cceaa09f-7b59-45ec-b969-3a740c2aebaa}</Project>
+      <Name>OpenIZ.Core.Alert</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Model.ViewModelSerializers\OpenIZ.Core.Model.ViewModelSerializers.csproj">
+      <Project>{ECE9B280-9647-4092-BABF-EB2E25084670}</Project>
+      <Name>OpenIZ.Core.Model.ViewModelSerializers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
+      <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
+      <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3a45f695-47a2-464c-ace6-bdabbfa39fbc}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Configuration\UI\ucCoreSettings.resx">
+      <DependentUpon>ucCoreSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Configuration\UI\ucServiceSettings.resx">
+      <DependentUpon>ucServiceSettings.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

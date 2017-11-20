@@ -1,0 +1,261 @@
+﻿/*
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-6-14
+ */
+using System.Linq;
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
+using OpenIZ.Core.Model.Security;
+using System.Security.Cryptography;
+using System.Text;
+using MARC.HI.EHRS.SVC.Core.Services.Security;
+using System.Security;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Security;
+using System.Security.Authentication;
+using OpenIZ.Core.Model.Constants;
+
+namespace OpenIZ.Persistence.Data.MSSQL.Test.Services
+{
+    [TestClass]
+    public class SqlIdentityProviderTest : DataTest
+    {
+
+        /// <summary>
+        /// Class startup
+        /// </summary>
+        /// <param name="context"></param>
+        [ClassInitialize]
+        public static void ClassSetup(TestContext context)
+        {
+            AppDomain.CurrentDomain.SetData(
+                           "DataDirectory",
+                           Path.Combine(context.TestDeploymentDir, string.Empty));
+
+            IPasswordHashingService hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+            var dataService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            dataService.Insert(new SecurityUser()
+            {
+                UserName = "admin@identitytest.com",
+                Email = "admin@identitytest.com",
+                PasswordHash = hashingService.EncodePassword("password"),
+                UserClass = UserClassKeys.HumanUser
+            }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+            dataService.Insert(new SecurityUser()
+            {
+                UserName = "user@identitytest.com",
+                Email = "user@identitytest.com",
+                PasswordHash = hashingService.EncodePassword("password"),
+                UserClass = UserClassKeys.HumanUser
+
+            }, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+
+            IRoleProviderService roleService = ApplicationContext.Current.GetService<IRoleProviderService>();
+            roleService.AddUsersToRoles(new string[] { "admin@identitytest.com", "user@identitytest.com" }, new string[] { "USERS" }, AuthenticationContext.SystemPrincipal);
+            roleService.AddUsersToRoles(new string[] { "admin@identitytest.com" }, new string[] { "ADMINISTRATORS" }, AuthenticationContext.SystemPrincipal);
+        }
+
+        /// <summary>
+        /// Tests that the authenticate method successfully authenticates a user
+        /// </summary>
+        [TestMethod]
+        public void TestAuthenticateSuccess()
+        {
+
+            IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var principal = provider.Authenticate("admin@identitytest.com", "password");
+            Assert.AreEqual("admin@identitytest.com", principal.Identity.Name);
+            Assert.IsTrue(principal.Identity.IsAuthenticated);
+            Assert.AreEqual("Password", principal.Identity.AuthenticationType);
+
+        }
+
+        /// <summary>
+        /// Tests that the authenticate method successfully retrieves a non-authenticated identity
+        /// </summary>
+        [TestMethod]
+        public void TestGetNonAuthenticatedPrincipal()
+        {
+
+            IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var identity = provider.GetIdentity("admin@identitytest.com");
+            Assert.AreEqual("admin@identitytest.com", identity.Name);
+            Assert.IsFalse(identity.IsAuthenticated);
+            Assert.IsNull(identity.AuthenticationType);
+
+        }
+        /// <summary>
+        /// Tests that the authenticate method successfully logs an invalid login attempt
+        /// </summary>
+        [TestMethod]
+        public void TestInvalidLoginAttemptCount()
+        {
+
+            var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+
+            // Reset data for test
+            var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
+            user.Lockout = null;
+            user.LastLoginTime = null;
+            user.InvalidLoginAttempts = 0;
+            dataPersistence.Update(user, provider.Authenticate("admin@identitytest.com", "password"), TransactionMode.Commit);
+
+            try
+            {
+
+                var principal = provider.Authenticate("user@identitytest.com", "passwordz");
+                Assert.Fail("Should throw SecurityException");
+            }
+            catch (AuthenticationException)
+            {
+                // We should have a lockout
+                user = dataPersistence.Get(user.Id(), null, false);
+                Assert.AreEqual(1, user.InvalidLoginAttempts);
+                Assert.AreEqual(null, user.LastLoginTime);
+                Assert.IsFalse(user.Lockout.HasValue);
+
+            }
+
+        }
+
+
+        /// <summary>
+        /// Tests that the authenticate method successfully locks a user account after three attempts
+        /// </summary>
+        [TestMethod]
+        public void TestAuthenticateLockout()
+        {
+
+            var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            // Reset data for test
+            var user = dataPersistence.Query(u => u.UserName == "user@identitytest.com", null).First();
+            user.Lockout = null;
+            user.LastLoginTime = null;
+            user.InvalidLoginAttempts = 0;
+            dataPersistence.Update(user, AuthenticationContext.SystemPrincipal, TransactionMode.Commit);
+
+
+            // Try 4 times to log in
+            for (int i = 0; i < 7; i++)
+                try
+                {
+                    var principal = provider.Authenticate("user@identitytest.com", "passwordz");
+                    Assert.Fail("Should throw SecurityException");
+                }
+                catch (AuthenticationException)
+                { }
+
+            // We should have a lockout
+            user = dataPersistence.Get(user.Id(), null, false);
+            Assert.IsTrue(user.InvalidLoginAttempts >= 4);
+            Assert.AreEqual(null, user.LastLoginTime);
+            Assert.IsTrue(user.Lockout.HasValue);
+
+
+        }
+
+        /// <summary>
+        /// Tests that the authenticate method successfully authenticates a user
+        /// </summary>
+        [TestMethod]
+        public void TestAuthenticateFailure()
+        {
+            try
+            {
+                IIdentityProviderService provider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+                var principal = provider.Authenticate("admin@identitytest.com", "passwordz");
+                Assert.Fail("Should throw SecurityException");
+            }
+            catch(AuthenticationException)
+            { }
+        }
+
+        /// <summary>
+        /// Tests that the identity provider can change passwords
+        /// </summary>
+        [TestMethod]
+        public void TestChangePassword()
+        {
+
+            var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            IIdentityProviderService identityProvider = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var user = dataPersistence.Query(u => u.UserName == "admin@identitytest.com", null).First();
+            var existingPassword = user.PasswordHash;
+
+            // Now change the password
+            var principal = identityProvider.Authenticate("admin@identitytest.com", "password");
+            identityProvider.ChangePassword("admin@identitytest.com", "newpassword", principal);
+            user = dataPersistence.Get(user.Id(), principal, false);
+            Assert.AreNotEqual(existingPassword, user.PasswordHash);
+
+            // Change the password back 
+            user.PasswordHash = existingPassword;
+            dataPersistence.Update(user, principal, TransactionMode.Commit);
+        }
+
+        /// <summary>
+        /// Tests that anonymous user creation works
+        /// </summary>
+        [TestMethod]
+        public void TestAnonymousUserCreation()
+        {
+
+            var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            var identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+
+            var identity = identityService.CreateIdentity("anonymous@identitytest.com", "mypassword", AuthenticationContext.SystemPrincipal);
+            Assert.IsNotNull(identity);
+            Assert.IsFalse(identity.IsAuthenticated);
+
+            // Now verify with data persistence
+            var dataUser = dataPersistence.Query(u => u.UserName == "anonymous@identitytest.com", null).First();
+            Assert.AreEqual(hashingService.EncodePassword("mypassword"), dataUser.PasswordHash);
+        }
+
+        /// <summary>
+        /// Tests that administrative user creation works
+        /// </summary>
+        [TestMethod]
+        public void TestAdministrativeUserCreation()
+        {
+
+            var dataPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            var identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            var hashingService = ApplicationContext.Current.GetService<IPasswordHashingService>();
+
+            var authContext = identityService.Authenticate("admin@identitytest.com", "password");
+            var identity = identityService.CreateIdentity("admincreated@identitytest.com", "mypassword", authContext);
+            Assert.IsNotNull(identity);
+            Assert.IsFalse(identity.IsAuthenticated);
+
+            // Now verify with data persistence
+            var dataUser = dataPersistence.Query(u => u.UserName == "admincreated@identitytest.com", null).First();
+            Assert.AreEqual(hashingService.EncodePassword("mypassword"), dataUser.PasswordHash);
+            Assert.IsFalse(dataUser.Lockout.HasValue);
+            Assert.AreEqual(authContext.Identity.Name, dataUser.CreatedBy.UserName);
+            
+
+        }
+    }
+}

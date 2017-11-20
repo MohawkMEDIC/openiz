@@ -148,7 +148,7 @@ csx/
 AppPackages/
 
 # Others
-sql/
+#sql/
 *.Cache
 ClientBin/
 [Ss]tyle[Cc]op.*
@@ -187,3 +187,7 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+*.nupkg
+OpenIZ.sln.GhostDoc.xml
+*.exe
+/Solution Items/Solution Items.zip

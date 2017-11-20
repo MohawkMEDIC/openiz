@@ -1,0 +1,48 @@
+﻿SPA Pages (State Assets)
+=-=-=-=-=-=-=-=-=-=-=-=-
+
+State based applets (pages in the SPA framework) have the structure as follows:
+
+<[form|div|p] xmlns="http://www.w3.org/1999/xhtml" 
+		xmlns:oiz="http://openiz.org/applet"
+		xmlns:bind="http://openiz.org/applet/binding" 
+		>
+	<!-- 0..n static script references -->
+	<oiz:script></oiz:script>
+	<!-- 0..n static CSS references -->
+	<oiz:style></oiz:style>
+
+	<!-- 1..1 state name for ui-router -->
+    <oiz:state name="[applet].[state]">
+		<!-- 1..1 route -->
+        <oiz:url></oiz:url>
+		<!-- 1..1 view -->
+        <oiz:view>
+			<!-- 0..n titles -->
+            <oiz:title></oiz:title>
+			<!-- 0..n permissions -->
+            <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.0</oiz:demand>
+			<!-- 1..1 controller definition -->
+            <oiz:controller></oiz:controller>
+			<!-- 0..1 controller source file reference -->
+			<oiz:controller-src></oiz:controller-src>
+        </oiz:view>
+    </oiz:state>
+
+Widgets (embedded parts which can be reused)
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+<[div|p] xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:oiz="http://openiz.org/applet">
+	<oiz:widget type="[Tab|Panel]" scope="[Patient|Place|User]" name="[applet].[panelId]">
+		<!-- 0..1 icon to the widget -->
+		<oiz:icon></oiz:icon>
+		<!-- 0..n titles -->
+        <oiz:title></oiz:title>
+		<!-- 0..n permissions -->
+        <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.0</oiz:demand>
+		<!-- 1..1 controller definition -->
+        <oiz:controller></oiz:controller>
+		<!-- 0..1 controller source file reference -->
+		<oiz:controller-src></oiz:controller-src>
+	</oiz:widget>

@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F51377FB-1E69-40BD-884B-6BB311CB9B0E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OizDevTool</RootNamespace>
+    <AssemblyName>oizdt</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GIIS.DataLayer">
+      <HintPath>..\Solution Items\GIIS.DataLayer.dll</HintPath>
+    </Reference>
+    <Reference Include="jint, Version=2.10.2.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f" />
+    <Reference Include="MARC.Everest, Version=1.5.0.0, Culture=neutral, PublicKeyToken=ba5b2480018546af, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.Everest.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Core, Version=2.0.0.23990, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MohawkCollege.EHR.Util.SimpleXSD">
+      <HintPath>..\Solution Items\MohawkCollege.EHR.Util.SimpleXSD.dll</HintPath>
+    </Reference>
+    <Reference Include="MohawkCollege.Util.Console.Parameters">
+      <HintPath>..\Solution Items\MohawkCollege.Util.Console.Parameters.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql, Version=3.1.3.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Admin.cs" />
+    <Compile Include="CsdImport.Entity.cs" />
+    <Compile Include="CsdImport.Metadata.cs" />
+    <Compile Include="CsdImport.Place.cs" />
+    <Compile Include="CsdImport.PlaceService.cs" />
+    <Compile Include="CsdImport.Provider.cs" />
+    <Compile Include="Dataset.cs" />
+    <Compile Include="Debugger\ProtoDebugger.cs" />
+    <Compile Include="Debugger\BreDebugger.cs" />
+    <Compile Include="Debugger\Debug.cs" />
+    <Compile Include="Debugger\DebuggerBase.cs" />
+    <Compile Include="CommandAttribute.cs" />
+    <Compile Include="DocGen.cs" />
+    <Compile Include="ImsiServiceClient.cs" />
+    <Compile Include="InteractiveBase.cs" />
+    <Compile Include="ServiceManager.cs" />
+    <Compile Include="Warehouse.cs" />
+    <Compile Include="ExampleAttribute.cs" />
+    <Compile Include="InteractiveAttribute.cs" />
+    <Compile Include="ParameterClassAttribute.cs" />
+    <Compile Include="VocabTool.cs" />
+    <Compile Include="ConsoleParameters.cs" />
+    <Compile Include="Csd.cs" />
+    <Compile Include="CsdImport.cs" />
+    <Compile Include="EverestImport.cs" />
+    <Compile Include="FakeDataGenerator.cs" />
+    <Compile Include="GiisImport.cs" />
+    <Compile Include="JsonSerializerFactory.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SeedData\SeedData.cs" />
+    <Compile Include="JsProxy.cs" />
+    <Compile Include="SvsImport.cs" />
+    <Compile Include="Svs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
+    <Compile Include="CsdImport.Organization.cs" />
+    <None Include="oizdt.config.empty">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\CSD.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\datatypes-base.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\datatypes.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\infrastructureRoot.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\NarrativeBlock.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\HL7V3\NE2008\coreschemas\voc.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Resources\SVS.xsd">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.BusinessRules.JavaScript\OpenIZ.BusinessRules.JavaScript.csproj">
+      <Project>{3BFD6EE6-0267-4D82-BE7D-9B48B2F6F3D4}</Project>
+      <Name>OpenIZ.BusinessRules.JavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
+      <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
+      <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core\OpenIZ.Core.csproj">
+      <Project>{db9bc05e-45f1-4f96-a161-f36bdecaf566}</Project>
+      <Name>OpenIZ.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Messaging.AMI.Client\OpenIZ.Messaging.AMI.Client.csproj">
+      <Project>{0FDBD4DB-30AE-4E1D-AAE1-5FE1370DCE3F}</Project>
+      <Name>OpenIZ.Messaging.AMI.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Protocol.Xml\OpenIZ.Protocol.Xml.csproj">
+      <Project>{cad6bcb7-758b-4aa4-a5fe-a9fab8a4cf2f}</Project>
+      <Name>OpenIZ.Protocol.Xml</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\jsdoc-template.js" />
+    <EmbeddedResource Include="Resources\jsdoc-addlclasses.js" />
+    <EmbeddedResource Include="Resources\CarePlanWarehouseSchema.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="SeedData.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

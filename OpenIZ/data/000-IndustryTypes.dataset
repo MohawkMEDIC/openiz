@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Industry Type Codes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+
+    <Concept xmlns="http://openiz.org/model">
+      <id>33b40c3c-c0c0-48b6-be74-0881d9c00ee6</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Industry-Manufacturing</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <name>
+        <language>en</language>
+        <value>Manufacturing</value>
+      </name>
+      <conceptSet>d1597e50-845a-46e1-b9ae-6f99ff93d9db</conceptSet>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+
+    <Concept xmlns="http://openiz.org/model">
+      <id>87269826-c0c3-4c22-abb1-3572f6679c3f</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Industry-OtherUnknown</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <name>
+        <language>en</language>
+        <value>Other/Unknown</value>
+      </name>
+      <conceptSet>d1597e50-845a-46e1-b9ae-6f99ff93d9db</conceptSet>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+
+    <Concept xmlns="http://openiz.org/model">
+      <id>ef0b2e4e-9e02-4ce3-ab69-cece5f598e20</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Industry-HealthDelivery</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <name>
+        <language>en</language>
+        <value>Healthcare</value>
+      </name>
+      <conceptSet>d1597e50-845a-46e1-b9ae-6f99ff93d9db</conceptSet>
+    </Concept>
+  </update>
+</dataset>

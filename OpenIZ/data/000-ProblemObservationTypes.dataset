@@ -1,0 +1,452 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>B3030751-D4DB-420B-B765-E837607820CD</id>
+      
+      <name>SNOMED CT</name>
+      <oid>2.16.840.1.113883.6.96</oid>
+      <authority>SNM</authority>
+      <url>http://snomed.info</url>
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>402d2720-495a-4908-b2b3-00fb021c82a8</id>
+      
+      <mnemonic>64572001</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Condition</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>236b5641-61d2-4d12-91f7-5dddbd7f8931</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Condition</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>402d2720-495a-4908-b2b3-00fb021c82a8</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Condition</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>04e6ef3e-0749-4f2b-9a66-50c626645259</id>
+      
+      <mnemonic>418799008</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        
+        <language>en</language>
+        <value>Symptom  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>10a0fb51-687d-41ec-8d50-ad6549e2ae58</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Symptom</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>04e6ef3e-0749-4f2b-9a66-50c626645259</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Symptom  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7501efde-215c-4336-aaaa-9d88d57d005d</id>
+      
+      <mnemonic>404684003</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        
+        <language>en</language>
+        <value>Finding  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>5dbd3949-fda0-4c5d-a849-a673fd5565f6</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Finding</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>7501efde-215c-4336-aaaa-9d88d57d005d</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Finding  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e6a625a9-df55-4006-827c-357a1ab41b82</id>
+      
+      <mnemonic>409586006</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        
+        <language>en</language>
+        <value>Complaint  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>402051ae-fa84-45b7-ac3b-586d1323ebe7</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Complaint</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>e6a625a9-df55-4006-827c-357a1ab41b82</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Complaint  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>8ba18f38-7230-4215-b508-081ce7ac93e3</id>
+      
+      <mnemonic>248536006</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        
+        <language>en</language>
+        <value>Functional limitation  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>bfc26b1f-af4c-4d50-a084-eb0d9eabd519</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Functionallimitation</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>8ba18f38-7230-4215-b508-081ce7ac93e3</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Functional limitation  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d1b83f49-1ce1-4a13-9135-07ff639b71fe</id>
+      
+      <mnemonic>55607006</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        
+        <language>en</language>
+        <value>Problem  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>260ffe90-7882-4b38-a7af-d2110e91e752</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Problem</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>d1b83f49-1ce1-4a13-9135-07ff639b71fe</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Problem  </value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>bec4638c-6ddf-4c11-a70a-e3266c7478f8</id>
+      
+      <mnemonic>282291009</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        
+        <language>en</language>
+        <value>Diagnosis</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>d5e0a5be-d227-413a-a752-b7d79d7d4ef3</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Diagnosis</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>bec4638c-6ddf-4c11-a70a-e3266c7478f8</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Diagnosis</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e7d0e536-85e0-46ce-a858-84247dff0a9f</id>
+      
+      <mnemonic>SEV</mnemonic>
+      <codeSystem>02823B47-C315-4366-8883-442E646D34BE</codeSystem>
+      <name>
+        
+        
+        <language>en</language>
+        <value>Severity</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>05012084-3351-4045-8390-fbcbd7ec1d19</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-Severity</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>e7d0e536-85e0-46ce-a858-84247dff0a9f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Severity</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>bec4638c-6ddf-4c11-a70a-e3266c7478ff</id>
+      
+      <mnemonic>184305005</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+
+        <language>en</language>
+        <value>Cause of Death</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>d5e0a5be-d227-413a-a752-b7d79d7d4ede</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-CauseOfDeath</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>bec4638c-6ddf-4c11-a70a-e3266c7478ff</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Cause of death</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7c7a3e02-6e86-424b-857c-561fc133675f</id>
+      
+      <mnemonic>365860008</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>General clinical state finding</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>6fb8487c-cd6f-44f1-ab63-27dc65405792</id>
+      
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-ClinicalState</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>7c7a3e02-6e86-424b-857c-561fc133675f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Clinical State</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5C1658BC-A483-4071-8601-5533D9CCEC63</id>
+
+      <mnemonic>363698007</mnemonic>
+      <codeSystem>B3030751-D4DB-420B-B765-E837607820CD</codeSystem>
+      <name>
+
+        <language>en</language>
+        <value>Finding Site</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>25D9F855-F0C8-4718-884D-04D3B6439E5C</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>ObservationType-FindingSite</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>5C1658BC-A483-4071-8601-5533D9CCEC63</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Finding Site</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>03aa038f-570e-45f1-93ac-fd77e239a1ec</id>
+      
+      <name>Observation Act Types</name>
+      <mnemonic>ObservationType</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.45</oid>
+      <url>http://openiz.org/conceptset/ObservationType</url>
+      <concept>236b5641-61d2-4d12-91f7-5dddbd7f8931</concept>
+      <concept>10a0fb51-687d-41ec-8d50-ad6549e2ae58</concept>
+      <concept>5dbd3949-fda0-4c5d-a849-a673fd5565f6</concept>
+      <concept>402051ae-fa84-45b7-ac3b-586d1323ebe7</concept>
+      <concept>bfc26b1f-af4c-4d50-a084-eb0d9eabd519</concept>
+      <concept>260ffe90-7882-4b38-a7af-d2110e91e752</concept>
+      <concept>d5e0a5be-d227-413a-a752-b7d79d7d4ef3</concept>
+      <concept>05012084-3351-4045-8390-fbcbd7ec1d19</concept>
+      <concept>d5e0a5be-d227-413a-a752-b7d79d7d4ede</concept>
+      <concept>6fb8487c-cd6f-44f1-ab63-27dc65405792</concept>
+    </ConceptSet>
+  </update>
+
+
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>952D89FA-9324-4008-9452-3EB6780B6EA0</id>
+
+      <name>Problem or Concern Observation Types</name>
+      <mnemonic>ProblemObservationType</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.53</oid>
+      <url>http://openiz.org/conceptset/ProblemObservationType</url>
+      <concept>236b5641-61d2-4d12-91f7-5dddbd7f8931</concept>
+      <concept>10a0fb51-687d-41ec-8d50-ad6549e2ae58</concept>
+      <concept>bfc26b1f-af4c-4d50-a084-eb0d9eabd519</concept>
+      <concept>260ffe90-7882-4b38-a7af-d2110e91e752</concept>
+      <concept>d5e0a5be-d227-413a-a752-b7d79d7d4ef3</concept>
+    </ConceptSet>
+  </update>
+</dataset>

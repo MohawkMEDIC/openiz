@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{65EF51C6-5CB8-43B8-AE65-4A68F0B44AD2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenIZ.Core.Model.AMI</RootNamespace>
+    <AssemblyName>OpenIZ.Core.Model.AMI</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Debug\OpenIZ.Core.Model.AMI.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\bin\Release\OpenIZ.Core.Model.AMI.XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\OpenIZ.Core.Alert\OpenIZ.Core.Alert.csproj">
+      <Project>{cceaa09f-7b59-45ec-b969-3a740c2aebaa}</Project>
+      <Name>OpenIZ.Core.Alert</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
+      <Project>{f1a82a4f-4a57-47d7-ae76-444c8a4ff54a}</Project>
+      <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Alerting\AlertMessageInfo.cs" />
+    <Compile Include="AmiCollection.cs" />
+    <Compile Include="Applet\AppletManifestInfo.cs" />
+    <Compile Include="Auth\SecurityApplicationInfo.cs" />
+    <Compile Include="Auth\SecurityDeviceInfo.cs" />
+    <Compile Include="Auth\SecurityPolicyInfo.cs" />
+    <Compile Include="Auth\SecurityRoleInfo.cs" />
+    <Compile Include="Auth\TfaRequestInfo.cs" />
+    <Compile Include="Auth\SecurityUserInfo.cs" />
+    <Compile Include="Auth\TfaMechanismInfo.cs" />
+    <Compile Include="BusinessRules\BusinessRuleInfo.cs" />
+    <Compile Include="DataTypes\AssigningAuthorityInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticApplicationInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticEnvironmentInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticAttachmentInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticAttachments.cs" />
+    <Compile Include="Diagnostics\DiagnosticReport.cs" />
+    <Compile Include="Diagnostics\DiagnosticServiceInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticSyncInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticVersionInfo.cs" />
+    <Compile Include="Logging\LogFileInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\AuditInfo.cs" />
+    <Compile Include="Security\RevokeReason.cs" />
+    <Compile Include="Security\SubmissionInfo.cs" />
+    <Compile Include="Security\SubmissionRequest.cs" />
+    <Compile Include="Security\SubmissionResult.cs" />
+    <Compile Include="Security\SubmissionStatus.cs" />
+    <Compile Include="Security\X509Certificate2Info.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core">
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

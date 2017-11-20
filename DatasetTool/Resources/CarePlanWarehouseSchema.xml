@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2017-5-26
+ -->
+<DatamartSchema xmlns="http://openiz.org/warehousing" name="oizcp" id="07BA63B4-50FA-41D5-9D24-7FB41606A961">
+  <property name="creation_date" type="date" attributes="nonnull"/>
+  <property name="patient_id" type="uuid" attributes="nonnull index"/>
+  <property name="location_id" type="uuid" attributes="index"/>
+  <property name="protocol_id" type="uuid" attributes="index"/>
+  <property name="act_id" type="uuid" attributes="nonnull"/>
+  <property name="class_id" type="uuid" attributes="nonnull"/>
+  <property name="type_id" type="uuid" attributes="nonnull"/>
+  <property name="min_date" type="date" attributes="nonnull"/>
+  <property name="max_date" type="date" attributes="none"/>
+  <property name="act_date" type="date" attributes="index"/>
+  <property name="product_id" type="uuid" attributes="index"/>
+  <property name="sequence_id" type="int" />
+  <property name="dose_seq" type="int"/>
+  <property name="fulfilled" type="bool"/>
+  <sqp name="bymonth">
+    <property name="location_id" type="uuid"/>
+    <property name="product_id" type="uuid"/>
+    <property name="act_date" type="date"/>
+    <property name="acts" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[SELECT location_id, product_id, act_date, COUNT(act_id) AS acts FROM 
+(	
+	select location_id, product_id, cast(strftime('%s', date(act_date, 'unixepoch')) as bigint) as act_date, act_id from oizcp 
+) GROUP BY location_id, product_id, act_date]]>
+    </sql>
+  </sqp>
+  <sqp name="byday">
+    <property name="patient_id" type="uuid"/>
+    <property name="location_id" type="uuid"/>
+    <property name="product_id" type="uuid"/>
+    <property name="act_date" type="date"/>
+    <property name="dose_seq" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[select patient_id, product_id, location_id, dose_seq as productId, act_date as act_date from oizcp]]>
+    </sql>
+  </sqp>
+  <sqp name="defaulters_aggregate">
+    <property name="days_overdue" type="int"/>
+    <property name="location_id" type="uuid"/>
+    <property name="num_children" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[
+    SELECT overdue / 86400 AS days_overdue, location_id, COUNT(DISTINCT patient_id) AS num_children FROM
+    (SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) AS overdue FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') GROUP BY patient_id) WHERE overdue > 0 GROUP BY overdue, location_id
+    ]]>
+    </sql>
+  </sqp>
+  <sqp name="defaulters">
+    <property name="patient_id" type="uuid"/>
+    <property name="location_id" type="uuid"/>
+    <property name="days_overdue" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[
+    SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) / 86400 AS days_overdue, product_id, dose_seq FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
+    ]]>
+    </sql>
+  </sqp>
+  <sqp name="consistency" >
+    <property name="patient_id" type="uuid"/>
+    <sql provider="sqlite">
+      <![CDATA[SELECT DISTINCT patient_id FROM oizcp]]>
+    </sql>
+    <sql provider="npgsql">
+      <![CDATA[SELECT DISTINCT patient_id FROM oizcp]]>
+    </sql>
+  </sqp>
+</DatamartSchema>

@@ -1,0 +1,417 @@
+﻿{
+    "$type": "UserEntity",
+	"securityUser": "824a6228-f365-e611-aede-080027afb8b3",
+	"language": [{
+	    "$type": "PersonLanguageCommunication",
+	    "languageCode": "sw",
+	    "isPreferred": true,
+	    "modifiedOn": "2016-08-23T12:34:13.699Z",
+	    "source": "fe6879f3-099d-4f95-8c01-3fe867d40765",
+	    "isdelayloadenabledModel": false,
+	    "id": "a981120d-21ca-4568-a9a1-e63b5eda26d8",
+	    "etag": "0D1281A9CA216845A9A1E63B5EDA26D8"
+	}],
+	"assecurityuserModel": {
+	    "$type": "SecurityUser",
+		"emailConfirmed": false,
+		"invalidLoginAttempts": 0,
+		"passwordHash": "59ff5973691ff75f8baa45f1e38fae24875f77ef00987ed22b02df075fb144f9",
+		"securityStamp": "230c36b5-982a-4c8d-9367-267d664bc295",
+		"twoFactorEnabled": false,
+		"userName": "lucy",
+		"rolesModel": [{
+		    "$type": "NonVersionedEntityData",
+		    "name": "CLINICAL_STAFF",
+		    "policiesModel": [{
+		        "$type": "IdentifiedData",
+		        "policykeyModel": "f6840336-4e20-4bc0-b965-baa6d7c80be3",
+		        "granttypeModel": 2,
+		        "modifiedOn": "2016-08-23T12:37:31.360Z",
+		        "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+		        "isdelayloadenabledModel": false,
+		        "id": "a9134773-7102-472b-b146-045db6526571",
+		        "etag": "734713A902712B47B146045DB6526571"
+		    },
+			{
+			    "$type": "IdentifiedData",
+			    "policykeyModel": "ea73c05a-3159-48c8-bbcb-741911d91cd2",
+			    "granttypeModel": 0,
+			    "modifiedOn": "2016-08-23T12:37:31.361Z",
+			    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+			    "isdelayloadenabledModel": false,
+			    "id": "eb7f194a-c671-43aa-9c9a-8194d81275d4",
+			    "etag": "4A197FEB71C6AA439C9A8194D81275D4"
+			},
+			{
+			    "$type": "IdentifiedData",
+			    "policykeyModel": "dea891aa-224d-4859-81b3-c1eb2750067e",
+			    "granttypeModel": 0,
+			    "modifiedOn": "2016-08-23T12:37:31.363Z",
+			    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+			    "isdelayloadenabledModel": false,
+			    "id": "5d9253c3-16db-4e26-902f-e490c8e4bfdc",
+			    "etag": "C353925DDB16264E902FE490C8E4BFDC"
+			},
+			{
+			    "$type": "IdentifiedData",
+			    "policykeyModel": "d15b96ab-646c-4c00-9a58-ea09eee67d7c",
+			    "granttypeModel": 2,
+			    "modifiedOn": "2016-08-23T12:37:31.364Z",
+			    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+			    "isdelayloadenabledModel": false,
+			    "id": "b40f71a3-ae94-4e7e-811e-43e2fdd673a4",
+			    "etag": "A3710FB494AE7E4E811E43E2FDD673A4"
+			},
+			{
+			    "$type": "IdentifiedData",
+			    "policykeyModel": "4cd648e5-8189-4aa7-addd-250e527fd603",
+			    "granttypeModel": 2,
+			    "modifiedOn": "2016-08-23T12:37:31.365Z",
+			    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+			    "isdelayloadenabledModel": false,
+			    "id": "fc3fa1ff-cd28-465d-a439-9bc7602e3d4c",
+			    "etag": "FFA13FFC28CD5D46A4399BC7602E3D4C"
+			}],
+		    "modifiedOn": "0001-01-01T00:00:00.000Z",
+		    "creationtimeModel": "0001-01-01T00:00:00.000Z",
+		    "creationTime": "0001-01-01T00:00:00.000Z",
+		    "isdelayloadenabledModel": false,
+		    "id": "9b287ba2-b32e-4307-9087-d154405a663f",
+		    "etag": "A27B289B2EB307439087D154405A663F"
+		}],
+		"phoneNumberConfirmed": false,
+		"userClass": "00000000-0000-0000-0000-000000000000",
+		"etag": "230c36b5-982a-4c8d-9367-267d664bc295",
+		"policiesModel": [{
+		    "$type": "IdentifiedData",
+		    "policykeyModel": "f6840336-4e20-4bc0-b965-baa6d7c80be3",
+		    "granttypeModel": 2,
+		    "modifiedOn": "2016-08-23T12:37:31.368Z",
+		    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+		    "isdelayloadenabledModel": false,
+		    "id": "a9134773-7102-472b-b146-045db6526571",
+		    "etag": "734713A902712B47B146045DB6526571"
+		},
+		{
+		    "$type": "IdentifiedData",
+		    "policykeyModel": "ea73c05a-3159-48c8-bbcb-741911d91cd2",
+		    "granttypeModel": 0,
+		    "modifiedOn": "2016-08-23T12:37:31.370Z",
+		    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+		    "isdelayloadenabledModel": false,
+		    "id": "eb7f194a-c671-43aa-9c9a-8194d81275d4",
+		    "etag": "4A197FEB71C6AA439C9A8194D81275D4"
+		},
+		{
+		    "$type": "IdentifiedData",
+		    "policykeyModel": "dea891aa-224d-4859-81b3-c1eb2750067e",
+		    "granttypeModel": 0,
+		    "modifiedOn": "2016-08-23T12:37:31.370Z",
+		    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+		    "isdelayloadenabledModel": false,
+		    "id": "5d9253c3-16db-4e26-902f-e490c8e4bfdc",
+		    "etag": "C353925DDB16264E902FE490C8E4BFDC"
+		},
+		{
+		    "$type": "IdentifiedData",
+		    "policykeyModel": "d15b96ab-646c-4c00-9a58-ea09eee67d7c",
+		    "granttypeModel": 2,
+		    "modifiedOn": "2016-08-23T12:37:31.371Z",
+		    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+		    "isdelayloadenabledModel": false,
+		    "id": "b40f71a3-ae94-4e7e-811e-43e2fdd673a4",
+		    "etag": "A3710FB494AE7E4E811E43E2FDD673A4"
+		},
+		{
+		    "$type": "IdentifiedData",
+		    "policykeyModel": "4cd648e5-8189-4aa7-addd-250e527fd603",
+		    "granttypeModel": 2,
+		    "modifiedOn": "2016-08-23T12:37:31.372Z",
+		    "source": "9b287ba2-b32e-4307-9087-d154405a663f",
+		    "isdelayloadenabledModel": false,
+		    "id": "fc3fa1ff-cd28-465d-a439-9bc7602e3d4c",
+		    "etag": "FFA13FFC28CD5D46A4399BC7602E3D4C"
+		}],
+		"updatedtimeModel": "2016-08-23T12:36:20.794Z",
+		"updatedTime": "2016-08-23T12:36:20.794Z",
+		"modifiedOn": "2016-08-23T12:36:20.794Z",
+		"updatedBy": "824a6228-f365-e611-aede-080027afb8b3",
+		"creationtimeModel": "2016-08-23T10:05:11.047Z",
+		"creationTime": "2016-08-23T10:05:11.047Z",
+		"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+		"isdelayloadenabledModel": false,
+		"id": "824a6228-f365-e611-aede-080027afb8b3"
+	},
+	"classConcept": "9de2a846-ddf2-4ebc-902e-84508c5089ea",
+	"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+	"determinerConceptModel": {
+	    "$type": "Concept",
+		"isReadonly": true,
+		"mnemonic": "Specific",
+		"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+		"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+		"conceptClassModel": {
+		    "$type": "ConceptClass",
+			"name": "Other Classification",
+			"mnemonic": "Other",
+			"modifiedOn": "0001-01-01T00:00:00.000Z",
+			"creationtimeModel": "0001-01-01T00:00:00.000Z",
+			"creationTime": "0001-01-01T00:00:00.000Z",
+			"isdelayloadenabledModel": false,
+			"id": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+			"etag": "39346B0DBEC98044AF39EEB457C052D0"
+		},
+		"name": {
+		    "en": "specific"
+		},
+		"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+		"etag": "12653AFC65F311E6AEDE080027AFB8B3",
+		"version": "fc3a6512-f365-e611-aede-080027afb8b3",
+		"creationtimeModel": "2016-08-19T09:55:38.739Z",
+		"creationTime": "2016-08-19T09:55:38.739Z",
+		"modifiedOn": "2016-08-19T09:55:38.739Z",
+		"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+		"isdelayloadenabledModel": false,
+		"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+	},
+	"relationship": {
+	    "DedicatedServiceDeliveryLocation": {
+	        "$type": "EntityRelationship",
+			"target": "a14af90e-1646-4f53-b5ce-420e4da5d8a7",
+			"targetModel": {
+			    "$type": "Entity",
+				"classConcept": "ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c",
+				"determinerConcept": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09",
+				"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+				"typeConcept": "1d0041e3-42cc-41de-a9bc-35ec8530b691",
+				"determinerConceptModel": {
+				    "$type": "Concept",
+					"isReadonly": true,
+					"mnemonic": "Specific",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+					"conceptClassModel": {
+					    "$type": "ConceptClass",
+						"name": "Other Classification",
+						"mnemonic": "Other",
+						"modifiedOn": "0001-01-01T00:00:00.000Z",
+						"creationtimeModel": "0001-01-01T00:00:00.000Z",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"isdelayloadenabledModel": false,
+						"id": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+						"etag": "39346B0DBEC98044AF39EEB457C052D0"
+					},
+					"name": {
+					    "en": "specific"
+					},
+					"conceptSet": ["effc9f86-56e2-4920-a75a-fec310aa1430"],
+					"etag": "12653AFC65F311E6AEDE080027AFB8B3",
+					"version": "fc3a6512-f365-e611-aede-080027afb8b3",
+					"creationtimeModel": "2016-08-19T09:55:38.739Z",
+					"creationTime": "2016-08-19T09:55:38.739Z",
+					"modifiedOn": "2016-08-19T09:55:38.739Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"isdelayloadenabledModel": false,
+					"id": "f29f08de-78a7-4a5e-aeaf-7b545ba19a09"
+				},
+				"statusConceptModel": {
+				    "$type": "Concept",
+					"isReadonly": true,
+					"mnemonic": "ACTIVE",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"conceptClass": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+					"conceptClassModel": {
+					    "$type": "ConceptClass",
+						"name": "Status",
+						"mnemonic": "Status",
+						"modifiedOn": "0001-01-01T00:00:00.000Z",
+						"creationtimeModel": "0001-01-01T00:00:00.000Z",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"isdelayloadenabledModel": false,
+						"id": "54b93182-fc19-47a2-82c6-089fd70a4f45",
+						"etag": "8231B95419FCA24782C6089FD70A4F45"
+					},
+					"conceptSet": ["c7578340-a8ff-4d7d-8105-581016324e68",
+					"de358951-24dc-48dc-8185-f10b7ea4dcd1",
+					"93a48f6a-6808-4c70-83a2-d02178c2a883",
+					"aae906aa-27b3-4cdb-aff1-f08b0fd31e59"],
+					"etag": "314B52DDCBCC374FB15E66B6D6568233",
+					"previousVersion": "1ec99df6-861c-4c5c-84b7-8ffc7beb3649",
+					"version": "dd524b31-cccb-4f37-b15e-66b6d6568233",
+					"creationtimeModel": "2016-08-19T09:55:38.599Z",
+					"creationTime": "2016-08-19T09:55:38.599Z",
+					"modifiedOn": "2016-08-19T09:55:38.599Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"isdelayloadenabledModel": false,
+					"id": "c8064cbd-fa06-4530-b430-1a52f1530c27"
+				},
+				"typeConceptModel": {
+				    "$type": "Concept",
+					"isReadonly": false,
+					"mnemonic": "Facility-HealthCenter",
+					"statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+					"conceptClass": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+					"conceptClassModel": {
+					    "$type": "ConceptClass",
+						"name": "Other Classification",
+						"mnemonic": "Other",
+						"modifiedOn": "0001-01-01T00:00:00.000Z",
+						"creationtimeModel": "0001-01-01T00:00:00.000Z",
+						"creationTime": "0001-01-01T00:00:00.000Z",
+						"isdelayloadenabledModel": false,
+						"id": "0d6b3439-c9be-4480-af39-eeb457c052d0",
+						"etag": "39346B0DBEC98044AF39EEB457C052D0"
+					},
+					"name": {
+					    "en": "Health Center"
+					},
+					"conceptSet": ["02bf0e41-658c-4715-b467-aa2b3466ee66"],
+					"etag": "94B10F6AD983F84689FDE25C91E8DE40",
+					"previousVersion": "6a0fb194-83d9-46f8-89fd-e25c91e8de40",
+					"version": "6a0fb194-83d9-46f8-89fd-e25c91e8de40",
+					"creationtimeModel": "2016-08-19T09:57:19.474Z",
+					"creationTime": "2016-08-19T09:57:19.474Z",
+					"modifiedOn": "2016-08-19T09:57:19.474Z",
+					"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+					"isdelayloadenabledModel": false,
+					"id": "1d0041e3-42cc-41de-a9bc-35ec8530b691"
+				},
+				"identifier": {
+				    "TZ_FRID": {
+				        "$type": "EntityIdentifier",
+						"value": "urn:uuid:F62341FF-B5F9-39D4-96BE-45FCCE3C37A4",
+						"authoritykeyModel": "30429cdc-deb1-4ade-9f64-1420978afa4d",
+						"modifiedOn": "2016-08-23T12:37:31.407Z",
+						"source": "a14af90e-1646-4f53-b5ce-420e4da5d8a7",
+						"isdelayloadenabledModel": false,
+						"id": "89a8bcb5-1416-4c37-9f80-c3bb2631b612",
+						"etag": "B5BCA8891614374C9F80C3BB2631B612"
+				    },
+					"TIIS_FACID": {
+					    "$type": "EntityIdentifier",
+						"value": "17477",
+						"authoritykeyModel": "5c94c17f-c448-422b-8df0-d4f4ad10eda5",
+						"modifiedOn": "2016-08-23T12:37:31.408Z",
+						"source": "a14af90e-1646-4f53-b5ce-420e4da5d8a7",
+						"isdelayloadenabledModel": false,
+						"id": "601473ae-dbc8-4cbb-a2e2-fcb87886734b",
+						"etag": "AE731460C8DBBB4CA2E2FCB87886734B"
+					}
+				},
+				"relationship": {
+				    "Parent": {
+				        "$type": "EntityRelationship",
+						"target": "41c147e2-60bc-44ce-a9c9-f178b140b638",
+						"holder": "a14af90e-1646-4f53-b5ce-420e4da5d8a7",
+						"relationshipType": "bfcbb345-86db-43ba-b47e-e7411276ac7c",
+						"inversionInd": false,
+						"quantity": 0,
+						"modifiedOn": "2016-08-23T12:37:31.411Z",
+						"source": "a14af90e-1646-4f53-b5ce-420e4da5d8a7",
+						"isdelayloadenabledModel": false,
+						"id": "4cb4bcd1-0b9a-425a-9895-bec296f0118f",
+						"etag": "D1BCB44C9A0B5A429895BEC296F0118F"
+				    }
+				},
+				"extension": {
+				    "http://openiz.org/extensions/contrib/tiis/coldStorageCapacity": null,
+					"http://openiz.org/extensions/contrib/tiis/isleaf": null,
+					"http://openiz.org/extensions/contrib/tiis/vaccineStore": null,
+					"http://openiz.org/extensions/contrib/tiis/isVaccinationPoint": null
+				},
+				"name": {
+				    "OfficialRecord": {
+				        "$type": "EntityName",
+						"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+						"component": {
+						    "$other": {
+						        "$type": "EntityNameComponent",
+								"phoneticAlgorithm": "402cd339-d0e4-46ce-8fc2-12a4b0e17226",
+								"value": "Arusha School Dispensary",
+								"modifiedOn": "2016-08-23T12:37:31.418Z",
+								"source": "c4cd198e-8ea4-4bfa-8069-d96c86f25e7d",
+								"isdelayloadenabledModel": false,
+								"id": "2c9cf2b1-1a40-44e9-954b-39812362db4a",
+								"etag": "B1F29C2C401AE944954B39812362DB4A"
+						    }
+						},
+						"modifiedOn": "2016-08-23T12:37:31.419Z",
+						"source": "a14af90e-1646-4f53-b5ce-420e4da5d8a7",
+						"isdelayloadenabledModel": false,
+						"id": "c4cd198e-8ea4-4bfa-8069-d96c86f25e7d",
+						"etag": "8E19CDC4A48EFA4B8069D96C86F25E7D"
+				    }
+				},
+				"tag": {
+				    "http://openiz.org/tags/contrib/importedData": "true"
+				},
+				"etag": "27F8596E1926FA43B0CB93373EE0002E",
+				"version": "6e59f827-2619-43fa-b0cb-93373ee0002e",
+				"creationtimeModel": "2016-08-19T09:57:56.364Z",
+				"creationTime": "2016-08-19T09:57:56.364Z",
+				"modifiedOn": "2016-08-19T09:57:56.364Z",
+				"createdBy": "fadca076-3690-4a6e-af9e-f1cd68e8c7e8",
+				"isdelayloadenabledModel": false,
+				"id": "a14af90e-1646-4f53-b5ce-420e4da5d8a7"
+			},
+			"holder": "fe6879f3-099d-4f95-8c01-3fe867d40765",
+			"holderModel": null,
+			"relationshipType": "455f1772-f580-47e8-86bd-b5ce25d351f9",
+			"inversionInd": false,
+			"quantity": 0,
+			"modifiedOn": "2016-08-23T12:34:13.699Z",
+			"source": "fe6879f3-099d-4f95-8c01-3fe867d40765",
+			"isdelayloadenabledModel": false,
+			"id": "cc687288-3b55-4a98-ac87-967f17b60a71",
+			"etag": "887268CC553B984AAC87967F17B60A71"
+	    }
+	},
+	"telecom": {
+	    "$other": {
+	        "$type": "EntityTelecomAddress",
+			"use": "e161f90e-5939-430e-861a-f8e885cc353d",
+			"value": "255678765567",
+			"modifiedOn": "2016-08-23T12:34:13.699Z",
+			"source": "fe6879f3-099d-4f95-8c01-3fe867d40765",
+			"isdelayloadenabledModel": false,
+			"id": "42a88413-bc71-46ec-a1e9-e54c1b0faf3e",
+			"etag": "1384A84271BCEC46A1E9E54C1B0FAF3E"
+	    }
+	},
+	"name": {
+	    "OfficialRecord": {
+	        "$type": "EntityName",
+			"use": "1ec9583a-b019-4baa-b856-b99caf368656",
+			"component": {
+			    "Given": "Lucy",
+				"Family": "Mohawk"
+			},
+			"modifiedOn": "2016-08-23T12:34:13.699Z",
+			"source": "fe6879f3-099d-4f95-8c01-3fe867d40765",
+			"isdelayloadenabledModel": false,
+			"id": "2af78087-b75c-4d36-85c9-0dd0469ed2cb",
+			"etag": "8780F72A5CB7364D85C90DD0469ED2CB"
+	    }
+	},
+	"etag": "4097F859FFBE264CBEB7697C8B226487",
+	"previousVersion": "cc26adc7-095b-480a-b47d-97250d175501",
+	"previousVersionModel": {
+	    "$type": "Entity",
+		"determinerConcept": "00000000-0000-0000-0000-000000000000",
+		"etag": "C7AD26CC5B090A48B47D97250D175501",
+		"version": "cc26adc7-095b-480a-b47d-97250d175501",
+		"creationtimeModel": "2016-08-23T12:31:01.675Z",
+		"creationTime": "2016-08-23T12:31:01.675Z",
+		"modifiedOn": "2016-08-23T12:31:01.675Z",
+		"createdBy": "824a6228-f365-e611-aede-080027afb8b3",
+		"isdelayloadenabledModel": false,
+		"id": "fe6879f3-099d-4f95-8c01-3fe867d40765"
+	},
+	"version": "59f89740-beff-4c26-beb7-697c8b226487",
+	"creationtimeModel": "2016-08-23T12:34:13.699Z",
+	"creationTime": "2016-08-23T12:34:13.699Z",
+	"modifiedOn": "2016-08-23T12:34:13.699Z",
+	"createdBy": "824a6228-f365-e611-aede-080027afb8b3",
+	"isdelayloadenabledModel": false,
+	"id": "fe6879f3-099d-4f95-8c01-3fe867d40765"
+}

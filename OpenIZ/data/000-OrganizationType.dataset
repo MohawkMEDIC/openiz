@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="Organization Type Concept Set" xmlns="http://openiz.org/data">
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>485BC177-3E84-4A5A-9F25-466BA30E987E</id>
+
+      <name>Organization Type Concept</name>
+      <mnemonic>OrganizationTypeConcept</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.55</oid>
+      <url>http://openiz.org/valuset/OrganizationType</url>
+    </ConceptSet>
+  </update>
+</dataset>

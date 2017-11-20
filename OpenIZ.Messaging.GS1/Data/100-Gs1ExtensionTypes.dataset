@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dataset xmlns="http://openiz.org/data" id="GS1 Extensions">
+  <update insertIfNotExists="true">
+    <ExtensionType xmlns="http://openiz.org/model">
+      <id>6b2ae7b5-158f-46d0-9ff9-0e3fa999dcaa</id>
+      <handlerClass>OpenIZ.Core.Extensions.DateExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <name>http://openiz.org/extensions/stock/contrib/gs1/estimatedDeliveryDate</name>
+    </ExtensionType>
+  </update>
+  <update insertIfNotExists="true">
+    <ExtensionType xmlns="http://openiz.org/model">
+      <id>34073745-018b-48d1-82da-c545391d294a</id>
+      <handlerClass>OpenIZ.Core.Extensions.DateExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <name>http://openiz.org/extensions/stock/contrib/gs1/shipmentDate</name>
+    </ExtensionType>
+  </update>
+</dataset>

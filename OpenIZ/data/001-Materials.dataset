@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dataset xmlns="http://openiz.org/data" id="Default Materials">
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>UnitOfMeasure-Dose</mnemonic>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <conceptClass>1EF69347-EF03-4FF7-B3C5-6334448845E6</conceptClass>
+    </Concept>
+  </insert>
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>790be5ca-d07d-46c6-8fa0-9d4f5adf388c</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>c7f4980b-e338-4363-83f7-2b3d38933e7e</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>ORAL POLIO VACCINE</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>OPV</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>66CBCE3A-2E77-401D-95D8-EE0361F4F076</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>ED144BD2-A334-40A2-9A8F-B767A1397D07</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>19afe679-ef94-48b4-9d6a-3c9827c4c8e2</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>BACILLUS CALMETTE-GUERIN VACCINE</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>BCG</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>9902267C-8F77-4233-BFD3-E6B068AB326A</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>41B008A6-FCF8-40BC-AB96-7567E94BCF8F</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>C20CE9A2-57FD-4FFB-9C12-04A3957D732A</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>DTP - Haemophilus influenzae type b conjugate and hepatitis b</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>DTP-Hib-HepB</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>9902267C-8F77-4233-BFD3-E6B068AB326A</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>DD53B8FF-2F4D-4359-A031-9405AD384893</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>9606ACF1-8A70-4664-944B-87B3750CA7CC</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>Rotavirus Vaccine</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>ROTA</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>66CBCE3A-2E77-401D-95D8-EE0361F4F076</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>6506FA75-9CD9-47DC-9B94-CBD55B6B6C8B</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>6549730D-EBBE-4700-8052-3DD3F390213F</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>Measles and Rubella Virus Vaccine</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>MR</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>9902267C-8F77-4233-BFD3-E6B068AB326A</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>7C5A4FF6-4E81-4C6C-88E9-FC75CE61A4FB</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>519AD6CD-2E07-4734-91C0-175242B387B8</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>Measles vaccine</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>Measles</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>9902267C-8F77-4233-BFD3-E6B068AB326A</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>E829C3D1-5243-474E-A2D6-BA35D99610C4</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>1185DEF1-6AD4-4995-B67A-406DB08945B5</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>Pneumococcal conjugate PCV 13</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>PCV13</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>9902267C-8F77-4233-BFD3-E6B068AB326A</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  
+  </insert>
+
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>D8049BE9-19D7-4DD8-9DC1-7D8F3886FF97</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>7B73529C-4C3D-4720-BB14-FDF8688F7D3B</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>Tetanus Toxoid</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>TT</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>9902267C-8F77-4233-BFD3-E6B068AB326A</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+
+  </insert>
+
+
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>7D80E518-6E04-4091-8D19-7265BB09BC1F</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>3023bad7-8c16-49ea-81fc-eee6232b80e7</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>Vitamin A, plain</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>Vitamin A</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>66CBCE3A-2E77-401D-95D8-EE0361F4F076</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+
+  <insert>
+    <Material xmlns="http://openiz.org/model">
+      <id>7D80E518-6E04-4091-8D19-7A3BB2B32C1F</id>
+      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
+      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
+      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
+      <typeConcept>1ee21592-da84-4253-a65f-84681aeae1b6</typeConcept>
+      <name>
+        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
+        <component>
+          <value>Benzimidazole derivative</value>
+        </component>
+      </name>
+      <name>
+        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
+        <component>
+          <value>Mebendazole</value>
+        </component>
+      </name>
+      <quantity>1</quantity>
+      <formConcept>66CBCE3A-2E77-401D-95D8-EE0361F4F076</formConcept>
+      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
+    </Material>
+  </insert>
+
+</dataset>

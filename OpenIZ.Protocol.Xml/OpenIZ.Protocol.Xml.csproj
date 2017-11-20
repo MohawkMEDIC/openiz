@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CAD6BCB7-758B-4AA4-A5FE-A9FAB8A4CF2F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenIZ.Protocol.Xml</RootNamespace>
+    <AssemblyName>OpenIZ.Protocol.Xml</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="..\OpenIZ.licenseheader">
+      <Link>OpenIZ.licenseheader</Link>
+    </None>
+    <None Include="Doc\XmlDecisionSupport\index.md" />
+    <None Include="Schema\OpenIZProtocol.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppletClinicalProtocolRepository.cs" />
+    <Compile Include="Model\DecisionSupportBaseElement.cs" />
+    <Compile Include="Model\ProtocolCollection.cs" />
+    <Compile Include="Model\ProtocolDefinition.cs" />
+    <Compile Include="Model\ProtocolRuleDefinition.cs" />
+    <Compile Include="Model\ProtocolThenClauseCollection.cs" />
+    <Compile Include="Model\ProtocolVariableDefinition.cs" />
+    <Compile Include="Model\ProtocolWhenClauseCollection.cs" />
+    <Compile Include="Model\RuleSetDefinition.cs" />
+    <Compile Include="Model\XmlLinq\XmlBinaryExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlBoundExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlMethodCallExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlConstantExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlExpressionList.cs" />
+    <Compile Include="Model\XmlLinq\XmlLambdaExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlMemberExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlParameterExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlTypeBinaryExpression.cs" />
+    <Compile Include="Model\XmlLinq\XmlUnaryExpression.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XmlClinicalProtocol.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Model\OpenIZ.Core.Model.csproj">
+      <Project>{F1A82A4F-4A57-47D7-AE76-444C8A4FF54A}</Project>
+      <Name>OpenIZ.Core.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.PCL\OpenIZ.Core.PCL.csproj">
+      <Project>{3A45F695-47A2-464C-ACE6-BDABBFA39FBC}</Project>
+      <Name>OpenIZ.Core.PCL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressionEvaluator">
+      <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

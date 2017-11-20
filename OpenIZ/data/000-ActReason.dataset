@@ -1,0 +1,670 @@
+﻿<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/data" id="Act Reason Codes">
+  <update insertIfNotExists="true">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</id>
+      <name>HL7AREASON</name>
+      <oid>2.16.840.1.113883.5.8</oid>
+      <authority>HL7AREASON</authority>
+      <description>HL7AREASON</description>
+      <url>http://hl7.org/fhir/ValueSet/v3-ActReason</url>
+
+    </CodeSystem>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>90e0d0b6-c055-42ec-8248-d37f4a28650c</id>
+      
+      <mnemonic>BROKE</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Broken / Damaged</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>dcff308d-cca5-4eb3-ad92-770917d88e56</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-Broken</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>90e0d0b6-c055-42ec-8248-d37f4a28650c</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Broken / Damaged</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>a5d6651d-ccfc-43da-8ee0-b4aaf584bfd2</id>
+      
+      <mnemonic>OSTOCK</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Out of Stock</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>c7469fad-f190-40a2-a28d-f97d1863e8cf</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-OutOfStock</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>a5d6651d-ccfc-43da-8ee0-b4aaf584bfd2</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Out of Stock</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e82094f0-5f36-4b3d-99cf-61ae9ba2015d</id>
+      
+      <mnemonic>EXPIRE</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Expired</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>4b518938-b1ea-44e3-b837-31617fa188a4</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-Expired</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>e82094f0-5f36-4b3d-99cf-61ae9ba2015d</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Expired</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>69a00e97-f612-47eb-a6f9-bb244e81705c</id>
+      
+      <mnemonic>PATCAR</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Patient Care</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>2d86e872-57a0-4103-9f60-d10bd8e196ae</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-PatientCare</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>69a00e97-f612-47eb-a6f9-bb244e81705c</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Patient Care</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>8b712301-b4a5-4cee-8998-e1a08f85612e</id>
+      
+      <mnemonic>PREFUS</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Patient Refused</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>42351a36-f60f-4687-b334-7a41b091bae1</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-PatientRefused</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>8b712301-b4a5-4cee-8998-e1a08f85612e</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Patient Refused</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5ce6d619-b0e5-4cb1-9183-f468f85018e2</id>
+      
+      <mnemonic>PPT</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Per-Protocol</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>a53562bd-b499-4603-8772-866e181fb3e7</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-PerProtocol</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>5ce6d619-b0e5-4cb1-9183-f468f85018e2</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Per-Protocol</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7fd09f7c-cb6e-4c2c-9ca7-87606d34cecc</id>
+      
+      <mnemonic>ALGINT</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Allergy / Intolerance</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>4ff3617b-bb91-4f3f-b4d2-2425f477037f</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-AllergyOrIntolerance</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>7fd09f7c-cb6e-4c2c-9ca7-87606d34cecc</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Allergy / Intolerance</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>71c88c5a-d0a0-4e9b-a552-782f39919a71</id>
+      
+      <mnemonic>AGE</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Age Alert</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>98db93c5-e53c-4e42-8f5e-46c336a5b29e</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-AgeAlert</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>71c88c5a-d0a0-4e9b-a552-782f39919a71</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Age Alert</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>a5f6ea22-7961-458c-bb8d-0a88364bb3d1</id>
+      
+      <mnemonic>PROFJ</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Professional Judgement</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>9d947e6d-8406-42f3-bb8a-634fb3c81a08</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-ProfessionalJudgement</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>a5f6ea22-7961-458c-bb8d-0a88364bb3d1</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Professional Judgement</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>b7c1d7d1-aaa7-4699-9076-ac93302e488d</id>
+      
+      <mnemonic>RELIG</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Religious Objection</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>0d40c2b6-7ceb-4492-ab2a-6e7c730eaf22</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-ReligiousObjection</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>b7c1d7d1-aaa7-4699-9076-ac93302e488d</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Religious Objection</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d6b628aa-2ab1-4bc3-8141-2ffc94ae2d13</id>
+      
+      <mnemonic>STRTLATE</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Started too late</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>b75bf533-9804-4450-83c7-23f0332f87b8</id>
+      
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-StartedTooLate</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>d6b628aa-2ab1-4bc3-8141-2ffc94ae2d13</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Started too late</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>4a27e314-ce2f-4638-92ed-bdf73ffc8921</id>
+      <mnemonic>__VACSAF</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Vaccine Safety concern</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>c6718df8-c8c0-49fd-a73d-52f6981ccbf7</id>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-VaccineSafety</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>4a27e314-ce2f-4638-92ed-bdf73ffc8921</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Vaccine Safety concern</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>9bbd7579-0ff8-4c50-aa3c-fcbfd8b1258c</id>
+      <mnemonic>CSTORE</mnemonic>
+      <codeSystem>1137d89e-6c9d-4a30-8edf-891b1ad85fa2</codeSystem>
+      <name>
+        
+        <language>en</language>
+        <value>Cold storage malfunction</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>06922eac-0cae-49af-a33c-fc7096349e4a</id>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-ColdStorageFailure</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
+      <referenceTerm>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <term>9bbd7579-0ff8-4c50-aa3c-fcbfd8b1258c</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Cold storage malfunction</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>5EDB55A1-723C-46E4-9FEE-2C94DB20B7AB</id>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-PhysicalCount</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>Physical count</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+  <update insertIfNotExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>67F64C78-91B6-42D8-96F6-9A2639112F6B</id>
+      <previousVersion xsi:nil="true" />
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>REASON-Wasted</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0</conceptClass>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <language>en</language>
+        <value>General Wastage</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </Concept>
+  </update>
+
+  
+    <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>ba44f451-f979-4e11-9db4-aad8e2e88ce5</id>
+      <name>Reason Codes</name>
+      <mnemonic>ActReason</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.19</oid>
+      <url>http://openiz.org/conceptsets/Reason</url>
+      
+      <concept>5EDB55A1-723C-46E4-9FEE-2C94DB20B7AB</concept>
+      <concept>67F64C78-91B6-42D8-96F6-9A2639112F6B</concept>
+      <concept>dcff308d-cca5-4eb3-ad92-770917d88e56</concept>
+      <concept>c7469fad-f190-40a2-a28d-f97d1863e8cf</concept>
+      <concept>4b518938-b1ea-44e3-b837-31617fa188a4</concept>
+      <concept>2d86e872-57a0-4103-9f60-d10bd8e196ae</concept>
+      <concept>42351a36-f60f-4687-b334-7a41b091bae1</concept>
+      <concept>a53562bd-b499-4603-8772-866e181fb3e7</concept>
+      <concept>4ff3617b-bb91-4f3f-b4d2-2425f477037f</concept>
+      <concept>98db93c5-e53c-4e42-8f5e-46c336a5b29e</concept>
+      <concept>9d947e6d-8406-42f3-bb8a-634fb3c81a08</concept>
+      <concept>0d40c2b6-7ceb-4492-ab2a-6e7c730eaf22</concept>
+      <concept>b75bf533-9804-4450-83c7-23f0332f87b8</concept>
+      <concept>c6718df8-c8c0-49fd-a73d-52f6981ccbf7</concept>
+      <concept>06922eac-0cae-49af-a33c-fc7096349e4a</concept>
+    </ConceptSet>
+  </update>
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>37A46085-E3C3-4A6D-A1FE-0F2C9C49360D</id>
+      <name>Protocol Violation Reason</name>
+      <mnemonic>ProtocolViolationReason</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.37</oid>
+      <url>http://openiz.org/conceptsets/ProtocolViolationReason</url>
+      <concept>c7469fad-f190-40a2-a28d-f97d1863e8cf</concept>
+      <concept>4b518938-b1ea-44e3-b837-31617fa188a4</concept>
+      <concept>42351a36-f60f-4687-b334-7a41b091bae1</concept>
+      <concept>4ff3617b-bb91-4f3f-b4d2-2425f477037f</concept>
+      <concept>9d947e6d-8406-42f3-bb8a-634fb3c81a08</concept>
+      <concept>0d40c2b6-7ceb-4492-ab2a-6e7c730eaf22</concept>
+      <concept>b75bf533-9804-4450-83c7-23f0332f87b8</concept>
+      <concept>c6718df8-c8c0-49fd-a73d-52f6981ccbf7</concept>
+    </ConceptSet>
+  </update>
+
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>3BD46185-E3C3-4A6D-A1FE-0F2C9C49360D</id>
+      <name>Protocol Violation - Don't Reschedule</name>
+      <mnemonic>ProtocolViolationReasonSevere</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.50</oid>
+      <url>http://openiz.org/conceptsets/ProtocolViolationReasonSevere</url>
+      <concept>42351a36-f60f-4687-b334-7a41b091bae1</concept>
+      <concept>4ff3617b-bb91-4f3f-b4d2-2425f477037f</concept>
+      <concept>9d947e6d-8406-42f3-bb8a-634fb3c81a08</concept>
+      <concept>0d40c2b6-7ceb-4492-ab2a-6e7c730eaf22</concept>
+      <concept>b75bf533-9804-4450-83c7-23f0332f87b8</concept>
+      <concept>c6718df8-c8c0-49fd-a73d-52f6981ccbf7</concept>
+    </ConceptSet>
+  </update>
+  
+  <update insertIfNotExists="true">
+    <ConceptSet xmlns="http://openiz.org/model">
+      <id>3D02FB53-1133-406D-A06F-7D47A556F3BC</id>
+      <name>Stock Reason Codes</name>
+      <mnemonic>StockReason</mnemonic>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.38</oid>
+      <url>http://openiz.org/conceptsets/StockReason</url>
+      <concept>5EDB55A1-723C-46E4-9FEE-2C94DB20B7AB</concept>
+      <concept>67F64C78-91B6-42D8-96F6-9A2639112F6B</concept>
+      <concept>dcff308d-cca5-4eb3-ad92-770917d88e56</concept>
+      <concept>4b518938-b1ea-44e3-b837-31617fa188a4</concept>
+      <concept>06922eac-0cae-49af-a33c-fc7096349e4a</concept>
+    </ConceptSet>
+  </update>
+</dataset>

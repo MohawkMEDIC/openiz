@@ -1,0 +1,275 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="HL7v2 Address Use Codes" xmlns="http://openiz.org/data">
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>1d2a42c9-cdca-4346-8467-eebf5a90ea3c</id>
+      <mnemonic>B</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Firm/Business</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>EAA6F08E-BB8E-4457-9DC0-3A1555FADF5C</source>
+      <term>1d2a42c9-cdca-4346-8467-eebf5a90ea3c</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>0b6af27c-084c-4a7b-aa16-a5a793a2addc</id>
+      <mnemonic>BA</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Bad Address</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>F3132FC0-AADD-40B7-B875-961C40695389</source>
+      <term>0b6af27c-084c-4a7b-aa16-a5a793a2addc</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>ea1f55c3-7b33-4bd8-b499-1aa9964b121f</id>
+      <mnemonic>BDL</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Birth Delivery Location</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>aef9a9d0-e62b-4907-a394-4b5c4786fa62</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>HL7v2AddressUse-BDL</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>ea1f55c3-7b33-4bd8-b499-1aa9964b121f</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Birth Delivery Location</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>5af0e14f-7921-49ad-badc-24d523a6d0a7</id>
+      <mnemonic>BR</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Residence at Birth</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>5519e04f-b808-468f-9301-134390296466</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>HL7v2AddressUse-BR</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>5af0e14f-7921-49ad-badc-24d523a6d0a7</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Residence at Birth</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d2805db9-4cfd-4097-a40e-0fb5b35c7a8e</id>
+      <mnemonic>C</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Current or Temporary</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>CEF6EA31-A097-4F59-8723-A38C727C6597</source>
+      <term>d2805db9-4cfd-4097-a40e-0fb5b35c7a8e</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>e9a2002a-500d-4cb1-a9ef-30ee95bf0439</id>
+      <mnemonic>F</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Country of Origin</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>092ec914-b8a1-4497-9a98-2f6b7ed97fdc</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>HL7v2AddressUse-F</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>e9a2002a-500d-4cb1-a9ef-30ee95bf0439</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Country of Origin</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d8f47275-bb67-44ca-bf2c-8229eee3b6d3</id>
+      <mnemonic>L</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Legal Address</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>493C3E9D-4F65-4E4D-9582-C9008F4F2EB4</source>
+      <term>d8f47275-bb67-44ca-bf2c-8229eee3b6d3</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>cd5d514e-d109-4a61-8b22-06cbc9410710</id>
+      <mnemonic>M</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Mailing</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>CEF6EA31-A097-4F59-8723-A38C727C6597</source>
+      <term>cd5d514e-d109-4a61-8b22-06cbc9410710</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>877be6f4-a164-4e59-bb2f-e73c902517b6</id>
+      <mnemonic>N</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Birth</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <Concept xmlns="http://openiz.org/model">
+      <id>99f2195c-8095-4cf8-afa8-f7c6dab9baab</id>
+      <isReadonly>false</isReadonly>
+      <mnemonic>HL7v2AddressUse-N</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>877be6f4-a164-4e59-bb2f-e73c902517b6</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Birth</value>
+      </name>
+      <conceptSet>C68A7690-D78D-4AFC-8A36-1EBDFB86F15F</conceptSet>
+    </Concept>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>84a894b3-4f23-49ce-a2c0-6c54ff99de6d</id>
+      <mnemonic>O</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Office/Business</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>EAA6F08E-BB8E-4457-9DC0-3A1555FADF5C</source>
+      <term>84a894b3-4f23-49ce-a2c0-6c54ff99de6d</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>f6956e0f-7b80-4c7d-a33b-a62435a58c72</id>
+      <mnemonic>P</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Permanent</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>493C3E9D-4F65-4E4D-9582-C9008F4F2EB4</source>
+      <term>f6956e0f-7b80-4c7d-a33b-a62435a58c72</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3520d1f8-944e-4d37-9194-ad49f0ed3729</id>
+      <mnemonic>RH</mnemonic>
+      <codeSystem>0c4d091e-8701-4953-b16d-b8ca8e85de46</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Registry Home</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="true">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>493C3E9D-4F65-4E4D-9582-C9008F4F2EB4</source>
+      <term>3520d1f8-944e-4d37-9194-ad49f0ed3729</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+</dataset>

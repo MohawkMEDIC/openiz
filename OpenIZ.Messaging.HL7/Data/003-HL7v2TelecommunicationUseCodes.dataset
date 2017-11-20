@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="HL7v2 Telecommunications Use Codes" xmlns="http://openiz.org/data">
+  <insert skipIfError="false" skipIfExists="false">
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>827e23d8-7623-4227-9815-2d5b33592de9</id>
+      <name>HL7v2 Telecommunications Use Codes</name>
+      <oid>1.3.6.1.4.1.33349.3.1.5.9.3.52</oid>
+      <url>http://hl7.org/fhir/v2/0201</url>
+    </CodeSystem>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d7bc8efb-5366-4d96-8dcf-9af75c9e891a</id>
+      <mnemonic>ASN</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Answering Service Number</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>1ecd7b17-b5ff-4cae-9c3b-c1258132d137</source>
+      <term>d7bc8efb-5366-4d96-8dcf-9af75c9e891a</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>4b7de96a-8573-41df-aa8b-5c6b24da5538</id>
+      <mnemonic>BPN</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Beeper Number</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>788000b4-e37a-4055-a2aa-c650089ce3b1</source>
+      <term>4b7de96a-8573-41df-aa8b-5c6b24da5538</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>91e7d44d-c1ba-46c7-87b0-72c68f3cb16d</id>
+      <mnemonic>EMR</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Emergency Number</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>25985f42-476a-4455-a977-4e97a554d710</source>
+      <term>91e7d44d-c1ba-46c7-87b0-72c68f3cb16d</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>75876a5b-f754-4c46-a045-e231ced9ed82</id>
+      <mnemonic>NET</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Network (email) Address</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <!--
+  Email address specifies type off address not the use of addressu
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>2d26aa29-a563-4a65-9ba8-c3afb9b49ac1</source>
+      <term>75876a5b-f754-4c46-a045-e231ced9ed82</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>-->
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>93ef75b2-7416-474a-a528-5d0d29427efc</id>
+      <mnemonic>ORN</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Other Residence Number</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>CEF6EA31-A097-4F59-8723-A38C727C6597</source>
+      <term>93ef75b2-7416-474a-a528-5d0d29427efc</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>afd468ea-e9c5-47fd-9286-49a917dab881</id>
+      <mnemonic>PRN</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Primary Residence Number</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>ec35ea7c-55d2-4619-a56b-f7a986412f7f</source>
+      <term>afd468ea-e9c5-47fd-9286-49a917dab881</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>4c264604-2384-4882-a988-0441fea1b643</id>
+      <mnemonic>VHN</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Vacation Home Number</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>CEF6EA31-A097-4F59-8723-A38C727C6597</source>
+      <term>4c264604-2384-4882-a988-0441fea1b643</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert skipIfError="false" skipIfExists="false">
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>7cc6630a-2fbc-48b2-89ad-9f713900533f</id>
+      <mnemonic>WPN</mnemonic>
+      <codeSystem>827e23d8-7623-4227-9815-2d5b33592de9</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Work Number</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>eaa6f08e-bb8e-4457-9dc0-3a1555fadf5c</source>
+      <term>7cc6630a-2fbc-48b2-89ad-9f713900533f</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+</dataset>

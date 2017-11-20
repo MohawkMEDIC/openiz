@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Administrative Gender Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>24a1862d-1594-4c78-bfab-5b3d918e30e0</id>
+      <name>FHIR Administrative Gender Codes</name>
+      <oid>2.16.840.1.113883.4.642.1.2</oid>
+      <url>http://hl7.org/fhir/administrative-gender</url>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>d0f37b73-596d-4d89-9de6-6a9fa0dafb4b</id>
+      <mnemonic>male</mnemonic>
+      <codeSystem>24a1862d-1594-4c78-bfab-5b3d918e30e0</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Male</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>f4e3a6bb-612e-46b2-9f77-ff844d971198</source>
+      <term>d0f37b73-596d-4d89-9de6-6a9fa0dafb4b</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>9c30a978-bd8c-47cb-a622-341239196b3f</id>
+      <mnemonic>female</mnemonic>
+      <codeSystem>24a1862d-1594-4c78-bfab-5b3d918e30e0</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Female</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>094941e9-a3db-48b5-862c-bc289bd7f86c</source>
+      <term>9c30a978-bd8c-47cb-a622-341239196b3f</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>fd477aeb-74d8-42e0-8b8e-492fee471688</id>
+      <mnemonic>other</mnemonic>
+      <codeSystem>24a1862d-1594-4c78-bfab-5b3d918e30e0</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Other</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>091f27e8-e592-4e81-b5d7-338b7749d8b8</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Gender-other</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>fd477aeb-74d8-42e0-8b8e-492fee471688</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Other</value>
+      </name>
+      <conceptSet>E9EECD3C-7B80-47F9-9CB6-55C8D3110FB0</conceptSet>
+    </Concept>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>16b5529b-4694-47c1-a273-c1ab1070cea1</id>
+      <mnemonic>unknown</mnemonic>
+      <codeSystem>24a1862d-1594-4c78-bfab-5b3d918e30e0</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Unknown</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <Concept xmlns="http://openiz.org/model">
+      <id>43ba2ea1-93df-4e06-8bf9-1e65c4a46a3f</id>
+      <version xsi:nil="true" />
+      <sequence xsi:nil="true" />
+      <isReadonly>false</isReadonly>
+      <mnemonic>Gender-unknown</mnemonic>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
+      <referenceTerm>
+        <term>16b5529b-4694-47c1-a273-c1ab1070cea1</term>
+        <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+      </referenceTerm>
+      <name>
+        <language>en</language>
+        <value>Unknown</value>
+      </name>
+      <conceptSet>E9EECD3C-7B80-47F9-9CB6-55C8D3110FB0</conceptSet>
+    </Concept>
+  </insert>
+</dataset>

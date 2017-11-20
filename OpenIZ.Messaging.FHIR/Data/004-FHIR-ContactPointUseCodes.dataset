@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="FHIR Contact Point Use Codes" xmlns="http://openiz.org/data">
+  <insert>
+    <CodeSystem xmlns="http://openiz.org/model">
+      <id>d57945a5-936b-4bfd-99c9-b41b6151748b</id>
+      <name>FHIR Contact Point Use Codes</name>
+      <oid>2.16.840.1.113883.4.642.1.67</oid>
+      <url>http://hl7.org/fhir/contact-point-use</url>
+    </CodeSystem>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>9E96474B-6628-4744-8570-E70B4E18BB02</id>
+      <mnemonic>home</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Home</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>c4faafd8-fc90-4330-8b4b-e4e64c86b87b</source>
+      <term>9E96474B-6628-4744-8570-E70B4E18BB02</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>35F95D56-7C63-4D14-8E6B-A1BA01FCF57C</id>
+      <mnemonic>work</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Work</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>eaa6f08e-bb8e-4457-9dc0-3a1555fadf5c</source>
+      <term>35F95D56-7C63-4D14-8E6B-A1BA01FCF57C</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>287B4851-0DEC-45C0-9AC0-28E199583F06</id>
+      <mnemonic>temp</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Temp</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>cef6ea31-a097-4f59-8723-a38c727c6597</source>
+      <term>287B4851-0DEC-45C0-9AC0-28E199583F06</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>DA472010-FE7B-40D2-A0DF-15338654B296</id>
+      <creationTime>2017-04-09T21:12:20.7971413-04:00</creationTime>
+      <mnemonic>old</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Old</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>f3132fc0-aadd-40b7-b875-961c40695389</source>
+      <term>DA472010-FE7B-40D2-A0DF-15338654B296</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+  <insert>
+    <ReferenceTerm xmlns="http://openiz.org/model">
+      <id>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</id>
+      <mnemonic>mobile</mnemonic>
+      <codeSystem>d57945a5-936b-4bfd-99c9-b41b6151748b</codeSystem>
+      <name>
+        <language>en</language>
+        <value>Mobile</value>
+        <phoneticAlgorithm xsi:nil="true" />
+      </name>
+    </ReferenceTerm>
+  </insert>
+  <insert>
+    <ConceptReferenceTerm xmlns="http://openiz.org/model">
+      <source>e161f90e-5939-430e-861a-f8e885cc353d</source>
+      <term>3E79D2AF-34E3-4B3B-9E57-587D32C46E0A</term>
+      <relationshipType>2c4dafc2-566a-41ae-9ebc-3097d7d22f4a</relationshipType>
+    </ConceptReferenceTerm>
+  </insert>
+</dataset>

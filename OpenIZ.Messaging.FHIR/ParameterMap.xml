@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - 
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-2
+ -->
+<QueryParameterMap xmlns="http://openiz.org/model/fhir">
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.ResourceBase, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="_id" model="id"/>
+    <map fhir="_lastUpdated" model="modifiedOn"/>
+  </type>
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.ImmunizationRecommendation, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="vaccine-type" model="participation[Product].player.typeConcept" type="concept"/>
+    <map fhir="dose-number" model="doseSequence"/>
+    <map fhir="date" model="creationTime"/>
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
+  </type>
+  
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Immunization, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="vaccine-code" model="participation[Consumable].player@ManufacturedMaterial.typeConcept" type="concept"/>
+    <map fhir="dose-sequence" model="doseSequence"/>
+    <map fhir="date" model="actTime"/>
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player@Patient.name.component.value" />
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Patient.dateOfBirth"/>
+    <map fhir="patient.location.identifier" model="participation[RecordTarget].player@Patient.relationship[DedicatedServiceDeliveryLocation].target@Place.identifier" type="identifier"/>
+    <map fhir="in-catchment" model="tag[catchmentIndicator].value"/>
+    <map fhir="is-outreach" model="relationship[HasComponent].source.tag[outreach]"/>
+    <map fhir="is-backEntry" model="tag[backEntry].value"/>
+    <map fhir="location" model="participation[Location].player" type="reference"/>
+    <map fhir="location.name" model="participation[Location].player@Place.name.component.value"/>
+    <map fhir="location.identifier" model="participation[Location].player@Place.identifier" type="identifier"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="name" model="name.component.value"/>
+    <map fhir="family" model="name.component[Family].value"/>
+    <map fhir="given" model="name.component[Given].value"/>
+    <map fhir="address" model="address.component.value"/>
+    <map fhir="birthdate" model="dateOfBirth"/>
+    <map fhir="gender" model="genderConcept" type="concept"/>
+    <map fhir="identifier" model="identifier" type="identifier"/>
+    <map fhir="provider" model="participation[HealthcareProvider].player" type="reference"/>
+    <map fhir="provider.name" model="participation[HealthcareProvider].player.name.component.value"/>
+    <map fhir="provider.address" model="participation[HealthcareProvider].player.address.component.value"/>
+    <map fhir="location" model="participation[DedicatedServiceDeliveryLocation].player" type="reference"/>
+    <map fhir="location.name" model="participation[DedicatedServiceDeliveryLocation].player.name.component.value"/>
+    <map fhir="location.address" model="participation[DedicatedServiceDeliveryLocation].player.address.component.value"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="category" model="typeConcept" type="concept"/>
+    <map fhir="code" model="typeConcept" type="concept"/>
+    <map fhir="value-concept" model="value" type="concept"/>
+    <map fhir="value-quantity" model="value"/>
+    <map fhir="issued" model="creationTime"/>
+    <map fhir="date" model="actTime"/>
+    <map fhir="data-absent-reason" model="reasonConcept"/>
+    <map fhir="encounter" model="relationship[HasComponent].source"/>
+    <map fhir="identifier" model="identifier" type="identifier"/>
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
+    <map fhir="performer" model="participation[Authorororiginator].player" type="reference"/>
+    <map fhir="status" model="statusConcept" type="concept"/>
+    <map fhir="interpretation" model="interpretationConcept" type="concept"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.AdverseEvent, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="date" model="relationship[HasSubject].target.actTime"/>
+    <map fhir="location" model="participation[Location].player" type="reference"/>
+    <map fhir="location.identifier" model="participation[Location].player.identifier" type="identifier"/>
+    <map fhir="location.name" model="participation[Location].player.name.component.value" />
+    <map fhir="reaction" model="relationship[HasSubject].target.relationship[HasManifestation].target.value" type="concept"/>
+    <map fhir="recorder" model="participation[Authorororiginator].player" type="reference"/>
+    <map fhir="recorder.identifier" model="participation[Authorororiginator].player.identifier" type="identifier"/>
+    <map fhir="recorder.name" model="participation[Authorororiginator].player.name.component.value" />
+    <map fhir="recorder" model="participation[Authorororiginator].player" type="reference"/>
+    <map fhir="seriousness" model="relationship[HasSubject].target.relationship[HasComponent].target[ObservationType-Severity].value" type="concept"/>
+    <map fhir="subject" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="subject.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="subject.address" model="participation[RecordTarget].player.address.component.value" />
+    <map fhir="subject.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="subject.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth" />
+    <map fhir="subject.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
+
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.address" model="participation[RecordTarget].player.address.component.value" />
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth" />
+    <map fhir="patient.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
+
+    
+    <map fhir="type" model="typeConcept" type="concept" />
+    <amp fhir="substance" model="relationship[RefersTo].target.participation[Product|Consumable].player" type="reference"/>
+    <map fhir="substance.type" model="relationship[RefersTo].target.participation[Product|Consumable].player.typeConcept" type="concept"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.AllergyIntolerance, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="asserter" model="participation[Authorororiginator].player" type="reference"/>
+    <map fhir="asserter.identifier" model="participation[Authorororiginator].player.identifier" type="identifier"/>
+    <map fhir="asserter.name" model="participation[Authorororiginator].player.name.component.value"/>
+    <map fhir="category" model="typeConcept" type="concept" defaultCodeSystem="http://hl7.org/fhir/allergy-intolerance-category"/>
+    <map fhir="clinical-status" model="statusConcept" type="concept"/>
+    <map fhir="code" model="value" type="concept"/>
+    <map fhir="criticality" model="relationship[HasComponent].target[ObservationType-Severity].value" type="concept" defaultCodeSystem="http://hl7.org/fhir/allergy-intolerance-criticality"/>
+    <map fhir="severity" model="relationship[HasComponent].target[ObservationType-Severity].value" type="concept"/>
+    <map fhir="type" model="typeConcept" type="concept" defaultCodeSystem="http://hl7.org/fhir/allergy-intolerance-type"/>
+    <map fhir="date" model="actTime"/>
+    <map fhir="identifier" model="identifier" type="identifier"/>
+    <map fhir="manifestation" model="relationship[HasManifestation].target.value" type="concept"/>
+    <map fhir="onset-date" model="startTime"/>
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
+    <map fhir="recorder" model="participation[Authorororiginator].player" type="reference"/>
+    <map fhir="recorder.identifier" model="participation[Authorororiginator].player.identifier" type="identifier"/>
+    <map fhir="recorder.name" model="participation[Authorororiginator].player.name.component.value"/>
+
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Condition, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="asserted-date" model="creationTime"/>
+    <map fhir="asserter" model="participation[Authorororiginator].player" type="reference"/>
+    <map fhir="asserter.identifier" model="participation[Authorororiginator].player.identifier" type="identifier"/>
+    <map fhir="asserter.name" model="participation[Authorororiginator].player.name.component.value"/>
+    <map fhir="clinical-status" model="statusConcept" type="concept"/>
+    <map fhir="code" model="value" type="concept"/>
+    <map fhir="encounter" model="relationship[HasComponent].source"/>
+    <map fhir="identifier" model="identifier" type="identifier"/>
+    <map fhir="onset-date" model="startTime"/>
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
+    <map fhir="severity" model="relationship[HasComponent].target[ObservationType-Severity].value"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.MedicationAdministration, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="code" model="participation[Product].player.typeConcept" type="concept"/>
+    <map fhir="effective-time" model="actTime"/>
+    <map fhir="date" model="actTime"/>
+    <map fhir="identifier" model="identifier" type="token"/>
+    <map fhir="medication" model="participation[Product|Consumable].player" type="reference"/>
+    <map file="not-given" model="isNegated"/>
+    <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
+    <map fhir="patient.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
+    <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
+    <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
+    <map fhir="patient.birthDate" model="participation[RecordTarget].player@Person.dateOfBirth"/>
+    <map fhir="location" model="participation[Location].player" type="reference"/>
+    <map fhir="location.identifier" model="participation[Location].player.identifier" type="identifier"/>
+    <map fhir="location.name" model="participation[Location].player.name.component.value" />
+    <map fhir="performer" model="participation[Authorororiginator|Performer].player" type="reference"/>
+    <map fhir="reason-given" model="reasonConcept" type="concept"/>
+    <map fhir="reason-not-given" model="reasonConcept" type="concept"/>
+    <map fhir="status" model="statusConcept.referenceTerm.value"/>
+    
+  </type>
+  
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Location, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="address" model="address.component.value"/>
+    <map fhir="address-city" model="address.component[City].value"/>
+    <map fhir="address-country" model="address.component[Country].value"/>
+    <map fhir="address-state" model="address.component[State].value"/>
+    <map fhir="identifier" model="identifier" type="identifier"/>
+    <map fhir="name" model="name.component.value"/>
+    <map fhir="status" model="statusConcept" type="concept" defaultCodeSystem="http://hl7.org/fhir/location-status"/>
+    <map fhir="type" model="typeConcept" type="concept"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Medication, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="code" model="typeConcept" type="concept"/>
+    <map fhir="form" model="formConcept" type="concept"/>
+    <map fhir="manufacturer" model="relationship[WarrantedProduct].source" type="reference"/>
+    <map fhir="manufacturer.name" model="relationship[WarrantedProduct].source.name.component.value"/>
+    <map fhir="lotNummber" model="lotNumber"/>
+    <map fhir="expirationDate" model="expireDate"/>
+    <map fhir="status" model="statusConcept" type="concept" defaultCodeSystem="http://hl7.org/fhir/medication-status"/>
+  </type>
+
+  <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Substance, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
+    <map fhir="code" model="typeConcept" type="concept"/>
+    <map fhir="expiry" model="expireDate"/>
+    <map fhir="identifier" model="identifier" type="identifier"/>
+    <map fhir="status" model="statusConcept" type="concept" defaultCodeSystem="http://hl7.org/fhir/substance-status"/>
+  </type>
+</QueryParameterMap>
