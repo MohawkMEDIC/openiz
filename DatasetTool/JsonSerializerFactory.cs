@@ -363,9 +363,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 if (jsonName == null || jsonName.StartsWith("$") || !pi.CanWrite) continue;
                 propertyCondition = new CodeConditionStatement(this.CreateEqualsStatement(new CodePrimitiveExpression(jsonName), readerValue), new CodeStatement[] { }, new CodeStatement[] { propertyCondition });
                 propertyCondition.TrueStatements.Add(new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(_reader, "Read")));
-                propertyCondition.TrueStatements.Add(new CodeVariableDeclarationStatement(pi.PropertyType, "_instance", new CodeCastExpression(pi.PropertyType, new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(_jsonContext, "ReadElementUtil"), _reader, new CodeTypeOfExpression(pi.PropertyType), new CodeObjectCreateExpression(typeof(JsonSerializationContext), new CodePrimitiveExpression(jsonName), _jsonContext, s_retVal, _context)))));
+                propertyCondition.TrueStatements.Add(new CodeVariableDeclarationStatement(typeof(Object), "_instance", new CodeMethodInvokeExpression(new CodeMethodReferenceExpression(_jsonContext, "ReadElementUtil"), _reader, new CodeTypeOfExpression(pi.PropertyType), new CodeObjectCreateExpression(typeof(JsonSerializationContext), new CodePrimitiveExpression(jsonName), _jsonContext, s_retVal, _context))));
                 var _instance = new CodeVariableReferenceExpression("_instance");
-                propertyCondition.TrueStatements.Add(new CodeConditionStatement(new CodeBinaryOperatorExpression(_instance, CodeBinaryOperatorType.IdentityInequality, s_null), new CodeAssignStatement(new CodePropertyReferenceExpression(s_retVal, pi.Name), _instance)));
+                propertyCondition.TrueStatements.Add(new CodeConditionStatement(new CodeBinaryOperatorExpression(_instance, CodeBinaryOperatorType.IdentityInequality, s_null), new CodeAssignStatement(new CodePropertyReferenceExpression(s_retVal, pi.Name), new CodeCastExpression(pi.PropertyType, _instance))));
             }
 
             jsonPropertyTokenCondition.TrueStatements.Add(propertyCondition);
