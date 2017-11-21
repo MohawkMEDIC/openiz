@@ -19,6 +19,7 @@
  */
 
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Constants;
@@ -90,5 +91,20 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        /// <summary>
+        /// Get interactions
+        /// </summary>
+        protected override IEnumerable<InteractionDefinition> GetInteractions()
+        {
+            return new TypeRestfulInteraction[]
+            {
+                TypeRestfulInteraction.InstanceHistory,
+                TypeRestfulInteraction.Read,
+                TypeRestfulInteraction.Search,
+                TypeRestfulInteraction.VersionRead,
+                TypeRestfulInteraction.Delete
+            }.Select(o => new InteractionDefinition() { Type = o });
+        }
+    }
 }

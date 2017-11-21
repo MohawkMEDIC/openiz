@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-2
  */
+using MARC.HI.EHRS.SVC.Core.Wcf;
 using OpenIZ.Core.Security;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace OpenIZ.Core.Wcf.Security
     /// <summary>
     /// Set the authorization policy
     /// </summary>
+    [AuthenticationSchemeDescription(AuthenticationScheme.OAuth2)]
     public class JwtTokenAuthorizationPolicy : IAuthorizationPolicy
     {
 

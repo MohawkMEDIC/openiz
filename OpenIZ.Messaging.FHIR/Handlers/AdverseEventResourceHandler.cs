@@ -37,6 +37,7 @@ using System.ServiceModel.Web;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
+    
     /// <summary>
     /// Adverse event resource handler
     /// </summary>
@@ -122,6 +123,21 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             query = Expression.Lambda<Func<Act, bool>>(Expression.AndAlso(Expression.AndAlso(query.Body, anyRef), typeReference), query.Parameters);
 
             return base.Query(query, issues, queryId, offset, count, out totalResults);
+        }
+
+        /// <summary>
+        /// Get interactions
+        /// </summary>
+        protected override IEnumerable<InteractionDefinition> GetInteractions()
+        {
+            return new TypeRestfulInteraction[]
+            {
+                TypeRestfulInteraction.InstanceHistory,
+                TypeRestfulInteraction.Read,
+                TypeRestfulInteraction.Search,
+                TypeRestfulInteraction.VersionRead,
+                TypeRestfulInteraction.Delete
+            }.Select(o => new InteractionDefinition() { Type = o });
         }
     }
 }

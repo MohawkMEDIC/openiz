@@ -98,7 +98,13 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// </summary>
         [XmlAttribute("type")]
         public String FhirType { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets the textual description of the query parameter
+        /// </summary>
+        [XmlAttribute("desc")]
+        public String Description { get; set; }
+
     }
 
 }

@@ -19,6 +19,7 @@
  */
 
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
@@ -167,5 +168,22 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 
 			return patient;
 		}
-	}
+
+        /// <summary>
+        /// Get interactions
+        /// </summary>
+        protected override IEnumerable<InteractionDefinition> GetInteractions()
+        {
+            return new TypeRestfulInteraction[]
+            {
+                TypeRestfulInteraction.InstanceHistory,
+                TypeRestfulInteraction.Read,
+                TypeRestfulInteraction.Search,
+                TypeRestfulInteraction.VersionRead,
+                TypeRestfulInteraction.Delete,
+                TypeRestfulInteraction.Create,
+                TypeRestfulInteraction.Update
+            }.Select(o => new InteractionDefinition() { Type = o });
+        }
+    }
 }

@@ -19,11 +19,13 @@
  */
 
 using MARC.Everest.Connectors;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.ServiceModel.Web;
 
@@ -59,5 +61,15 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			query = Expression.Lambda<Func<CodedObservation, bool>>(Expression.AndAlso(query.Body, anyRef), query.Parameters);
 			return base.Query(query, issues, queryId, offset, count, out totalResults);
 		}
-	}
+
+        /// <summary>
+        /// Get interactions
+        /// </summary>
+        protected override IEnumerable<InteractionDefinition> GetInteractions()
+        {
+            return new TypeRestfulInteraction[]
+            {
+            }.Select(o => new InteractionDefinition() { Type = o });
+        }
+    }
 }

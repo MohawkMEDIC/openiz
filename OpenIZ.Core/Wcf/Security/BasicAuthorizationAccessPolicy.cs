@@ -39,12 +39,14 @@ using OpenIZ.Core;
 using System.ServiceModel;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Security;
+using MARC.HI.EHRS.SVC.Core.Wcf;
 
 namespace OpenIZ.Core.Wcf.Security
 {
     /// <summary>
     /// Basic authorization policy
     /// </summary>
+    [AuthenticationSchemeDescription(AuthenticationScheme.Basic)]
     public class BasicAuthorizationAccessPolicy : IAuthorizationPolicy
     {
 
