@@ -41,6 +41,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model;
 using System.Collections.Specialized;
+using MARC.HI.EHRS.SVC.Core.Data;
 
 namespace OizDevTool
 {
@@ -75,6 +76,10 @@ namespace OizDevTool
             [Parameter("fulfill")]
             [Description("Calculate fulfillment for the specified type of act")]
             public StringCollection ActTypes { get; set; }
+
+            [Parameter("patient")]
+            [Description("Calculate care plan for specified patients")]
+            public StringCollection PatientId { get; set; }
 
         }
 
@@ -341,7 +346,15 @@ namespace OizDevTool
             while (ofs < tr)
             {
 
-                var prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr);
+                IEnumerable<Patient> prodPatients = null;
+                if (parms.PatientId?.Count > 0)
+                {
+                    prodPatients = parms.PatientId.OfType<String>().Select(o => patientPersistence.Get(new Identifier<Guid>(Guid.Parse(o)), AuthenticationContext.SystemPrincipal, false));
+                    ofs = parms.PatientId.Count;
+                    tr = parms.PatientId.Count;
+                }
+                else
+                    prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr);
                 ofs += 100;
 
                 foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
