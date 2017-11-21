@@ -27,6 +27,7 @@ using MARC.HI.EHRS.SVC.Messaging.FHIR.Handlers;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Messaging.FHIR.Util;
 using System;
@@ -145,10 +146,16 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                 ConditionalDelete = MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ConditionalDeleteStatus.NotSupported,
                 ReadHistory = true,
                 UpdateCreate = true,
-                Versioning = MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceVersionPolicy.Versioned,
+                Versioning = typeof(IVersionedEntity).IsAssignableFrom(typeof(TModel)) ? 
+                    MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceVersionPolicy.Versioned :
+                    MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceVersionPolicy.NonVersioned,
                 Interaction = this.GetInteractions().ToList(),
                 SearchParams = QueryRewriter.GetSearchParams<TFhirResource, TModel>().ToList(),
-                Type = typeof(TFhirResource).GetCustomAttribute<XmlRootAttribute>().ElementName
+                Type = typeof(TFhirResource).GetCustomAttribute<XmlRootAttribute>().ElementName,
+                Profile = new Reference<StructureDefinition>()
+                {
+                    ReferenceUrl = $"/StructureDefinition/openiz/_history/{Assembly.GetEntryAssembly().GetName().Version}"
+                }
             };
         }
 

@@ -110,7 +110,8 @@ namespace OpenIZ.Messaging.FHIR.Util
                 {
                     Name = o.FhirName,
                     Type = MapFhirParameterType<TModelType>(o.FhirType, o.ModelName),
-                    Documentation = o.Description
+                    Documentation = o.Description,
+                    Definition = new FhirUri(new Uri($"/Profile/openiz#search-{map.SourceType.Name}.{o.FhirName}", UriKind.Relative))
                 });
 
         }

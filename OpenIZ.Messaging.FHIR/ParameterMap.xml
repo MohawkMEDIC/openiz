@@ -166,7 +166,7 @@
     <map fhir="date" model="actTime"/>
     <map fhir="identifier" model="identifier" type="token"/>
     <map fhir="medication" model="participation[Product|Consumable].player" type="reference"/>
-    <map file="not-given" model="isNegated"/>
+    <map fhir="not-given" model="isNegated"/>
     <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
     <map fhir="patient.identifier" model="participation[RecordTarget].player.identifier" type="identifier"/>
     <map fhir="patient.name" model="participation[RecordTarget].player.name.component.value" />
