@@ -917,7 +917,7 @@ namespace OizDevTool
 
                 var children = Child.GetChildByHealthFacilityId(giisHf.Id);
 
-                var dbFacility = placePersister.Query(o => o.Identifiers.Any(i => i.Value == facId && i.Authority.DomainName == "GIIS_FACID"), AuthenticationContext.AnonymousPrincipal).FirstOrDefault();
+                var dbFacility = placePersister.Query(o => o.Identifiers.Any(i => i.Value == facId && i.Authority.DomainName == "GIIS_FACID" && i.ObsoleteVersionSequenceId == null), AuthenticationContext.AnonymousPrincipal).FirstOrDefault();
 
                 // Confirm creation
                 if (dbFacility == null && parms.ConfirmCreate)

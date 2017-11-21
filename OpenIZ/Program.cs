@@ -88,7 +88,7 @@ namespace OpenIZ
 #if DEBUG
                     Core.Diagnostics.Tracer.AddWriter(new Core.Diagnostics.LogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ.data"), System.Diagnostics.Tracing.EventLevel.LogAlways);
 #else
-                    Core.Diagnostics.Tracer.AddWriter(new Core.Diagnostics.LogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ.data"), System.Diagnostics.Tracing.EventLevel.Warning);
+                    Core.Diagnostics.Tracer.AddWriter(new Core.Diagnostics.LogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ.data"), System.Diagnostics.Tracing.EventLevel.LogAlways);
 #endif
 
                     Console.WriteLine("Open Immunize (OpenIZ) {0} ({1})", entryAsm.GetName().Version, entryAsm.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);

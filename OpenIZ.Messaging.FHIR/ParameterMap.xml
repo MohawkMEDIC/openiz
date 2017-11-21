@@ -62,9 +62,9 @@
     <map fhir="provider" model="participation[HealthcareProvider].player" type="reference"/>
     <map fhir="provider.name" model="participation[HealthcareProvider].player.name.component.value"/>
     <map fhir="provider.address" model="participation[HealthcareProvider].player.address.component.value"/>
-    <map fhir="location" model="participation[DedicatedServiceDeliveryLocation].player" type="reference"/>
-    <map fhir="location.name" model="participation[DedicatedServiceDeliveryLocation].player.name.component.value"/>
-    <map fhir="location.address" model="participation[DedicatedServiceDeliveryLocation].player.address.component.value"/>
+    <map fhir="location" model="participation[DedicatedServiceDeliveryLocation].target" type="reference"/>
+    <map fhir="location.name" model="participation[DedicatedServiceDeliveryLocation].target.name.component.value"/>
+    <map fhir="location.address" model="participation[DedicatedServiceDeliveryLocation].target.address.component.value"/>
   </type>
 
   <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
