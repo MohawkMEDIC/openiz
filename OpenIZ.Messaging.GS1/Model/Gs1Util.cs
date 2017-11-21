@@ -168,9 +168,20 @@ namespace OpenIZ.Messaging.GS1.Model
             // Quantity code
             var quantityCode = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(orderReceivePtcpt.LoadProperty<Material>("PlayerEntity").QuantityConceptKey.Value, "UCUM");
 
+            // Does the base material have it? 
             if (quantityCode == null)
-                throw new InvalidOperationException($"Missing quantity code for {orderReceivePtcpt.LoadProperty<Material>("PlayerEntity").QuantityConceptKey.Value}");
+            {
+                var mat = ApplicationContext.Current.GetService<IMaterialRepositoryService>().FindMaterial(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "Instance").Any(p => p.TargetEntityKey == orderReceivePtcpt.PlayerEntityKey)).FirstOrDefault();
+                if (mat == null)
+                    throw new InvalidOperationException($"Missing quantity code for {orderReceivePtcpt.LoadProperty<Material>("PlayerEntity").Key}");
+                else
+                {
+                    quantityCode = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(mat.QuantityConceptKey.Value, "UCUM");
+                    if (quantityCode == null)
+                        throw new InvalidOperationException($"Missing quantity code for {orderReceivePtcpt.LoadProperty<Material>("PlayerEntity").Key}");
 
+                }
+            }
             // Receiving logistic unit type
             return new ReceivingAdviceLogisticUnitType()
             {
@@ -244,7 +255,7 @@ namespace OpenIZ.Messaging.GS1.Model
                 throw new ArgumentNullException(nameof(material), "Missing material instance");
 
             ReferenceTerm cvx = null;
-            if(material.TypeConceptKey.HasValue)
+            if (material.TypeConceptKey.HasValue)
                 cvx = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(material.TypeConceptKey.Value, "CVX");
             var typeItemCode = new ItemTypeCodeType()
             {

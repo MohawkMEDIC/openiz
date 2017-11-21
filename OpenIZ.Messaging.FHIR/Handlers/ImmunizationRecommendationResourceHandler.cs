@@ -186,5 +186,15 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		{
 			throw new NotSupportedException();
 		}
-	}
+
+        /// <summary>
+        /// Get interactions
+        /// </summary>
+        protected override IEnumerable<MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.InteractionDefinition> GetInteractions()
+        {
+            return new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.TypeRestfulInteraction[]
+            {
+            }.Select(o => new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.InteractionDefinition() { Type = o });
+        }
+    }
 }

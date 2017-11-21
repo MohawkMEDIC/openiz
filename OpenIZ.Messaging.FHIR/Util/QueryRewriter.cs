@@ -37,6 +37,7 @@ using OpenIZ.Core.Model.Query;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Services;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 
 namespace OpenIZ.Messaging.FHIR.Util
 {
@@ -97,7 +98,65 @@ namespace OpenIZ.Messaging.FHIR.Util
             }
         }
 
-        
+        /// <summary>
+        /// Get a list of search parameters
+        /// </summary>
+        public static IEnumerable<MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamDefinition> GetSearchParams<TFhirResource, TModelType>()
+        {
+            var map = s_map.Map.FirstOrDefault(o => o.SourceType == typeof(TFhirResource));
+            if (map == null) return new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamDefinition[0];
+            else
+                return map.Map.Select(o => new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamDefinition()
+                {
+                    Name = o.FhirName,
+                    Type = MapFhirParameterType<TModelType>(o.FhirType, o.ModelName),
+                    Documentation = o.Description,
+                    Definition = new FhirUri(new Uri($"/Profile/openiz#search-{map.SourceType.Name}.{o.FhirName}", UriKind.Relative))
+                });
+
+        }
+
+        /// <summary>
+        /// Map FHIR parameter type
+        /// </summary>
+        private static MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType MapFhirParameterType<TModelType>(string type, string definition)
+        {
+            switch(type)
+            {
+                case "concept":
+                case "identifier":
+                    return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Token;
+                case "reference":
+                    return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Reference;
+                default:
+                    try
+                    {
+                        var expr = QueryExpressionParser.BuildLinqExpression<TModelType>(NameValueCollection.ParseQueryString(definition + "=null"));
+
+                        switch((expr as BinaryExpression).Left.Type.StripNullable().Name)
+                        {
+                            case "String":
+                                return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.String;
+                            case "Uri":
+                                return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Uri;
+                            case "Int32":
+                            case "Int64":
+                            case "Int16":
+                            case "Double":
+                            case "Decimal":
+                            case "Float":
+                                return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Number;
+                            default:
+                                return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Composite;
+                        }
+                    }
+                    catch
+                    {
+                        return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.String;
+                    }
+            }
+        }
+
         /// <summary>
         /// Re-writes the FHIR query parameter to IMSI query parameter format
         /// </summary>

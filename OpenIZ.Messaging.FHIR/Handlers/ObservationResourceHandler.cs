@@ -33,6 +33,7 @@ using System.Collections.Specialized;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.DataTypes;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
@@ -173,6 +174,21 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                 Query = query,
                 TotalResults = totalResults
             };
+        }
+
+        /// <summary>
+        /// Get interactions
+        /// </summary>
+        protected override IEnumerable<InteractionDefinition> GetInteractions()
+        {
+            return new TypeRestfulInteraction[]
+            {
+                TypeRestfulInteraction.InstanceHistory,
+                TypeRestfulInteraction.Read,
+                TypeRestfulInteraction.Search,
+                TypeRestfulInteraction.VersionRead,
+                TypeRestfulInteraction.Delete
+            }.Select(o => new InteractionDefinition() { Type = o });
         }
 
     }

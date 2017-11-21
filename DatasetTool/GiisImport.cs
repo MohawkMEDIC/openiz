@@ -936,6 +936,23 @@ namespace OizDevTool
                     }
                 }
 
+                // Confirm creation
+                if (dbFacility == null && parms.ConfirmCreate)
+                {
+                    Console.WriteLine("Facility with GIIS_FACID #{0} not found", facId);
+                    var createUpdate = Prompt("Do you want to (c)reate a new facility or (f)ind another or (a)bort?", new string[] { "c", "f", "a" });
+                    switch (createUpdate)
+                    {
+                        case "a":
+                            return;
+                        case "f":
+                            dbFacility = MergeFind(giisHf.Name);
+                            if (dbFacility == null)
+                                return;
+                            break;
+                    }
+                }
+
                 if (dbFacility == null)
                 {
                     Console.WriteLine("Will create facility {0} ({1} patients)...", giisHf.Name, children.Count);

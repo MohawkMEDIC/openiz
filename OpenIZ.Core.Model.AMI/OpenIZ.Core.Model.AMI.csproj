@@ -74,6 +74,7 @@
     <Compile Include="Diagnostics\DiagnosticReport.cs" />
     <Compile Include="Diagnostics\DiagnosticServiceInfo.cs" />
     <Compile Include="Diagnostics\DiagnosticSyncInfo.cs" />
+    <Compile Include="Diagnostics\DiagnosticThreadInfo.cs" />
     <Compile Include="Diagnostics\DiagnosticVersionInfo.cs" />
     <Compile Include="Logging\LogFileInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

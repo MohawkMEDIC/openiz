@@ -21,6 +21,7 @@
 using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model;
@@ -126,5 +127,20 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 
 			return base.Query(query, issues, queryId, offset, count, out totalResults);
 		}
-	}
+
+        /// <summary>
+        /// Get interactions
+        /// </summary>
+        protected override IEnumerable<InteractionDefinition> GetInteractions()
+        {
+            return new TypeRestfulInteraction[]
+            {
+                TypeRestfulInteraction.InstanceHistory,
+                TypeRestfulInteraction.Read,
+                TypeRestfulInteraction.Search,
+                TypeRestfulInteraction.VersionRead,
+                TypeRestfulInteraction.Delete
+            }.Select(o => new InteractionDefinition() { Type = o });
+        }
+    }
 }

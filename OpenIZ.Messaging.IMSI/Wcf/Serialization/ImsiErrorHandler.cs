@@ -48,7 +48,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf.Serialization
     public class ImsiErrorHandler : IErrorHandler
     {
         // Trace source
-        private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI");
+        private TraceSource m_traceSource = new TraceSource("OpenIZ.Messaging.IMSI.Wcf");
 
         /// <summary>
         /// Handle error

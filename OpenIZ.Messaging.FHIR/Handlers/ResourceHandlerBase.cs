@@ -27,6 +27,7 @@ using MARC.HI.EHRS.SVC.Messaging.FHIR.Handlers;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Messaging.FHIR.Util;
 using System;
@@ -133,13 +134,43 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 			};
 		}
 
-		/// <summary>
-		/// Queries for a specified resource.
-		/// </summary>
-		/// <param name="parameters">The parameters.</param>
-		/// <returns>Returns the FHIR query result containing the results of the query.</returns>
-		/// <exception cref="System.ArgumentNullException">parameters</exception>
-		public virtual FhirQueryResult Query(System.Collections.Specialized.NameValueCollection parameters)
+        /// <summary>
+        /// Get definition for the specified resource
+        /// </summary>
+        public virtual MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceDefinition GetDefinition()
+        {
+            return new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceDefinition()
+            {
+                ConditionalCreate = false,
+                ConditionalUpdate = true,
+                ConditionalDelete = MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ConditionalDeleteStatus.NotSupported,
+                ReadHistory = true,
+                UpdateCreate = true,
+                Versioning = typeof(IVersionedEntity).IsAssignableFrom(typeof(TModel)) ? 
+                    MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceVersionPolicy.Versioned :
+                    MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceVersionPolicy.NonVersioned,
+                Interaction = this.GetInteractions().ToList(),
+                SearchParams = QueryRewriter.GetSearchParams<TFhirResource, TModel>().ToList(),
+                Type = typeof(TFhirResource).GetCustomAttribute<XmlRootAttribute>().ElementName,
+                Profile = new Reference<StructureDefinition>()
+                {
+                    ReferenceUrl = $"/StructureDefinition/openiz/_history/{Assembly.GetEntryAssembly().GetName().Version}"
+                }
+            };
+        }
+
+        /// <summary>
+        /// Get interactions supported by this handler
+        /// </summary>
+        protected abstract IEnumerable<MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.InteractionDefinition> GetInteractions();
+
+        /// <summary>
+        /// Queries for a specified resource.
+        /// </summary>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Returns the FHIR query result containing the results of the query.</returns>
+        /// <exception cref="System.ArgumentNullException">parameters</exception>
+        public virtual FhirQueryResult Query(System.Collections.Specialized.NameValueCollection parameters)
 		{
 			if (parameters == null)
 				throw new ArgumentNullException(nameof(parameters));

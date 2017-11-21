@@ -57,10 +57,16 @@ namespace OpenIZ.Core.Model.AMI.Diagnostics
 		[XmlElement("appInfo"), JsonProperty("appInfo")]
 		public DiagnosticApplicationInfo ApplicationInfo { get; set; }
 
-		/// <summary>
-		/// Gets or sets any ticket related information
-		/// </summary>
-		[XmlElement("ticketId"), JsonProperty("ticketId")]
+        /// <summary>
+        /// Thread information
+        /// </summary>
+        [XmlElement("thread"), JsonProperty("thread")]
+        public List<DiagnosticThreadInfo> Threads { get; set; }
+
+        /// <summary>
+        /// Gets or sets any ticket related information
+        /// </summary>
+        [XmlElement("ticketId"), JsonProperty("ticketId")]
 		public string CorrelationId { get; set; }
 	}
 }
