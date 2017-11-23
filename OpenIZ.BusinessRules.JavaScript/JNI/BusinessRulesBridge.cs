@@ -99,7 +99,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public void AddBusinessRule(String target, String trigger, Func<Object, ExpandoObject> _delegate)
         {
-            JavascriptBusinessRulesEngine.Current.RegisterRule(target, trigger, _delegate);
+            JavascriptBusinessRulesEngine.ThreadInstance.RegisterRule(target, trigger, _delegate);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public void AddValidator(String target, Func<Object, Object[]> _delegate)
         {
-            JavascriptBusinessRulesEngine.Current.RegisterValidator(target, _delegate);
+            JavascriptBusinessRulesEngine.ThreadInstance.RegisterValidator(target, _delegate);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         public object ExecuteRule(String action, Object data)
         {
             var sData = this.ToModel(data);
-            var retVal = JavascriptBusinessRulesEngine.Current.Invoke(action, sData);
+            var retVal = JavascriptBusinessRulesEngine.ThreadInstance.Invoke(action, sData);
             return this.ToViewModel(retVal);
         }
 
@@ -250,7 +250,7 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
                 {
                     try
                     {
-                        itms[i] = JavascriptBusinessRulesEngine.Current.InvokeRaw(trigger, itms[i]);
+                        itms[i] = JavascriptBusinessRulesEngine.ThreadInstance.InvokeRaw(trigger, itms[i]);
                     }
                     catch (Exception e)
                     {

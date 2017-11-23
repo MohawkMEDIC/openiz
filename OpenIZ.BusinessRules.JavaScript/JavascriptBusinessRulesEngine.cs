@@ -55,6 +55,12 @@ namespace OpenIZ.BusinessRules.JavaScript
         // Javascript BRE instance
         private static JavascriptBusinessRulesEngine s_instance;
 
+        /// <summary>
+        /// Thread static instance
+        /// </summary>
+        [ThreadStatic]
+        private static JavascriptBusinessRulesEngine s_threadInstance;
+
         // Sync lock
         private static Object s_syncLock = new object();
 
@@ -77,7 +83,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
 
         }
-
+        
         /// <summary>
         /// Business rules bridge
         /// </summary>
@@ -107,6 +113,26 @@ namespace OpenIZ.BusinessRules.JavaScript
                 using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))
                     this.AddRules(itm.Replace(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.FullName, ""), sr);
 
+        }
+
+        /// <summary>
+        /// Gets an instance specifically for this executing thread 
+        /// </summary>
+        public static JavascriptBusinessRulesEngine ThreadInstance {
+            get
+            {
+                if (ApplicationServiceContext.HostType == OpenIZHostType.Server)
+                {
+                    if (s_threadInstance == null)
+                    {
+                        s_threadInstance = new JavascriptBusinessRulesEngine();
+                        s_threadInstance.Initialize();
+                    }
+                    return s_threadInstance;
+                }
+                else
+                    return JavascriptBusinessRulesEngine.Current;
+            }
         }
 
         /// <summary>
@@ -184,6 +210,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public void RegisterValidator(string target, Func<object, Object[]> _delegate)
         {
+
             List<Func<object, Object[]>> validatorFunc = null;
             if (!this.m_validatorDefinitions.TryGetValue(target, out validatorFunc))
             {
@@ -211,6 +238,10 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public void RegisterRule(string target, string trigger, Func<object, ExpandoObject> _delegate)
         {
+            // Guard -> Only the CURRENT instance can add validators
+            if (this != JavascriptBusinessRulesEngine.Current)
+                return;
+
             Dictionary<String, List<Func<object, ExpandoObject>>> triggerHandler = null;
             if (!this.m_triggerDefinitions.TryGetValue(target, out triggerHandler))
             {
