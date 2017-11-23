@@ -131,9 +131,9 @@ namespace OpenIZ.Messaging.FHIR.Util
                 default:
                     try
                     {
-                        var expr = QueryExpressionParser.BuildLinqExpression<TModelType>(NameValueCollection.ParseQueryString(definition + "=null"));
 
-                        switch((expr as BinaryExpression).Left.Type.StripNullable().Name)
+
+                        switch(GetQueryType<TModelType>(definition).StripNullable().Name)
                         {
                             case "String":
                                 return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.String;
@@ -146,15 +146,49 @@ namespace OpenIZ.Messaging.FHIR.Util
                             case "Decimal":
                             case "Float":
                                 return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Number;
+                            case "DateTime":
+                            case "DateTimeOffset":
+                                return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Date;
                             default:
                                 return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Composite;
                         }
                     }
-                    catch
+                    catch(Exception e)
                     {
                         return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.String;
                     }
             }
+        }
+
+        /// <summary>
+        /// Follows the specified query definition and determines the type
+        /// </summary>
+        private static Type GetQueryType<TModelType>(string definition)
+        {
+            var pathParts = definition.Split('.');
+            var scopeType = typeof(TModelType);
+            foreach(var path in pathParts)
+            {
+                // Get actual path
+                var vPath = path;
+                if (vPath.Contains("["))
+                    vPath = vPath.Substring(0, vPath.IndexOf("["));
+                else if (vPath.Contains("@"))
+                    vPath = vPath.Substring(0, vPath.IndexOf("@"));
+
+                if (path.Contains("@")) // cast? 
+                {
+                    var cast = path.Substring(path.IndexOf("@") + 1);
+                    scopeType = typeof(QueryExpressionParser).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == cast);
+                }
+                else {
+                    var property = scopeType.GetXmlProperty(vPath, true);
+                    if (property == null)
+                        return scopeType;
+                    scopeType = property.PropertyType.StripGeneric();
+                }
+            }
+            return scopeType;
         }
 
         /// <summary>

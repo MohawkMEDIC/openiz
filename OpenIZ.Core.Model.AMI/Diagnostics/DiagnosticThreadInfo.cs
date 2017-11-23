@@ -8,7 +8,7 @@ namespace OpenIZ.Core.Model.AMI.Diagnostics
     /// <summary>
     /// Diagnostic thread information
     /// </summary>
-    [JsonObject(nameof(DiagnosticEnvironmentInfo)), XmlType(nameof(DiagnosticEnvironmentInfo), Namespace = "http://openiz.org/ami/diagnostics")]
+    [JsonObject(nameof(DiagnosticThreadInfo)), XmlType(nameof(DiagnosticEnvironmentInfo), Namespace = "http://openiz.org/ami/diagnostics")]
     public class DiagnosticThreadInfo
     {
         /// <summary>

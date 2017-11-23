@@ -137,7 +137,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         /// <summary>
         /// Get definition for the specified resource
         /// </summary>
-        public virtual MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceDefinition GetDefinition()
+        public virtual MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceDefinition GetResourceDefinition()
         {
             return new MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.ResourceDefinition()
             {
@@ -157,6 +157,14 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                     ReferenceUrl = $"/StructureDefinition/openiz/_history/{Assembly.GetEntryAssembly().GetName().Version}"
                 }
             };
+        }
+
+        /// <summary>
+        /// Get structure definitions
+        /// </summary>
+        public virtual StructureDefinition GetStructureDefinition()
+        {
+
         }
 
         /// <summary>

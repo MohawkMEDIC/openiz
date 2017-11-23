@@ -44,7 +44,7 @@
     <map fhir="patient.birthDate" model="participation[RecordTarget].player@Patient.dateOfBirth"/>
     <map fhir="patient.location.identifier" model="participation[RecordTarget].player@Patient.relationship[DedicatedServiceDeliveryLocation].target@Place.identifier" type="identifier"/>
     <map fhir="in-catchment" model="tag[catchmentIndicator].value"/>
-    <map fhir="is-outreach" model="relationship[HasComponent].source.tag[outreach]"/>
+    <map fhir="is-outreach" model="relationship[HasComponent].source.tag[outreach].value"/>
     <map fhir="is-backEntry" model="tag[backEntry].value"/>
     <map fhir="location" model="participation[Location].player" type="reference"/>
     <map fhir="location.name" model="participation[Location].player@Place.name.component.value"/>
@@ -75,7 +75,7 @@
     <map fhir="issued" model="creationTime"/>
     <map fhir="date" model="actTime"/>
     <map fhir="data-absent-reason" model="reasonConcept"/>
-    <map fhir="encounter" model="relationship[HasComponent].source"/>
+    <map fhir="encounter" model="relationship[HasComponent].source" type="reference"/>
     <map fhir="identifier" model="identifier" type="identifier"/>
     <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
     <map fhir="patient.gender" model="participation[RecordTarget].player@Patient.genderConcept" type="concept"/>
@@ -149,7 +149,7 @@
     <map fhir="asserter.name" model="participation[Authorororiginator].player.name.component.value"/>
     <map fhir="clinical-status" model="statusConcept" type="concept"/>
     <map fhir="code" model="value" type="concept"/>
-    <map fhir="encounter" model="relationship[HasComponent].source"/>
+    <map fhir="encounter" model="relationship[HasComponent].source" type="reference"/>
     <map fhir="identifier" model="identifier" type="identifier"/>
     <map fhir="onset-date" model="startTime"/>
     <map fhir="patient" model="participation[RecordTarget].player" type="reference"/>
