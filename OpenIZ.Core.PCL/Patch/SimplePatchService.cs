@@ -320,7 +320,7 @@ namespace OpenIZ.Core.Services.Impl
                                 // HACK: Patches with no version code don't adhere to ths
                                 if (String.IsNullOrEmpty(patch.Version) && force)
                                     this.m_tracer.TraceWarning("Patch specifies removal of non-existing relationship {0} -> Ignoring", op);
-                                else
+                                else if(!force)
                                     throw new PatchAssertionException("Cannot remove a non-existing relationship");
                             }
                         }

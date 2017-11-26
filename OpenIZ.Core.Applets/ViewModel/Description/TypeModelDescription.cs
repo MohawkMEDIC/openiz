@@ -37,7 +37,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Description
         public void Initialize()
         {
             for(int i = 0; i < this.Properties?.Count; i++)
-                this.Properties[i].Initialize(this);
+                this.Properties[i]?.Initialize(this);
         }
 
         /// <summary>
