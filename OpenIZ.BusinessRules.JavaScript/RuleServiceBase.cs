@@ -44,7 +44,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         public TBinding AfterInsert(TBinding data)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.Current.Invoke("AfterInsert", data);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterInsert", data);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         public TBinding AfterObsolete(TBinding data)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.Current.Invoke("AfterObsolete", data);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterObsolete", data);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         public IEnumerable<TBinding> AfterQuery(IEnumerable<TBinding> results)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.Current.Invoke("AfterQuery", new Bundle() { Item = results.OfType<IdentifiedData>().ToList() }).Item.OfType<TBinding>();
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterQuery", new Bundle() { Item = results.OfType<IdentifiedData>().ToList() }).Item.OfType<TBinding>();
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         public TBinding AfterRetrieve(TBinding result)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.Current.Invoke("AfterRetrieve", result);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterRetrieve", result);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding AfterUpdate(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.Current.Invoke("AfterUpdate", data);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterUpdate", data);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding BeforeInsert(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.Current.Invoke("BeforeInsert", data);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("BeforeInsert", data);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding BeforeObsolete(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.Current.Invoke("BeforeObsolete", data);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("BeforeObsolete", data);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding BeforeUpdate(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.Current.Invoke("BeforeUpdate", data);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("BeforeUpdate", data);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public List<DetectedIssue> Validate(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.Current.Validate(data);
+            return JavascriptBusinessRulesEngine.ThreadInstance.Validate(data);
         }
         
     }
