@@ -58,6 +58,9 @@ namespace OpenIZ.BusinessRules.JavaScript
         // Sync lock
         private static Object s_syncLock = new object();
 
+        // Local lock
+        private object m_localLock = new object();
+
         // Javascript engine
         private Jint.Engine m_engine = null;
 
@@ -195,10 +198,13 @@ namespace OpenIZ.BusinessRules.JavaScript
                     throw new KeyNotFoundException(target);
                 var ruleService = typeof(RuleServiceBase<>).MakeGenericType(targetType);
                 var serviceManager = ApplicationServiceContext.Current.GetService(typeof(IServiceManager)) as IServiceManager;
-                serviceManager.AddServiceProvider(ruleService);
+
+                lock (s_syncLock)
+                    if (ApplicationServiceContext.Current.GetService(ruleService) == null)
+                        serviceManager.AddServiceProvider(ruleService);
 
                 // Now add
-                lock (s_syncLock)
+                lock (this.m_localLock)
                     this.m_validatorDefinitions.Add(target, new List<Func<object, Object[]>>() { _delegate });
             }
             else
@@ -222,10 +228,13 @@ namespace OpenIZ.BusinessRules.JavaScript
                     throw new KeyNotFoundException(target);
                 var ruleService = typeof(RuleServiceBase<>).MakeGenericType(targetType);
                 var serviceManager = ApplicationServiceContext.Current.GetService(typeof(IServiceManager)) as IServiceManager;
-                serviceManager.AddServiceProvider(ruleService);
+
+                lock(s_syncLock)
+                    if(ApplicationServiceContext.Current.GetService(ruleService) == null)
+                        serviceManager.AddServiceProvider(ruleService);
 
                 // Now add
-                lock (s_syncLock)
+                lock (this.m_localLock)
                     this.m_triggerDefinitions.Add(target, new Dictionary<string, List<Func<object, ExpandoObject>>>()
                     {
                         { trigger, new List<Func<object, ExpandoObject>>() { _delegate } }
@@ -235,7 +244,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             {
                 List<Func<object, ExpandoObject>> delegates = null;
                 if (!triggerHandler.TryGetValue(trigger, out delegates))
-                    lock (s_syncLock)
+                    lock (this.m_localLock)
                         triggerHandler.Add(trigger, new List<Func<object, ExpandoObject>>() { _delegate });
                 else
                     delegates.Add(_delegate);
