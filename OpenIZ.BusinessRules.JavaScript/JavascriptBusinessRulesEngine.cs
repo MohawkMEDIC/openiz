@@ -229,8 +229,8 @@ namespace OpenIZ.BusinessRules.JavaScript
                 var ruleService = typeof(RuleServiceBase<>).MakeGenericType(targetType);
                 var serviceManager = ApplicationServiceContext.Current.GetService(typeof(IServiceManager)) as IServiceManager;
 
-                lock(s_syncLock)
-                    if(ApplicationServiceContext.Current.GetService(ruleService) == null)
+                lock (s_syncLock)
+                    if (ApplicationServiceContext.Current.GetService(ruleService) == null)
                         serviceManager.AddServiceProvider(ruleService);
 
                 // Now add
@@ -311,31 +311,31 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public object InvokeRaw(String action, Object data)
         {
-            try
-            {
-                var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
-
-                var sdata = data as IDictionary<String, Object>;
-                if (sdata == null || !sdata.ContainsKey("$type")) return data;
-
-                var callList = this.GetCallList(binder.BindToType("OpenIZ.Core.Model, Version=1.0.0.0", sdata["$type"].ToString()), action);
-                var retVal = data;
-
-                if (callList.Count > 0)
+            lock (this.m_localLock)
+                try
                 {
-                    foreach (var c in callList)
-                    {
-                        lock (s_syncLock)
-                            data = c(data);
-                    }
-                }
+                    var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
 
-                return data;
-            }
-            catch (JavaScriptException e)
-            {
-                this.m_tracer.TraceError("JAVASCRIPT ERROR RUNNING {0} OBJECT :::::> {3}@{2}\r\n{1}", action, this.ProduceLiteral(data), e.LineNumber, e);
-                throw new DetectedIssueException(new List<DetectedIssue>()
+                    var sdata = data as IDictionary<String, Object>;
+                    if (sdata == null || !sdata.ContainsKey("$type")) return data;
+
+                    var callList = this.GetCallList(binder.BindToType("OpenIZ.Core.Model, Version=1.0.0.0", sdata["$type"].ToString()), action);
+                    var retVal = data;
+
+                    if (callList.Count > 0)
+                    {
+                        foreach (var c in callList)
+                        {
+                            data = c(data);
+                        }
+                    }
+
+                    return data;
+                }
+                catch (JavaScriptException e)
+                {
+                    this.m_tracer.TraceError("JAVASCRIPT ERROR RUNNING {0} OBJECT :::::> {3}@{2}\r\n{1}", action, this.ProduceLiteral(data), e.LineNumber, e);
+                    throw new DetectedIssueException(new List<DetectedIssue>()
                     {
                         new DetectedIssue()
                         {
@@ -344,12 +344,12 @@ namespace OpenIZ.BusinessRules.JavaScript
                         }
                     });
 
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, this.ProduceLiteral(data), e);
-                throw new BusinessRulesExecutionException($"Error running business rule {action} for {this.ProduceLiteral(data)} - {e.Message}", e);
-            }
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, this.ProduceLiteral(data), e);
+                    throw new BusinessRulesExecutionException($"Error running business rule {action} for {this.ProduceLiteral(data)} - {e.Message}", e);
+                }
         }
 
         /// <summary>
@@ -372,31 +372,31 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding Invoke<TBinding>(string action, TBinding data) where TBinding : IdentifiedData
         {
-            try
-            {
-                if (data == default(TBinding)) return data;
-
-                var callList = this.GetCallList(data.GetType(), action).Union(this.GetCallList<TBinding>(action)).Distinct();
-                var retVal = data;
-
-                if (callList.Count() > 0)
+            lock (this.m_localLock)
+                try
                 {
-                    dynamic viewModel = this.m_bridge.ToViewModel(retVal);
-                    foreach (var c in callList)
-                    {
-                        lock (s_syncLock)
-                            viewModel = c(viewModel);
-                    }
-                    retVal = (TBinding)this.m_bridge.ToModel(viewModel);
-                }
+                    if (data == default(TBinding)) return data;
 
-                return retVal;
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
-                throw new BusinessRulesExecutionException($"Error running business rule {action} for {data}", e);
-            }
+                    var callList = this.GetCallList(data.GetType(), action).Union(this.GetCallList<TBinding>(action)).Distinct();
+                    var retVal = data;
+
+                    if (callList.Count() > 0)
+                    {
+                        dynamic viewModel = this.m_bridge.ToViewModel(retVal);
+                        foreach (var c in callList)
+                        {
+                            viewModel = c(viewModel);
+                        }
+                        retVal = (TBinding)this.m_bridge.ToModel(viewModel);
+                    }
+
+                    return retVal;
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error running {0} for {1} : {2}", action, data, e);
+                    throw new BusinessRulesExecutionException($"Error running business rule {action} for {data}", e);
+                }
         }
 
         /// <summary>
@@ -404,28 +404,28 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public List<DetectedIssue> Validate<TBinding>(TBinding data) where TBinding : IdentifiedData
         {
-            try
-            {
-                var callList = this.GetValidators(data.GetType()).Union(this.GetValidators<TBinding>()).Distinct();
-                var retVal = new List<DetectedIssue>();
-                var vmData = this.m_bridge.ToViewModel(data);
-                foreach (var c in callList)
+            lock (this.m_localLock)
+                try
                 {
-                    object[] issues = null;
-                    lock (s_syncLock)
-                        issues = c(vmData);
-                    retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o => new DetectedIssue()
+                    var callList = this.GetValidators(data.GetType()).Union(this.GetValidators<TBinding>()).Distinct();
+                    var retVal = new List<DetectedIssue>();
+                    var vmData = this.m_bridge.ToViewModel(data);
+                    foreach (var c in callList)
                     {
-                        Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,
-                        Priority = o.ContainsKey("priority") ? (DetectedIssuePriorityType)(int)(double)o["priority"] : DetectedIssuePriorityType.Informational
-                    }));
+                        object[] issues = null;
+                        issues = c(vmData);
+                        retVal.AddRange(issues.Cast<IDictionary<String, Object>>().Select(o => new DetectedIssue()
+                        {
+                            Text = o.ContainsKey("text") ? o["text"]?.ToString() : null,
+                            Priority = o.ContainsKey("priority") ? (DetectedIssuePriorityType)(int)(double)o["priority"] : DetectedIssuePriorityType.Informational
+                        }));
+                    }
+                    return retVal;
                 }
-                return retVal;
-            }
-            catch (JavaScriptException e)
-            {
-                this.m_tracer.TraceError("JAVASCRIPT ERROR VALIDATING OBJECT :::::> {1}@{0}", e.LineNumber, e);
-                return new List<DetectedIssue>()
+                catch (JavaScriptException e)
+                {
+                    this.m_tracer.TraceError("JAVASCRIPT ERROR VALIDATING OBJECT :::::> {1}@{0}", e.LineNumber, e);
+                    return new List<DetectedIssue>()
                 {
                     new DetectedIssue()
                     {
@@ -434,11 +434,11 @@ namespace OpenIZ.BusinessRules.JavaScript
                     }
                 };
 
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error validating {0} : {1}", data, e);
-                return new List<DetectedIssue>()
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error validating {0} : {1}", data, e);
+                    return new List<DetectedIssue>()
                     {
                         new DetectedIssue()
                         {
@@ -446,7 +446,7 @@ namespace OpenIZ.BusinessRules.JavaScript
                             Text = e.Message
                         }
                     };
-            }
+                }
         }
     }
 }
