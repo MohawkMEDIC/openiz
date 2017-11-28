@@ -164,7 +164,8 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         /// </summary>
         public virtual StructureDefinition GetStructureDefinition()
         {
-
+			// TODO: implement
+			return null;
         }
 
         /// <summary>
