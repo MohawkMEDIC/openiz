@@ -204,31 +204,6 @@
   </insert>
   <insert  skipIfExists="true">
     <Material xmlns="http://openiz.org/model">
-      <id>15b42b90-17fa-48cd-8121-f909c9d00ccc</id>
-      <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
-      <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
-      <statusConcept>C8064CBD-FA06-4530-B430-1A52F1530C27</statusConcept>
-      <typeConcept>7B73529C-4C3D-4720-BB14-FDF8688F7D3B</typeConcept>
-      <name>
-        <use>1EC9583A-B019-4BAA-B856-B99CAF368656</use>
-        <component>
-          <value>Human Papillomavirus Vaccine</value>
-        </component>
-      </name>
-      <name>
-        <use>A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1</use>
-        <component>
-          <value>HPV</value>
-        </component>
-      </name>
-      <quantity>1</quantity>
-      <formConcept>9902267C-8F77-4233-BFD3-E6B068AB326A</formConcept>
-      <quantityConcept>a4fc5c93-31c2-4f87-990e-c5a4e5ea2e76</quantityConcept>
-    </Material>
-  </insert>
-
-  <insert  skipIfExists="true">
-    <Material xmlns="http://openiz.org/model">
       <id>7D80E518-6E04-4091-8D19-7265BB09BC1F</id>
       <classConcept>D39073BE-0F8F-440E-B8C8-7034CC138A95</classConcept>
       <determinerConcept>AD28A7AC-A66B-42C4-91B4-DE40A2B11980</determinerConcept>
