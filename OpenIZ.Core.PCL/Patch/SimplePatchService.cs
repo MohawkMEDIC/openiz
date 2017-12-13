@@ -189,7 +189,10 @@ namespace OpenIZ.Core.Services.Impl
         private PatchOperation BuildRemoveQuery(String path, IdentifiedData c)
         {
             PatchOperation retval = new PatchOperation(PatchOperationType.Remove, path, null);
-            if (c.Key.HasValue)
+
+            var simpleAtt = c.GetType().GetTypeInfo().GetCustomAttribute<SimpleValueAttribute>();
+
+            if (c.Key.HasValue && simpleAtt == null)
             {
                 retval.Path += ".id";
                 retval.Value = c.Key;
@@ -204,10 +207,12 @@ namespace OpenIZ.Core.Services.Impl
                 {
                     var pi = cvalue.GetType().GetRuntimeProperty(classAtt.ClassifierProperty);
                     var redirectProperty = pi.GetCustomAttribute<SerializationReferenceAttribute>();
+
+                    // Prefer the key over the type
                     if (redirectProperty != null)
-                        serializationName += "." + cvalue.GetType().GetRuntimeProperty(redirectProperty.RedirectProperty).GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
-                    else
-                        serializationName += "." + pi.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
+                        pi = cvalue.GetType().GetRuntimeProperty(redirectProperty.RedirectProperty);
+
+                    serializationName += "." + pi.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName;
 
                     cvalue = pi.GetValue(cvalue);
                     classAtt = cvalue?.GetType().GetTypeInfo().GetCustomAttribute<ClassifierAttribute>();

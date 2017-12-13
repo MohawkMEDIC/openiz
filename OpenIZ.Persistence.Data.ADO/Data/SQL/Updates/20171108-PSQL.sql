@@ -1,5 +1,5 @@
 ﻿/** 
- * <update id="20171108-01" applyRange="0.9.9.2-0.9.9.2"  invariantName="npgsql">
+ * <update id="20171108-01" applyRange="0.9.10.0-0.9.10.0"  invariantName="npgsql">
  *	<summary>Adds trigger constraints to ensure that relationships are of proper type</summary>
  *	<remarks></remarks>
  * </update>
