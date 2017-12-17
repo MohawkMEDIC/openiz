@@ -43,6 +43,27 @@ using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {
+
+    /// <summary>
+    /// Rules engine was created
+    /// </summary>
+    public class RulesEngineCreatedArgs : EventArgs
+    {
+
+        /// <summary>
+        /// Creates new event 
+        /// </summary>
+        public RulesEngineCreatedArgs(JavascriptBusinessRulesEngine engine)
+        {
+            this.CreatedEngine = engine;
+        }
+
+        /// <summary>
+        /// Gets the engine that was created
+        /// </summary>
+        public JavascriptBusinessRulesEngine CreatedEngine { get; private set; }
+    }
+
     /// <summary>
     /// Represents the JavaScript business rules engine
     /// </summary>
@@ -54,6 +75,11 @@ namespace OpenIZ.BusinessRules.JavaScript
 
         // Javascript BRE instance
         private static JavascriptBusinessRulesEngine s_instance;
+
+        /// <summary>
+        /// New BRE was created
+        /// </summary>
+        internal static event EventHandler<RulesEngineCreatedArgs> EngineCreated;
 
         /// <summary>
         /// Thread static instance
@@ -130,6 +156,7 @@ namespace OpenIZ.BusinessRules.JavaScript
                     {
                         s_threadInstance = new JavascriptBusinessRulesEngine();
                         s_threadInstance.Initialize();
+                        EngineCreated?.Invoke(null, new RulesEngineCreatedArgs(s_threadInstance));
                     }
                     return s_threadInstance;
                 }
@@ -174,7 +201,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             {
 
                 // Already ran
-                this.m_tracer.TraceVerbose("Adding rules to BRE");
+                this.m_tracer.TraceVerbose("Adding rules to BRE: {0}", ruleId);
                 var rawScript = script.ReadToEnd();
                 // Find all reference paths
                 Regex includeReg = new Regex(@"\/\/\/\s*?\<reference\s*?path\=[""'](.*?)[""']\s?\/\>", RegexOptions.Multiline);
@@ -244,10 +271,6 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public void RegisterRule(string target, string trigger, Func<object, ExpandoObject> _delegate)
         {
-            // Guard -> Only the CURRENT instance can add validators
-            if (this != JavascriptBusinessRulesEngine.Current)
-                return;
-
             Dictionary<String, List<Func<object, ExpandoObject>>> triggerHandler = null;
             if (!this.m_triggerDefinitions.TryGetValue(target, out triggerHandler))
             {

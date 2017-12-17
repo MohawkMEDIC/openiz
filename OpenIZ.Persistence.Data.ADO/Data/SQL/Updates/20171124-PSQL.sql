@@ -35,4 +35,7 @@ SELECT REG_PATCH('20171108-01');
 -- RULE 14: PROVIDERS CAN BE HEALTHCARE PROVIDERS
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('77b7a04b-c065-4faf-8ec0-2cdad4ae372b', '9de2a846-ddf2-4ebc-902e-84508c5089ea', '6b04fed8-c164-469c-910b-f824c2bda4f0', 'err_healthCareProviders_PersonsOnly');
 
+-- RULE 15: NOK IS BETWEEN PATIENTS AND PERSONS
+INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('1ee4e74f-542d-4544-96f6-266a6247f274', 'bacd9c6f-3fa9-481e-9636-37457962804d', '9de2a846-ddf2-4ebc-902e-84508c5089ea', 'err_nextOfKin_PersonsOnly');
+
 COMMIT;

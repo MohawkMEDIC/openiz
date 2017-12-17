@@ -64,7 +64,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         {
             this.m_type = t;
         }
-       
+
         /// <summary>
         /// Gets the type that this formatter handles
         /// </summary>
@@ -91,7 +91,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
         {
 
             Dictionary<String, PropertyInfo> retVal = null;
-            lock(this.m_syncLock)
+            lock (this.m_syncLock)
                 if (!this.m_jsonPropertyInfo.TryGetValue(propertyType, out retVal))
                 {
                     retVal = new Dictionary<string, PropertyInfo>();
@@ -102,7 +102,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                             retVal.Add(propertyName, pi);
                     }
                     if (!this.m_jsonPropertyInfo.ContainsKey(propertyType))
-                            this.m_jsonPropertyInfo.Add(propertyType, retVal);
+                        this.m_jsonPropertyInfo.Add(propertyType, retVal);
                 }
             return retVal;
         }
@@ -140,8 +140,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                         retVal = info.Name.ToLower() + "Model";
                 }
 
-                lock(this.m_syncLock)
-                    if(!this.m_jsonPropertyNames.ContainsKey(info))
+                lock (this.m_syncLock)
+                    if (!this.m_jsonPropertyNames.ContainsKey(info))
                         this.m_jsonPropertyNames.Add(info, retVal);
             }
             return retVal;
@@ -158,7 +158,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
 
             // For each item in the property ...
             bool loadedProperties = false;
-            
+
             // Iterate properties 
             foreach (var propertyInfo in o.GetType().GetRuntimeProperties())
             {
@@ -182,7 +182,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     {
                         if (value is IList && !propertyInfo.PropertyType.IsArray)
                         {
-                            if(o.Key.HasValue) 
+                            if (o.Key.HasValue)
                                 value = context.JsonContext.LoadCollection(propertyInfo.PropertyType, (Guid)o.Key);
                             propertyInfo.SetValue(o, value);
                             loadedProperties = (value as IList).Count > 0;
@@ -190,18 +190,18 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                         else
                         {
                             var keyPropertyRef = propertyInfo.GetCustomAttribute<SerializationReferenceAttribute>();
-	                        if (keyPropertyRef != null)
-	                        {
-		                        var keyProperty = o.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
-		                        var key = keyProperty.GetValue(o);
-		                        if (key != null)
-		                        {
-			                        value = context.JsonContext.LoadRelated(propertyInfo.PropertyType, (Guid)key);
-			                        propertyInfo.SetValue(o, value);
-			                        loadedProperties = value != null;
-		                        }
+                            if (keyPropertyRef != null)
+                            {
+                                var keyProperty = o.GetType().GetRuntimeProperty(keyPropertyRef.RedirectProperty);
+                                var key = keyProperty.GetValue(o);
+                                if (key != null)
+                                {
+                                    value = context.JsonContext.LoadRelated(propertyInfo.PropertyType, (Guid)key);
+                                    propertyInfo.SetValue(o, value);
+                                    loadedProperties = value != null;
+                                }
 
-	                        }
+                            }
                         }
 
                     }
@@ -229,9 +229,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             if (!asType.GetTypeInfo().IsAbstract)
                 retVal = Activator.CreateInstance(asType);
 
-            int depth = r.TokenType == JsonToken.StartObject ? r.Depth : r.Depth - 1 ; // current depth
+            int depth = r.TokenType == JsonToken.StartObject ? r.Depth : r.Depth - 1; // current depth
             var properties = GetPropertyInfo(asType);
-            
+
             // We will parse this until we can no longer parse
             while (r.Read())
             {
@@ -268,7 +268,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                     r.Read();
                                     var instance = context.JsonContext.ReadElementUtil(r, propertyInfo.PropertyType, new JsonSerializationContext(propertyName, context.JsonContext, retVal, context));
                                     if (!(instance == null || (instance as IList)?.Count == 0))
+                                    {
                                         propertyInfo.SetValue(retVal, instance);
+                                    }
                                 }
                                 else
                                     r.Skip();
@@ -306,7 +308,7 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
             // Value attribute is null
             if (simpleValueAttribute != null)
             {
-                retVal = Activator.CreateInstance(this.m_type); 
+                retVal = Activator.CreateInstance(this.m_type);
                 var simpleProperty = this.m_type.GetRuntimeProperty(simpleValueAttribute.ValueProperty);
                 var propertyType = simpleProperty.PropertyType.StripNullable();
                 if (propertyType == typeof(Guid))

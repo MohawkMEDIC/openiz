@@ -240,6 +240,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                     return Convert.ToDecimal(r.Value);
                                 else if (t.StripNullable() == typeof(Int32))
                                     return Convert.ToInt32(r.Value);
+                                else if (t.StripNullable().GetTypeInfo().IsEnum)
+                                    return Enum.ToObject(t.StripNullable(), Convert.ToInt32(r.Value));
                                 else
                                     return (Double)r.Value;
                             case JsonToken.Date:
@@ -252,8 +254,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                                     return new DateTimeOffset((DateTime)r.Value);
                             case JsonToken.Integer:
                                 t = t.StripNullable();
-                                if (t.GetTypeInfo().IsEnum)
-                                    return Enum.ToObject(t, r.Value);
+                                if (t.StripNullable().GetTypeInfo().IsEnum)
+                                    return Enum.ToObject(t.StripNullable(), r.Value);
                                 return Convert.ChangeType(r.Value, t);
                             case JsonToken.String:
                                 if (String.IsNullOrEmpty((string)r.Value))

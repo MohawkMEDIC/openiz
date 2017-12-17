@@ -56,6 +56,16 @@ namespace OpenIZ.BusinessRules.JavaScript
                     }
                 OpenIZ.BusinessRules.JavaScript.JavascriptBusinessRulesEngine.Current.Bridge.Serializer.LoadSerializerAssembly(typeof(ActExtensionViewModelSerializer).GetTypeInfo().Assembly);
 
+                // Instruct the rules engine to load rules
+                OpenIZ.BusinessRules.JavaScript.JavascriptBusinessRulesEngine.EngineCreated += (o, e) =>
+                {
+                    foreach (var itm in appletManager.Applets.SelectMany(a => a.Assets).Where(a => a.Name.StartsWith("rules/")))
+                        using (StreamReader sr = new StreamReader(new MemoryStream(appletManager.Applets.RenderAssetContent(itm))))
+                        {
+                            e.CreatedEngine.AddRules(itm.Name, sr);
+                            this.m_tracer.TraceInfo("Added rules from {0}", itm.Name);
+                        }
+                };
             }
             catch (Exception ex)
             {
