@@ -89,11 +89,11 @@ namespace OpenIZ.Messaging.HL7
 			{
 				var entityAddress = new EntityAddress();
 
-				var addressUse = AddressUseKeys.TemporaryAddress;
+				var addressUse = AddressUseKeys.HomeAddress;
 
 				if (!string.IsNullOrEmpty(addresses[i].AddressType.Value) && !string.IsNullOrWhiteSpace(addresses[i].AddressType.Value))
 				{
-					var concept = GetConcept(addresses[i].AddressType.Value, "urn:oid:2.16.840.1.113883.5.1");
+					var concept = GetConcept(addresses[i].AddressType.Value, "urn:oid:2.16.840.1.113883.5.1012");
 
 					// TODO: cleanup
 					if (concept == null)
@@ -313,7 +313,7 @@ namespace OpenIZ.Messaging.HL7
 			{
 				var entityName = new EntityName();
 
-				var nameUse = NameUseKeys.Search;
+				var nameUse = NameUseKeys.OfficialRecord;
 
 				if (!string.IsNullOrEmpty(names[i].NameTypeCode.Value) && !string.IsNullOrWhiteSpace(names[i].NameTypeCode.Value))
 				{
@@ -901,10 +901,6 @@ namespace OpenIZ.Messaging.HL7
 
 					var result = ConvertAssigningAuthority(v231Msh.SendingApplication, details);
 
-					if (result == null)
-					{
-						details.Add(new UnrecognizedSenderResultDetail(ResultDetailType.Error, v231Msh.SendingApplication.NamespaceID.Value, "MSH^3"));
-					}
 				}
 				else if (msh is NHapi.Model.V25.Segment.MSH)
 				{
@@ -912,10 +908,6 @@ namespace OpenIZ.Messaging.HL7
 
 					var result = ConvertAssigningAuthority(v25Msh.SendingApplication, details);
 
-					if (result == null)
-					{
-						details.Add(new UnrecognizedSenderResultDetail(ResultDetailType.Error, v25Msh.SendingApplication.NamespaceID.Value, "MSH^3"));
-					}
 				}
 				else
 				{

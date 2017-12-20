@@ -79,6 +79,8 @@ namespace OpenIZ.Core.Services.Impl
 			bundle = breService?.BeforeInsert(bundle) ?? bundle;
 			bundle = persistence.Insert(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			breService?.AfterInsert(bundle);
+
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(bundle.Item));
 			return bundle;
 		}
 
@@ -105,7 +107,9 @@ namespace OpenIZ.Core.Services.Impl
 			bundle = persistence.Obsolete(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 			bundle = breService?.AfterObsolete(bundle) ?? bundle;
 
-			return bundle;
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(bundle.Item));
+
+            return bundle;
 		}
 
         /// <summary>
@@ -143,6 +147,9 @@ namespace OpenIZ.Core.Services.Impl
 				bundle = persistence.Update(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
                 breService?.AfterUpdate(bundle);
+
+                this.DataUpdated?.Invoke(this, new AuditDataEventArgs(bundle.Item));
+
                 return bundle;
 			}
 			catch (DataPersistenceException)
@@ -152,6 +159,9 @@ namespace OpenIZ.Core.Services.Impl
 				bundle = persistence.Insert(bundle, AuthenticationContext.Current.Principal, TransactionMode.Commit);
 
                 breService?.AfterInsert(bundle);
+
+                this.DataCreated?.Invoke(this, new AuditDataEventArgs(bundle.Item));
+
                 return bundle;
 			}
 

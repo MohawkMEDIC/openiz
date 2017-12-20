@@ -64,10 +64,14 @@ namespace OpenIZ.Messaging.HL7
 
 					var msh = e.Message.GetStructure("MSH") as MSH;
 
-					// get the device identity by device name, as the device will have to be registered in OpenIZ
-					var deviceIdentity = identityProvider.GetIdentity(msh.SendingApplication.NamespaceID.Value);
-
-					AuthenticationContext.Current = new AuthenticationContext(new GenericPrincipal(deviceIdentity, new string[] {}));
+                    // get the device identity by device name, as the device will have to be registered in OpenIZ
+                    if (AuthenticationContext.Current?.Principal?.Identity?.IsAuthenticated == false ||
+                        AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
+                    {
+                        // HACK: Need better way to auth on HL7v2
+                        var deviceIdentity = identityProvider.Authenticate(msh.SendingApplication.NamespaceID.Value, msh.SendingFacility.NamespaceID.Value);
+                        AuthenticationContext.Current = new AuthenticationContext(deviceIdentity);
+                    }
 
 					// Get the MSH segment
 					var terser = new Terser(e.Message);

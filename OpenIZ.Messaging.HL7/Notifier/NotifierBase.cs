@@ -158,7 +158,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			var configuration = ApplicationContext.Current.Configuration;
 
 			// set MSH-3 as the NSID of the patient identifier
-			msh.SendingApplication.NamespaceID.Value = patient.Identifiers.FirstOrDefault()?.Authority?.DomainName ?? configuration.DeviceName;
+			msh.SendingApplication.NamespaceID.Value = configuration.DeviceName;
 			msh.SendingFacility.NamespaceID.Value = configuration.JurisdictionData.Name;
 			msh.VersionID.VersionID.Value = "2.3.1";
 		}
@@ -190,12 +190,13 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			if (patient.DateOfBirth.HasValue)
 			{
-				pid.DateTimeOfBirth.TimeOfAnEvent.Value = (TS)patient.DateOfBirth.Value;
+				pid.DateTimeOfBirth.TimeOfAnEvent.Value = patient.DateOfBirth.Value.ToString("yyyyMMdd");
+                
 			}
 
 			if (patient.DeceasedDate.HasValue)
 			{
-				pid.PatientDeathDateAndTime.TimeOfAnEvent.Value = (TS)patient.DeceasedDate.Value;
+				pid.PatientDeathDateAndTime.TimeOfAnEvent.Value = patient.DeceasedDate.Value.ToString("yyyyMMdd");
 				pid.PatientDeathIndicator.Value = "Y";
 			}
 
@@ -221,9 +222,15 @@ namespace OpenIZ.Messaging.HL7.Notifier
             // Create the PI for the patient key
             var lastPid = pid.PatientIdentifierListRepetitionsUsed;
             pid.GetPatientIdentifierList(lastPid).ID.Value = patient.Key.ToString();
-            pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.AssigningAuthority?.Oid;
-            pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalIDType.Value = "ISO";
-            pid.GetPatientIdentifierList(lastPid).IdentifierTypeCode.Value = "PI";
+
+            if (ApplicationContext.Current.Configuration?.Custodianship?.Id?.Id != null)
+                pid.GetPatientIdentifierList(lastPid).AssigningAuthority.NamespaceID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.Id;
+            else
+            {
+                pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.AssigningAuthority?.Oid;
+                pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalIDType.Value = "ISO";
+                pid.GetPatientIdentifierList(lastPid).IdentifierTypeCode.Value = "PI";
+            }
 
             foreach (var personLanguage in patient.LoadCollection<PersonLanguageCommunication>("LanguageCommunication").Where(l => l.IsPreferred))
 			{

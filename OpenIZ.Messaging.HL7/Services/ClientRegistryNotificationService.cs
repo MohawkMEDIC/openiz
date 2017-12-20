@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Messaging.HL7.Services
 {
@@ -149,7 +150,10 @@ namespace OpenIZ.Messaging.HL7.Services
 					}));
 				}
 
-				foreach (var target in targetConfigurations)
+
+                this.tracer.TraceVerbose("{1} patient {0}, {2} configurations found...", workItem.Event.Key, workItem.ActionType, targetConfigurations.Count);
+                
+                foreach (var target in targetConfigurations)
 				{
 					target.Notifier.Notify(new NotificationQueueWorkItem<IdentifiedData>(workItem.Event, workItem.ActionType));
 				}

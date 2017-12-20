@@ -86,7 +86,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
                 {
                     Name = thd.Id.ToString(),
                     CpuTime = thd.UserProcessorTime,
-                    WaitReason = thd.WaitReason.ToString(),
+                    WaitReason = null,
                     State = thd.ThreadState.ToString()
                 });
             retVal.ApplicationInfo.Assemblies = AppDomain.CurrentDomain.GetAssemblies().Select(o => new DiagnosticVersionInfo(o)).ToList();

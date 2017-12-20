@@ -73,7 +73,7 @@ namespace OpenIZ.Core.Query
         {
             get
             {
-                throw new NotImplementedException();
+                return true;
             }
         }
 

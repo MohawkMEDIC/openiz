@@ -324,6 +324,8 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                     else
                         simpleProperty.SetValue(retVal, simpleValue);
                 }
+                else if (propertyType == typeof(String) && simpleValue?.GetType() != typeof(String))
+                    simpleProperty.SetValue(retVal, simpleValue?.ToString());
                 else
                     simpleProperty.SetValue(retVal, simpleValue);
             }
