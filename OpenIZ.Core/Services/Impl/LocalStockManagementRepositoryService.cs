@@ -85,5 +85,17 @@ namespace OpenIZ.Core.Services.Impl
                 o.Participations.Where(guard=>guard.ParticipationRole.Mnemonic == "Consumable").Any(p=>p.PlayerEntityKey == manufacturedMaterialKey), AuthenticationContext.Current.Principal);
 
         }
+
+        /// <summary>
+        /// Get total consumed in the specified place by material
+        /// </summary>
+        public IEnumerable<ActParticipation> GetConsumed(Guid manufacturedMaterialKey, Guid placeKey, DateTimeOffset? startPeriod, DateTimeOffset? endPeriod)
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException($"Unabled to locate persistence service for ActParticipations");
+
+            return persistenceService.Query(o => o.ParticipationRoleKey == ActParticipationKey.Consumable && o.PlayerEntityKey == manufacturedMaterialKey && o.Act.Participations.Where(p => p.ParticipationRole.Mnemonic == "Location").Any(p => p.PlayerEntityKey == placeKey), AuthenticationContext.Current.Principal);
+        }
     }
 }
