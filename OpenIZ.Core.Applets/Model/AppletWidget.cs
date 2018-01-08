@@ -34,10 +34,19 @@ namespace OpenIZ.Core.Applets.Model
     [XmlType(nameof(AppletWidgetScope), Namespace = "http://openiz.org/applet")]
     public enum AppletWidgetScope
     {
+        /// <summary>
+        /// The widget should be placed on the patient summary page
+        /// </summary>
         [XmlEnum("patient")]
         Patient,
+        /// <summary>
+        /// The widget should be placed on the facility home page
+        /// </summary>
         [XmlEnum("place")]
         Facility,
+        /// <summary>
+        /// The widget should be placed on the user settings page
+        /// </summary>
         [XmlEnum("user")]
         User
     }
@@ -59,6 +68,7 @@ namespace OpenIZ.Core.Applets.Model
         [XmlEnum("tab")]
         Tab
     }
+
     /// <summary>
     /// Represents a widget. A widget is a special pointer which has a title and content which can be rendered
     /// in a container 

@@ -124,5 +124,6 @@ namespace OpenIZ.Core.Applets.Model
         /// </summary>
         [XmlAttribute("static")]
         public bool Static { get; set; }
+        
     }
 }

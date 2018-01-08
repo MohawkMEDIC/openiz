@@ -458,4 +458,52 @@
 
     </despatchAdviceLogisticUnit>
   </despatchAdvice>
-</despatch_advice:despatchAdviceMessage>]]></con:request><con:originalUri>http://192.168.1.200/gs1/despatchAdvice</con:originalUri><con:credentials><con:selectedAuthProfile>OpenIZ OAuth</con:selectedAuthProfile><con:authType>OAuth 2.0</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:resource></con:interface><con:testSuite id="8eda85fe-d082-4e92-81ed-11ec50c872ec" name="Load Test Suite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:properties/></con:testSuite><con:properties/><con:encryptedContent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:wssContainer/><con:oAuth2ProfileContainer><con:oAuth2Profile><con:name>OpenIZ OAuth</con:name><con:clientID>fiddler</con:clientID><con:clientSecret>fiddler</con:clientSecret><con:accessTokenURI>http://localhost:8080/auth/oauth2_token</con:accessTokenURI><con:accessToken>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtleWlkIjoiMCJ9.eyJyb2xlIjoiQ0xJTklDQUxfU1RBRkYiLCJpc3MiOiJodHRwczovL3JlYWxtLnRpbXIubW9oLmdvLnR6Ojg0NDMvYXV0aCIsInVuaXF1ZV9uYW1lIjoiZnlmZWoiLCJhdXRobWV0aG9kIjoiT0F1dGgyIiwiaHR0cDovL29wZW5pei5vcmcvY2xhaW1zL2FwcGxpY2F0aW9uLWlkIjoiNjQxZTU2M2UtY2NkNC00ZmRlLTk0ZjUtNzQwYzc3OTliMmMxIiwiaHR0cDovL29wZW5pei5vcmcvY2xhaW1zL2dyYW50IjpbIjEuMy42LjEuNC4xLjMzMzQ5LjMuMS41LjkuMi4xIiwiMS4zLjYuMS40LjEuMzMzNDkuMy4xLjUuOS4yLjIiLCIxLjMuNi4xLjQuMS4zMzM0OS4zLjEuNS45LjIuNC4wIl0sImVtYWlsIjoianVzdGluQGZ5ZmVzb2Z0d2FyZS5jYSIsInRlbCI6IjAxMTExMTExMTEiLCJzdWIiOiI3YjVkYjQ0ZS1hNWE4LTQ0NzUtOTMyMi00MTI3NTMzOGUyMzgiLCJhdWQiOiJodHRwczovL3JlYWxtLnRpbXIubW9oLmdvLnR6Ojg0NDMvaW1zaSIsImV4cCI6MTUxMzAyNDQwMywibmJmIjoxNTEzMDIwODAzfQ.JLRzVwU1Neg_Qksjmchh0NtxvVB5_A-rQiSYmNKtbtI</con:accessToken><con:accessTokenPosition>HEADER</con:accessTokenPosition><con:oAuth2Flow>RESOURCE_OWNER_PASSWORD_CREDENTIALS</con:oAuth2Flow><con:refreshAccessTokenMethod>AUTOMATIC</con:refreshAccessTokenMethod><con:scope>http://localhost:8080/imsi</con:scope><con:accessTokenStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ENTERED_MANUALLY</con:accessTokenStatus><con:accessTokenStartingStatus>ENTERED_MANUALLY</con:accessTokenStartingStatus><con:javaScripts><con:entry/><con:entry/></con:javaScripts><con:manualAccessTokenExpirationTime/><con:manualAccessTokenExpirationTimeUnit>SECONDS</con:manualAccessTokenExpirationTimeUnit><con:resourceOwnerName>allison</con:resourceOwnerName><con:resourceOwnerPassword>Mohawk123</con:resourceOwnerPassword></con:oAuth2Profile></con:oAuth2ProfileContainer><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+</despatch_advice:despatchAdviceMessage>]]></con:request><con:originalUri>http://192.168.1.200/gs1/despatchAdvice</con:originalUri><con:credentials><con:selectedAuthProfile>OpenIZ OAuth</con:selectedAuthProfile><con:authType>OAuth 2.0</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="inventoryReport" path="inventoryReport" id="bda73d8c-29d8-4400-82df-1f748f1488d5"><con:settings/><con:parameters/><con:method name="Method 1" id="a5c9b9a2-b73f-4ffb-9361-4539441fadbf" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" id="84a21d8f-10ec-4f4f-a3fc-db880ae87bac" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request><![CDATA[<logistics_inventory_report_request:logisticsInventoryReportRequestMessage xmlns:logistics_inventory_report_request="urn:gs1:ecom:logistics_inventory_report_request:xsd:3" xmlns:sh="http://www.unece.org/cefact/namespaces/StandardBusinessDocumentHeader" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:gs1:ecom:logistics_inventory_report_request:xsd:3 ../Schemas/gs1/ecom/LogisticsInventoryReportRequest.xsd">
+  <sh:StandardBusinessDocumentHeader>
+    <sh:HeaderVersion>1.0</sh:HeaderVersion>
+    <sh:Sender>
+      <sh:Identifier Authority="GS1">94834938943894893</sh:Identifier>
+      <sh:ContactInformation>
+        <sh:Contact>John Doe</sh:Contact>
+        <sh:EmailAddress>John_Doe@national.government.go</sh:EmailAddress>
+        <sh:FaxNumber>+1-212-555-1213</sh:FaxNumber>
+        <sh:TelephoneNumber>+1-212-555-2122</sh:TelephoneNumber>
+      </sh:ContactInformation>
+    </sh:Sender>
+    <sh:Receiver>
+      <sh:Identifier Authority="GS1">23489048903289428</sh:Identifier>
+      <sh:ContactInformation>
+        <sh:Contact>Mary Smith</sh:Contact>
+        <sh:EmailAddress>Mary_Smith@national.deployment.openiz.org</sh:EmailAddress>
+        <sh:FaxNumber>+1-312-555-1214</sh:FaxNumber>
+        <sh:TelephoneNumber>+1-312-555-2125</sh:TelephoneNumber>
+      </sh:ContactInformation>
+    </sh:Receiver>
+    <sh:DocumentIdentification>
+      <sh:Standard>GS1</sh:Standard>
+      <sh:TypeVersion>3.2</sh:TypeVersion>
+      <sh:InstanceIdentifier>INVRPRQ-21</sh:InstanceIdentifier>
+      <sh:Type>Logistics Inventory Report</sh:Type>
+      <sh:MultipleType>false</sh:MultipleType>
+      <sh:CreationDateAndTime>2017-03-11T00:00:00.000-05:00</sh:CreationDateAndTime>
+    </sh:DocumentIdentification>
+  </sh:StandardBusinessDocumentHeader>
+  <logisticsInventoryReportRequest>
+    <creationDateTime>2012-07-11T00:00:00.000-05:00</creationDateTime>
+    <documentStatusCode>ORIGINAL</documentStatusCode>
+    <reportingPeriod>
+      <beginDate>
+       2017-11-01
+      </beginDate>
+      <endDate>
+       2017-11-s
+      </endDate>
+    </reportingPeriod>
+    <logisticsInventoryRequestLocation>
+      <inventoryLocation>
+	<additionalPartyIdentification additionalPartyIdentificationTypeCode="HIE_FRID">urn:uuid:d2694d40-8028-3de7-bab9-846d362b5f64</additionalPartyIdentification>
+      </inventoryLocation>
+    </logisticsInventoryRequestLocation>
+    <documentActionCode>ADD</documentActionCode>
+  </logisticsInventoryReportRequest>
+</logistics_inventory_report_request:logisticsInventoryReportRequestMessage>]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:resource></con:interface><con:testSuite id="8eda85fe-d082-4e92-81ed-11ec50c872ec" name="Load Test Suite"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:properties/></con:testSuite><con:properties/><con:encryptedContent xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:wssContainer/><con:oAuth2ProfileContainer><con:oAuth2Profile><con:name>OpenIZ OAuth</con:name><con:clientID>fiddler</con:clientID><con:clientSecret>fiddler</con:clientSecret><con:accessTokenURI>http://localhost:8080/auth/oauth2_token</con:accessTokenURI><con:accessToken>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtleWlkIjoiMCJ9.eyJyb2xlIjoiQ0xJTklDQUxfU1RBRkYiLCJpc3MiOiJodHRwczovL3JlYWxtLnRpbXIubW9oLmdvLnR6Ojg0NDMvYXV0aCIsInVuaXF1ZV9uYW1lIjoiZnlmZWoiLCJhdXRobWV0aG9kIjoiT0F1dGgyIiwiaHR0cDovL29wZW5pei5vcmcvY2xhaW1zL2FwcGxpY2F0aW9uLWlkIjoiNjQxZTU2M2UtY2NkNC00ZmRlLTk0ZjUtNzQwYzc3OTliMmMxIiwiaHR0cDovL29wZW5pei5vcmcvY2xhaW1zL2dyYW50IjpbIjEuMy42LjEuNC4xLjMzMzQ5LjMuMS41LjkuMi4xIiwiMS4zLjYuMS40LjEuMzMzNDkuMy4xLjUuOS4yLjIiLCIxLjMuNi4xLjQuMS4zMzM0OS4zLjEuNS45LjIuNC4wIl0sImVtYWlsIjoianVzdGluQGZ5ZmVzb2Z0d2FyZS5jYSIsInRlbCI6IjAxMTExMTExMTEiLCJzdWIiOiI3YjVkYjQ0ZS1hNWE4LTQ0NzUtOTMyMi00MTI3NTMzOGUyMzgiLCJhdWQiOiJodHRwczovL3JlYWxtLnRpbXIubW9oLmdvLnR6Ojg0NDMvaW1zaSIsImV4cCI6MTUxMzAyNDQwMywibmJmIjoxNTEzMDIwODAzfQ.JLRzVwU1Neg_Qksjmchh0NtxvVB5_A-rQiSYmNKtbtI</con:accessToken><con:accessTokenPosition>HEADER</con:accessTokenPosition><con:oAuth2Flow>RESOURCE_OWNER_PASSWORD_CREDENTIALS</con:oAuth2Flow><con:refreshAccessTokenMethod>AUTOMATIC</con:refreshAccessTokenMethod><con:scope>http://localhost:8080/imsi</con:scope><con:accessTokenStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">UNKNOWN</con:accessTokenStatus><con:accessTokenStartingStatus>ENTERED_MANUALLY</con:accessTokenStartingStatus><con:javaScripts><con:entry/><con:entry/></con:javaScripts><con:manualAccessTokenExpirationTime/><con:manualAccessTokenExpirationTimeUnit>SECONDS</con:manualAccessTokenExpirationTimeUnit><con:resourceOwnerName>allison</con:resourceOwnerName><con:resourceOwnerPassword>Mohawk123</con:resourceOwnerPassword></con:oAuth2Profile></con:oAuth2ProfileContainer><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

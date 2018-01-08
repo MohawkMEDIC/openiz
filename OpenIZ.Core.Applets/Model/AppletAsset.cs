@@ -106,6 +106,7 @@ namespace OpenIZ.Core.Applets.Model
         {
             return String.Format("/{1}/{2}", AppletCollection.APPLET_SCHEME, this.Manifest?.Info?.Id, this.Name);
         }
+        
     }
 
 }

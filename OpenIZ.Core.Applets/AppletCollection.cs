@@ -272,7 +272,16 @@ namespace OpenIZ.Core.Applets
             get
             {
                 if (s_widgetAssets == null)
-                    s_widgetAssets = this.m_appletManifest.SelectMany(m => m.Assets).Select(a => ((a.Content == null && this.Resolver != null ? this.Resolver(a) : a.Content) as AppletWidget)).Where(o=>o != null).ToList();
+                    s_widgetAssets = this.m_appletManifest.SelectMany(m => m.Assets).Where(o=>o.MimeType =="text/html").Select(a =>
+                    {
+                        var content = ((a.Content == null && this.Resolver != null ? this.Resolver(a) : a.Content) as AppletWidget);
+                        if (content != null) {
+                            content.Controller = this.ResolveAsset(content.Controller, a)?.ToString();
+                            content.Style = content.Style.Select(s => this.ResolveAsset(s, a)?.ToString()).ToList();
+                            content.Icon = this.ResolveAsset(content.Icon, a)?.ToString();
+                        }
+                        return content;
+                    }).Where(o=>o != null).ToList();
                 return s_widgetAssets;
             }
         }
@@ -912,7 +921,7 @@ namespace OpenIZ.Core.Applets
                     if (incAsset != null)
                         headerInjection.AddRange(new ScriptBundleContent(itm.Reference).HeaderElement);
                     else
-                        throw new FileNotFoundException(String.Format("Asset {0} not found", itm));
+                        throw new FileNotFoundException(String.Format("Asset {0} not found", itm.Reference));
                 }
             foreach (var itm in htmlAsset.Style)
             {
