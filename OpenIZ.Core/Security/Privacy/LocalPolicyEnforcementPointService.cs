@@ -1,9 +1,14 @@
-﻿using MARC.HI.EHRS.SVC.Core;
+﻿using MARC.HI.EHRS.SVC.Auditing.Data;
+using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Attributes;
 using MARC.HI.EHRS.SVC.Core.Event;
 using MARC.HI.EHRS.SVC.Core.Services;
+using MARC.HI.EHRS.SVC.Core.Services.Policy;
 using OpenIZ.Core.Interfaces;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Security.Audit;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections;
@@ -146,7 +151,23 @@ namespace OpenIZ.Core.Security.Privacy
         /// </summary>
         public IEnumerable HandlePostQueryEvent(IEnumerable results)
         {
-            return results;
+            // this is a very simple PEP which will enforce active policies in the result set.
+            var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
+            var decisions = results.OfType<Object>().Select(o=>new { Securable = o, Decision = pdp.GetPolicyDecision(AuthenticationContext.Current.Principal, o) });
+            
+            return decisions
+                // We want to mask ELEVATE
+                .Where(o => o.Decision.Outcome == PolicyDecisionOutcomeType.Elevate && o.Securable is Act).Select(
+                    o => new Act() {
+                        ReasonConceptKey = NullReasonKeys.Masked,
+                        Key = (o.Securable as IdentifiedData).Key
+                    }
+                )
+                // We want to include all grant
+                .Union(
+                    decisions.Where(o => o.Decision.Outcome == PolicyDecisionOutcomeType.Grant).Select(o => o.Securable)
+                )
+                .ToList();
         }
 
 
