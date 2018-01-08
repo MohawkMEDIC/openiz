@@ -238,5 +238,18 @@ namespace OpenIZ.Messaging.IMSI.Test
             var expression = CreateQueryString(query.ToArray());
             Assert.AreEqual("name[Legal].component.value=Smith", expression);
         }
+
+
+        /// <summary>
+        /// Tests that the [QueryParameter] attribute is adhered to
+        /// </summary>
+        [TestMethod]
+        public void TestWriteNonSerializedProperty()
+        {
+            var query = QueryExpressionBuilder.BuildQuery<Patient>(o => o.Extensions.Any(e => e.ExtensionDisplay == "1"));
+            var expression = CreateQueryString(query.ToArray());
+            Assert.AreEqual("extension.display=1", expression);
+        }
+
     }
 }

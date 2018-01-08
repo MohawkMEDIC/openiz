@@ -36,7 +36,8 @@ namespace OpenIZ.Core.Services.Impl
 	/// </summary>
 	public partial class LocalActRepositoryService : IRepositoryService<QuantityObservation>,
         IRepositoryService<CodedObservation>,
-        IRepositoryService<TextObservation>
+        IRepositoryService<TextObservation>,
+        IRepositoryService<Observation>
     {
 
         /// <summary>
@@ -260,5 +261,62 @@ namespace OpenIZ.Core.Services.Impl
 		{
 			return this.Save<TextObservation>(data);
 		}
+
+        /// <summary>
+        /// Get the observation
+        /// </summary>
+        Observation IRepositoryService<Observation>.Get(Guid key)
+        {
+            return this.Get<Observation>(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get the observation version
+        /// </summary>
+        Observation IRepositoryService<Observation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<Observation>(key, versionKey);
+        }
+
+        /// <summary>
+        /// Find the specified observation
+        /// </summary>
+        public IEnumerable<Observation> Find(Expression<Func<Observation, bool>> query)
+        {
+            int tr = 0;
+            return this.Find<Observation>(query, 0, null, out tr);
+        }
+
+        /// <summary>
+        /// Find the specified observation with the specified objects
+        /// </summary>
+        public IEnumerable<Observation> Find(Expression<Func<Observation, bool>> query, int offset, int? count, out int totalResults)
+        {
+            return this.Find<Observation>(query, offset, count, out totalResults);
+        }
+
+        /// <summary>
+        /// Insert the specified observation
+        /// </summary>
+        public Observation Insert(Observation data)
+        {
+            return this.Insert<Observation>(data);
+        }
+
+        /// <summary>
+        /// Save the specified data
+        /// </summary>
+        public Observation Save(Observation data)
+        {
+            return this.Save<Observation>(data);
+        }
+
+        /// <summary>
+        /// Obsolete the specified data
+        /// </summary>
+        Observation IRepositoryService<Observation>.Obsolete(Guid key)
+        {
+            return this.Obsolete<Observation>(key);
+        }
     }
 }

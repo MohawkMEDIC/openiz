@@ -134,6 +134,7 @@
     <Compile Include="Security\LocalPolicyEnforcementService.cs" />
     <Compile Include="Security\Claims\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
+    <Compile Include="Security\Privacy\LocalPolicyEnforcementPointService.cs" />
     <Compile Include="Security\SecurityUtils.cs" />
     <Compile Include="Security\PasswordHashingServices.cs" />
     <Compile Include="Security\TwoFactorSecretGenerators.cs" />

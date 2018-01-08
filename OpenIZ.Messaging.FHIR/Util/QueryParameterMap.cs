@@ -41,6 +41,29 @@ namespace OpenIZ.Messaging.FHIR.Util
         [XmlElement("type")]
         public List<QueryParameterType> Map { get; set; }
 
+        /// <summary>
+        /// Merges two query parameter maps together
+        /// </summary>
+        public void Merge(QueryParameterMap map)
+        {
+
+            foreach (var itm in map.Map)
+            {
+                var myMapping = this.Map.FirstOrDefault(p => p.SourceType == itm.SourceType);
+
+                // I have a local mapping
+                if (myMapping != null)
+                {
+                    // Remove any overridden mappings
+                    myMapping.Map.RemoveAll(o => itm.Map.Any(i => i.FhirName == o.FhirName));
+                    // Add overridden mappings
+                    myMapping.Map.AddRange(itm.Map);
+                }
+                else // we just add
+                    this.Map.Add(itm);
+
+            }
+        }
     }
 
     /// <summary>

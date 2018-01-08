@@ -187,5 +187,18 @@ namespace OpenIZ.Persistence.Data.ADO.Test
             Assert.AreEqual(1, query.Arguments.Count());
         }
 
+        /// <summary>
+        /// Tests that the query writer works properly when querying based on a property that is non-serialized
+        /// </summary>
+        [TestMethod]
+        public void TestModelQueryShouldUseNonSerialized()
+        {
+            var query = m_builder.CreateQuery<Entity>(o => o.Extensions.Any(e => e.ExtensionDisplay == "1"));
+            Assert.IsTrue(query.SQL.Contains("SELECT * FROM ent_vrsn_tbl"));
+            Assert.IsTrue(query.SQL.Contains("INNER JOIN ent_tbl"));
+            Assert.IsTrue(query.SQL.Contains("WITH"));
+            Assert.IsTrue(query.SQL.Contains("ext_disp"));
+            Assert.AreEqual(1, query.Arguments.Count());
+        }
     }
 }

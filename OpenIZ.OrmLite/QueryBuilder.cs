@@ -281,7 +281,7 @@ namespace OpenIZ.OrmLite
                     IEnumerable<KeyValuePair<String, Object>> queryParms = new List<KeyValuePair<String, Object>>() { parm }.Union(otherParms);
 
                     // Grab the appropriate builder
-                    var subProp = typeof(TModel).GetXmlProperty(propertyPredicate.Path, true);
+                    var subProp = typeof(TModel).GetQueryProperty(propertyPredicate.Path, true);
                     if (subProp == null) throw new MissingMemberException(propertyPredicate.Path);
 
                     // Link to this table in the other?
@@ -386,7 +386,7 @@ namespace OpenIZ.OrmLite
                             subQuery.Add(new KeyValuePair<string, object>("obsoletionTime", "null"));
 
                         TableMapping tableMapping = null;
-                        var subPropKey = typeof(TModel).GetXmlProperty(propertyPredicate.Path);
+                        var subPropKey = typeof(TModel).GetQueryProperty(propertyPredicate.Path);
 
                         // Get column info
                         PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(typeof(TModel), o.OrmType, subPropKey); })?.FirstOrDefault(o => o != null);
@@ -476,7 +476,7 @@ namespace OpenIZ.OrmLite
 
             // Map the type
             var tableMapping = scopedTables.First();
-            var propertyInfo = tmodel.GetXmlProperty(propertyPath);
+            var propertyInfo = tmodel.GetQueryProperty(propertyPath);
             if (propertyInfo == null)
                 throw new ArgumentOutOfRangeException(propertyPath);
             PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(tmodel, o.OrmType, propertyInfo); }).FirstOrDefault(o => o != null);

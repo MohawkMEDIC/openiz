@@ -72,6 +72,7 @@ namespace OpenIZ.Messaging.FHIR.Util
 
         // The query parameter map
         private static QueryParameterMap s_map;
+
         // Default
         private static QueryParameterType s_default;
 
@@ -80,22 +81,31 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// </summary>
         static QueryRewriter()
         {
-            Stream s = null;
-            try {
-                var externMap = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "ParameterMap.Fhir.xml");
-                if (File.Exists(externMap))
-                    s = File.OpenRead(externMap);
-                else
-                    s = typeof(QueryRewriter).Assembly.GetManifestResourceStream("OpenIZ.Messaging.FHIR.ParameterMap.xml");
-                XmlSerializer xsz = new XmlSerializer(typeof(QueryParameterMap));
-                s_map = xsz.Deserialize(s) as QueryParameterMap;
-                s_default = s_map.Map.FirstOrDefault(o => o.SourceType == typeof(ResourceBase));
-            }
-            finally
+            OpenMapping(typeof(QueryRewriter).Assembly.GetManifestResourceStream("OpenIZ.Messaging.FHIR.ParameterMap.xml"));
+            var externMap = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "ParameterMap.Fhir.xml");
+
+            if (File.Exists(externMap))
+                using (var s = File.OpenRead(externMap))
+                    OpenMapping(s);
+        }
+
+        /// <summary>
+        /// Open a query mapping
+        /// </summary>
+        private static void OpenMapping(Stream stream)
+        {
+            XmlSerializer xsz = new XmlSerializer(typeof(QueryParameterMap));
+
+            if (s_map == null)
+                s_map = xsz.Deserialize(stream) as QueryParameterMap;
+            else
             {
-                s?.Close();
-                s?.Dispose();
+                // Merge
+                var map = xsz.Deserialize(stream) as QueryParameterMap;
+                s_map.Merge(map);
             }
+
+            s_default = s_map.Map.FirstOrDefault(o => o.SourceType == typeof(ResourceBase));
         }
 
         /// <summary>
@@ -121,7 +131,7 @@ namespace OpenIZ.Messaging.FHIR.Util
         /// </summary>
         private static MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType MapFhirParameterType<TModelType>(string type, string definition)
         {
-            switch(type)
+            switch (type)
             {
                 case "concept":
                 case "identifier":
@@ -133,7 +143,7 @@ namespace OpenIZ.Messaging.FHIR.Util
                     {
 
 
-                        switch(GetQueryType<TModelType>(definition).StripNullable().Name)
+                        switch (GetQueryType<TModelType>(definition).StripNullable().Name)
                         {
                             case "String":
                                 return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.String;
@@ -153,7 +163,7 @@ namespace OpenIZ.Messaging.FHIR.Util
                                 return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.Composite;
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         return MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone.SearchParamType.String;
                     }
@@ -167,7 +177,7 @@ namespace OpenIZ.Messaging.FHIR.Util
         {
             var pathParts = definition.Split('.');
             var scopeType = typeof(TModelType);
-            foreach(var path in pathParts)
+            foreach (var path in pathParts)
             {
                 // Get actual path
                 var vPath = path;
@@ -181,8 +191,9 @@ namespace OpenIZ.Messaging.FHIR.Util
                     var cast = path.Substring(path.IndexOf("@") + 1);
                     scopeType = typeof(QueryExpressionParser).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == cast);
                 }
-                else {
-                    var property = scopeType.GetXmlProperty(vPath, true);
+                else
+                {
+                    var property = scopeType.GetQueryProperty(vPath, true);
                     if (property == null)
                         return scopeType;
                     scopeType = property.PropertyType.StripGeneric();
@@ -247,7 +258,7 @@ namespace OpenIZ.Messaging.FHIR.Util
                         ModelName = "extension",
                         FhirType = "tag"
                     };
-                else if(parmMap == null)
+                else if (parmMap == null)
                     continue;
 
                 foreach (var v in fhirQuery.GetValues(kv))
@@ -325,7 +336,7 @@ namespace OpenIZ.Messaging.FHIR.Util
                                 if (codeSystemUri.StartsWith("urn:oid:"))
                                 {
                                     codeSystemUri = codeSystemUri.Substring(8);
-                                    codeSystem = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindCodeSystems(o => o.Oid == codeSystemUri ).FirstOrDefault();
+                                    codeSystem = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindCodeSystems(o => o.Oid == codeSystemUri).FirstOrDefault();
                                 }
                                 else if (codeSystemUri.StartsWith("urn:") || codeSystemUri.StartsWith("http:"))
                                     codeSystem = ApplicationContext.Current.GetService<IConceptRepositoryService>().FindCodeSystems(o => o.Url == codeSystemUri).FirstOrDefault();
