@@ -115,11 +115,19 @@ namespace OpenIZ.Core.Model.Query
                 String[] memberPath = currentValue.Key.Split('.');
                 String path = "";
 
-                foreach (var rawMember in memberPath)
+                for (int i = 0; i < memberPath.Length; i++)
                 {
+                    var rawMember = memberPath[i];
                     var pMember = rawMember;
                     String guard = String.Empty,
                         cast = String.Empty;
+                    
+                    // Guard token incomplete?
+                    if(pMember.Contains("[") && !pMember.Contains("]"))
+                    {
+                        while (!pMember.Contains("]") && i < memberPath.Length)
+                            pMember += "." + memberPath[++i];
+                    }
 
                     // Update path
                     path += pMember + ".";
@@ -156,7 +164,7 @@ namespace OpenIZ.Core.Model.Query
                     PropertyInfo memberInfo = null;
                     if (!memberCache.TryGetValue(pMember, out memberInfo))
                     {
-                        memberInfo = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a => a.ElementName == pMember) == true);
+                        memberInfo = accessExpression.Type.GetRuntimeProperties().FirstOrDefault(p => p.GetCustomAttributes<XmlElementAttribute>()?.Any(a => a.ElementName == pMember) == true || p.GetCustomAttribute<QueryParameterAttribute>()?.ParameterName == pMember);
                         if (memberInfo == null)
                             throw new ArgumentOutOfRangeException(currentValue.Key);
 

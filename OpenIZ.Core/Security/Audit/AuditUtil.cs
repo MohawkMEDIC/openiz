@@ -25,6 +25,7 @@ using MARC.HI.EHRS.SVC.Core.Services.Security;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
@@ -191,49 +192,51 @@ namespace OpenIZ.Core.Security.Audit
             AddSenderDeviceActor(audit);
 
             // Objects
-            //audit.AuditableObjects = data.Select(o =>
-            //{
+            audit.AuditableObjects = data.Select(o =>
+            {
 
-            //    var idTypeCode = AuditableObjectIdType.Custom;
-            //    var roleCode = AuditableObjectRole.Resource;
-            //    var objType = AuditableObjectType.Other;
+                var idTypeCode = AuditableObjectIdType.Custom;
+                var roleCode = AuditableObjectRole.Resource;
+                var objType = AuditableObjectType.Other;
 
-            //    if (o is Patient)
-            //    {
-            //        idTypeCode = AuditableObjectIdType.PatientNumber;
-            //        roleCode = AuditableObjectRole.Patient;
-            //        objType = AuditableObjectType.Person;
-            //    }
-            //    else if (o is UserEntity || o is Provider)
-            //    {
-            //        idTypeCode = AuditableObjectIdType.UserIdentifier;
-            //        objType = AuditableObjectType.Person;
-            //        roleCode = AuditableObjectRole.Provider;
-            //    }
-            //    else if (o is Entity)
-            //        idTypeCode = AuditableObjectIdType.EnrolleeNumber;
-            //    else if (o is Act)
-            //    {
-            //        idTypeCode = AuditableObjectIdType.EncounterNumber;
-            //        roleCode = AuditableObjectRole.Report;
-            //    }
-            //    else if (o is SecurityUser)
-            //    {
-            //        idTypeCode = AuditableObjectIdType.UserIdentifier;
-            //        roleCode = AuditableObjectRole.SecurityUser;
-            //        objType = AuditableObjectType.SystemObject;
-            //    }
+                if (o is Patient)
+                {
+                    idTypeCode = AuditableObjectIdType.PatientNumber;
+                    roleCode = AuditableObjectRole.Patient;
+                    objType = AuditableObjectType.Person;
+                }
+                else if (o is UserEntity || o is Provider)
+                {
+                    idTypeCode = AuditableObjectIdType.UserIdentifier;
+                    objType = AuditableObjectType.Person;
+                    roleCode = AuditableObjectRole.Provider;
+                }
+                else if (o is Entity)
+                    idTypeCode = AuditableObjectIdType.EnrolleeNumber;
+                else if (o is Act)
+                {
+                    idTypeCode = AuditableObjectIdType.EncounterNumber;
+                    roleCode = AuditableObjectRole.Report;
+                    if ((o as Act)?.ReasonConceptKey == NullReasonKeys.Masked) // Masked 
+                        lifecycle = AuditableObjectLifecycle.Deidentification;
+                }
+                else if (o is SecurityUser)
+                {
+                    idTypeCode = AuditableObjectIdType.UserIdentifier;
+                    roleCode = AuditableObjectRole.SecurityUser;
+                    objType = AuditableObjectType.SystemObject;
+                }
 
-            //    return new AuditableObject()
-            //    {
-            //        IDTypeCode = idTypeCode,
-            //        CustomIdTypeCode = idTypeCode == AuditableObjectIdType.Custom ? new AuditCode(o.GetType().Name, "OpenIZTable") : null,
-            //        LifecycleType = lifecycle,
-            //        ObjectId = o.Key?.ToString(),
-            //        Role = roleCode,
-            //        Type = objType
-            //    };
-            //}).ToList();
+                return new AuditableObject()
+                {
+                    IDTypeCode = idTypeCode,
+                    CustomIdTypeCode = idTypeCode == AuditableObjectIdType.Custom ? new AuditCode(o.GetType().Name, "OpenIZTable") : null,
+                    LifecycleType = lifecycle,
+                    ObjectId = o.Key?.ToString(),
+                    Role = roleCode,
+                    Type = objType
+                };
+            }).ToList();
 
             // Query performed
             if (!String.IsNullOrEmpty(queryPerformed))
@@ -415,6 +418,7 @@ namespace OpenIZ.Core.Security.Audit
             AddDeviceActor(audit);
             SendAudit(audit);
         }
+
 
         /// <summary>
         /// Audit a login of a principal

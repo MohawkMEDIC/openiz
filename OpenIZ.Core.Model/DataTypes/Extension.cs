@@ -117,11 +117,11 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             return this.LoadProperty<ExtensionType>("ExtensionType")?.ExtensionHandlerInstance?.DeSerialize(this.ExtensionValueXml);
         }
-
+        
         /// <summary>
         /// Gets or sets an extension displayable value
         /// </summary>
-        [XmlIgnore, JsonIgnore]
+        [XmlIgnore, JsonIgnore, QueryParameter("display")]
         public String ExtensionDisplay
         {
             get

@@ -316,8 +316,8 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         // We want to roll back to the start time and re-calc balance oh at time?
                         if (reportTo.Value.Date < DateTime.Now.Date)
                         {
-                            var prevAdjustments = this.m_stockService.FindAdjustments(mmat.Key.Value, place.Key.Value, reportTo, DateTime.Now);
-                            balanceOH -= (decimal)prevAdjustments.Sum(o => o.Participations.FirstOrDefault(p => p.ParticipationRoleKey == ActParticipationKey.Consumable)?.Quantity);
+                            var consumed = this.m_stockService.GetConsumed(mmat.Key.Value, place.Key.Value, reportTo, DateTime.Now);
+                            balanceOH -= (decimal)consumed.Sum(o => o.Quantity ?? 0);
                         }
 
                         ReferenceTerm cvx = null;

@@ -314,14 +314,17 @@ namespace OpenIZ.Core.Model.Query
                                      memberExpr.Member;
 
                     // Is this a delay load?
-                    var SerializationReferenceAttribute = memberExpr.Member.GetCustomAttribute<SerializationReferenceAttribute>();
+                    var serializationReferenceAttribute = memberExpr.Member.GetCustomAttribute<SerializationReferenceAttribute>();
+                    var queryParameterAttribute = memberExpr.Member.GetCustomAttribute<QueryParameterAttribute>();
                     var xmlIgnoreAttribute = memberExpr.Member.GetCustomAttribute<XmlIgnoreAttribute>();
-                    if (xmlIgnoreAttribute != null && SerializationReferenceAttribute != null && !String.IsNullOrEmpty(SerializationReferenceAttribute.RedirectProperty))
-                        memberInfo = memberExpr.Expression.Type.GetRuntimeProperty(SerializationReferenceAttribute.RedirectProperty);
+                    if (xmlIgnoreAttribute != null && serializationReferenceAttribute != null && !String.IsNullOrEmpty(serializationReferenceAttribute.RedirectProperty))
+                        memberInfo = memberExpr.Expression.Type.GetRuntimeProperty(serializationReferenceAttribute.RedirectProperty);
 
                     // TODO: Delay and bound properties!!
                     var memberXattribute = memberInfo.GetCustomAttributes<XmlElementAttribute>().FirstOrDefault();
-                    if (memberXattribute == null)
+                    if (memberXattribute == null && queryParameterAttribute != null)
+                        memberXattribute = new XmlElementAttribute(queryParameterAttribute.ParameterName); // We don't serialize but it does exist
+                    else if(memberXattribute == null)
                         return null; // TODO: When this occurs?
 
                     // Return path

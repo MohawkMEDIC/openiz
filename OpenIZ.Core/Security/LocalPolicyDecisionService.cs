@@ -43,6 +43,15 @@ namespace OpenIZ.Core.Security
         /// </summary>
         public PolicyDecision GetPolicyDecision(IPrincipal principal, object securable)
         {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            else if (securable == null)
+                throw new ArgumentNullException(nameof(securable));
+
+            // We need to get the active policies for this
+            var pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
+            IEnumerable<IPolicyInstance> securablePolicies = pip.GetActivePolicies(securable),
+                principalPolicies = pip.GetActivePolicies(principal);
             throw new NotImplementedException();
         }
 

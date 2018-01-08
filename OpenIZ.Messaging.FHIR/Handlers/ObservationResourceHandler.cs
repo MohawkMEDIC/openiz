@@ -34,6 +34,7 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.DataTypes;
 using MARC.HI.EHRS.SVC.Messaging.FHIR.Backbone;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Messaging.FHIR.Handlers
 {
@@ -95,13 +96,17 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                     break;
             }
 
-            var loc = model.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
+            var loc = model.LoadCollection<ActParticipation>("Participations").FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.Location);
             if (loc != null)
                 retVal.Extension.Add(new Extension()
                 {
                     Url = "http://openiz.org/extensions/act/fhir/location",
                     Value = new FhirString(loc.PlayerEntityKey.ToString())
                 });
+
+            if(model.InterpretationConceptKey.HasValue)
+                retVal.Interpretation = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>("InterpretationConcept"));
+
 
             return retVal;
         }
@@ -138,7 +143,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
                 throw new ArgumentNullException(nameof(parameters));
 
             Core.Model.Query.NameValueCollection imsiQuery = null;
-            FhirQuery query = QueryRewriter.RewriteFhirQuery<Observation, Core.Model.Acts.Observation>(parameters, out imsiQuery);
+            FhirQuery query = QueryRewriter.RewriteFhirQuery<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, Core.Model.Acts.Observation>(parameters, out imsiQuery);
 
             // Do the query
             int totalResults = 0;

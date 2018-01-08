@@ -52,7 +52,11 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		/// </summary>
 		public RepositoryResourceHandlerBase()
 		{
-			ApplicationContext.Current.Started += (o, e) => this.m_repository = ApplicationContext.Current.GetService<IRepositoryService<TModel>>();
+            ApplicationContext.Current.Started += (o, e) =>
+            {
+                this.m_repository = ApplicationContext.Current.GetService<IRepositoryService<TModel>>();
+
+            };
 		}
 
 		/// <summary>

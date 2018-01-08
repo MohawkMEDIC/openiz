@@ -46,6 +46,15 @@ namespace OpenIZ.Core.Services
 		/// <param name="manufacturedMaterial">The manufactured material for which to retrieve the balance.</param>
 		int GetBalance(Place place, ManufacturedMaterial manufacturedMaterial);
 
+        /// <summary>
+        /// Get the total amount of consumed objects 
+        /// </summary>
+        /// <param name="manufacturedMaterialKey">The manufactured material being consumed</param>
+        /// <param name="placeKey">The place at which the manufactured material was consumed</param>
+        /// <param name="startPeriod">The start period</param>
+        /// <param name="endPeriod">The end period</param>
+        IEnumerable<ActParticipation> GetConsumed(Guid manufacturedMaterialKey, Guid placeKey, DateTimeOffset? startPeriod, DateTimeOffset? endPeriod);
+
 		/// <summary>
 		/// Find adjustments matching the specified
 		/// </summary>

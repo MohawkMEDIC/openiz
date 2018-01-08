@@ -35,7 +35,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
     /// <summary>
     /// Persistence class for observations
     /// </summary>
-    internal class ObservationPersistenceService : ActDerivedPersistenceService<Observation, DbObservation>
+    public class ObservationPersistenceService : ActDerivedPersistenceService<Observation, DbObservation>
     {
 
         /// <summary>

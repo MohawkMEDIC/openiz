@@ -241,5 +241,20 @@ namespace OpenIZ.Messaging.IMSI.Test
             Assert.AreEqual(httpQueryParameters.ToString(), pexpr.ToString());
 
         }
+
+        /// <summary>
+        /// Tests of LINQ using non-serialized property
+        /// </summary>
+        [TestMethod]
+        public void TestNonSerializedParse()
+        {
+            String expected = "o => o.Extensions.Any(extension => extension.ExtensionDisplay == \"1\")";
+            NameValueCollection httpQueryParameters = new NameValueCollection();
+            httpQueryParameters.Add("extension.display", "1");
+            var expr = QueryExpressionParser.BuildLinqExpression<Patient>(httpQueryParameters);
+            var pexpr = new NameValueCollection(QueryExpressionBuilder.BuildQuery<Patient>(expr, true).ToArray());
+            Assert.AreEqual(httpQueryParameters.ToString(), pexpr.ToString());
+
+        }
     }
 }
