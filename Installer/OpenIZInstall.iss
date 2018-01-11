@@ -44,7 +44,7 @@ Compression = none
 #else
 Compression = lzma2/ultra 
 #endif
-AppCopyright = Copyright (C) 2015-2017 Mohawk College of Applied Arts and Technology
+AppCopyright = Copyright (C) 2015-2018 Mohawk College of Applied Arts and Technology
 
 [Types]
 Name: full; Description: Complete Installation

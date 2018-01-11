@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -134,7 +134,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                 }
 
                 // Now we want to create a new Supply act which that fulfills the old act
-                    Act fulfillAct = new Act()
+                Act fulfillAct = new Act()
                 {
                     CreationTime = DateTimeOffset.Now,
                     MoodConceptKey = ActMoodKeys.Eventoccurrence,
@@ -197,7 +197,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
             }
 
             // insert transaction
-            if(orderTransaction.Item.Count > 0)
+            if (orderTransaction.Item.Count > 0)
                 try
                 {
                     ApplicationContext.Current.GetService<IBatchRepositoryService>().Insert(orderTransaction);
@@ -250,7 +250,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
                     var id = filter.inventoryLocation.gln ?? filter.inventoryLocation.additionalPartyIdentification?.FirstOrDefault()?.Value;
                     var place = this.m_placeRepository.Find(o => o.Identifiers.Any(i => i.Value == id), 0, 1, out tc).FirstOrDefault();
                     if (place == null)
-                        throw new FileNotFoundException($"Place {filter.inventoryLocation.gln} not found");
+                    {
+                        Guid uuid = Guid.Empty;
+                        if (Guid.TryParse(id, out uuid))
+                            place = this.m_placeRepository.Get(uuid, Guid.Empty);
+
+                        if(place == null)
+                            throw new FileNotFoundException($"Place {filter.inventoryLocation.gln} not found");
+                    }
                     if (filterPlaces == null)
                         filterPlaces = new List<Place>() { place };
                     else
@@ -289,24 +296,29 @@ namespace OpenIZ.Messaging.GS1.Wcf
                     var tradeItemStatuses = new List<TradeItemInventoryStatusType>();
 
                     // What are the relationships of held entities
-                    foreach (var rel in place.Relationships.Where(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity))
+                    var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+                    var relationships = persistenceService.Query(o=>o.RelationshipTypeKey == EntityRelationshipTypeKeys.OwnedEntity && o.SourceEntityKey == place.Key.Value, AuthenticationContext.Current.Principal);
+                    relationships.AsParallel().ForAll(rel =>
                     {
+                        AuthenticationContext.Current = masterAuthContext;
+
                         if (!(rel.TargetEntity is ManufacturedMaterial))
                         {
                             var matl = this.m_materialRepository.GetManufacturedMaterial(rel.TargetEntityKey.Value, Guid.Empty);
                             if (matl == null)
                             {
                                 Trace.TraceWarning("It looks like {0} owns {1} but {1} is not a mmat!?!?!", place.Key, rel.TargetEntityKey);
-                                continue;
+                                return;
                             }
                             else
                                 rel.TargetEntity = matl;
                         }
                         var mmat = rel.TargetEntity as ManufacturedMaterial;
                         if (!(mmat is ManufacturedMaterial))
-                            continue;
+                            return;
 
                         var mat = this.m_materialRepository.FindMaterial(o => o.Relationships.Where(r => r.RelationshipType.Mnemonic == "Instance").Any(r => r.TargetEntity.Key == mmat.Key)).FirstOrDefault();
+                        var instanceData = mat.LoadCollection<EntityRelationship>("Relationships").FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance);
 
                         decimal balanceOH = rel.Quantity ?? 0;
 
@@ -318,6 +330,9 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         {
                             var consumed = this.m_stockService.GetConsumed(mmat.Key.Value, place.Key.Value, reportTo, DateTime.Now);
                             balanceOH -= (decimal)consumed.Sum(o => o.Quantity ?? 0);
+
+                            if (balanceOH == 0 && this.m_stockService.GetConsumed(mmat.Key.Value, place.Key.Value, reportFrom, reportTo).Count() == 0)
+                                return;
                         }
 
                         ReferenceTerm cvx = null;
@@ -331,54 +346,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         };
 
                         // First we need the GTIN for on-hand balance
-                        tradeItemStatuses.Add(new TradeItemInventoryStatusType()
-                        {
-                            gtin = mmat.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GTIN")?.Value,
-                            itemTypeCode = typeItemCode,
-                            additionalTradeItemIdentification = mmat.Identifiers.Where(o => o.Authority.DomainName != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
-                            {
-                                additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
-                                Value = o.Value
-                            }).ToArray(),
-                            tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
-                            tradeItemClassification = new TradeItemClassificationType()
-                            {
-                                additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
-                                {
-                                    codeListVersion = o.Authority.DomainName,
-                                    Value = o.Value
-                                }).ToArray()
-                            },
-                            inventoryDateTime = DateTime.Now,
-                            inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "ON_HAND" },
-                            transactionalItemData = new TransactionalItemDataType[]
-                            {
-                            new TransactionalItemDataType()
-                            {
-                                tradeItemQuantity = new QuantityType()
-                                {
-                                    measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
-                                    {
-                                        additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
-                                        Value = o.ReferenceTerm.Mnemonic
-                                    }).FirstOrDefault()?.Value,
-                                    Value = balanceOH
-                                },
-                                batchNumber = mmat.LotNumber,
-                                itemExpirationDate = mmat.ExpiryDate.Value,
-                                itemExpirationDateSpecified = true
-                            }
-                            }
-                        });
-
-
-                        foreach (var adjgrp in adjustments.GroupBy(o => o.ReasonConceptKey))
-                        {
-                            var reasonConcept = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(adjgrp.Key.Value, "GS1_STOCK_STATUS")?.Mnemonic;
-                            if (reasonConcept == null)
-                                reasonConcept = (ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConcept(adjgrp.Key.Value, Guid.Empty) as Concept)?.Mnemonic;
-
-                            // Broken vials?
+                        lock(tradeItemStatuses)
                             tradeItemStatuses.Add(new TradeItemInventoryStatusType()
                             {
                                 gtin = mmat.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GTIN")?.Value,
@@ -388,6 +356,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                     additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
                                     Value = o.Value
                                 }).ToArray(),
+                                tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
                                 tradeItemClassification = new TradeItemClassificationType()
                                 {
                                     additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
@@ -396,31 +365,85 @@ namespace OpenIZ.Messaging.GS1.Wcf
                                         Value = o.Value
                                     }).ToArray()
                                 },
-                                tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
                                 inventoryDateTime = DateTime.Now,
-                                inventoryDispositionCode = new InventoryDispositionCodeType() { Value = reasonConcept },
+                                inventoryDispositionCode = new InventoryDispositionCodeType() { Value = "ON_HAND" },
                                 transactionalItemData = new TransactionalItemDataType[]
                                 {
-                                    new TransactionalItemDataType()
+                                new TransactionalItemDataType()
+                                {
+                                    tradeItemQuantity = new QuantityType()
                                     {
-                                        tradeItemQuantity = new QuantityType()
+                                        measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
                                         {
-                                            measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
-                                            {
-                                                additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
-                                                Value = o.ReferenceTerm.Mnemonic
-                                            }).FirstOrDefault()?.Value,
-                                            Value = Math.Abs(adjgrp.Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable && p.PlayerEntityKey == mmat.Key).Quantity.Value))
-                                        },
-                                        batchNumber = mmat.LotNumber,
-                                        itemExpirationDate = mmat.ExpiryDate.Value,
-                                        itemExpirationDateSpecified = true
-                                    }
+                                            additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
+                                            Value = o.ReferenceTerm.Mnemonic
+                                        }).FirstOrDefault()?.Value,
+                                        Value = balanceOH
+                                    },
+                                    batchNumber = mmat.LotNumber,
+                                    itemExpirationDate = mmat.ExpiryDate.Value,
+                                    itemExpirationDateSpecified = true
+                                }
                                 }
                             });
+
+
+                        foreach (var adjgrp in adjustments.GroupBy(o => o.ReasonConceptKey))
+                        {
+                            var reasonConcept = ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConceptReferenceTerm(adjgrp.Key.Value, "GS1_STOCK_STATUS")?.Mnemonic;
+                            if (reasonConcept == null)
+                                reasonConcept = (ApplicationContext.Current.GetService<IConceptRepositoryService>().GetConcept(adjgrp.Key.Value, Guid.Empty) as Concept)?.Mnemonic;
+
+                            // Broken vials?
+                            lock(tradeItemStatuses)
+                                tradeItemStatuses.Add(new TradeItemInventoryStatusType()
+                                {
+                                    gtin = mmat.Identifiers.FirstOrDefault(o => o.Authority.DomainName == "GTIN")?.Value,
+                                    itemTypeCode = typeItemCode,
+                                    additionalTradeItemIdentification = mmat.Identifiers.Where(o => o.Authority.DomainName != "GTIN").Select(o => new AdditionalTradeItemIdentificationType()
+                                    {
+                                        additionalTradeItemIdentificationTypeCode = o.Authority.DomainName,
+                                        Value = o.Value
+                                    }).ToArray(),
+                                    tradeItemClassification = new TradeItemClassificationType()
+                                    {
+                                        additionalTradeItemClassificationCode = mat.Identifiers.Where(o => o.Authority.Oid != gtin.Oid).Select(o => new AdditionalTradeItemClassificationCodeType()
+                                        {
+                                            codeListVersion = o.Authority.DomainName,
+                                            Value = o.Value
+                                        }).ToArray()
+                                    },
+                                    tradeItemDescription = mmat.Names.Select(o => new Description200Type() { Value = o.Component.FirstOrDefault()?.Value }).FirstOrDefault(),
+                                    inventoryDateTime = DateTime.Now,
+                                    inventoryDispositionCode = new InventoryDispositionCodeType() { Value = reasonConcept },
+                                    transactionalItemData = new TransactionalItemDataType[]
+                                    {
+                                        new TransactionalItemDataType()
+                                        {
+                                            transactionalItemLogisticUnitInformation = instanceData == null ? null : new TransactionalItemLogisticUnitInformationType()
+                                            {
+                                              numberOfLayers = "1",
+                                              numberOfUnitsPerLayer = instanceData.Quantity.ToString(),
+                                              packageTypeCode = new PackageTypeCodeType() { Value = mat.LoadCollection<EntityExtension>("Extensions").FirstOrDefault(o=>o.ExtensionTypeKey == Gs1ModelExtensions.PackagingUnit)?.ExtensionValue?.ToString() ?? "CONT" }
+                                            },
+                                            tradeItemQuantity = new QuantityType()
+                                            {
+                                                measurementUnitCode = (mmat.QuantityConcept ?? mat?.QuantityConcept)?.ReferenceTerms.Select(o => new AdditionalLogisticUnitIdentificationType()
+                                                {
+                                                    additionalLogisticUnitIdentificationTypeCode = o.ReferenceTerm.CodeSystem.Name,
+                                                    Value = o.ReferenceTerm.Mnemonic
+                                                }).FirstOrDefault()?.Value,
+                                                Value = Math.Abs(adjgrp.Sum(o => o.Participations.First(p => p.ParticipationRoleKey == ActParticipationKey.Consumable && p.PlayerEntityKey == mmat.Key).Quantity.Value))
+                                            },
+                                            batchNumber = mmat.LotNumber,
+                                            itemExpirationDate = mmat.ExpiryDate.Value,
+                                            itemExpirationDateSpecified = true
+                                        }
+                                    }
+                                });
                         }
 
-                    }
+                    });
 
                     // Reduce
                     locationStockStatus.tradeItemInventoryStatus = tradeItemStatuses.ToArray();

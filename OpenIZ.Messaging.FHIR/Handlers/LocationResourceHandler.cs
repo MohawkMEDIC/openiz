@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -44,7 +44,7 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 		protected override Location MapToFhir(Place model, WebOperationContext webOperationContext)
 		{
 			Location retVal = DataTypeConverter.CreateResource<Location>(model);
-			retVal.Identifier = model.Identifiers.Select(o => DataTypeConverter.ToFhirIdentifier<Entity>(o)).ToList();
+			retVal.Identifier = model.LoadCollection<EntityIdentifier>("Identifiers").Select(o => DataTypeConverter.ToFhirIdentifier<Entity>(o)).ToList();
 
 			// Map status
 			if (model.StatusConceptKey == StatusKeys.Active)
@@ -64,7 +64,6 @@ namespace OpenIZ.Messaging.FHIR.Handlers
 				retVal.Mode = LocationMode.Instance;
 
 			retVal.Type = DataTypeConverter.ToFhirCodeableConcept(model.LoadProperty<Concept>("TypeConcept"), "http://hl7.org/fhir/ValueSet/v3-ServiceDeliveryLocationRoleType");
-
 			retVal.Telecom = model.LoadCollection<EntityTelecomAddress>("Telecoms").Select(o => DataTypeConverter.ToFhirTelecom(o)).ToList();
 			retVal.Address = DataTypeConverter.ToFhirAddress(model.LoadCollection<EntityAddress>("Addresses").FirstOrDefault());
 

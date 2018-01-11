@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -80,6 +80,10 @@ namespace OizDevTool
             [Parameter("patient")]
             [Description("Calculate care plan for specified patients")]
             public StringCollection PatientId { get; set; }
+
+            [Parameter("facility")]
+            [Description("Calculate care plan for the specified facility")]
+            public String FacilityId { get; set; }
 
         }
 
@@ -327,7 +331,6 @@ namespace OizDevTool
             var lastRefresh = DateTime.Parse(parms.Since ?? "0001-01-01");
 
             // Should we calculate?
-
             var warehousePatients = warehouseService.StoredQuery(dataMart.Id, "consistency", new { });
             Guid queryId = Guid.NewGuid();
             int tr = 1, ofs = 0, calc = 0, tq = 0;
@@ -347,7 +350,13 @@ namespace OizDevTool
             {
 
                 IEnumerable<Patient> prodPatients = null;
-                if (parms.PatientId?.Count > 0)
+                if (!String.IsNullOrEmpty(parms.FacilityId))
+                {
+                    Guid facId = Guid.Parse(parms.FacilityId);
+                    prodPatients = patientPersistence.Query(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "DedicatedServiceDeliveryLocation").Any(r => r.TargetEntityKey == facId), AuthenticationContext.SystemPrincipal);
+                    warehouseService.Delete(dataMart.Id, new { location_id = parms.FacilityId });
+                }
+                else if (parms.PatientId?.Count > 0)
                 {
                     prodPatients = parms.PatientId.OfType<String>().Select(o => patientPersistence.Get(new Identifier<Guid>(Guid.Parse(o)), AuthenticationContext.SystemPrincipal, false));
                     ofs = parms.PatientId.Count;

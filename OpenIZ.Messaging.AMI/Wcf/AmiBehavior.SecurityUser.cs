@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -26,6 +26,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Security;
+using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Security.Claims;
 using OpenIZ.Core.Services;
 using System;
@@ -185,7 +186,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			if (info.Lockout.HasValue)
 			{
-				if (info.Lockout.Value)
+                // Alter identity DEMAND
+                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand();
+
+                if (info.Lockout.Value)
 					userRepository.LockUser(userId);
 				else
 					userRepository.UnlockUser(userId);
@@ -194,6 +198,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 			// First, we remove the roles
 			if (info.Roles != null && info.Roles.Any())
 			{
+                // Alter identity DEMAND
+                new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PermissionPolicyIdentifiers.AlterIdentity).Demand();
+
 				var irps = ApplicationContext.Current.GetService<IRoleProviderService>();
 
 				var roles = irps.GetAllRoles(info.UserName);

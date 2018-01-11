@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -323,6 +323,15 @@ namespace OpenIZ.Warehouse.ADO
 
             if (container is DatamartSchemaProperty)
                 createSql = createSql.Append("entity_uuid UUID NOT NULL, ");
+            else if (container is DatamartStoredQuery)  // We create a property for the container
+                context.Insert(new AdhocProperty()
+                {
+                    Attributes = 0,
+                    TypeId = 8,
+                    SchemaId = schema.Id,
+                    Name = container.Name,
+                    PropertyId = container.Id
+                });
 
             // Create the specified dm_<<name>>_table
             foreach (var itm in (container ?? schema).Properties)
@@ -334,7 +343,7 @@ namespace OpenIZ.Warehouse.ADO
                 {
                     Attributes = (int)itm.Attributes,
                     TypeId = (int)itm.Type,
-                    ContainerId = (container as DatamartSchemaProperty)?.Id,
+                    ContainerId = (container as DatamartSchemaProperty)?.Id ?? (container as DatamartStoredQuery)?.Id,
                     SchemaId = schema.Id,
                     Name = itm.Name,
                     PropertyId = itm.Id
@@ -600,6 +609,9 @@ namespace OpenIZ.Warehouse.ADO
                     // Query paremeters
                     var mart = this.GetDatamart(context, datamartId);
 
+                    if (mart == null)
+                        throw new FileNotFoundException(datamartId.ToString());
+
                     IDictionary<String, Object> parms = queryParameters as ExpandoObject;
                     if (queryParameters is String)
                         queryParameters = NameValueCollection.ParseQueryString(queryParameters as String);
@@ -616,10 +628,21 @@ namespace OpenIZ.Warehouse.ADO
                             parms.Add(itm.Name, itm.GetValue(queryParameters, null));
                     }
 
-                    var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId);
+                    var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId || m.Id.ToString() == queryId.ToLower());
+
 
                     int tr = 0;
-                    return this.QueryInternal(context, String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 0, out tr);
+                    object ofs = 0, cnt = 0;
+                    parms.TryGetValue("_count", out cnt);
+                    parms.TryGetValue("_offset", out ofs);
+                    parms.Remove("_count");
+                    parms.Remove("_offset");
+
+                    if (ofs is List<String>)
+                        ofs = Int32.Parse((ofs as List<String>)[0]);
+                    if (cnt is List<String>)
+                        cnt = Int32.Parse((cnt as List<String>)[0]);
+                    return this.QueryInternal(context, String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, Convert.ToInt32(ofs), Convert.ToInt32(cnt), out tr);
                 }
                 catch (Exception e)
                 {
