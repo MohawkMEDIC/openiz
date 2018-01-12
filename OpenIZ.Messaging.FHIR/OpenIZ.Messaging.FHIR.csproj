@@ -61,6 +61,7 @@
     <Compile Include="Handlers\LocationResourceHandler.cs" />
     <Compile Include="Handlers\MedicationAdministrationResourceHandler.cs" />
     <Compile Include="Handlers\MedicationResourceHandler.cs" />
+    <Compile Include="Handlers\PractitionerResourceHandler.cs" />
     <Compile Include="Handlers\RepositoryResourceHandlerBase.cs" />
     <Compile Include="Handlers\ImmunizationRecommendationResourceHandler.cs" />
     <Compile Include="Handlers\ImmunizationResourceHandler.cs" />
