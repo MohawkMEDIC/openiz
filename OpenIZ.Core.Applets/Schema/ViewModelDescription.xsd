@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2016-11-30
+ - User: fyfej
+ - Date: 2017-9-1
  -->
 <xs:schema xmlns:tns="http://openiz.org/model/view" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://openiz.org/model/view" elementFormDefault="qualified">
 	<xs:complexType name="ClassifierModelDescription">

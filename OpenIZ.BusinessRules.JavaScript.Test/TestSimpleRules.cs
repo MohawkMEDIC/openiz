@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-11-8
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using Jint;
 using Jint.Native;

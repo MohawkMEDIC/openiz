@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2017-1-11
+ - User: fyfej
+ - Date: 2017-9-1
  -->
 <xs:schema xmlns:tns="http://openiz.org/warehousing" elementFormDefault="qualified" targetNamespace="http://openiz.org/warehousing" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import namespace="http://microsoft.com/wsdl/types/" schemaLocation="BaseTypes.xsd" />

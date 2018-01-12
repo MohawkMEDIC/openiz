@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2016-6-14
+ - User: fyfej
+ - Date: 2017-9-1
  -->
 <Feature xmlns="http://marc-hi.ca/plugin/dbxml" verion="1.0.0.0" id="CE79889F-79B0-461B-A42E-50CD07F78B07" dbms="mssql">
   <install>

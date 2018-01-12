@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2016-8-2
+ - User: fyfej
+ - Date: 2017-9-1
  -->
 <ProtocolDefinition xmlns="http://openiz.org/cdss" name="Oral Polio Vaccine" protocolVersion="1" uuid="C2A628F3-DB52-45ED-B863-0FB4B1B8E77C">
   <when evaluation="and">

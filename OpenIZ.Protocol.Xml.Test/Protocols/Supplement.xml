@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2016-8-24
+ - User: fyfej
+ - Date: 2017-9-1
  -->
 <ProtocolDefinition xmlns="http://openiz.org/cdss" id="zz_VITA" name="Vitamin A Supplement" uuid="D743E71F-86BD-4992-A50B-4FF05838095C">
   <when evaluation="and">
