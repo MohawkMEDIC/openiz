@@ -38,6 +38,20 @@ using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.OrmLite
 {
+    /// <summary>
+    /// Query predicate part
+    /// </summary>
+    public enum QueryPredicatePart
+    {
+        Full = Path | Guard | Cast | SubPath,
+        Path = 0x1,
+        Guard = 0x2,
+        Cast = 0x4,
+        SubPath = 0x8,
+        PropertyAndGuard = Path | Guard,
+        PropertyAndCast = Path | Cast
+    }
+
 
     /// <summary>
     /// Represents the query predicate
@@ -88,6 +102,27 @@ namespace OpenIZ.OrmLite
                 SubPath = matches.Groups[SubPropertyRegexGroup].Value
             };
         }
+
+
+        /// <summary>
+        /// Represent the predicate as a string
+        /// </summary>
+        public String ToString(QueryPredicatePart parts)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if ((parts & QueryPredicatePart.Path) != 0)
+                sb.Append(this.Path);
+            if ((parts & QueryPredicatePart.Guard) != 0 && !String.IsNullOrEmpty(this.Guard))
+                sb.AppendFormat("[{0}]", this.Guard);
+            if ((parts & QueryPredicatePart.Cast) != 0 && !String.IsNullOrEmpty(this.CastAs))
+                sb.AppendFormat("@{0}", this.CastAs);
+            if ((parts & QueryPredicatePart.SubPath) != 0 && !String.IsNullOrEmpty(this.SubPath))
+                sb.AppendFormat("{0}{1}", sb.Length > 0 ? "." : "", this.SubPath);
+
+            return sb.ToString();
+        }
+
     }
     /// <summary>
     /// Query builder for model objects
@@ -268,7 +303,7 @@ namespace OpenIZ.OrmLite
                 if (propertyPredicate == null) throw new ArgumentOutOfRangeException(parm.Key);
                
                 // Next, we want to construct the other parms
-                var otherParms = workingParameters.Where(o => QueryPredicate.Parse(o.Key).Path == propertyPredicate.Path).ToArray();
+                var otherParms = workingParameters.Where(o => QueryPredicate.Parse(o.Key).ToString(QueryPredicatePart.PropertyAndCast) == propertyPredicate.ToString(QueryPredicatePart.PropertyAndCast)).ToArray();
 
                 // Remove the working parameters if the column is FK then all parameters
                 if (otherParms.Any() || !String.IsNullOrEmpty(propertyPredicate.Guard) || !String.IsNullOrEmpty(propertyPredicate.SubPath))
@@ -328,7 +363,7 @@ namespace OpenIZ.OrmLite
                             int nGuards = 0;
                             foreach (var guardClause in guardConditions)
                             {
-                                var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(QueryPredicate.Parse(o.Key).SubPath, o.Value)).ToList();
+                                var subQuery = guardClause.Select(o => new KeyValuePair<String, Object>(QueryPredicate.Parse(o.Key).ToString(QueryPredicatePart.SubPath), o.Value)).ToList();
 
                                 // TODO: GUARD CONDITION HERE!!!!
                                 if (!String.IsNullOrEmpty(guardClause.Key))
@@ -383,7 +418,7 @@ namespace OpenIZ.OrmLite
                         }
                         else  // this table points at other
                         {
-                            var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(QueryPredicate.Parse(o.Key).SubPath, o.Value)).ToList();
+                            var subQuery = queryParms.Select(o => new KeyValuePair<String, Object>(QueryPredicate.Parse(o.Key).ToString(QueryPredicatePart.SubPath), o.Value)).ToList();
 
                             if (!subQuery.Any(o => o.Key == "obsoletionTime") && typeof(IBaseEntityData).IsAssignableFrom(subProp.PropertyType))
                                 subQuery.Add(new KeyValuePair<string, object>("obsoletionTime", "null"));
