@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-7-4
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using System;
 using System.Collections.Generic;
@@ -38,5 +38,9 @@ namespace OpenIZ.Messaging.GS1
         /// Actual shipment date
         /// </summary>
         public static readonly Guid ActualShipmentDate = Guid.Parse("34073745-018b-48d1-82da-c545391d294a");
+        /// <summary>
+        /// Packaging unit
+        /// </summary>
+        public static readonly Guid PackagingUnit = Guid.Parse("4F417368-1C96-4F5E-BDAC-CA51C4BABF3B");
     }
 }

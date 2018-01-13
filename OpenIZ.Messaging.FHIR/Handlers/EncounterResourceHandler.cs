@@ -1,4 +1,23 @@
-﻿using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
+﻿/*
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
+ *
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: fyfej
+ * Date: 2018-1-9
+ */
+using MARC.HI.EHRS.SVC.Messaging.FHIR.Resources;
 using OpenIZ.Core.Model.Acts;
 using System;
 using System.Collections.Generic;
@@ -85,21 +104,21 @@ namespace OpenIZ.Messaging.FHIR.Handlers
             retVal.Subject = DataTypeConverter.CreateReference<MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Patient>(associated.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget)?.LoadProperty<Entity>("PlayerEntity"), webOperationContext);
 
             // Locations
-            foreach (var asc in associated.Where(o => o.LoadProperty<Entity>("PlayerEntity") is Place))
-                retVal.Location.Add(new EncounterLocation()
-                {
-                    Period = new FhirPeriod() {Start = model.CreationTime.DateTime },
-                    Location = DataTypeConverter.CreateReference<Location>(asc.PlayerEntity, webOperationContext)
-                });
+            retVal.Location = associated.Where(o => o.LoadProperty<Entity>("PlayerEntity") is Place).Select(o => new EncounterLocation()
+            {
+                Period = new FhirPeriod() { Start = model.CreationTime.DateTime },
+                Location = DataTypeConverter.CreateReference<Location>(o.PlayerEntity, webOperationContext)
+            }).ToList();
+
 
             // Participants
-            foreach (var asc in associated.Where(o => o.LoadProperty<Entity>("PlayerEntity") is Provider || o.LoadProperty<Entity>("PlayerEntity") is UserEntity ))
-                retVal.Participant.Add(new EncounterParticipant()
-                {
-                    Period = new FhirPeriod() { Start = model.CreationTime.DateTime },
-                    Type = new List<FhirCodeableConcept>() { DataTypeConverter.ToFhirCodeableConcept(asc.LoadProperty<Concept>("ParticipationRole")) },
-                    Individual = DataTypeConverter.CreateReference<Practitioner>(asc.PlayerEntity, webOperationContext)
-                });
+            retVal.Participant = associated.Where(o => o.LoadProperty<Entity>("PlayerEntity") is Provider || o.LoadProperty<Entity>("PlayerEntity") is UserEntity).Select(o => new EncounterParticipant()
+            {
+                Period = new FhirPeriod() { Start = model.CreationTime.DateTime },
+                Type = new List<FhirCodeableConcept>() { DataTypeConverter.ToFhirCodeableConcept(o.LoadProperty<Concept>("ParticipationRole")) },
+                Individual = DataTypeConverter.CreateReference<Practitioner>(o.PlayerEntity, webOperationContext)
+            }).ToList();
+
 
             return retVal; 
         }

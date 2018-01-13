@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: khannan
- * Date: 2017-8-8
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -51,6 +51,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.9.10.*")]
-[assembly: AssemblyInformationalVersion("Fredericton CTP1")]
-[assembly: AssemblyFileVersion("0.9.10.0")]
+[assembly: AssemblyVersion("0.9.11.*")]
+[assembly: AssemblyInformationalVersion("Fredericton CTP2")]
+[assembly: AssemblyFileVersion("0.9.11.0")]

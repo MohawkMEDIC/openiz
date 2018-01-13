@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2017-1-15
+ * User: fyfej
+ * Date: 2017-9-1
  */
 using System;
 
@@ -109,8 +109,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
 
-                List<IQueryBuilderHack> hax = new List<IQueryBuilderHack>();
-                if (s_configuration.DataCorrectionKeys.Any(k => k == "ConceptQueryHack")) hax.Add(new ConceptQueryHack(s_mapper));
+                List<IQueryBuilderHack> hax = new List<IQueryBuilderHack>() { new RelationshipQueryHack() };
+                if (s_configuration.DataCorrectionKeys.Any(k => k == "ConceptQueryHack"))
+                    hax.Add(new ConceptQueryHack(s_mapper));
 
                 s_queryBuilder = new QueryBuilder(s_mapper, s_configuration.Provider,
                     hax.Where(o=>o != null).ToArray()    

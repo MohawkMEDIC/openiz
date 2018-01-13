@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  - 
  - 
  - Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: justi
- - Date: 2017-4-10
+ - User: fyfej
+ - Date: 2017-9-1
  -->
 <xs:schema xmlns="urn:ihe:iti:svs:2008" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:hl7="urn:hl7-org:v3"

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,12 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-11-8
- */
-/// <reference path="openiz.js"/>
-/**
- * Sample Business Rule for Patient
+ * User: fyfej
+ * Date: 2017-9-1
  */
 OpenIZBre.AddBusinessRule("Patient", "AfterInsert", function (patient) {
     // Simplify
