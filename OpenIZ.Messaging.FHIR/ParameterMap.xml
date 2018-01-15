@@ -59,13 +59,13 @@
     <map fhir="birthdate" model="dateOfBirth"/>
     <map fhir="gender" model="genderConcept" type="concept"/>
     <map fhir="identifier" model="identifier" type="identifier"/>
-    <map fhir="provider" model="relationship[HealthcareProvider].player" type="reference"/>
-    <map fhir="provider.name" model="relationship[HealthcareProvider].player.name.component.value"/>
-    <map fhir="provider.address" model="relationship[HealthcareProvider].player.address.component.value"/>
+    <map fhir="provider" model="relationship[HealthcareProvider].target" type="reference"/>
+    <map fhir="provider.name" model="relationship[HealthcareProvider].target.name.component.value"/>
+    <map fhir="provider.address" model="relationship[HealthcareProvider].target.address.component.value"/>
     <map fhir="location" model="relationship[DedicatedServiceDeliveryLocation].target" type="reference"/>
+    <map fhir="location.identifier" model="relationship[DedicatedServiceDeliveryLocation].target.identifier"/>
     <map fhir="location.name" model="relationship[DedicatedServiceDeliveryLocation].target.name.component.value"/>
     <map fhir="location.address" model="relationship[DedicatedServiceDeliveryLocation].target.address.component.value"/>
-    <map fhir="location.identifier" model="relationship[DedicatedServiceDeliveryLocation].target.identifier"/>
   </type>
 
   <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">
