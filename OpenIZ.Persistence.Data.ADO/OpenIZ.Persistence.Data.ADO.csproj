@@ -272,14 +272,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\SQL\PSQL\openiz-vws.sql" />
-    <Content Include="Data\SQL\Updates\20171030-PSQL.sql" />
-    <Content Include="Data\SQL\Updates\20171023-PSQL.sql" />
-    <Content Include="Data\SQL\Updates\20171011-PSQL.sql" />
-    <Content Include="Data\SQL\Updates\20171003-PSQL.sql" />
-    <Content Include="Data\SQL\Updates\20170913-PSQL.sql" />
-    <Content Include="Data\SQL\Updates\20171016-PSQL.sql" />
-    <Content Include="Data\SQL\Updates\20171124-PSQL.sql" />
-    <Content Include="Data\SQL\Updates\20171108-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20171030-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20171023-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20171011-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20171003-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20170913-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20171016-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20171124-PSQL.sql" />
+    <EmbeddedResource Include="Data\SQL\Updates\20171108-PSQL.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

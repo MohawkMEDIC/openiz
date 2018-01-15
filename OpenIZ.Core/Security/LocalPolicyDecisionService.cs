@@ -52,7 +52,12 @@ namespace OpenIZ.Core.Security
             var pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
             IEnumerable<IPolicyInstance> securablePolicies = pip.GetActivePolicies(securable),
                 principalPolicies = pip.GetActivePolicies(principal);
-            throw new NotImplementedException();
+
+            var retVal = new PolicyDecision(securable);
+            retVal.Details.AddRange(securablePolicies.Select(o => new PolicyDecisionDetail(o.Policy.Oid,
+                    principalPolicies.Any(p => p.Policy.Oid.StartsWith(o.Policy.Oid)) ? PolicyDecisionOutcomeType.Grant : PolicyDecisionOutcomeType.Deny
+                )));
+            return retVal;
         }
 
         /// <summary>
@@ -68,7 +73,7 @@ namespace OpenIZ.Core.Security
             // Can we make this decision based on the claims? 
             if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == OpenIzClaimTypes.OpenIzGrantedPolicyClaim && policyId.StartsWith(c.Value)))
                 return PolicyDecisionOutcomeType.Grant;
-            
+
             // Get the user object from the principal
             var pip = ApplicationContext.Current.GetService<IPolicyInformationService>();
 
@@ -82,7 +87,7 @@ namespace OpenIZ.Core.Security
                 else if (pol.Rule < policyInstance.Rule)
                     policyInstance = pol;
 
-            if(policyInstance == null)
+            if (policyInstance == null)
             {
                 // TODO: Configure OptIn or OptOut
                 return PolicyDecisionOutcomeType.Deny;
@@ -95,12 +100,12 @@ namespace OpenIZ.Core.Security
             {
                 IPolicyHandler handlerInstance = null;
                 var policy = policyInstance.Policy as ILocalPolicy;
-                if(policy != null)
+                if (policy != null)
                     return policy.Handler.GetPolicyDecision(principal, policy, null).Outcome;
 
             }
             return policyInstance.Rule;
-            
+
         }
     }
 }

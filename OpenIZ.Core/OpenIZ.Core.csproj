@@ -131,7 +131,6 @@
     <Compile Include="Security\ILocalPolicy.cs" />
     <Compile Include="Security\IPolicyHandler.cs" />
     <Compile Include="Security\LocalPolicyDecisionService.cs" />
-    <Compile Include="Security\LocalPolicyEnforcementService.cs" />
     <Compile Include="Security\Claims\OpenIzClaimTypes.cs" />
     <Compile Include="Security\PermissionPolicyIdentifiers.cs" />
     <Compile Include="Security\Privacy\LocalPolicyEnforcementPointService.cs" />
@@ -152,6 +151,7 @@
     <Compile Include="Services\Impl\LocalAlertRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalAppletManagerService.cs" />
     <Compile Include="Services\Impl\LocalAssigningAuthorityRepositoryService.cs" />
+    <Compile Include="Services\Impl\LocalAuditRepository.cs" />
     <Compile Include="Services\Impl\LocalBatchRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalEntityRepositoryService.cs" />
     <Compile Include="Services\Impl\LocalEntityRepositoryServiceBase.cs" />

@@ -55,7 +55,7 @@ namespace OpenIZ.Core.Security.Privacy
         private TraceSource m_tracer = new TraceSource(OpenIzConstants.SecurityTraceSourceName);
 
         // Subscribed listeners
-        private List<IDataPersistenceService> m_subscribedListeners = new List<IDataPersistenceService>();
+        private Dictionary<IDataPersistenceService, KeyValuePair<Delegate, Delegate>> m_subscribedListeners = new Dictionary<IDataPersistenceService, KeyValuePair<Delegate, Delegate>>();
 
         /// <summary>
         /// Determines whether the service is running
@@ -142,22 +142,22 @@ namespace OpenIZ.Core.Security.Privacy
                     var senderParm = Expression.Parameter(typeof(Object), "o");
                     var eventParm = Expression.Parameter(pqeArgType, "e");
                     var delegateData = Expression.Convert(Expression.MakeMemberAccess(eventParm, pqeArgType.GetRuntimeProperty("Results")), typeof(IEnumerable));
-                    var instanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Assign(delegateData, Expression.Convert(Expression.Call(Expression.Constant(this), typeof(LocalPolicyEnforcementService).GetRuntimeMethod(nameof(HandlePostQueryEvent), new Type[] { typeof(IEnumerable) }), delegateData), pqeArgType.GetRuntimeProperty("Results").PropertyType)), senderParm, eventParm).Compile();
+                    var queriedInstanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Assign(delegateData, Expression.Convert(Expression.Call(Expression.Constant(this), typeof(LocalPolicyEnforcementPointService).GetRuntimeMethod(nameof(HandlePostQueryEvent), new Type[] { typeof(IEnumerable) }), delegateData), pqeArgType.GetRuntimeProperty("Results").PropertyType)), senderParm, eventParm).Compile();
 
                     // Bind to events
-                    svcType.GetRuntimeEvent("Queried").AddEventHandler(svcInstance, instanceDelegate);
+                    svcType.GetRuntimeEvent("Queried").AddEventHandler(svcInstance, queriedInstanceDelegate);
 
                     // Construct delegate for retrieve
                     pqeArgType = typeof(PostRetrievalEventArgs<>).MakeGenericType(t);
                     senderParm = Expression.Parameter(typeof(Object), "o");
                     eventParm = Expression.Parameter(pqeArgType, "e");
                     delegateData = Expression.Convert(Expression.MakeMemberAccess(eventParm, pqeArgType.GetRuntimeProperty("Data")), t);
-                    instanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Assign(delegateData, Expression.Call(Expression.Constant(this), typeof(LocalPolicyEnforcementService).GetRuntimeMethod(nameof(HandlePostRetrieveEvent), new Type[] { t }), delegateData)), senderParm, eventParm).Compile();
+                    var retrievedInstanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Assign(delegateData, Expression.Call(Expression.Constant(this), typeof(LocalPolicyEnforcementPointService).GetRuntimeMethod(nameof(HandlePostRetrieveEvent), new Type[] { t }), delegateData)), senderParm, eventParm).Compile();
 
                     // Bind to events
-                    svcType.GetRuntimeEvent("Retrieved").AddEventHandler(svcInstance, instanceDelegate);
+                    svcType.GetRuntimeEvent("Retrieved").AddEventHandler(svcInstance, retrievedInstanceDelegate);
 
-                    this.m_subscribedListeners.Add(svcInstance as IDataPersistenceService);
+                    this.m_subscribedListeners.Add(svcInstance as IDataPersistenceService, new KeyValuePair<Delegate, Delegate>(queriedInstanceDelegate, retrievedInstanceDelegate));
                 }
 
             }
@@ -203,7 +203,11 @@ namespace OpenIZ.Core.Security.Privacy
         /// </summary>
         private void UnBindEvents()
         {
-
+            foreach(var i in this.m_subscribedListeners)
+            {
+                i.GetType().GetRuntimeEvent("Queried").RemoveEventHandler(i.Key, i.Value.Key);
+                i.GetType().GetRuntimeEvent("Retrieved").RemoveEventHandler(i.Key, i.Value.Value);
+            }
         }
     }
 }

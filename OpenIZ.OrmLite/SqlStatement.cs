@@ -199,9 +199,17 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public SqlStatement InnerJoin<TLeft, TRight>(Expression<Func<TLeft, dynamic>> leftColumn, Expression<Func<TRight, dynamic>> rightColumn)
         {
+            return this.Join<TLeft, TRight>("INNER", leftColumn, rightColumn);
+        }
+
+        /// <summary>
+        /// Join by specific type of join
+        /// </summary>
+        public SqlStatement Join<TLeft, TRight>(String joinType, Expression<Func<TLeft, dynamic>> leftColumn, Expression<Func<TRight, dynamic>> rightColumn)
+        {
             var leftMap = TableMapping.Get(typeof(TLeft));
             var rightMap = TableMapping.Get(typeof(TRight));
-            var joinStatement = this.Append($"INNER JOIN {rightMap.TableName} ON");
+            var joinStatement = this.Append($"{joinType} JOIN {rightMap.TableName} ON");
             var rhsPk = rightMap.GetColumn(this.GetMember(rightColumn.Body));
             var lhsPk = leftMap.GetColumn(this.GetMember(leftColumn.Body));
             return joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
