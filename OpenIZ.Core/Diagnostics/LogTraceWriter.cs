@@ -52,19 +52,19 @@ namespace OpenIZ.Core.Diagnostics
             switch (level)
             {
                 case EventLevel.Error:
-                    this.m_traceSource?.TraceEvent(TraceEventType.Error, 0, format, args);
+                    this.m_traceSource?.TraceEvent(TraceEventType.Error, 0, $"[{source}] {format}", args);
                     break;
                 case EventLevel.Informational:
-                    this.m_traceSource?.TraceEvent(TraceEventType.Information, 0, format, args);
+                    this.m_traceSource?.TraceEvent(TraceEventType.Information, 0, $"[{source}] {format}", args);
                     break;
                 case EventLevel.Critical:
-                    this.m_traceSource?.TraceEvent(TraceEventType.Critical, 0, format, args);
+                    this.m_traceSource?.TraceEvent(TraceEventType.Critical, 0, $"[{source}] {format}", args);
                     break;
                 case EventLevel.Verbose:
-                    this.m_traceSource?.TraceEvent(TraceEventType.Verbose, 0, format, args);
+                    this.m_traceSource?.TraceEvent(TraceEventType.Verbose, 0, $"[{source}] {format}", args);
                     break;
                 case EventLevel.Warning:
-                    this.m_traceSource?.TraceEvent(TraceEventType.Warning, 0, format, args);
+                    this.m_traceSource?.TraceEvent(TraceEventType.Warning, 0, $"[{source}] {format}", args);
                     break;
 
             }

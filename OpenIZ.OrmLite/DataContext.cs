@@ -60,7 +60,7 @@ namespace OpenIZ.OrmLite
         private Dictionary<String, IEnumerable<Object>> m_cachedQuery = new Dictionary<string, IEnumerable<object>>();
 
         // Trace source
-        private Tracer m_tracer = Tracer.GetTracer(typeof(DataContext));
+        private TraceSource m_tracer = new TraceSource("OpenIZ.OrmLite");
 
         // Commands prepared on this connection
         private Dictionary<String, IDbCommand> m_preparedCommands = new Dictionary<string, IDbCommand>();
