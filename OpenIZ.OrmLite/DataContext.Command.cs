@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Data.Warehouse;
 using System.Threading;
 using System.IO;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.OrmLite
 {

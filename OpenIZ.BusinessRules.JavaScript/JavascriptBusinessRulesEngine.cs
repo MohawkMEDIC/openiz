@@ -40,6 +40,7 @@ using OpenIZ.Core.Interfaces;
 using Jint.Parser.Ast;
 using Jint.Parser;
 using OpenIZ.Core.Exceptions;
+using System.Threading;
 
 namespace OpenIZ.BusinessRules.JavaScript
 {
@@ -67,8 +68,14 @@ namespace OpenIZ.BusinessRules.JavaScript
     /// <summary>
     /// Represents the JavaScript business rules engine
     /// </summary>
-    public class JavascriptBusinessRulesEngine
+    public class JavascriptBusinessRulesEngine : IDisposable
     {
+
+        // UUID for logging
+        private Guid m_engineId = Guid.NewGuid();
+
+        // BRE pool
+        private static Stack<JavascriptBusinessRulesEngine> s_brePool = new Stack<JavascriptBusinessRulesEngine>();
 
         // Tracer for JSBRE
         private Tracer m_tracer = Tracer.GetTracer(typeof(JavascriptBusinessRulesEngine));
@@ -76,10 +83,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         // Javascript BRE instance
         private static JavascriptBusinessRulesEngine s_instance;
 
-        /// <summary>
-        /// New BRE was created
-        /// </summary>
-        internal static event EventHandler<RulesEngineCreatedArgs> EngineCreated;
+        // Reset event for bre pool
+        private static AutoResetEvent s_poolResetEvent = new AutoResetEvent(false);
 
         /// <summary>
         /// Thread static instance
@@ -112,17 +117,57 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
 
         }
-        
+
         /// <summary>
         /// Business rules bridge
         /// </summary>
         public BusinessRulesBridge Bridge { get { return this.m_bridge; } }
 
         /// <summary>
+        /// Initialize the business rules engine
+        /// </summary>
+        public static void InitializeGlobal()
+        {
+            // Ensure the current exists
+            JavascriptBusinessRulesEngine.Current.Initialize();
+
+            // Host is server, then initialize a pool
+            if (ApplicationServiceContext.HostType == OpenIZHostType.Server)
+            {
+                s_brePool = new Stack<JavascriptBusinessRulesEngine>(Environment.ProcessorCount);
+                for (int i = 0; i < Environment.ProcessorCount; i++)
+                {
+                    var bre = new JavascriptBusinessRulesEngine();
+                    bre.Initialize();
+                    s_brePool.Push(bre);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Add rules to all global objects
+        /// </summary>
+        public static void AddRulesGlobal(String ruleId, StreamReader script)
+        {
+            s_threadInstance = JavascriptBusinessRulesEngine.Current;
+            JavascriptBusinessRulesEngine.Current.AddRules(ruleId, script);
+            foreach (var i in s_brePool)
+            {
+                script.BaseStream.Seek(0, SeekOrigin.Begin);
+                s_threadInstance = i;
+                i.AddRules(ruleId, script);
+            }
+            s_threadInstance = null;
+        }
+
+        /// <summary>
         /// Initialize javascript BRE
         /// </summary>
         private void Initialize()
         {
+            if (this.m_engine != null) return; // already initialized
+
             // Set up javascript ening 
             this.m_tracer.TraceInfo("OpenIZ Javascript Business Rules Host Initialize");
 
@@ -147,22 +192,49 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// <summary>
         /// Gets an instance specifically for this executing thread 
         /// </summary>
-        public static JavascriptBusinessRulesEngine ThreadInstance {
-            get
+        public static JavascriptBusinessRulesEngine GetThreadInstance()
+        {
+            if (ApplicationServiceContext.HostType == OpenIZHostType.Server)
             {
-                if (ApplicationServiceContext.HostType == OpenIZHostType.Server)
+                if (s_threadInstance == null)
                 {
-                    if (s_threadInstance == null)
+                    // This block of code attempts to get a free business rule service from the available pool, if one is not available
+                    // it will go into a wait state and will block, re-activating when another engine is disposed.
+                    try
                     {
-                        s_threadInstance = new JavascriptBusinessRulesEngine();
-                        s_threadInstance.Initialize();
-                        EngineCreated?.Invoke(null, new RulesEngineCreatedArgs(s_threadInstance));
+                        Monitor.Enter(s_syncLock);
+                        if (s_brePool.Count > 0)
+                        {
+                            s_threadInstance = s_brePool.Pop();
+                            Monitor.Exit(s_syncLock); // dispose of lock
+                        }
+                        else
+                        {
+                            while (s_brePool.Count == 0)
+                            {
+                                Monitor.Exit(s_syncLock);
+                                s_instance.m_tracer.TraceVerbose("JSBRE Pool exhausted, awaiting free engine");
+                                s_poolResetEvent.WaitOne();
+                                Monitor.Enter(s_syncLock);
+                            }
+                            s_threadInstance = s_brePool.Pop();
+                            Monitor.Exit(s_syncLock);
+                        }
+
+                        s_threadInstance.m_tracer.TraceVerbose("Allocated JSBRE Instance - ID # {0}, Pool = {1}", s_threadInstance.m_engineId, s_brePool.Count);
+
                     }
-                    return s_threadInstance;
+                    finally
+                    {
+                        // Release lock
+                        if(Monitor.IsEntered(s_syncLock))
+                            Monitor.Exit(s_syncLock);
+                    }
                 }
-                else
-                    return JavascriptBusinessRulesEngine.Current;
+                return s_threadInstance;
             }
+            else
+                return JavascriptBusinessRulesEngine.Current;
         }
 
         /// <summary>
@@ -501,6 +573,24 @@ namespace OpenIZ.BusinessRules.JavaScript
                         }
                     };
                 }
+        }
+
+        /// <summary>
+        /// Dispose of the waiting thread
+        /// </summary>
+        public void Dispose()
+        {
+            if (this != JavascriptBusinessRulesEngine.Current) // push the thread instance back on the queue
+            {
+                lock (s_syncLock)
+                {
+                    s_brePool.Push(this);
+                    this.m_tracer.TraceVerbose("Released JSBRE Instance - ID # {0}, Pool = {1}", this.m_engineId, s_brePool.Count);
+
+                }
+                s_threadInstance = null;
+                s_poolResetEvent.Set();
+            }
         }
     }
 }

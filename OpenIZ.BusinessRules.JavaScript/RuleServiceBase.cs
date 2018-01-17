@@ -44,7 +44,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         public TBinding AfterInsert(TBinding data)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterInsert", data);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                    return instance.Invoke("AfterInsert", data);
         }
 
         /// <summary>
@@ -53,7 +54,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         public TBinding AfterObsolete(TBinding data)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterObsolete", data);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Invoke("AfterObsolete", data);
         }
 
         /// <summary>
@@ -62,7 +64,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         public IEnumerable<TBinding> AfterQuery(IEnumerable<TBinding> results)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterQuery", new Bundle() { Item = results.OfType<IdentifiedData>().ToList() }).Item.OfType<TBinding>();
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Invoke("AfterQuery", new Bundle() { Item = results.OfType<IdentifiedData>().ToList() }).Item.OfType<TBinding>();
         }
 
         /// <summary>
@@ -71,7 +74,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         public TBinding AfterRetrieve(TBinding result)
         {
             // Invoke the business rule
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterRetrieve", result);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Invoke("AfterRetrieve", result);
         }
 
         /// <summary>
@@ -79,7 +83,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding AfterUpdate(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("AfterUpdate", data);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Invoke("AfterUpdate", data);
         }
 
         /// <summary>
@@ -87,7 +92,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding BeforeInsert(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("BeforeInsert", data);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Invoke("BeforeInsert", data);
         }
 
         /// <summary>
@@ -95,7 +101,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding BeforeObsolete(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("BeforeObsolete", data);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Invoke("BeforeObsolete", data);
         }
 
         /// <summary>
@@ -103,7 +110,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public TBinding BeforeUpdate(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.ThreadInstance.Invoke("BeforeUpdate", data);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Invoke("BeforeUpdate", data);
         }
 
         /// <summary>
@@ -111,7 +119,8 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// </summary>
         public List<DetectedIssue> Validate(TBinding data)
         {
-            return JavascriptBusinessRulesEngine.ThreadInstance.Validate(data);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                return instance.Validate(data);
         }
         
     }
