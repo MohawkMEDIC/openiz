@@ -24,7 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Mobile.Core.Security.Audit.Model
+namespace OpenIZ.Persistence.Auditing.ADO.Data.Model
 {
     /// <summary>
     /// Audit actors

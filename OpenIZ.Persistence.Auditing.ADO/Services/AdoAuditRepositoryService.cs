@@ -6,7 +6,7 @@ using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Security.Audit;
 using OpenIZ.Core.Services;
-using OpenIZ.Mobile.Core.Security.Audit.Model;
+using OpenIZ.Persistence.Auditing.ADO.Data.Model;
 using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Auditing.ADO.Configuration;
 using System;
@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using MARC.HI.EHRS.SVC.Core.Event;
 using System.Security.Principal;
 using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Persistence.Auditing.ADO.Services
 {
@@ -36,7 +37,7 @@ namespace OpenIZ.Persistence.Auditing.ADO.Services
         private AdoConfiguration m_configuration = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection(AuditConstants.ConfigurationSectionName) as AdoConfiguration;
 
         // Model map
-        private ModelMapper m_mapper = new ModelMapper(typeof(AdoAuditRepositoryService).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Auditing.ADO.Data.Map.ModelMap.xml"));
+        private ModelMapper m_mapper = null;
 
         // Query builder
         private QueryBuilder m_builder;
@@ -90,7 +91,18 @@ namespace OpenIZ.Persistence.Auditing.ADO.Services
         /// </summary>
         public AdoAuditRepositoryService()
         {
-            this.m_builder = new QueryBuilder(this.m_mapper, this.m_configuration.Provider);
+            try
+            {
+                this.m_mapper = new ModelMapper(typeof(AdoAuditRepositoryService).Assembly.GetManifestResourceStream("OpenIZ.Persistence.Auditing.ADO.Data.Map.ModelMap.xml"));
+                this.m_builder = new QueryBuilder(this.m_mapper, this.m_configuration.Provider);
+            }
+            catch(ModelMapValidationException e)
+            {
+                this.m_traceSource.TraceError("Error validing map: {0}", e.Message);
+                foreach (var i in e.ValidationDetails)
+                    this.m_traceSource.TraceError("{0}:{1} @ {2}", i.Level, i.Message, i.Location);
+                throw;
+            }
         }
 
         /// <summary>
@@ -201,7 +213,7 @@ namespace OpenIZ.Persistence.Auditing.ADO.Services
                 IDbTransaction tx = null;
                 try
                 {
-                    
+                    context.Open();                    
                     tx = context.BeginTransaction();
 
                     // Insert core
@@ -327,11 +339,14 @@ namespace OpenIZ.Persistence.Auditing.ADO.Services
 
             try
             {
+
                 var pk = containerId as Identifier<Guid>;
 
                 // Fetch 
                 using (var context = this.m_configuration.Provider.GetReadonlyConnection())
                 {
+                    context.Open();
+
                     var sql = this.m_builder.CreateQuery<AuditData>(o => o.CorrelationToken == pk.Id).Limit(1).Build();
                     var res = context.FirstOrDefault(typeof(CompositeResult<DbAuditData, DbAuditCode>), sql);
                     var result = this.ToModelInstance(context, res as CompositeResult<DbAuditData, DbAuditCode>, false);
@@ -388,6 +403,8 @@ namespace OpenIZ.Persistence.Auditing.ADO.Services
             {
                 using (var context = this.m_configuration.Provider.GetReadonlyConnection())
                 {
+                    context.Open();
+
                     var sql = this.m_builder.CreateQuery(query).Build();
                     sql = sql.OrderBy<DbAuditData>(o => o.Timestamp, SortOrderType.OrderByDescending);
 

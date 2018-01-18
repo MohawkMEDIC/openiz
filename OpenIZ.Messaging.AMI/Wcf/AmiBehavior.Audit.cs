@@ -19,8 +19,11 @@
  */
 using MARC.HI.EHRS.SVC.Auditing.Services;
 using MARC.HI.EHRS.SVC.Core;
+using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.AMI.Security;
+using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
+using System;
 using System.Linq;
 using System.Security;
 using System.ServiceModel.Web;
@@ -39,27 +42,42 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <exception cref="System.Security.SecurityException">Audit service does not exist!</exception>
 		public void CreateAudit(AuditInfo audit)
 		{
-			// Audit the access
-			var auditService = ApplicationContext.Current.GetService<IAuditorService>();
-			if (auditService == null)
-				throw new SecurityException("Audit service does not exist!");
+            try
+            {
+                // Audit the access
+                var auditService = ApplicationContext.Current.GetService<IAuditorService>();
+                if (auditService == null)
+                    throw new SecurityException("Audit service does not exist!");
 
-			ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueNonPooledWorkItem(o =>
-			{
-				var adt = o as AuditInfo;
+                var authContext = AuthenticationContext.Current;
+                ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueNonPooledWorkItem(o =>
+                {
+                    try
+                    {
+                        var adt = o as AuditInfo;
+                        AuthenticationContext.Current = authContext;
+                        adt.Audit.ForEach(a => auditService.SendAudit(a));
 
-				adt.Audit.ForEach(a => auditService.SendAudit(a));
+                        // Persist this audit as well?
+                        var auditRepositoryService = ApplicationContext.Current.GetService<IAuditRepositoryService>();
 
-				// Persist this audit as well?
-				var auditRepositoryService = ApplicationContext.Current.GetService<IAuditRepositoryService>();
+                        if (auditRepositoryService != null)
+                        {
+                            adt.Audit = adt.Audit.Select(a => auditRepositoryService.Insert(a)).ToList();
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        this.traceSource.TraceError("Error forwarding/persisting audit: {0}", e);
+                    }
+                }, audit);
 
-				if (auditRepositoryService != null)
-				{
-					adt.Audit = adt.Audit.Select(a => auditRepositoryService.Insert(a)).ToList();
-				}
-			}, audit);
-
-			WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
+                WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
+            }
+            catch(Exception e)
+            {
+                this.traceSource.TraceError("Error creating audit: {0}", e);
+            }
 		}
 	}
 }
