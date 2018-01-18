@@ -2,6 +2,7 @@
  * <update id="20171030-01" applyRange="0.2.0.7-0.9.11.0"  invariantName="npgsql">
  *	<summary>Adds the Procedure table to the OpenIZ schema</summary>
  *	<remarks></remarks>
+ *	<guard>select not(ck_patch('20171030-01'))</guard>
  * </update>
  */
 BEGIN TRANSACTION;
@@ -175,5 +176,7 @@ BEGIN
 	RETURN '0.9.11.0';
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT REG_PATCH('20171030-01');
 
 COMMIT;

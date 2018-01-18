@@ -45,6 +45,7 @@
 );
 
 CREATE INDEX aud_obj_obj_id_idx ON aud_obj_tbl(obj_id);
+CREATE INDEX aud_obj_aud_id_idx ON aud_obj_tbl(aud_id);
 
 -- TABLE FOR AUDIT ACTORS
 CREATE TABLE aud_act_tbl (
@@ -66,3 +67,5 @@ CREATE TABLE aud_act_assoc_tbl (
 	CONSTRAINT fk_aud_act_assoc_act_id FOREIGN KEY (act_id) REFERENCES aud_act_tbl (id),
 	CONSTRAINT fk_aud_act_assoc_aud_id FOREIGN KEY (aud_id) REFERENCES aud_tbl (id)
 );
+
+CREATE INDEX aud_act_assoc_aud_id_idx ON aud_act_assoc_tbl(aud_id);

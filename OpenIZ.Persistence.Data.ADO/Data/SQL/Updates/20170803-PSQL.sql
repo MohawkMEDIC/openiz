@@ -3,6 +3,7 @@
  *	<summary>Adds sequencing to the participation table</summary>
  *	<remarks>This will add sequence identifiers to the participation table so that data can be returned 
  *	in proper order</remarks>
+ *	<guard>select not(ck_patch('20170803-01'))</guard>
  * </update>
  */
 
@@ -19,5 +20,7 @@ BEGIN
 	RETURN '0.9.0.3';
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT REG_PATCH('20170803-01');
 
 COMMIT;

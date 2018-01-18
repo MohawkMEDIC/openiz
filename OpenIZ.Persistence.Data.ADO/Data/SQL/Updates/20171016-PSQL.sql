@@ -2,6 +2,7 @@
  * <update id="20171016-01" applyRange="0.2.0.4-0.9.0.6"  invariantName="npgsql">
  *	<summary>Adds FIRST aggregation function</summary>
  *	<remarks></remarks>
+ *	<guard>select not(ck_patch('20171016-01'))</guard>
  * </update>
  */
 
@@ -27,5 +28,7 @@ BEGIN
 	RETURN '0.9.0.7';
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT REG_PATCH('20171016-01');
 
 COMMIT;

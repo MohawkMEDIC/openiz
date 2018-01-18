@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="Facilities from GIIS" xmlns="http://openiz.org/data">
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="Elbonian (Demo) Facilities" xmlns="http://openiz.org/data">
   <update insertIfNotExists="true">
     <Place xmlns="http://openiz.org/model">
       <id>fd2de69e-758b-4a9d-a281-3b23e22f751e</id>

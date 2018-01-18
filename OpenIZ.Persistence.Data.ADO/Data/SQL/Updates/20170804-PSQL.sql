@@ -2,6 +2,7 @@
  * <update id="20170804-01" applyRange="0.2.0.0-0.9.0.2"  invariantName="npgsql">
  *	<summary>Fixes an issue with locked accounts set to 9999 as date</summary>
  *	<remarks>Fixes issue with locked accounts</remarks>
+ *	<guard>select not(ck_patch('20170804-01'))</guard>
  * </update>
  */
 
@@ -74,5 +75,7 @@ BEGIN
 	END IF;
 END	
 $$ LANGUAGE PLPGSQL;
+
+SELECT REG_PATCH('20170804-01');
 
 COMMIT;

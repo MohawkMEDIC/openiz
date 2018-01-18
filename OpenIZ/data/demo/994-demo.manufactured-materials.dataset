@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="Manufactured Materials from GIIS" xmlns="http://openiz.org/data">
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="Elbonian (Demo) Materials &amp; Vaccines" xmlns="http://openiz.org/data">
   <update insertIfNotExists="true">
     <Organization xmlns="http://openiz.org/model">
       <id>ee4029cd-479b-43c5-ab96-183b9236d47b</id>

@@ -2,6 +2,7 @@
  * <update id="20171003-01" applyRange="0.2.0.4-0.9.0.4"  invariantName="npgsql">
  *	<summary>Adds several performance enhancing indexes</summary>
  *	<remarks></remarks>
+ *	<guard>select not(ck_patch('20171003-01'))</guard>
  * </update>
  */
 
@@ -17,5 +18,7 @@ BEGIN
 	RETURN '0.9.0.5';
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT REG_PATCH('20171003-01');
 
 COMMIT;
