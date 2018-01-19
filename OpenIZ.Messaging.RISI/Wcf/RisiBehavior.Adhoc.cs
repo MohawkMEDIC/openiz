@@ -104,7 +104,10 @@ namespace OpenIZ.Messaging.RISI.Wcf
 			if (adhocService == null)
 				throw new InvalidOperationException("Cannot find the adhoc data warehouse service");
 
-			return new RisiCollection<DataWarehouseObject>(adhocService.StoredQuery(Guid.Parse(datamartId), queryId, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery()).Select(o => new DataWarehouseObject(o)));
+            int tr = 0;
+            var res = adhocService.StoredQuery(Guid.Parse(datamartId), queryId, WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToQuery(), out tr).Select(o => new DataWarehouseObject(o));
+
+            return new RisiCollection<DataWarehouseObject>(res) { Size = tr };
 		}
 
 		/// <summary>

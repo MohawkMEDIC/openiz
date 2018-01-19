@@ -93,7 +93,7 @@ namespace OpenIZ.Core.Services
 		/// <summary>
 		/// Executes a predefined query against a datamart
 		/// </summary>
-		IEnumerable<dynamic> StoredQuery(Guid datamartId, String queryId, dynamic queryParameters);
+		IEnumerable<dynamic> StoredQuery(Guid datamartId, String queryId, dynamic queryParameters, out int totalResults);
 
 		/// <summary>
 		/// Adds the specified object to the specified datamart returning the tupleId

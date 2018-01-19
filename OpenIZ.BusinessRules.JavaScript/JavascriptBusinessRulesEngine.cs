@@ -77,6 +77,9 @@ namespace OpenIZ.BusinessRules.JavaScript
         // BRE pool
         private static Stack<JavascriptBusinessRulesEngine> s_brePool = new Stack<JavascriptBusinessRulesEngine>();
 
+        // Instance count
+        private int m_instanceCount = 0;
+
         // Tracer for JSBRE
         private Tracer m_tracer = Tracer.GetTracer(typeof(JavascriptBusinessRulesEngine));
 
@@ -206,6 +209,7 @@ namespace OpenIZ.BusinessRules.JavaScript
                         if (s_brePool.Count > 0)
                         {
                             s_threadInstance = s_brePool.Pop();
+                            s_threadInstance.m_instanceCount++;
                             Monitor.Exit(s_syncLock); // dispose of lock
                         }
                         else
@@ -218,6 +222,8 @@ namespace OpenIZ.BusinessRules.JavaScript
                                 Monitor.Enter(s_syncLock);
                             }
                             s_threadInstance = s_brePool.Pop();
+                            s_threadInstance.m_instanceCount++;
+
                             Monitor.Exit(s_syncLock);
                         }
 
@@ -231,6 +237,8 @@ namespace OpenIZ.BusinessRules.JavaScript
                             Monitor.Exit(s_syncLock);
                     }
                 }
+                else
+                    s_threadInstance.m_instanceCount++;
                 return s_threadInstance;
             }
             else
@@ -271,7 +279,6 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
             try
             {
-
                 // Already ran
                 this.m_tracer.TraceVerbose("Adding rules to BRE: {0}", ruleId);
                 var rawScript = script.ReadToEnd();
@@ -582,13 +589,14 @@ namespace OpenIZ.BusinessRules.JavaScript
         {
             if (this != JavascriptBusinessRulesEngine.Current) // push the thread instance back on the queue
             {
-                lock (s_syncLock)
-                {
-                    s_brePool.Push(this);
-                    this.m_tracer.TraceVerbose("Released JSBRE Instance - ID # {0}, Pool = {1}", this.m_engineId, s_brePool.Count);
-
-                }
-                s_threadInstance = null;
+                if(m_instanceCount <= 1 && !s_brePool.ToArray().Any(o=>o.m_engineId == this.m_engineId))
+                    lock (s_syncLock)
+                    {
+                        s_brePool.Push(this);
+                        s_threadInstance = null;
+                        this.m_tracer.TraceVerbose("Released JSBRE Instance - ID # {0}, Pool = {1}", this.m_engineId, s_brePool.Count);
+                    }
+                m_instanceCount--;
                 s_poolResetEvent.Set();
             }
         }

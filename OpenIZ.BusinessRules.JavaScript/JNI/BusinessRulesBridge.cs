@@ -99,7 +99,8 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public void AddBusinessRule(String target, String trigger, Func<Object, ExpandoObject> _delegate)
         {
-            JavascriptBusinessRulesEngine.GetThreadInstance().RegisterRule(target, trigger, _delegate);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                instance.RegisterRule(target, trigger, _delegate);
         }
 
         /// <summary>
@@ -107,7 +108,8 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public void AddValidator(String target, Func<Object, Object[]> _delegate)
         {
-            JavascriptBusinessRulesEngine.GetThreadInstance().RegisterValidator(target, _delegate);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+                instance.RegisterValidator(target, _delegate);
         }
 
         /// <summary>
@@ -115,9 +117,12 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public object ExecuteRule(String action, Object data)
         {
-            var sData = this.ToModel(data);
-            var retVal = JavascriptBusinessRulesEngine.GetThreadInstance().Invoke(action, sData);
-            return this.ToViewModel(retVal);
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
+            {
+                var sData = this.ToModel(data);
+                var retVal = instance.Invoke(action, sData);
+                return this.ToViewModel(retVal);
+            }
         }
 
         /// <summary>
@@ -230,48 +235,50 @@ namespace OpenIZ.BusinessRules.JavaScript.JNI
         /// </summary>
         public Object ExecuteBundleRules(String trigger, Object bundle)
         {
-            try
+            using (var instance = JavascriptBusinessRulesEngine.GetThreadInstance())
             {
-                var thdPool = ApplicationServiceContext.Current.GetService(typeof(IThreadPoolService)) as IThreadPoolService;
-                IDictionary<String, Object> bdl = bundle as IDictionary<String, Object>;
-
-                this.m_cacheObject.Clear();
-
-                object rawItems = null;
-                if (!bdl.TryGetValue("$item", out rawItems) && !bdl.TryGetValue("item", out rawItems))
+                try
                 {
-                    this.m_tracer.TraceVerbose("Bundle contains no items: {0}", this.ProduceLiteral(bdl));
-                    return bundle;
+                    var thdPool = ApplicationServiceContext.Current.GetService(typeof(IThreadPoolService)) as IThreadPoolService;
+                    IDictionary<String, Object> bdl = bundle as IDictionary<String, Object>;
+
+                    this.m_cacheObject.Clear();
+
+                    object rawItems = null;
+                    if (!bdl.TryGetValue("$item", out rawItems) && !bdl.TryGetValue("item", out rawItems))
+                    {
+                        this.m_tracer.TraceVerbose("Bundle contains no items: {0}", this.ProduceLiteral(bdl));
+                        return bundle;
+                    }
+
+                    Object[] itms = rawItems as object[];
+
+                    for (int i = 0; i < itms.Length; i++)
+                    {
+                        try
+                        {
+                            itms[i] = instance.InvokeRaw(trigger, itms[i]);
+                        }
+                        catch (Exception e)
+                        {
+                            //if (System.Diagnostics.Debugger.IsAttached)
+                            throw;
+                            //else
+                            //    Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itms[i], e);
+                        }
+                    }
+
+                    bdl.Remove("item");
+                    bdl.Remove("$item");
+                    bdl.Add("$item", itms);
+                    return bdl;
                 }
-
-                Object[] itms = rawItems as object[];
-
-                for (int i = 0; i < itms.Length; i++)
+                catch (Exception e)
                 {
-                    try
-                    {
-                        itms[i] = JavascriptBusinessRulesEngine.GetThreadInstance().InvokeRaw(trigger, itms[i]);
-                    }
-                    catch (Exception e)
-                    {
-                        //if (System.Diagnostics.Debugger.IsAttached)
-                        throw;
-                        //else
-                        //    Tracer.GetTracer(typeof(BusinessRulesBridge)).TraceError("Error applying rule for {0}: {1}", itms[i], e);
-                    }
+                    this.m_tracer.TraceError("Error executing bundle rules: {0}", e);
+                    throw;
                 }
-
-                bdl.Remove("item");
-                bdl.Remove("$item");
-                bdl.Add("$item", itms);
-                return bdl;
             }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error executing bundle rules: {0}", e);
-                throw;
-            }
-
         }
 
         /// <summary>

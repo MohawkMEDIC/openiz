@@ -596,7 +596,7 @@ namespace OpenIZ.Warehouse.ADO
         /// Execute a stored query
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.QueryWarehouseData)]
-        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters)
+        public IEnumerable<dynamic> StoredQuery(Guid datamartId, string queryId, dynamic queryParameters, out int totalResults)
         {
             this.ThrowIfDisposed();
 
@@ -642,7 +642,7 @@ namespace OpenIZ.Warehouse.ADO
                         ofs = Int32.Parse((ofs as List<String>)[0]);
                     if (cnt is List<String>)
                         cnt = Int32.Parse((cnt as List<String>)[0]);
-                    return this.QueryInternal(context, String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, Convert.ToInt32(ofs), Convert.ToInt32(cnt), out tr);
+                    return this.QueryInternal(context, String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, Convert.ToInt32(ofs), Convert.ToInt32(cnt), out totalResults);
                 }
                 catch (Exception e)
                 {
@@ -704,7 +704,7 @@ namespace OpenIZ.Warehouse.ADO
                     {
                         var value = itm;
                         String filter = String.Empty;
-                        var op = "AND";
+                        var op = " AND ";
 
                         if (value is String)
                         {
@@ -750,7 +750,7 @@ namespace OpenIZ.Warehouse.ADO
                                 case '~':
                                     filter = $"{key} {this.m_configuration.Provider.CreateSqlKeyword(OrmLite.Providers.SqlKeyword.ILike)} '%' || ? || '%'";
                                     value = sValue.Substring(1);
-                                    op = "OR";
+                                    op = " OR ";
 
                                     break;
                                 default:
@@ -762,7 +762,7 @@ namespace OpenIZ.Warehouse.ADO
                                     else
                                     {
                                         filter = $"{key} = ?";
-                                        op = "OR";
+                                        op = " OR ";
                                     }
                                     break;
                             }
@@ -816,7 +816,7 @@ namespace OpenIZ.Warehouse.ADO
                     }
 
                     retVal.RemoveLast();
-                    retVal.Append(")").Append("AND");
+                    retVal.Append(")").Append(" AND ");
                 } // exist or value
                 retVal.RemoveLast();
             }

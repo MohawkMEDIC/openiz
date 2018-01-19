@@ -331,9 +331,9 @@ namespace OizDevTool
             var lastRefresh = DateTime.Parse(parms.Since ?? "0001-01-01");
 
             // Should we calculate?
-            var warehousePatients = warehouseService.StoredQuery(dataMart.Id, "consistency", new { });
-            Guid queryId = Guid.NewGuid();
             int tr = 1, ofs = 0, calc = 0, tq = 0;
+            var warehousePatients = warehouseService.StoredQuery(dataMart.Id, "consistency", new { }, out tr);
+            Guid queryId = Guid.NewGuid();
             WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 2);
             DateTime start = DateTime.Now;
 
