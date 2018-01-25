@@ -1,8 +1,8 @@
 ﻿/** 
  * <update id="20171108-01" applyRange="0.9.0.0-0.9.11.0"  invariantName="npgsql">
- *	<summary>Adds trigger constraints to ensure that relationships are of proper type</summary>
+ *	<summary>Add relationship types between patients and locations</summary>
  *	<remarks></remarks>
- *	<check>select not(ck_patch('20171108-01'))</check>
+ *	<check>select ck_patch('20171108-01')</check>
  * </update>
  */
 

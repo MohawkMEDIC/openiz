@@ -2,7 +2,7 @@
  * <update id="20171003-01" applyRange="0.2.0.4-0.9.0.4"  invariantName="npgsql">
  *	<summary>Adds several performance enhancing indexes</summary>
  *	<remarks></remarks>
- *	<guard>select not(ck_patch('20171003-01'))</guard>
+ *	<isInstalled>select ck_patch('20171003-01')</isInstalled>
  * </update>
  */
 

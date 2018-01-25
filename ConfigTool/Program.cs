@@ -31,6 +31,9 @@ namespace ConfigTool
             // Attempt to open a restricted resource (see if we're administrator)
             frmSplash splash = new frmSplash();
             splash.Show();
+#if DEBUG
+            MessageBox.Show("Attach debugger now (if you want to)");
+#endif
             try
             {
 

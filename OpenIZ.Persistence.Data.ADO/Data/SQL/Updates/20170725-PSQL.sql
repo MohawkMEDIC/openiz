@@ -3,7 +3,7 @@
  *	<summary>Switches high volume tables to integer keys rather than UUIDs</summary>
  *	<remarks>This update will add numeric keys to tables and updates linkages between these
  *	for data which is not submitted by or exposed to external parties.</remarks>
- *	<guard>select not(ck_patch('20170725-01'))</guard>
+ *	<isInstalled>select ck_patch('20170725-01')</isInstalled>
  * </update>
  */
 

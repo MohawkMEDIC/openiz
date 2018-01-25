@@ -1,8 +1,8 @@
 ﻿/** 
  * <update id="20171030-01" applyRange="0.2.0.7-0.9.11.0"  invariantName="npgsql">
- *	<summary>Adds the Procedure table to the OpenIZ schema</summary>
+ *	<summary>Adds the SQUASH_DB() command to database</summary>
  *	<remarks></remarks>
- *	<guard>select not(ck_patch('20171030-01'))</guard>
+ *	<isInstalled>select ck_patch('20171030-01')</isInstalled>
  * </update>
  */
 BEGIN TRANSACTION;

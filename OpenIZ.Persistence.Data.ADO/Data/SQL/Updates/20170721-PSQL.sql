@@ -4,6 +4,7 @@
  *	<remarks>This update will install two new entity relationship types: INSTANCE and LOCATED ENTITY. INSTANCE replaces the old MANUFACTURED_PRODUCT relationship
  *	type, and is used to indicate a manufactured material is an instance of a material kind. LOCATED ENTITY is used to indicate that a particular entity is physically
  *	located in another entity</remarks>
+ *  <isInstalled>select string_to_array(get_sch_vrsn(), '.')::int[] >= string_to_array('0.9.0.1', '.')::int[]</isInstalled>
  * </update>
  */
 BEGIN TRANSACTION;
@@ -24,7 +25,7 @@ $$ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION CK_PATCH(PATCH_ID_IN IN VARCHAR(24)) RETURNS BOOLEAN AS $$
 BEGIN
-	RETURN QUERY SELECT COUNT(*) > 0 FROM PATCH_DB_SYSTBL WHERE PATCH_ID = PATCH_ID_IN;
+	RETURN (SELECT COUNT(*) > 0 FROM PATCH_DB_SYSTBL WHERE PATCH_ID = PATCH_ID_IN);
 END
 $$ LANGUAGE PLPGSQL;
 

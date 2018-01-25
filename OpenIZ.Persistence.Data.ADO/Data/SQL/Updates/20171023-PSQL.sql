@@ -2,7 +2,7 @@
  * <update id="20171023-01" applyRange="0.2.0.4-0.9.0.6"  invariantName="npgsql">
  *	<summary>Adds the Procedure table to the OpenIZ schema</summary>
  *	<remarks></remarks>
- *	<guard>select not(ck_patch('20171023-01'))</guard>
+ *	<isInstalled>select ck_patch('20171023-01')</isInstalled>
  * </update>
  */
 

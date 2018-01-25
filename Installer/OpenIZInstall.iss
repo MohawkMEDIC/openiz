@@ -463,7 +463,7 @@ var
 begin
   Result := True;
   bSuccess := RegQueryDWordValue(HKLM, 'Software\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', regVersion);
-  if (True = bSuccess) and (regVersion >= 378389) then begin
+  if (True = bSuccess) and (regVersion >= 378675) then begin
     Result := False;
   end;
 end; 
@@ -476,11 +476,11 @@ begin
   dotNetNeeded := Framework45IsNotInstalled();
   
   if (not IsAdminLoggedOn()) then begin
-    MsgBox('OpenIZ needs the Microsoft .NET Framework 4.5 to be installed by an Administrator', mbInformation, MB_OK);
+    MsgBox('OpenIZ needs the Microsoft .NET Framework 4.5.1 to be installed by an Administrator', mbInformation, MB_OK);
     Result := false;
   end 
   else if(dotNetNeeded) then begin
-    memoDependenciesNeeded := memoDependenciesNeeded + '      .NET Framework 4.5' #13;
+    memoDependenciesNeeded := memoDependenciesNeeded + '      .NET Framework 4.5.2' #13;
   end;
 
 end;
@@ -518,11 +518,11 @@ begin
       if Exec(ExpandConstant(dotnetRedistURL), '/passive /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
           // handle success if necessary; ResultCode contains the exit code
           if not (ResultCode <> 0) then begin
-            Result := '.NET Framework 4.5 is Required';
+            Result := '.NET Framework 4.5.1 is Required';
           end;
         end else begin
           // handle failure if necessary; ResultCode contains the error code
-            Result := '.NET Framework 4.5 is Required';
+            Result := '.NET Framework 4.5.1 is Required';
         end;
     end;
 

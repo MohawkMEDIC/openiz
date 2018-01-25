@@ -1,8 +1,8 @@
 ﻿/** 
  * <update id="20171123-01" applyRange="0.9.0.0-0.9.0.11"  invariantName="npgsql">
- *	<summary>Adds trigger constraints to ensure that relationships are of proper type</summary>
+ *	<summary>Add entity relationship validation for providers and state/county</summary>
  *	<remarks></remarks>
- *	<guard>select not(ck_patch('20171123-01'))</guard>
+ *	<isInstalled>select ck_patch('20171123-01')</isInstalled>
  * </update>
  */
 
@@ -18,6 +18,7 @@ INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err
 -- RULE 16: DEDICATED SDL AND STATE / COUNTY
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('455f1772-f580-47e8-86bd-b5ce25d351f9', '8cf4b0b0-84e5-4122-85fe-6afa8240c218', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_stateDedicatedSDL');
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('455f1772-f580-47e8-86bd-b5ce25d351f9', 'd9489d56-ddac-4596-b5c6-8f41d73d8dc5', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_stateDedicatedSDL');
+INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('455f1772-f580-47e8-86bd-b5ce25d351f9', '48b2ffb3-07db-47ba-ad73-fc8fb8502471', 'ff34dfa7-c6d3-4f8b-bc9f-14bcdc13ba6c', 'err_stateDedicatedSDL');
 
 SELECT REG_PATCH('20171123-01');
 
