@@ -171,6 +171,7 @@ namespace OpenIZ.Messaging.IMSI
                     endpoint.EndpointBehaviors.Add(new ImsiRestEndpointBehavior());
                     endpoint.EndpointBehaviors.Add(new ImsiErrorEndpointBehavior());
                 }
+                
                 // Start the webhost
                 this.m_webHost.Open();
 

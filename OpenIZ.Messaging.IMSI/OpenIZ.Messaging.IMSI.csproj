@@ -44,6 +44,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SwaggerWcf">
+      <HintPath>..\Solution Items\SwaggerWcf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />

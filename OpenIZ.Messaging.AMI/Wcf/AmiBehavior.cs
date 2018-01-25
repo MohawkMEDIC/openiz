@@ -46,6 +46,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.AMI.Logging;
 using System.IO;
+using SwaggerWcf.Attributes;
+using System.ComponentModel;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -53,6 +55,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
     /// Represents the administrative contract interface.
     /// </summary>
     [ServiceBehavior(ConfigurationName = "AMI", InstanceContextMode = InstanceContextMode.PerCall)]
+    [Description("Administrative Management Interface")]
     public partial class AmiBehavior : IAmiContract
     {
         // Trace source
@@ -107,6 +110,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// </summary>
         /// <param name="schemaId">The id of the schema to be retrieved.</param>
         /// <returns>Returns the administrative interface schema.</returns>
+        [SwaggerWcfHidden]
         public XmlSchema GetSchema(int schemaId)
         {
             try
@@ -240,6 +244,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
         /// <summary>
         /// Perform a ping
         /// </summary>
+        [SwaggerWcfHidden]
         public void Ping()
         {
             WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;

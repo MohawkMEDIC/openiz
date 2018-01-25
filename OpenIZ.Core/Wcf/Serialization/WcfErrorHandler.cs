@@ -26,6 +26,7 @@ using OpenIZ.Core.Security.Audit;
 using OpenIZ.Core.Wcf.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Linq;
 using System.Diagnostics;
 using System.IdentityModel.Tokens;
@@ -112,7 +113,7 @@ namespace OpenIZ.Core.Wcf.Serialization
             else if (error is Newtonsoft.Json.JsonException ||
                 error is System.Xml.XmlException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
-            else if (error is DuplicateKeyException)
+            else if (error is DuplicateKeyException || error is DuplicateNameException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.Conflict;
             else if (error is FileNotFoundException || error is KeyNotFoundException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NotFound;
@@ -120,10 +121,13 @@ namespace OpenIZ.Core.Wcf.Serialization
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.ServiceUnavailable;
             else if (error is DetectedIssueException)
                 WebOperationContext.Current.OutgoingResponse.StatusCode = (System.Net.HttpStatusCode)422;
+            else if (error is NotImplementedException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.NotImplemented;
+            else if(error is NotSupportedException)
+                WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.MethodNotAllowed;
             else
                 WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.InternalServerError;
            
-       
 
             fault = Message.CreateMessage(version, MessageFault.CreateFault(code, reason), String.Empty);
             

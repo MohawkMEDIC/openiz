@@ -60,6 +60,8 @@ using OpenIZ.Core;
 using System.Data.Linq;
 using MARC.HI.EHRS.SVC.Core.Exceptions;
 using System.ServiceModel.Channels;
+using SwaggerWcf.Attributes;
+using System.ComponentModel;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
@@ -67,6 +69,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     /// Data implementation
     /// </summary>
     [ServiceBehavior(ConfigurationName = "IMSI", InstanceContextMode = InstanceContextMode.PerCall)]
+    [Description("Immunization Management Service Interface")]
+    [SwaggerWcf("/imsi")]
     public class ImsiServiceBehavior : IImsiServiceContract
     {
         // Trace source
@@ -75,8 +79,10 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Ping the server
         /// </summary>
+        [SwaggerWcfHidden]
         public void Ping()
         {
+            this.ThrowIfNotReady();
             WebOperationContext.Current.OutgoingResponse.StatusCode = System.Net.HttpStatusCode.NoContent;
         }
 
@@ -84,6 +90,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Create the specified resource
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(409, "You are attempting to create a resource that already exists")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(201, "The object was created successfully")]
         public IdentifiedData Create(string resourceType, IdentifiedData body)
         {
             this.ThrowIfNotReady();
@@ -130,6 +147,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Create or update the specified object
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(409, "You are attempting to create or update data that would put the object in a conflicted state")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(201, "The object was created or updated successfully")]
         public IdentifiedData CreateUpdate(string resourceType, string id, IdentifiedData body)
         {
             this.ThrowIfNotReady();
@@ -174,6 +202,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Get the specified object
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(304, "The object was not modified since the HTTP Cache-Control header conditions")]
+        [SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
         public IdentifiedData Get(string resourceType, string id)
         {
             this.ThrowIfNotReady();
@@ -230,6 +269,16 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Gets a specific version of a resource
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(200, "The operation was successful, and the specified version of the resource is in the response")]
         public IdentifiedData GetVersion(string resourceType, string id, string versionId)
         {
             this.ThrowIfNotReady();
@@ -270,6 +319,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Get the schema which defines this service
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+        [SwaggerWcfHidden]
         public XmlSchema GetSchema(int schemaId)
         {
             this.ThrowIfNotReady();
@@ -308,6 +358,15 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Gets the recent history an object
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
         public IdentifiedData History(string resourceType, string id)
         {
             this.ThrowIfNotReady();
@@ -353,6 +412,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Perform a search on the specified resource type
         /// </summary>
         [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(200, "The operation was successful and the response contains the search results")]
+        [SwaggerWcfResponse(304, "None of the matching resources have been modified since the HTTP cache headers indicate")]
         public IdentifiedData Search(string resourceType)
         {
             this.ThrowIfNotReady();
@@ -439,6 +509,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Get the server's current time
         /// </summary>
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(200, "The operation was successful and the response contains the current server time")]
         public DateTime Time()
         {
             this.ThrowIfNotReady();
@@ -449,6 +521,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Update the specified resource
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(409, "You are attempting to perform an update on an old version of the resource, or the conditional HTTP headers don't match the current version of the resource")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(200, "The object was updated successfully")]
         public IdentifiedData Update(string resourceType, string id, IdentifiedData body)
         {
             this.ThrowIfNotReady();
@@ -496,6 +579,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Obsolete the specified data
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(409, "You are attempting to perform an obsolete on an old version of the resource, or the conditional HTTP headers don't match the current version of the resource")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(200, "The object was obsoleted successfully")]
         public IdentifiedData Delete(string resourceType, string id)
         {
             this.ThrowIfNotReady();
@@ -540,6 +634,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Perform the search but only return the headers
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(200, "The operation was successful and the headers were returned")]
         public void HeadSearch(string resourceType)
         {
             this.ThrowIfNotReady();
@@ -550,6 +655,17 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Get just the headers
         /// </summary>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(200, "The operation was successful and the headers were returned")]
         public void GetHead(string resourceType, string id)
         {
             this.ThrowIfNotReady();
@@ -562,6 +678,19 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <param name="resourceType"></param>
         /// <param name="id"></param>
         /// <param name="body"></param>
+        [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(204, "The patch was applied successfully")]
+        [SwaggerWcfResponse(409, "The ETag provided in the If-Match header, or the PATCH contents themselves don't match the resource being patched")]
+        [SwaggerWcfContentTypes(ConsumeTypes = new String[] { "application/xml+oiz-patch" })]
         public void Patch(string resourceType, string id, Patch body)
         {
             this.ThrowIfNotReady();
@@ -633,6 +762,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             }
         }
 
+        [SwaggerWcfHidden]
         public Patch GetPatch(string resourceType, string id)
         {
             this.ThrowIfNotReady();
@@ -642,6 +772,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Get options
         /// </summary>
+        [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+        [SwaggerWcfResponse(200, "The operation was successful")]
         public IdentifiedData Options()
         {
             this.ThrowIfNotReady();

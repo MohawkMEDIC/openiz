@@ -6,6 +6,7 @@
       <classConcept>7c08bd55-4d42-49cd-92f8-6388d6c4183f</classConcept>
       <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
       <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+	  <industryConcept>33b40c3c-c0c0-48b6-be74-0881d9c00ee6</industryConcept>
       <name>
         <source xsi:nil="true" />
         <effectiveVersionSequence xsi:nil="true" />
@@ -58,12 +59,12 @@
         <component>
           <source xsi:nil="true" />
           <type xsi:nil="true" />
-          <value>MR (Dilbert Vaccine Manufacturers)</value>
+          <value>MeasleGuard MR (Dilbert Vaccine Manufacturers)</value>
         </component>
       </name>
-      <expiryDate>2018-06-26T00:00:00</expiryDate>
+      <expiryDate>2020-06-26T00:00:00</expiryDate>
       <isAdministrative>false</isAdministrative>
-      <lotNumber>XXY-1234567889757</lotNumber>
+      <lotNumber>MGR-1234567889757</lotNumber>
     </ManufacturedMaterial>
   </update>
   <update insertIfNotExists="true">
@@ -107,9 +108,9 @@
           <value>PCV13 (Dilbert Vaccine Manufacturers)</value>
         </component>
       </name>
-      <expiryDate>2018-06-26T00:00:00</expiryDate>
+      <expiryDate>2020-06-26T00:00:00</expiryDate>
       <isAdministrative>false</isAdministrative>
-      <lotNumber>YFD-230984230984</lotNumber>
+      <lotNumber>PC4-230984230984</lotNumber>
     </ManufacturedMaterial>
   </update>
   <update insertIfNotExists="true">
@@ -150,9 +151,138 @@
           <value>OPV (Dilbert Vaccine Manufacturers)</value>
         </component>
       </name>
-      <expiryDate>2018-06-26T00:00:00</expiryDate>
+      <expiryDate>2020-06-26T00:00:00</expiryDate>
       <isAdministrative>false</isAdministrative>
-      <lotNumber>DFR-9432809850943</lotNumber>
+      <lotNumber>OPL-9432809850943</lotNumber>
+    </ManufacturedMaterial>
+  </update>
+  <update insertIfNotExists="true">
+    <ManufacturedMaterial xmlns="http://openiz.org/model">
+      <id>3000a32b-33db-4c0d-b41e-2959ac8e3f2c</id>
+      <classConcept>fafec286-89d5-420b-9085-054aca9d1eef</classConcept>
+      <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <typeConcept>19afe679-ef94-48b4-9d6a-3c9827c4c8e2</typeConcept>
+      <identifier>
+        <value>DB3948937432</value>
+        <authority>
+          <name>GS1 Global Trade Identification Number (GTIN)</name>
+          <domainName>GTIN</domainName>
+          <oid>1.3.160</oid>
+          <assigningDevice xsi:nil="true" />
+        </authority>
+      </identifier>
+      <relationship>
+        <source>ED144BD2-A334-40A2-9A8F-B767A1397D07</source>
+        <target>3000a32b-33db-4c0d-b41e-2959ac8e3f2c</target>
+        <relationshipType>AC45A740-B0C7-4425-84D8-B3F8A41FEF9F</relationshipType>
+        <inversionInd>false</inversionInd>
+      </relationship>
+      <relationship>
+        <source>ee4029cd-479b-43c5-ab96-183b9236d47b</source>
+        <target>3000a32b-33db-4c0d-b41e-2959ac8e3f2c</target>
+        <relationshipType>6780DF3B-AFBD-44A3-8627-CBB3DC2F02F6</relationshipType>
+      </relationship>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <use>a87a6d21-2ca6-4aea-88f3-6135cceb58d1</use>
+        <component>
+          <source xsi:nil="true" />
+          <type xsi:nil="true" />
+          <value>BCG (Dilbert Vaccine Manufacturers)</value>
+        </component>
+      </name>
+      <expiryDate>2020-06-26T00:00:00</expiryDate>
+      <isAdministrative>false</isAdministrative>
+      <lotNumber>BCA-578483432</lotNumber>
+    </ManufacturedMaterial>
+  </update>
+  <update insertIfNotExists="true">
+    <ManufacturedMaterial xmlns="http://openiz.org/model">
+      <id>f7577818-ce43-40f8-86c5-6614731ab119</id>
+      <classConcept>fafec286-89d5-420b-9085-054aca9d1eef</classConcept>
+      <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <typeConcept>C20CE9A2-57FD-4FFB-9C12-04A3957D732A</typeConcept>
+      <identifier>
+        <value>DB2892743283</value>
+        <authority>
+          <name>GS1 Global Trade Identification Number (GTIN)</name>
+          <domainName>GTIN</domainName>
+          <oid>1.3.160</oid>
+          <assigningDevice xsi:nil="true" />
+        </authority>
+      </identifier>
+      <relationship>
+        <source>41B008A6-FCF8-40BC-AB96-7567E94BCF8F</source>
+        <target>f7577818-ce43-40f8-86c5-6614731ab119</target>
+        <relationshipType>AC45A740-B0C7-4425-84D8-B3F8A41FEF9F</relationshipType>
+        <inversionInd>false</inversionInd>
+      </relationship>
+      <relationship>
+        <source>ee4029cd-479b-43c5-ab96-183b9236d47b</source>
+        <target>f7577818-ce43-40f8-86c5-6614731ab119</target>
+        <relationshipType>6780DF3B-AFBD-44A3-8627-CBB3DC2F02F6</relationshipType>
+      </relationship>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <use>a87a6d21-2ca6-4aea-88f3-6135cceb58d1</use>
+        <component>
+          <source xsi:nil="true" />
+          <type xsi:nil="true" />
+          <value>PentaMax DTP-HepB-Hib (Dilbert Vaccine Manufacturers)</value>
+        </component>
+      </name>
+      <expiryDate>2020-06-26T00:00:00</expiryDate>
+      <isAdministrative>false</isAdministrative>
+      <lotNumber>DTX-43094382</lotNumber>
+    </ManufacturedMaterial>
+  </update>
+  <update insertIfNotExists="true">
+    <ManufacturedMaterial xmlns="http://openiz.org/model">
+      <id>4cff3a9b-0a40-4143-b812-f6289f0585d4</id>
+      <classConcept>fafec286-89d5-420b-9085-054aca9d1eef</classConcept>
+      <determinerConcept>f29f08de-78a7-4a5e-aeaf-7b545ba19a09</determinerConcept>
+      <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
+      <typeConcept>9606ACF1-8A70-4664-944B-87B3750CA7CC</typeConcept>
+      <identifier>
+        <value>DB4347983287</value>
+        <authority>
+          <name>GS1 Global Trade Identification Number (GTIN)</name>
+          <domainName>GTIN</domainName>
+          <oid>1.3.160</oid>
+          <assigningDevice xsi:nil="true" />
+        </authority>
+      </identifier>
+      <relationship>
+        <source>DD53B8FF-2F4D-4359-A031-9405AD384893</source>
+        <target>4cff3a9b-0a40-4143-b812-f6289f0585d4</target>
+        <relationshipType>AC45A740-B0C7-4425-84D8-B3F8A41FEF9F</relationshipType>
+        <inversionInd>false</inversionInd>
+      </relationship>
+      <relationship>
+        <source>ee4029cd-479b-43c5-ab96-183b9236d47b</source>
+        <target>4cff3a9b-0a40-4143-b812-f6289f0585d4</target>
+        <relationshipType>6780DF3B-AFBD-44A3-8627-CBB3DC2F02F6</relationshipType>
+      </relationship>
+      <name>
+        <source xsi:nil="true" />
+        <effectiveVersionSequence xsi:nil="true" />
+        <obsoleteVersionSequence xsi:nil="true" />
+        <use>a87a6d21-2ca6-4aea-88f3-6135cceb58d1</use>
+        <component>
+          <source xsi:nil="true" />
+          <type xsi:nil="true" />
+          <value>RotaGuard (Dilbert Vaccine Manufacturers)</value>
+        </component>
+      </name>
+      <expiryDate>2020-06-26T00:00:00</expiryDate>
+      <isAdministrative>false</isAdministrative>
+      <lotNumber>RTG-549503434</lotNumber>
     </ManufacturedMaterial>
   </update>
 </dataset>

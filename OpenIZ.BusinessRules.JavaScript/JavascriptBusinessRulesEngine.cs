@@ -137,8 +137,8 @@ namespace OpenIZ.BusinessRules.JavaScript
             // Host is server, then initialize a pool
             if (ApplicationServiceContext.HostType == OpenIZHostType.Server)
             {
-                s_brePool = new Stack<JavascriptBusinessRulesEngine>(Environment.ProcessorCount);
-                for (int i = 0; i < Environment.ProcessorCount; i++)
+                s_brePool = new Stack<JavascriptBusinessRulesEngine>(Environment.ProcessorCount * 2);
+                for (int i = 0; i < Environment.ProcessorCount * 2; i++)
                 {
                     var bre = new JavascriptBusinessRulesEngine();
                     bre.Initialize();
@@ -599,6 +599,17 @@ namespace OpenIZ.BusinessRules.JavaScript
                 m_instanceCount--;
                 s_poolResetEvent.Set();
             }
+        }
+
+        /// <summary>
+        /// Indicates whether a rule has been registered for the specified action and type
+        /// </summary>
+        /// <param name="trigger">The trigger being checked</param>
+        /// <param name="type">The type of data being stored</param>
+        /// <returns>True if there are any triggers registered for <paramref name="trigger"/></returns>
+        public bool HasRule<TBinding>(string trigger, Type type)
+        {
+            return this.GetCallList(type, trigger).Union(this.GetCallList<TBinding>(trigger)).Any();
         }
     }
 }
