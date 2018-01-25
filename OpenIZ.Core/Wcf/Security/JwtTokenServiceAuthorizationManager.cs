@@ -94,10 +94,12 @@ namespace OpenIZ.Core.Wcf.Security
                         throw new UnauthorizedRequestException("Missing Authorization header", "Bearer", this.m_configuration.Security.ClaimsAuth.Realm, this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
                     }
                 }
-                else if (!authorization.Trim().StartsWith("bearer", StringComparison.InvariantCultureIgnoreCase))
+                else if (!authorization.Trim().StartsWith("bearer", StringComparison.InvariantCultureIgnoreCase) && 
+                    !authorization.Trim().StartsWith("urn:ietf:params:oauth:token-type:jwt", StringComparison.InvariantCultureIgnoreCase)) // <-- Also acceptable 
                     throw new UnauthorizedRequestException("Invalid authentication scheme", "Bearer", this.m_configuration.Security.ClaimsAuth.Realm, this.m_configuration.Security.ClaimsAuth.Audiences.FirstOrDefault());
 
-                String authorizationToken = authorization.Substring(6).Trim();
+                authorization = authorization.Trim();
+                String authorizationToken = authorization.Substring(authorization.IndexOf(" ")).Trim();
                 JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 
                 var identityModelConfig = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("system.identityModel") as SystemIdentityModelSection;

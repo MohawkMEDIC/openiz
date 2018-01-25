@@ -32,6 +32,7 @@ using OpenIZ.Messaging.IMSI.Model;
 using SwaggerWcf.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Security.Permissions;
@@ -79,7 +80,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
     [ServiceKnownType(typeof(ErrorResult))]
     [ServiceKnownType(typeof(ConceptSet))]
 	[ServiceKnownType(typeof(ConceptReferenceTerm))]
-	public interface IImsiServiceContract 
+    public interface IImsiServiceContract 
     {
 
         /// <summary>

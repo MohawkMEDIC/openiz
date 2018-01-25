@@ -76,17 +76,22 @@ namespace OpenIZ.Messaging.Discovery.Swagger
                      // etc
                  };
 
+
+                 var wcUrl = ApplicationContext.Current.GetService<IConfigurationManager>().AppSettings["wildcardUrl"];
+                 var authUrl = apis.FirstOrDefault(a => a.ApiType == ServiceEndpointType.AuthenticationService)?.Url.FirstOrDefault();
+
                  var security = new SecurityDefinitions
                     {
                      {
-                        "auth", new SecurityAuthorization
+                        "OpenIZ Auth", new SecurityAuthorization
                         {
                           Type = "oauth2",
                           Name = "auth",
                           Description = "Forces authentication with credentials via an oauth gateway",
                           Flow = "password",
-                          Scopes = apis.Where(a=>a.Capabilities.HasFlag(ServiceEndpointCapabilities.BearerAuth)).ToDictionary(a=>a.Url.FirstOrDefault().Replace("0.0.0.0", WebOperationContext.Current.IncomingRequest.UriTemplateMatch.RequestUri.Host), a=>a.ApiType.ToString()),
-                          AuthorizationUrl = apis.FirstOrDefault(a=>a.ApiType == ServiceEndpointType.AuthenticationService)?.Url.FirstOrDefault()
+                          TokenUrl = authUrl.Replace("0.0.0.0", wcUrl) + "/oauth2_token",
+                          Scopes = apis.Where(a=>a.Capabilities.HasFlag(ServiceEndpointCapabilities.BearerAuth) && a.Url.Any()).ToDictionary(a=>a.Url.FirstOrDefault().Replace("0.0.0.0", wcUrl), a=>a.ApiType.ToString()),
+                          AuthorizationUrl = authUrl.Replace("0.0.0.0", wcUrl) + "/oauth2_token"
                         }
                       }
                     };
