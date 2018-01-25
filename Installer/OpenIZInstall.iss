@@ -83,14 +83,14 @@ Name: cache\redis; Description: REDIS Shared Memory Caching; Types: full
 Name: tools; Description: Management Tooling; Types: full 
 Name: tools\dev; Description: OpenIZ Server SDK; Types: full tools
 Name: tools\migration; Description: GIIS Migration Tooling; Types: full 
-
+Name: demo; Description: Sample Data; 
 
 [Files]
 #ifdef BUNDLED
 #ifdef x64
-Source: .\installsupp\postgresql-9.4.14-1-windows-x64.exe; DestDir: {tmp}; Flags:dontcopy
+Source: .\installsupp\postgresql-9.4.15-2-windows-x64.exe; DestDir: {tmp}; Flags:dontcopy
 #else
-Source: .\installsupp\postgresql-9.4.14-1-windows.exe; DestDir: {tmp}; Flags:dontcopy
+Source: .\installsupp\postgresql-9.4.15-2-windows.exe; DestDir: {tmp}; Flags:dontcopy
 #endif
 #endif
 
@@ -139,6 +139,7 @@ Source: ..\Solution Items\MARC.HI.EHRS.SVC.Configurator.Npgsql.dll; DestDir: {ap
 Source: ..\Solution Items\MARC.HI.EHRS.SVC.Core.dll; DestDir: {app}; Components: core
 Source: ..\bin\Release\ConfigTool.exe; DestDir: {app}; Components: core
 Source: ..\bin\Release\ConfigTool.exe.config; DestDir: {app}; Components: core
+Source: ..\bin\release\System.Threading.Tasks.Extensions.dll; DestDir: {app}; Components: core
 ; AMI
 Source: ..\Solution Items\MARC.Util.CertificateTools.dll; DestDir: {app}; Components: msg\ami
 Source: ..\Solution Items\CERTADMINLib.dll; DestDir: {app}; Components: msg\ami
@@ -218,9 +219,13 @@ Source: ..\bin\Release\SeedData.xml; DestDir: {app}; Components: tools\dev
 Source: ..\bin\release\data\*.dataset; DestDir: {app}\data; Components: msg\imsi
 Source: ..\bin\release\applets\*.pak; DestDir: {app}\applets; Components: msg\ami
 Source: ..\..\servicecore\MARC.HI.EHRS.QM.Persistence.Data\SQL\PSQL9\*.sql; DestDir: {app}\sql;  Components: msg
+; Sample Data
+Source: ..\openiz\data\demo\*.dataset; DestDir: {app}\data; Components: demo;
+
 ; ADO Stuff
 Source: ..\bin\release\OpenIZ.Warehouse.ADO.dll; DestDir: {app}; Components: db\ado
 Source: ..\bin\release\OpenIZ.Persistence.Data.ADO.dll; DestDir: {app}; Components: db\ado
+Source: ..\bin\release\OpenIZ.Persistence.Auditing.ADO.dll; DestDir: {app}; Components: db\ado
 Source: ..\bin\release\OpenIZ.OrmLite.dll; DestDir: {app}; Components: db\ado
 Source: ..\OpenIZ.Persistence.Data.ADO\Data\SQL\PSQL\*.sql; DestDir: {app}\sql; Components: db\ado
 Source: ..\OpenIZ.Warehouse.ADO\Data\SQL\PSQL\*.sql; DestDir: {app}\sql; Components: db\ado
@@ -247,6 +252,7 @@ Source: ..\bin\release\OpenIZ.Persistence.Diagnostics.Jira.dll; DestDir: {app}; 
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Run]
+
 #ifndef DEBUG
 ; ADO.NET 
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\Npgsql.dll"" /nologo /silent"; Components: tools\migration db\ado; StatusMsg: "Optimizing Assembly:Npgsql.dll"; flags: runhidden
@@ -335,8 +341,13 @@ Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Messaging.
 ; JIRA Stuff
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "install ""{app}\OpenIZ.Persistence.Diagnostics.Jira.dll"" /nologo /silent"; Components: interop\jira; StatusMsg: "Optimizing Assembly:OpenIZ.Persistence.Diagnostics.Jira.dll"; flags: runhidden
 #endif
+Filename: "{app}\ConfigTool.exe"; Flags: postinstall; Description: "Configure Open Immunize"
 
 [UninstallRun]
+#ifdef BUNDLED
+Filename: "{app}\postgresql\uninstall-postgresql.exe"; Parameters: "--mode unattended"; StatusMsg: "Un-registering PostgreSQL 9.5.10"; Flags:runhidden;
+#endif
+
 #ifndef DEBUG
 ; ADO.NET 
 Filename: "{dotnet40}\\ngen.exe"; Parameters: "uninstall ""{app}\Npgsql.dll"" /nologo /silent"; Components: tools\migration db\ado; StatusMsg: "Optimizing Assembly:Npgsql.dll"; flags: runhidden
@@ -445,22 +456,31 @@ const
   // dotnetRedistURL = 'http://192.168.1.1/dotnetfx.exe';
 
 
+function Framework45IsNotInstalled(): Boolean;
+var
+  bSuccess: Boolean;
+  regVersion: Cardinal;
+begin
+  Result := True;
+  bSuccess := RegQueryDWordValue(HKLM, 'Software\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', regVersion);
+  if (True = bSuccess) and (regVersion >= 378675) then begin
+    Result := False;
+  end;
+end; 
+
 function InitializeSetup(): Boolean;
 
 begin
  
   Result := true;
-  dotNetNeeded := false;
-
+  dotNetNeeded := Framework45IsNotInstalled();
   
-  if(not DirExists(ExpandConstant('{dotnet40}'))) then begin
-    dotNetNeeded := true;
-    if (not IsAdminLoggedOn()) then begin
-      MsgBox('Client Registry needs the Microsoft .NET Framework 4.5 to be installed by an Administrator', mbInformation, MB_OK);
-      Result := false;
-    end else begin
-      memoDependenciesNeeded := memoDependenciesNeeded + '      .NET Framework 4.5' #13;
-    end;
+  if (not IsAdminLoggedOn()) then begin
+    MsgBox('OpenIZ needs the Microsoft .NET Framework 4.5.1 to be installed by an Administrator', mbInformation, MB_OK);
+    Result := false;
+  end 
+  else if(dotNetNeeded) then begin
+    memoDependenciesNeeded := memoDependenciesNeeded + '      .NET Framework 4.5.2' #13;
   end;
 
 end;
@@ -477,11 +497,11 @@ begin
   #ifdef BUNDLED
     if (chkInstallPSQL.Checked) then begin
 	#ifdef x64
-      ExtractTemporaryFile('postgresql-9.4.14-1-windows-x64.exe');
-      if Exec(ExpandConstant('{tmp}\postgresql-9.4.14-1-windows-x64.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename psql_openiz --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+      ExtractTemporaryFile('postgresql-9.4.15-2-windows-x64.exe');
+      if Exec(ExpandConstant('{tmp}\postgresql-9.4.15-2-windows-x64.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename psql_openiz --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
 	#else
-      ExtractTemporaryFile('postgresql-9.4.14-1-windows.exe');
-      if Exec(ExpandConstant('{tmp}\postgresql-9.4.14-1-windows.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename  psql_openiz --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+      ExtractTemporaryFile('postgresql-9.4.15-2-windows.exe');
+      if Exec(ExpandConstant('{tmp}\postgresql-9.4.15-2-windows.exe'), '--mode unattended --superaccount ' + txtPostgresSU.Text + ' --superpassword ' + txtPostgresSUPass.Text + ' --servicename  psql_openiz --install_runtimes 1 --prefix "' + ExpandConstant('{app}\postgresql') + '" --datadir "' + ExpandConstant('{app}\postgresql\data') + '"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
 	#endif
           // handle success if necessary; ResultCode contains the exit code
           if not (ResultCode = 0) then begin
@@ -497,12 +517,12 @@ begin
       ExtractTemporaryFile('dotNetFx45_Full_setup.exe');
       if Exec(ExpandConstant(dotnetRedistURL), '/passive /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
           // handle success if necessary; ResultCode contains the exit code
-          if not (ResultCode = 0) then begin
-            Result := '.NET Framework 4.5 is Required';
+          if not (ResultCode <> 0) then begin
+            Result := '.NET Framework 4.5.1 is Required';
           end;
         end else begin
           // handle failure if necessary; ResultCode contains the error code
-            Result := '.NET Framework 4.5 is Required';
+            Result := '.NET Framework 4.5.1 is Required';
         end;
     end;
 
@@ -533,7 +553,7 @@ begin
   lblDescription := TLabel.Create(Page);
 	with lblDescription do begin
 		Parent := Page.Surface;
-		Caption := ExpandConstant('Setup can install Enterprise DB''s Windows version of PostgreSQL 9.4.14 on this computer. You do not need to do this if you have another computer running PostgreSQL 9.4 or higher.');
+		Caption := ExpandConstant('Setup can install Enterprise DB''s Windows version of PostgreSQL 9.4.15 on this computer. You do not need to do this if you have another computer running PostgreSQL 9.4 or higher.');
     WordWrap := true;
 		Left := ScaleX(5);
 		Top := ScaleY(8);
@@ -545,7 +565,7 @@ begin
 	chkInstallPSQL := TCheckBox.Create(Page);
 	with chkInstallPSQL do begin
 		Parent := Page.Surface;
-		Caption := ExpandConstant('Install PostgreSQL 9.4.14');
+		Caption := ExpandConstant('Install PostgreSQL 9.4.15');
 		Left := ScaleX(5);
 		Top := ScaleY(60);
 		Width := ScaleX(348);

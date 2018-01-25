@@ -2,6 +2,7 @@
  * <update id="20170913-01" applyRange="0.2.0.3-0.9.0.3"  invariantName="npgsql">
  *	<summary>Adds BAD to the type of name uses</summary>
  *	<remarks>Fixes issue with locked accounts</remarks>
+ *	<isInstalled>select ck_patch('20170913-01')</isInstalled>
  * </update>
  */
 
@@ -19,5 +20,8 @@ BEGIN
 	RETURN '0.9.0.4';
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT REG_PATCH('20170913-01');
+
 
 COMMIT;

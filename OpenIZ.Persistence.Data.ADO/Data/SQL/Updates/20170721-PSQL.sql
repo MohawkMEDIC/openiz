@@ -4,9 +4,30 @@
  *	<remarks>This update will install two new entity relationship types: INSTANCE and LOCATED ENTITY. INSTANCE replaces the old MANUFACTURED_PRODUCT relationship
  *	type, and is used to indicate a manufactured material is an instance of a material kind. LOCATED ENTITY is used to indicate that a particular entity is physically
  *	located in another entity</remarks>
+ *  <isInstalled>select string_to_array(get_sch_vrsn(), '.')::int[] >= string_to_array('0.9.0.1', '.')::int[]</isInstalled>
  * </update>
  */
 BEGIN TRANSACTION;
+
+
+CREATE TABLE PATCH_DB_SYSTBL (
+	PATCH_ID	VARCHAR(24) NOT NULL, 
+	APPLY_DATE	TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT PK_PTCH_DB_SYSTBL PRIMARY KEY (PATCH_ID)
+);
+
+CREATE OR REPLACE FUNCTION REG_PATCH(PATCH_ID_IN IN VARCHAR(24)) RETURNS BOOLEAN AS $$
+BEGIN
+	INSERT INTO PATCH_DB_SYSTBL (PATCH_ID) VALUES (PATCH_ID_IN);
+	RETURN TRUE;
+END
+$$ LANGUAGE PLPGSQL;
+
+CREATE OR REPLACE FUNCTION CK_PATCH(PATCH_ID_IN IN VARCHAR(24)) RETURNS BOOLEAN AS $$
+BEGIN
+	RETURN (SELECT COUNT(*) > 0 FROM PATCH_DB_SYSTBL WHERE PATCH_ID = PATCH_ID_IN);
+END
+$$ LANGUAGE PLPGSQL;
 
 DROP INDEX CD_VRSN_MNEMONIC_IDX;
 CREATE UNIQUE INDEX CD_VRSN_MNEMONIC_IDX ON CD_VRSN_TBL(MNEMONIC) WHERE OBSLT_UTC IS NULL;
@@ -107,5 +128,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+SELECT REG_PATCH('20170721-01');
 
 COMMIT;

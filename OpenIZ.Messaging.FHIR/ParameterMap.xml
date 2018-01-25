@@ -63,9 +63,10 @@
     <map fhir="provider.name" model="relationship[HealthcareProvider].target.name.component.value"/>
     <map fhir="provider.address" model="relationship[HealthcareProvider].target.address.component.value"/>
     <map fhir="location" model="relationship[DedicatedServiceDeliveryLocation].target" type="reference"/>
-    <map fhir="location.identifier" model="relationship[DedicatedServiceDeliveryLocation].target.identifier"/>
+    <map fhir="location.identifier" model="relationship[DedicatedServiceDeliveryLocation].target.identifier" type="identifier"/>
     <map fhir="location.name" model="relationship[DedicatedServiceDeliveryLocation].target.name.component.value"/>
     <map fhir="location.address" model="relationship[DedicatedServiceDeliveryLocation].target.address.component.value"/>
+    <map fhir="registration-time" model="creationTime"/>
   </type>
 
   <type model="MARC.HI.EHRS.SVC.Messaging.FHIR.Resources.Observation, MARC.HI.EHRS.SVC.Messaging.FHIR, Version=2.0.0.0">

@@ -2,6 +2,7 @@
  * <update id="20171011-01" applyRange="0.2.0.4-0.9.0.5"  invariantName="npgsql">
  *	<summary>Adds trigger constraints to ensure that relationships are of proper type</summary>
  *	<remarks></remarks>
+ *	<isInstalled>select ck_patch('20171011-01')</isInstalled>
  * </update>
  */
 
@@ -199,5 +200,7 @@ BEGIN
 	RETURN '0.9.0.6';
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT REG_PATCH('20171011-01');
 
 COMMIT;

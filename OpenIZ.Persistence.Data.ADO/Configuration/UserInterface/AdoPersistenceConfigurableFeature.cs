@@ -211,7 +211,7 @@ namespace OpenIZ.Persistence.Data.ADO.Configuration.UserInterface
                         using (var str = typeof(AdoPersistenceConfigurableFeature).Assembly.GetManifestResourceStream(nam))
                             retVal.Add(SqlSourceUpdate.Load(str));
                     }
-                return retVal;
+                return retVal.OrderBy(o=>o.Name).ToList();
             }
         }
 

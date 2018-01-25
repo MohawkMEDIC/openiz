@@ -1,7 +1,8 @@
 ﻿/** 
- * <update id="20171108-01" applyRange="0.9.11.0-0.9.11.0"  invariantName="npgsql">
- *	<summary>Adds trigger constraints to ensure that relationships are of proper type</summary>
+ * <update id="20171108-01" applyRange="0.9.0.0-0.9.11.0"  invariantName="npgsql">
+ *	<summary>Add relationship types between patients and locations</summary>
  *	<remarks></remarks>
+ *	<check>select ck_patch('20171108-01')</check>
  * </update>
  */
 
@@ -14,5 +15,8 @@ INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err
 
 -- RULE 12. -> Materials may use other Materials
 INSERT INTO ent_rel_vrfy_cdtbl (rel_typ_cd_id, src_cls_cd_id, trg_cls_cd_id, err_desc) VALUES ('08fff7d9-bac7-417b-b026-c9bee52f4a37', 'd39073be-0f8f-440e-b8c8-7034cc138a95', 'd39073be-0f8f-440e-b8c8-7034cc138a95', 'err_materials_associate_materials');
+
+SELECT REG_PATCH('20171108-01');
+
 
 COMMIT;
