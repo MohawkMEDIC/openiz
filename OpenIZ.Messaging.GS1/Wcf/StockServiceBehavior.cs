@@ -37,6 +37,7 @@ using OpenIZ.Core.Model.Collection;
 using OpenIZ.Messaging.GS1.Configuration;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Extensions;
+using SwaggerWcf.Attributes;
 
 namespace OpenIZ.Messaging.GS1.Wcf
 {
@@ -44,6 +45,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
     /// Stock service behavior
     /// </summary>
     [ServiceBehavior(Name = "GS1BMS_Behavior", ConfigurationName = "GS1BMS", InstanceContextMode = InstanceContextMode.PerCall)]
+    [SwaggerWcf("/gs1")]
     public class StockServiceBehavior : IStockService
     {
 
@@ -82,6 +84,19 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// The issue despactch advice message will insert a new shipped order into the TImR system.
         /// </summary>
+        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfTag("GS1 BMS XML 3.3")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(409, "You are attempting to create a resource that already exists")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(503, "The server has not completed startup or is in a state which cannot accept messages")]
+        [SwaggerWcfResponse(200, "Despatch advice was accepted")]
         public void IssueDespatchAdvice(DespatchAdviceMessageType advice)
         {
             if (advice == null || advice.despatchAdvice == null)
@@ -212,6 +227,17 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// Requests the issuance of a BMS1 inventory report request
         /// </summary>
+        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfTag("GS1 BMS XML 3.3")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(503, "The server has not completed startup or is in a state which cannot accept messages")]
+        [SwaggerWcfResponse(200, "Inventory report was constructed and returned")]
         public LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestMessageType parameters)
         {
             // Status
@@ -463,6 +489,19 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// Issues the order response message which will mark the requested order as underway
         /// </summary>
+        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfTag("GS1 BMS XML 3.3")]
+        [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+        [SwaggerWcfResponse(401, "Operation requires authentication")]
+        [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+        [SwaggerWcfResponse(404, "The provided resource could not be found")]
+        [SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+        [SwaggerWcfResponse(409, "You are attempting to create a resource that already exists")]
+        [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+        [SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+        [SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+        [SwaggerWcfResponse(503, "The server has not completed startup or is in a state which cannot accept messages")]
+        [SwaggerWcfResponse(200, "Order response was accepted")]
         public void IssueOrderResponse(OrderResponseMessageType orderResponse)
         {
             // TODO: Validate the standard header

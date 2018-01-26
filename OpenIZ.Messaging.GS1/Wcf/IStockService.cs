@@ -18,6 +18,7 @@
  * Date: 2017-9-1
  */
 using OpenIZ.Messaging.GS1.Model;
+using SwaggerWcf.Attributes;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 
@@ -34,12 +35,14 @@ namespace OpenIZ.Messaging.GS1.Wcf
 		/// Represents a request for issuance of an inventory report
 		/// </summary>
 		[WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/inventoryReport")]
+        [SwaggerWcfPath("Issue Inventory Report", "Builds and returns a detailed inventory report for the specified facilities", ExternalDocsUrl = "https://www.gs1.org/edi-xml/xml-inventory-report/3-3", ExternalDocsDescription = "GS1 BMS XML 3.3 Specification for Inventory Report")]
 		LogisticsInventoryReportMessageType IssueInventoryReportRequest(LogisticsInventoryReportRequestMessageType parameters);
 
         /// <summary>
         /// Represents a request to issue despatch advice
         /// </summary>
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/despatchAdvice")]
+        [SwaggerWcfPath("Issue Despatch Advice", "Sends a despatch (shipment of goods) to the Open Immunize server", ExternalDocsUrl = "https://www.gs1.org/edi-xml/xml-despatch-advice/3-3", ExternalDocsDescription = "GS1 BMS XML 3.3 Specification for Despatch Advice")]
         void IssueDespatchAdvice(DespatchAdviceMessageType advice);
 
         /// <summary>
@@ -60,6 +63,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// Issues order response
         /// </summary>
         [WebInvoke(Method = "POST", BodyStyle = WebMessageBodyStyle.Bare, RequestFormat = WebMessageFormat.Xml, ResponseFormat = WebMessageFormat.Xml, UriTemplate = "/orderResponse")]
+        [SwaggerWcfPath("Issue Order Response", "Allows an external GS1 trading parter to send a response to an order request which originated from Open Immunize", ExternalDocsUrl = "https://www.gs1.org/edi-xml/xml-order-response/3-3", ExternalDocsDescription = "GS1 BMS XML 3.3 Specification for Order Response")]
         void IssueOrderResponse(OrderResponseMessageType orderResponse);
     }
 }

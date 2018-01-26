@@ -20,6 +20,7 @@
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.RISI;
 using OpenIZ.Reporting.Core;
+using SwaggerWcf.Attributes;
 using System;
 using System.IO;
 using System.ServiceModel;
@@ -30,6 +31,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 	/// Provides operations for running and managing reports.
 	/// </summary>
 	[ServiceBehavior(ConfigurationName = "RISI")]
+    [SwaggerWcf("/risi")]
 	public partial class RisiBehavior : IRisiContract
 	{
 		/// <summary>
