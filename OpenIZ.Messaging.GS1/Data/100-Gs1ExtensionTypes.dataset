@@ -3,21 +3,21 @@
   <update insertIfNotExists="true">
     <ExtensionType xmlns="http://openiz.org/model">
       <id>6b2ae7b5-158f-46d0-9ff9-0e3fa999dcaa</id>
-      <handlerClass>OpenIZ.Core.Extensions.DateExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <handlerClass>OpenIZ.Core.Extensions.DateExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0</handlerClass>
       <name>http://openiz.org/extensions/stock/contrib/gs1/estimatedDeliveryDate</name>
     </ExtensionType>
   </update>
   <update insertIfNotExists="true">
     <ExtensionType xmlns="http://openiz.org/model">
       <id>34073745-018b-48d1-82da-c545391d294a</id>
-      <handlerClass>OpenIZ.Core.Extensions.DateExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <handlerClass>OpenIZ.Core.Extensions.DateExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0</handlerClass>
       <name>http://openiz.org/extensions/stock/contrib/gs1/shipmentDate</name>
     </ExtensionType>
   </update>
   <update insertIfNotExists="true">
     <ExtensionType xmlns="http://openiz.org/model">
       <id>4F417368-1C96-4F5E-BDAC-CA51C4BABF3B</id>
-      <handlerClass>OpenIZ.Core.Extensions.StringExtensionHandler, OpenIZ.Core.Model, Version=0.6.0.0</handlerClass>
+      <handlerClass>OpenIZ.Core.Extensions.StringExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0</handlerClass>
       <name>http://openiz.org/extensions/stock/contrib/gs1/packagingType</name>
     </ExtensionType>
   </update>
