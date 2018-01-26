@@ -1,5 +1,5 @@
 ﻿/** 
- * <update id="20171108-01" applyRange="0.9.0.0-0.9.11.0"  invariantName="npgsql">
+ * <update id="20171108-01" applyRange="0.9.0.0-1.0.0.0"  invariantName="npgsql">
  *	<summary>Add relationship types between patients and locations</summary>
  *	<remarks></remarks>
  *	<check>select ck_patch('20171108-01')</check>

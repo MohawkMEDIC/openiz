@@ -71,6 +71,18 @@ namespace OpenIZ.BusinessRules.JavaScript
     public class JavascriptBusinessRulesEngine : IDisposable
     {
 
+        // Debug mode
+        private static bool s_debugMode = false;
+
+        /// <summary>
+        /// Set the global debug mode
+        /// </summary>
+        /// <param name="debugMode">The debug mode to set</param>
+        public static void SetDebugMode(bool debugMode)
+        {
+            s_debugMode = debugMode;
+        }
+
         // UUID for logging
         private Guid m_engineId = Guid.NewGuid();
 
@@ -181,6 +193,8 @@ namespace OpenIZ.BusinessRules.JavaScript
                 .Strict(false)
 #if DEBUG
                 .DebugMode(true)
+#else
+                .DebugMode(s_debugMode)
 #endif
 
                 ).SetValue("OpenIZBre", this.m_bridge)

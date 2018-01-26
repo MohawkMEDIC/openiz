@@ -5,4 +5,5 @@ set version=%1
 echo Building Windows Installer
 cd installer
 call .\build.bat %version%
+cd ..
 exit /b

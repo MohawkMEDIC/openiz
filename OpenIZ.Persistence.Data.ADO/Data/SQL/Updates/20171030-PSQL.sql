@@ -1,5 +1,5 @@
 ﻿/** 
- * <update id="20171030-01" applyRange="0.2.0.7-0.9.11.0"  invariantName="npgsql">
+ * <update id="20171030-01" applyRange="0.2.0.7-1.0.0.0"  invariantName="npgsql">
  *	<summary>Adds the SQUASH_DB() command to database</summary>
  *	<remarks></remarks>
  *	<isInstalled>select ck_patch('20171030-01')</isInstalled>
@@ -173,7 +173,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION GET_SCH_VRSN() RETURNS VARCHAR(10) AS
 $$
 BEGIN
-	RETURN '0.9.11.0';
+	RETURN '1.0.0.0';
 END;
 $$ LANGUAGE plpgsql;
 

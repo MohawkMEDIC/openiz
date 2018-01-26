@@ -5,22 +5,22 @@
     <section name="system.identityModel" type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral"/>
     <!-- The following lines must always exist in your configuration file -->
     <section name="marc.hi.ehrs.svc.core" type="MARC.HI.EHRS.SVC.Core.Configuration.HostConfigurationSectionHandler, MARC.HI.EHRS.SVC.Core, Version=2.0.0.0"/>
-    <section name="openiz.core" type="OpenIZ.Core.Configuration.ConfigurationSectionHandler, OpenIZ.Core, Version=0.6.0.0"/>
+    <section name="openiz.core" type="OpenIZ.Core.Configuration.ConfigurationSectionHandler, OpenIZ.Core, Version=1.0.0.0"/>
 
     <!-- Registers the Microsoft SQL Server configuration section
-    <section name="openiz.persistence.data.mssql" type="OpenIZ.Persistence.Data.MSSQL.Configuration.SqlConfigurationSectionHandler, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
+    <section name="openiz.persistence.data.mssql" type="OpenIZ.Persistence.Data.MSSQL.Configuration.SqlConfigurationSectionHandler, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0"/>
     -->
     <!-- Registers the IMSI (IMS Interface) configuration endpoint
-    <section name="openiz.messaging.imsi" type="OpenIZ.Messaging.IMSI.Configuration.ImsiConfigurationSectionHandler, OpenIZ.Messaging.IMSI, Version=0.6.0.0"/>
+    <section name="openiz.messaging.imsi" type="OpenIZ.Messaging.IMSI.Configuration.ImsiConfigurationSectionHandler, OpenIZ.Messaging.IMSI, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the OpenIZ Reporting Engine configuration section
-    <section name="openiz.reporting.core" type="OpenIZ.Reporting.Core.Configuration.ReportingConfigurationSectionHandler, OpenIZ.Reporting.Core, Version=0.6.0.0"/>
+    <section name="openiz.reporting.core" type="OpenIZ.Reporting.Core.Configuration.ReportingConfigurationSectionHandler, OpenIZ.Reporting.Core, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the Authentication Control Service Configuration
       Do not un-comment if you are using a third party IdP like IdentityServer3
-    <section name="openiz.authentication.oauth2" type="OpenIZ.Authentication.OAuth2.Configuration.ConfigurationSectionHandler, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+    <section name="openiz.authentication.oauth2" type="OpenIZ.Authentication.OAuth2.Configuration.ConfigurationSectionHandler, OpenIZ.Authentication.OAuth2, Version=1.0.0.0"/>
       -->
 
     <!-- Registers the HL7 FHIR interface configuration
@@ -28,11 +28,11 @@
     -->
 
     <!-- Registers the Administration Management Interface (AMI)
-    <section name="openiz.messaging.ami" type="OpenIZ.Messaging.AMI.Configuration.AmiConfigurationSectionHandler, OpenIZ.Messaging.AMI, Version=0.6.0.0"/>
+    <section name="openiz.messaging.ami" type="OpenIZ.Messaging.AMI.Configuration.AmiConfigurationSectionHandler, OpenIZ.Messaging.AMI, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the Memory Caching Configuration 
-    <section name="openiz.caching.memory" type="OpenIZ.Caching.Memory.Configuration.ConfigurationSectionHandler, OpenIZ.Caching.Memory, Version=0.6.0.0"/>
+    <section name="openiz.caching.memory" type="OpenIZ.Caching.Memory.Configuration.ConfigurationSectionHandler, OpenIZ.Caching.Memory, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the Timer Job Configuration 
@@ -40,7 +40,7 @@
     -->
 
     <!-- Registers the ADO.NET (PostgreSQL, SQLite, etc) persistence configuration
-    <section name="openiz.persistence.data.ado" type="OpenIZ.Persistence.Data.ADO.Configuration.AdoConfigurationSectionHandler, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+    <section name="openiz.persistence.data.ado" type="OpenIZ.Persistence.Data.ADO.Configuration.AdoConfigurationSectionHandler, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the HL7 v2.x Interface Configuration
@@ -48,27 +48,27 @@
     -->
 
     <!-- Registers JIRA Diagnostics for capturing diagnostic (sherlock) reports
-    <section name="openiz.persistence.diagnostics.jira" type="OpenIZ.Persistence.Diagnostics.Jira.Configuration.ConfigurationSectionHandler, OpenIZ.Persistence.Diagnostics.Jira, Version=0.6.0.0"/>
+    <section name="openiz.persistence.diagnostics.jira" type="OpenIZ.Persistence.Diagnostics.Jira.Configuration.ConfigurationSectionHandler, OpenIZ.Persistence.Diagnostics.Jira, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the EMail Two-Factor Authentication and Password Recovery Section
-    <section name="openiz.core.security.tfa.email" type="OpenIZ.Core.Security.Tfa.Email.Configuration.ConfigurationSectionHandler, OpenIZ.Core.Security.Tfa.Email, Version=0.6.0.0"/>
+    <section name="openiz.core.security.tfa.email" type="OpenIZ.Core.Security.Tfa.Email.Configuration.ConfigurationSectionHandler, OpenIZ.Core.Security.Tfa.Email, Version=1.0.0.0"/>
     -->
 
     <!-- Registers Twilio SMS Two-Factor Authentication and Password recovery 
-    <section name="openiz.core.security.tfa.twilio" type="OpenIZ.Core.Security.Tfa.Twilio.Configuration.ConfigurationSectionHandler, OpenIZ.Core.Security.Tfa.Twilio, Version=0.6.0.0"/>
+    <section name="openiz.core.security.tfa.twilio" type="OpenIZ.Core.Security.Tfa.Twilio.Configuration.ConfigurationSectionHandler, OpenIZ.Core.Security.Tfa.Twilio, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the HL7 v2.x notification services for PIX/PDQ 
-    <section name="openiz.messaging.hl7.notification.pixpdq" type="OpenIZ.Messaging.HL7.Configuration.Hl7ConfigurationSectionHandler, OpenIZ.Messaging.HL7, Version=0.6.0.0"/>
+    <section name="openiz.messaging.hl7.notification.pixpdq" type="OpenIZ.Messaging.HL7.Configuration.Hl7ConfigurationSectionHandler, OpenIZ.Messaging.HL7, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the PostgreSQL Report Data Store 
-    <section name="openiz.persistence.reporting.psql" type="OpenIZ.Persistence.Reporting.PSQL.Configuration.ConfigurationSectionHandler, OpenIZ.Persistence.Reporting.PSQL, Version=0.6.0.0"/>
+    <section name="openiz.persistence.reporting.psql" type="OpenIZ.Persistence.Reporting.PSQL.Configuration.ConfigurationSectionHandler, OpenIZ.Persistence.Reporting.PSQL, Version=1.0.0.0"/>
     -->
 
     <!-- Registers the ADO.NET (PostgreSQL, SQLite, etc.) data warehouse store
-    <section name="openiz.warehouse.ado" type="OpenIZ.Warehouse.ADO.Configuration.AdoConfigurationSectionHandler, OpenIZ.Warehouse.ADO, Version=0.8.0.0"/>
+    <section name="openiz.warehouse.ado" type="OpenIZ.Warehouse.ADO.Configuration.AdoConfigurationSectionHandler, OpenIZ.Warehouse.ADO, Version=1.0.0.0"/>
     -->
 
     <section name="entityFramework" type="System.Data.Entity.Internal.ConfigFile.EntityFrameworkSection, EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" requirePermission="false" />
@@ -78,7 +78,7 @@
     -->
 
     <!-- Registers the REDIS cache service
-    <section name="openiz.caching.redis" type="OpenIZ.Caching.Redis.Configuration.RedisConfigurationHandler, OpenIZ.Caching.Redis, Version=0.8.0.0"/>
+    <section name="openiz.caching.redis" type="OpenIZ.Caching.Redis.Configuration.RedisConfigurationHandler, OpenIZ.Caching.Redis, Version=1.0.0.0"/>
     -->
 
     <!-- Registers IHE ATNA (DICOM/RFC-3881) auditing
@@ -229,9 +229,9 @@
         <behavior name="fhir_Behavior">
           <serviceDebug includeExceptionDetailInFaults="False" />
           <serviceMetadata httpGetEnabled="False" httpGetUrl="http://0.0.0.0:8080/fhir" />
-          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=1.0.0.0" >
             <authorizationPolicies>
-              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=1.0.0.0"/>
             </authorizationPolicies>
           </serviceAuthorization>
         </behavior>
@@ -241,12 +241,12 @@
         <behavior name="oauth2_behavior">
           <serviceAuthorization principalPermissionMode="Custom">
             <authorizationPolicies>
-              <add policyType="OpenIZ.Authentication.OAuth2.Wcf.ClientAuthorizationPolicy, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+              <add policyType="OpenIZ.Authentication.OAuth2.Wcf.ClientAuthorizationPolicy, OpenIZ.Authentication.OAuth2, Version=1.0.0.0"/>
             </authorizationPolicies>
           </serviceAuthorization>
           <serviceCredentials>
             <userNameAuthentication userNamePasswordValidationMode="Custom"
-                                    customUserNamePasswordValidatorType="OpenIZ.Authentication.OAuth2.Wcf.ClientCredentialValidator, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+                                    customUserNamePasswordValidatorType="OpenIZ.Authentication.OAuth2.Wcf.ClientCredentialValidator, OpenIZ.Authentication.OAuth2, Version=1.0.0.0"/>
           </serviceCredentials>
         </behavior>
         -->
@@ -254,9 +254,9 @@
         Enable this when the IMSI interface is running
         <behavior name="imsi_behavior">
           <serviceDebug includeExceptionDetailInFaults="false" httpHelpPageEnabled="true" httpHelpPageUrl="http://0.0.0.0:8080/help/imsi"/>
-          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=1.0.0.0" >
             <authorizationPolicies>
-              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=1.0.0.0"/>
             </authorizationPolicies>
           </serviceAuthorization>
           <serviceCredentials>
@@ -267,9 +267,9 @@
         Enable this when the AMI interface is running
         <behavior name="ami_behavior">
           <serviceDebug includeExceptionDetailInFaults="true"/>
-          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=1.0.0.0" >
             <authorizationPolicies>
-              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=1.0.0.0"/>
             </authorizationPolicies>
           </serviceAuthorization>
           <serviceCredentials>
@@ -280,9 +280,9 @@
         Enable this when the RISI interface is running
         <behavior name="risi_behavior">
           <serviceDebug includeExceptionDetailInFaults="true" />
-          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=0.6.0.0" >
+          <serviceAuthorization principalPermissionMode="Custom" serviceAuthorizationManagerType="OpenIZ.Core.Wcf.Security.JwtTokenServiceAuthorizationManager, OpenIZ.Core, Version=1.0.0.0" >
             <authorizationPolicies>
-              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=0.6.0.0"/>
+              <add policyType="OpenIZ.Core.Wcf.Security.JwtTokenAuthorizationPolicy, OpenIZ.Core, Version=1.0.0.0"/>
             </authorizationPolicies>
           </serviceAuthorization>
         </behavior>
@@ -464,8 +464,8 @@
   
   The provider types are:
   
-  PostgreSQL 9.x : OpenIZ.OrmLite.Providers.PostgreSQLProvider, OpenIZ.OrmLite, Version=0.6.0.0
-  SQLite3 : OpenIZ.OrmLite.Providers.SQLite, OpenIZ.OrmLite, Version=0.6.0.0
+  PostgreSQL 9.x : OpenIZ.OrmLite.Providers.PostgreSQLProvider, OpenIZ.OrmLite, Version=1.0.0.0
+  SQLite3 : OpenIZ.OrmLite.Providers.SQLite, OpenIZ.OrmLite, Version=1.0.0.0
   -->
   <!--
   Enable this section when you wish to use Microsoft SQL Server Persistence (older)
@@ -589,9 +589,9 @@
     Represent one or more resources which should be exposed on the FHIR interface
     
     <resourceProcessors>
-      <add type="OpenIZ.Messaging.FHIR.Handlers.PatientResourceHandler, OpenIZ.Messaging.FHIR, Version=0.6.0.0, Culture=neutral, PublicKeyToken=null" />
-      <add type="OpenIZ.Messaging.FHIR.Handlers.ImmunizationRecommendationResourceHandler, OpenIZ.Messaging.FHIR, Version=0.6.0.0, Culture=neutral, PublicKeyToken=null" />
-      <add type="OpenIZ.Messaging.FHIR.Handlers.ImmunizationResourceHandler, OpenIZ.Messaging.FHIR, Version=0.6.0.0, Culture=neutral, PublicKeyToken=null" />
+      <add type="OpenIZ.Messaging.FHIR.Handlers.PatientResourceHandler, OpenIZ.Messaging.FHIR, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <add type="OpenIZ.Messaging.FHIR.Handlers.ImmunizationRecommendationResourceHandler, OpenIZ.Messaging.FHIR, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <add type="OpenIZ.Messaging.FHIR.Handlers.ImmunizationResourceHandler, OpenIZ.Messaging.FHIR, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     </resourceProcessors>
     
     Cross-origin Resource Scripting (CORS) header controls which allow JavaScript to access this server directly
@@ -629,13 +629,13 @@
   <marc.hi.ehrs.svc.messaging.hapi>
     <services>
       <service name="LLP Listener" timeout="00:00:30" address="llp://0.0.0.0:2100">
-        <handler type="OpenIZ.Messaging.HL7.AdtMessageHandler, OpenIZ.Messaging.HL7, Version=0.6.0.0">
+        <handler type="OpenIZ.Messaging.HL7.AdtMessageHandler, OpenIZ.Messaging.HL7, Version=1.0.0.0">
           <message name="ADT^A01"/>
           <message name="ADT^A04"/>
           <message name="ADT^A05"/>
           <message name="ADT^A08"/>
         </handler>
-        <handler type="OpenIZ.Messaging.HL7.NotSupportedMessageHandler, OpenIZ.Messaging.HL7, Version=0.6.0.0">
+        <handler type="OpenIZ.Messaging.HL7.NotSupportedMessageHandler, OpenIZ.Messaging.HL7, Version=1.0.0.0">
           <message name="*"/>
         </handler>
       </service>
@@ -673,60 +673,60 @@
       <!--
       Enable one of these services for the type of password hashing you would like in OpenIZ
       
-      SHA256: <add type="OpenIZ.Core.Security.SHA256PasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
-      SHA1: <add type="OpenIZ.Core.Security.SHA1PasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
-      MD5: <add type="OpenIZ.Core.Security.MD5PasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
-      Plain: <add type="OpenIZ.Core.Security.PlainTextPasswordHashingService, OpenIZ.Core, Version=0.6.0.0"/>
+      SHA256: <add type="OpenIZ.Core.Security.SHA256PasswordHashingService, OpenIZ.Core, Version=1.0.0.0"/>
+      SHA1: <add type="OpenIZ.Core.Security.SHA1PasswordHashingService, OpenIZ.Core, Version=1.0.0.0"/>
+      MD5: <add type="OpenIZ.Core.Security.MD5PasswordHashingService, OpenIZ.Core, Version=1.0.0.0"/>
+      Plain: <add type="OpenIZ.Core.Security.PlainTextPasswordHashingService, OpenIZ.Core, Version=1.0.0.0"/>
       -->
 
       <!--
       Enable these services if you are running Microsoft SQL Server Persistence Services
-      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlServerPersistenceService, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlPolicyInformationService, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlRoleProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlIdentityProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlApplicationIdentityProvider, OpenIZ.Persistence.Data.MSSQL, Version=0.6.0.0"/>-->
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlServerPersistenceService, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlPolicyInformationService, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlRoleProvider, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlIdentityProvider, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.MSSQL.Services.SqlApplicationIdentityProvider, OpenIZ.Persistence.Data.MSSQL, Version=1.0.0.0"/>-->
       
       <!--
       Enable these services for ADO.NET persistence 
-      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoApplicationIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoDeviceIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPersistenceService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPolicyInformationService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoRoleProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
-      <add type="OpenIZ.Persistence.Data.ADO.AdoOidRegistrarService, OpenIZ.Persistence.Data.ADO, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoApplicationIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoDeviceIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPersistenceService, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoPolicyInformationService, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoRoleProvider, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.Services.AdoIdentityProvider, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
+      <add type="OpenIZ.Persistence.Data.ADO.AdoOidRegistrarService, OpenIZ.Persistence.Data.ADO, Version=1.0.0.0"/>
       -->
     
       <!-- 
       Enable this service to allow contact on the IMS interface
-      <add type="OpenIZ.Messaging.IMSI.ImsiMessageHandler, OpenIZ.Messaging.IMSI, Version=0.6.0.0"/>
+      <add type="OpenIZ.Messaging.IMSI.ImsiMessageHandler, OpenIZ.Messaging.IMSI, Version=1.0.0.0"/>
       -->
       
       <!-- 
       Enable this service to allow contact on the RISI (report) interface
-      <add type="OpenIZ.Messaging.RISI.RisiMessageHandler, OpenIZ.Messaging.RISI, Version=0.6.0.0"/>
+      <add type="OpenIZ.Messaging.RISI.RisiMessageHandler, OpenIZ.Messaging.RISI, Version=1.0.0.0"/>
       -->
       
       <!-- 
       Enable this interface to allow contact on the Administrative interface
-      <add type="OpenIZ.Messaging.AMI.AmiMessageHandler, OpenIZ.Messaging.AMI, Version=0.6.0.0"/>
+      <add type="OpenIZ.Messaging.AMI.AmiMessageHandler, OpenIZ.Messaging.AMI, Version=1.0.0.0"/>
       -->
 
       <!-- 
       Enable this interface to set this service as an ACS
-      <add type="OpenIZ.Authentication.OAuth2.OAuthMessageHandler, OpenIZ.Authentication.OAuth2, Version=0.6.0.0"/>
+      <add type="OpenIZ.Authentication.OAuth2.OAuthMessageHandler, OpenIZ.Authentication.OAuth2, Version=1.0.0.0"/>
       -->
 
       <!--
       Enable this interface to allow contact on a GS1 BMS message
-      <add type="OpenIZ.Messaging.GS1.StockServiceMessageHandler, OpenIZ.Messaging.GS1, Version=0.6.0.0"/>
+      <add type="OpenIZ.Messaging.GS1.StockServiceMessageHandler, OpenIZ.Messaging.GS1, Version=1.0.0.0"/>
       -->
 
       <!-- 
       Enable this service if this host is to act as a data intializer which is responsible for setting up the primary database.
       Only one machine in an OpenIZ cluster should be a data initializer
-      <add type="OpenIZ.Core.Persistence.DataInitializationService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Persistence.DataInitializationService, OpenIZ.Core, Version=1.0.0.0"/>
       -->
 
       <!-- 
@@ -740,82 +740,82 @@
       -->
 
       <!-- Core Services: Disabling these are unwise -->
-      <add type="OpenIZ.Core.Services.Impl.LocalConceptRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalPatientRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalSecurityRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalMaterialRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalPlaceRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalProviderRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalPersonRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalMetadataRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalActRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalAlertRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalOrganizationRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalIdentifierTypeRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalAssigningAuthorityRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalStockManagementRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalEntityRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.SimplePatchService, OpenIZ.Core.PCL, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalBatchRepositoryService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.ThreadPoolService, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Services.Impl.LocalServiceManager, OpenIZ.Core, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Security.Audit.AuditDaemonService, OpenIZ.Core, Version=0.8.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalConceptRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalPatientRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalSecurityRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalMaterialRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalPlaceRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalProviderRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalPersonRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalMetadataRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalActRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalAlertRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalOrganizationRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalIdentifierTypeRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalAssigningAuthorityRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalStockManagementRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalEntityRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.SimplePatchService, OpenIZ.Core.PCL, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalBatchRepositoryService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.ThreadPoolService, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalServiceManager, OpenIZ.Core, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Security.Audit.AuditDaemonService, OpenIZ.Core, Version=1.0.0.0"/>
 
       <!-- Change this if you wish to use an external policy decision service (PDP) -->
-      <add type="OpenIZ.Core.Security.LocalPolicyDecisionService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Security.LocalPolicyDecisionService, OpenIZ.Core, Version=1.0.0.0"/>
 
       <!-- Change this if you wish to use a custom phonetic algorithm calculation service -->
-      <add type="OpenIZ.Core.Services.Impl.NullPhoneticAlgorithmHandler, OpenIZ.Core.PCL, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.NullPhoneticAlgorithmHandler, OpenIZ.Core.PCL, Version=1.0.0.0"/>
 
       <!--
       Enable this service if you wish for sherlock diagnostic reports to go to a JIRA server
-      <add type="OpenIZ.Persistence.Diagnostics.Jira.DiagnosticReportPersistenceService, OpenIZ.Persistence.Diagnostics.Jira, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Diagnostics.Jira.DiagnosticReportPersistenceService, OpenIZ.Persistence.Diagnostics.Jira, Version=1.0.0.0"/>
       -->
 
       <!--
       Enable this service if you wish to use the in-process memory caching
-      <add type="OpenIZ.Caching.Memory.MemoryCacheService, OpenIZ.Caching.Memory, Version=0.6.0.0"/>
+      <add type="OpenIZ.Caching.Memory.MemoryCacheService, OpenIZ.Caching.Memory, Version=1.0.0.0"/>
       -->
       <!--
       Enable this service if you wish to enable REDIS shared memory caching
-      <add type="OpenIZ.Caching.Redis.RedisCacheService, OpenIZ.Caching.Redis, Version=0.8.0.0"/>
+      <add type="OpenIZ.Caching.Redis.RedisCacheService, OpenIZ.Caching.Redis, Version=1.0.0.0"/>
       -->
       
       <!--
       Enable this service if you wish to enable timer jobs (recommended)
-      <add type="MARC.HI.EHRS.SVC.Core.Timer.TimerService, MARC.HI.EHRS.SVC.Core.Timer, Version=0.6.0.0"/>
+      <add type="MARC.HI.EHRS.SVC.Core.Timer.TimerService, MARC.HI.EHRS.SVC.Core.Timer, Version=1.0.0.0"/>
       -->
       
       <!--
       Enable this service to broadcast new patient registrations to a IHE PIX based client registry
-      <add type="OpenIZ.Messaging.HL7.Services.ClientRegistryNotificationService, OpenIZ.Messaging.HL7, Version=0.6.0.0"/>
+      <add type="OpenIZ.Messaging.HL7.Services.ClientRegistryNotificationService, OpenIZ.Messaging.HL7, Version=1.0.0.0"/>
       -->
       
       <!--
       If you wish to enable Two-factor authentication on this server you will need to enable a relay service. This is a default implementation
-      <add type="OpenIZ.Core.Security.DefaultTfaRelayService, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Security.DefaultTfaRelayService, OpenIZ.Core, Version=1.0.0.0"/>
       -->
       <!--
       For password reset, the service will require a TFA Secret generator, this defualt implementation generates a 4 digit numeric code
-      <add type="OpenIZ.Core.Security.SimpleTfaSecretGenerator, OpenIZ.Core, Version=0.6.0.0"/>
+      <add type="OpenIZ.Core.Security.SimpleTfaSecretGenerator, OpenIZ.Core, Version=1.0.0.0"/>
       -->
 
       <!--
       Enabling these services will provide two-factor mechanisms for email and SMS
-      <add type="OpenIZ.Core.Security.Tfa.Email.TfaEmailMechanism, OpenIZ.Core.Security.Tfa.Email, Version=0.6.0.0"/>
-      <add type="OpenIZ.Core.Security.Tfa.Twilio.TfaTwilioMechanism, OpenIZ.Core.Security.Tfa.Twilio, Version=0.6.0.0"/>-->
+      <add type="OpenIZ.Core.Security.Tfa.Email.TfaEmailMechanism, OpenIZ.Core.Security.Tfa.Email, Version=1.0.0.0"/>
+      <add type="OpenIZ.Core.Security.Tfa.Twilio.TfaTwilioMechanism, OpenIZ.Core.Security.Tfa.Twilio, Version=1.0.0.0"/>-->
       -->
 
       <!--
       Enabling this service will allow caching of report parameters using PostgreSQL
-      <add type="OpenIZ.Persistence.Reporting.PSQL.ReportingPersistenceService, OpenIZ.Persistence.Reporting.PSQL, Version=0.6.0.0"/>
+      <add type="OpenIZ.Persistence.Reporting.PSQL.ReportingPersistenceService, OpenIZ.Persistence.Reporting.PSQL, Version=1.0.0.0"/>
       -->
       
       <!-- This service loads all business rules from installed applets on the server. You can override this behavior by implementing a different daemon service -->
-      <add type="OpenIZ.Core.Services.Daemons.AppletBusinessRulesDaemon, OpenIZ.Core, Version=0.6.0.0" />
+      <add type="OpenIZ.Core.Services.Daemons.AppletBusinessRulesDaemon, OpenIZ.Core, Version=1.0.0.0" />
       
       <!-- This service allows maintenance of applets on the server using a directory -->
-      <add type="OpenIZ.Core.Services.Impl.LocalAppletManagerService, OpenIZ.Core, Version=0.8.0.0"/>
+      <add type="OpenIZ.Core.Services.Impl.LocalAppletManagerService, OpenIZ.Core, Version=1.0.0.0"/>
       
       <!-- 
       Enable this service to allow for persistence of queries to/from an ADO.NET based data source
@@ -823,15 +823,15 @@
       -->
       
       <!-- This service allows for clinical protocols to be loaded from installed applets on the server -->
-      <add type="OpenIZ.Protocol.Xml.AppletClinicalProtocolRepository, OpenIZ.Protocol.Xml, Version=0.8.0.0"/>
+      <add type="OpenIZ.Protocol.Xml.AppletClinicalProtocolRepository, OpenIZ.Protocol.Xml, Version=1.0.0.0"/>
       
       <!-- This service provides simple generation of a care plan using the protocol repository. More complex care plans can be calculated
       by overriding this implementation with a custom implementation -->
-      <add type="OpenIZ.Core.Protocol.SimpleCarePlanService, OpenIZ.Core.PCL, Version=0.8.0.0"/>
+      <add type="OpenIZ.Core.Protocol.SimpleCarePlanService, OpenIZ.Core.PCL, Version=1.0.0.0"/>
       
       <!-- 
       Enable this service to store data warehousing information to an ADO.NET source
-      <add type="OpenIZ.Warehouse.ADO.ADODataWarehouse, OpenIZ.Warehouse.ADO, Version=0.8.0.0"/>
+      <add type="OpenIZ.Warehouse.ADO.ADODataWarehouse, OpenIZ.Warehouse.ADO, Version=1.0.0.0"/>
       -->
       
       <!--
@@ -884,7 +884,7 @@
                        readWriteConnection="<<connection string name to primary>>"
                        traceSql="true"
                        autoUpdateExisting="true"
-                       provider="OpenIZ.OrmLite.Providers.PostgreSQLProvider, OpenIZ.OrmLite, Version=0.6.0.0"/>
+                       provider="OpenIZ.OrmLite.Providers.PostgreSQLProvider, OpenIZ.OrmLite, Version=1.0.0.0"/>
   </openiz.persistence.reporting.psql>
   -->
   <openiz.reporting.core>
