@@ -3,7 +3,6 @@ using MARC.HI.EHRS.SVC.Core.Attributes;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Interop;
 using OpenIZ.Core.Wcf;
-using Swaggerator.Attributes;
 using SwaggerWcf;
 using SwaggerWcf.Models;
 using System;
