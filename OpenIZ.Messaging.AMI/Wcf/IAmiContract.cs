@@ -37,6 +37,7 @@ using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
+using SwaggerWcf.Attributes;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -105,6 +106,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="id">The id of the certificate signing request to be accepted.</param>
 		/// <returns>Returns the acceptance result.</returns>
 		[WebInvoke(UriTemplate = "/csr/{id}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
+		[SwaggerWcfPath("Accepts CSR", "Accepts a Certificate Signing Request")]
 		SubmissionResult AcceptCsr(string id);
 
 		/// <summary>
