@@ -27,6 +27,7 @@ using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 
 namespace OpenIZ.Messaging.IMSI.ResourceHandler
@@ -80,7 +81,14 @@ namespace OpenIZ.Messaging.IMSI.ResourceHandler
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
         public override IEnumerable<IdentifiedData> Query(NameValueCollection queryParameters, int offset, int count, out int totalCount)
         {
-            return base.Query(queryParameters, offset, count, out totalCount);
+            var retVal = base.Query(queryParameters, offset, count, out totalCount);
+
+            // Clean reverse relationships
+            List<String> lean = null;
+            if (queryParameters.TryGetValue("_lean", out lean) && lean[0] == "true")
+                retVal.OfType<Entity>().AsParallel().ForAll(r => r.Relationships.RemoveAll(o => o.SourceEntityKey != r.Key));
+
+            return retVal;
         }
 
 
