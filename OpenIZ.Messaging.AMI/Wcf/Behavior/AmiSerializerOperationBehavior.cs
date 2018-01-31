@@ -30,10 +30,20 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 	/// </summary>
 	internal class AmiSerializerOperationBehavior : IOperationBehavior
 	{
+		/// <summary>
+		/// Adds the binding parameters.
+		/// </summary>
+		/// <param name="operationDescription">The operation description.</param>
+		/// <param name="bindingParameters">The binding parameters.</param>
 		public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
 		{
 		}
 
+		/// <summary>
+		/// Applies the client behavior.
+		/// </summary>
+		/// <param name="operationDescription">The operation description.</param>
+		/// <param name="clientOperation">The client operation.</param>
 		public void ApplyClientBehavior(OperationDescription operationDescription, ClientOperation clientOperation)
 		{
 		}
@@ -48,6 +58,10 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 			dispatchOperation.Formatter = new WcfMessageDispatchFormatter<IAmiContract>(operationDescription);
 		}
 
+		/// <summary>
+		/// Validates the specified operation description.
+		/// </summary>
+		/// <param name="operationDescription">The operation description.</param>
 		public void Validate(OperationDescription operationDescription)
 		{
 		}

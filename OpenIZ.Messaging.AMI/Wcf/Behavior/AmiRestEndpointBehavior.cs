@@ -31,10 +31,20 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 	/// </summary>
 	public class AmiRestEndpointBehavior : IEndpointBehavior
 	{
+		/// <summary>
+		/// Adds the binding parameters.
+		/// </summary>
+		/// <param name="endpoint">The endpoint.</param>
+		/// <param name="bindingParameters">The binding parameters.</param>
 		public void AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
 		{
 		}
 
+		/// <summary>
+		/// Applies the client behavior.
+		/// </summary>
+		/// <param name="endpoint">The endpoint.</param>
+		/// <param name="clientRuntime">The client runtime.</param>
 		public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
 		}
@@ -56,6 +66,11 @@ namespace OpenIZ.Messaging.AMI.Wcf.Behavior
 			}
 		}
 
+		/// <summary>
+		/// Validates the specified endpoint.
+		/// </summary>
+		/// <param name="endpoint">The endpoint.</param>
+		/// <exception cref="System.InvalidOperationException">AMI Must be bound to type webHttpBinding</exception>
 		public void Validate(ServiceEndpoint endpoint)
 		{
 			var bindingElements = endpoint.Binding.CreateBindingElements();
