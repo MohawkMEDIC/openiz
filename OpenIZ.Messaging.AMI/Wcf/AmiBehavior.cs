@@ -38,7 +38,6 @@ using SwaggerWcf.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -75,8 +74,10 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get log file
+		/// Gets a specific log file.
 		/// </summary>
+		/// <param name="logId">The log identifier.</param>
+		/// <returns>Returns the log file information.</returns>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public LogFileInfo GetLog(string logId)
 		{
@@ -93,8 +94,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Get all log files
+		/// Get log files on the server and their sizes.
 		/// </summary>
+		/// <returns>Returns a collection of log files.</returns>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public AmiCollection<LogFileInfo> GetLogs()
 		{
@@ -152,8 +154,9 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		}
 
 		/// <summary>
-		/// Create a diagnostic report
+		/// Gets a server diagnostic report.
 		/// </summary>
+		/// <returns>Returns the created diagnostic report.</returns>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
 		public DiagnosticReport GetServerDiagnosticReport()
 		{
@@ -221,61 +224,33 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				InterfaceVersion = typeof(AmiCollection<>).Assembly.GetName().Version.ToString(),
 				Services = new List<ServiceResourceOptions>
 				{
-					new ServiceResourceOptions()
+					new ServiceResourceOptions
 					{
 						ResourceName = null,
-						Verbs = new List<string>() { "OPTIONS" }
+						Verbs = new List<string> {"OPTIONS"}
 					},
-					new ServiceResourceOptions()
+					new ServiceResourceOptions
 					{
 						ResourceName = "time",
-						Verbs = new List<string>() { "GET" }
+						Verbs = new List<string> {"GET"}
 					}
-				}
+				},
+				Endpoints = ApplicationContext.Current.GetServices().OfType<IApiEndpointProvider>().Select(o =>
+					new ServiceEndpointOptions
+					{
+						BaseUrl = o.Url,
+						ServiceType = o.ApiType,
+						Capabilities = o.Capabilities
+					}
+				).ToList()
 			};
 
 			// Get endpoints
-			serviceOptions.Endpoints = ApplicationContext.Current.GetServices().OfType<IApiEndpointProvider>().Select(o =>
-				new ServiceEndpointOptions()
-				{
-					BaseUrl = o.Url,
-					ServiceType = o.ApiType,
-					Capabilities = o.Capabilities
-				}
-			).ToList();
 
 			var config = ApplicationContext.Current.GetService<IConfigurationManager>().GetSection("openiz.messaging.ami") as AmiConfiguration;
-			if (config != null && config.Endpoints != null)
+
+			if (config?.Endpoints != null)
 				serviceOptions.Endpoints.AddRange(config.Endpoints);
-			//foreach (var methodInfo in typeof(IAmiContract).GetMethods().Where(m => m.GetCustomAttribute<WebInvokeAttribute>() != null))
-			//{
-			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
-			//	serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
-			//}
-
-			//foreach (var methodInfo in typeof(IAmiContract).GetMethods())
-			//{
-			//	var webInvoke = methodInfo.GetCustomAttribute<WebInvokeAttribute>();
-			//	var webGet = methodInfo.GetCustomAttribute<WebGetAttribute>();
-
-			//	if (webInvoke != null)
-			//	{
-			//		switch (webInvoke.Method)
-			//		{
-			//			case "DELETE":
-			//				break;
-			//			case "POST":
-			//				serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.GetParameters()[0].ParameterType.Name, new List<string> { webInvoke.Method }));
-			//				break;
-			//			case "PUT":
-			//				break;
-			//		}
-			//	}
-			//	else if (webGet != null)
-			//	{
-			//		serviceOptions.Services.Add(new ServiceResourceOptions(methodInfo.Name, new List<string> { "GET" }));
-			//	}
-			//}
 
 			return serviceOptions;
 		}

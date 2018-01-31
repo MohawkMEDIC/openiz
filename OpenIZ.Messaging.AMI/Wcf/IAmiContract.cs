@@ -567,12 +567,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <returns>Returns options for the AMI service.</returns>
 		[WebInvoke(UriTemplate = "/", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
+		[SwaggerWcfPath("Get Service Options", "Retrieves a list of resources and operations supported by this AMI service", ExternalDocsUrl = "http://openiz.org/artifacts/1.0/imsi/", ExternalDocsDescription = "AMI Data Contract Documentation")]
 		IdentifiedData Options();
 
 		/// <summary>
 		/// Ping the service to determine up/down
 		/// </summary>
 		[WebInvoke(UriTemplate = "/", Method = "PING")]
+		[SwaggerWcfPath("Service Availability Status", "Forces the service to respond with a 204 if the AMI is running at this endpoint", ExternalDocsUrl = "http://openiz.org/artifacts/1.0/imsi/", ExternalDocsDescription = "AMI Data Contract Documentation")]
 		void Ping();
 
 		/// <summary>
