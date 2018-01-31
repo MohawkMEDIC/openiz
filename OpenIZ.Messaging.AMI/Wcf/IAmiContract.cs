@@ -156,6 +156,17 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[SwaggerWcfPath("Create Assigning Authority", "Creates an assigning authority. An assigning authority represents an authority which can be used to assign identifiers to entities")]
 		AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
 
+		#region Auditing
+
+		/// <summary>
+		/// Create audit in the IMS' audit repository.
+		/// </summary>
+		/// <param name="audit">The audit to save.</param>
+		[WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		void CreateAudit(AuditInfo audit);
+
+		#endregion Auditing
+
 		/// <summary>
 		/// Creates the code system.
 		/// </summary>
@@ -480,6 +491,25 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[SwaggerWcfPath("Get Extension Type", "Retrieves extension types based on a query")]
 		AmiCollection<ExtensionType> GetExtensionTypes();
 
+		#region Logging
+
+		/// <summary>
+		/// Gets a specific log file.
+		/// </summary>
+		/// <param name="logId">The log identifier.</param>
+		/// <returns>Returns the log file information.</returns>
+		[WebGet(UriTemplate = "/log/{logId}")]
+		LogFileInfo GetLog(string logId);
+
+		/// <summary>
+		/// Get log files on the server and their sizes.
+		/// </summary>
+		/// <returns>Returns a collection of log files.</returns>
+		[WebGet(UriTemplate = "/log")]
+		AmiCollection<LogFileInfo> GetLogs();
+
+		#endregion Logging
+
 		/// <summary>
 		/// Gets a list of policies.
 		/// </summary>
@@ -616,7 +646,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="appletData">The applet data.</param>
 		/// <returns>Returns the updated applet.</returns>
 		[WebInvoke(UriTemplate = "/applet/{appletId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
-		AppletManifestInfo UpdateApplet(string appletId, Stream appletData);  
+		AppletManifestInfo UpdateApplet(string appletId, Stream appletData);
 
 		/// <summary>
 		/// Updates an application.
@@ -689,35 +719,5 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the security user.</returns>
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
-
-		#region Logging
-
-		/// <summary>
-		/// Gets a specific log file.
-		/// </summary>
-		/// <param name="logId">The log identifier.</param>
-		/// <returns>Returns the log file information.</returns>
-		[WebGet(UriTemplate = "/log/{logId}")]
-		LogFileInfo GetLog(String logId);
-
-		/// <summary>
-		/// Get log files on the server and their sizes.
-		/// </summary>
-		/// <returns>Returns a collection of log files.</returns>
-		[WebGet(UriTemplate = "/log")]
-		AmiCollection<LogFileInfo> GetLogs();
-
-		#endregion Logging
-
-		#region Auditing
-
-		/// <summary>
-		/// Create audit in the IMS' audit repository.
-		/// </summary>
-		/// <param name="audit">The audit to save.</param>
-		[WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
-		void CreateAudit(AuditInfo audit);
-
-		#endregion Auditing
 	}
 }
