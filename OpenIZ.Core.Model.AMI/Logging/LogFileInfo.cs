@@ -14,17 +14,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * User: fyfej
+ * User: khannan
  * Date: 2017-9-1
  */
 
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace OpenIZ.Core.Model.AMI.Logging

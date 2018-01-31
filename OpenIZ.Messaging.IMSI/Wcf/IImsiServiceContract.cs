@@ -26,28 +26,19 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Model.Security;
-using OpenIZ.Core.Security;
-using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Messaging.IMSI.Model;
 using SwaggerWcf.Attributes;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Security.Permissions;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Schema;
 
 namespace OpenIZ.Messaging.IMSI.Wcf
 {
-    /// <summary>
-    /// The IMSI service interface
-    /// </summary>
-    [ServiceContract(Namespace = "http://openiz.org/imsi/1.0", Name = "IMSI", ConfigurationName = "IMSI_1.0")]
+	/// <summary>
+	/// The IMSI service interface
+	/// </summary>
+	[ServiceContract(Namespace = "http://openiz.org/imsi/1.0", Name = "IMSI", ConfigurationName = "IMSI_1.0")]
     [ServiceKnownType(typeof(Concept))]
 	[ServiceKnownType(typeof(ConceptClass))]
 	[ServiceKnownType(typeof(ConceptRelationship))]
