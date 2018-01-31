@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
+
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Interop;
@@ -32,12 +33,12 @@ using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
+using SwaggerWcf.Attributes;
 using System;
 using System.IO;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Xml.Schema;
-using SwaggerWcf.Attributes;
 
 namespace OpenIZ.Messaging.AMI.Wcf
 {
@@ -125,6 +126,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="alertMessageInfo">The alert message to be created.</param>
 		/// <returns>Returns the created alert.</returns>
 		[WebInvoke(UriTemplate = "/alert", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Alert", "Creates an alert in the system. This alert can be sent to mutiple users or all users")]
 		AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo);
 
 		/// <summary>
@@ -133,6 +135,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="pakData">The pak data.</param>
 		/// <returns>Returns the created applet manifest info.</returns>
 		[WebInvoke(UriTemplate = "/applet", Method = "POST")]
+		[SwaggerWcfPath("Create Applet", "Creates an applet. An applet represents a html user interface, which can include optional business rules")]
 		AppletManifestInfo CreateApplet(Stream pakData);
 
 		/// <summary>
@@ -141,6 +144,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="applicationInfo">The security application to be created.</param>
 		/// <returns>Returns the created security application.</returns>
 		[WebInvoke(UriTemplate = "/application", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Application", "Creates an application. An application represents a entity which can be a third party application or service")]
 		SecurityApplicationInfo CreateApplication(SecurityApplicationInfo applicationInfo);
 
 		/// <summary>
@@ -149,6 +153,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="assigningAuthorityInfo">The assigning authority to be created.</param>
 		/// <returns>Returns the created assigning authority.</returns>
 		[WebInvoke(UriTemplate = "/assigningAuthority", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Assigning Authority", "Creates an assigning authority. An assigning authority represents an authority which can be used to assign identifiers to entities")]
 		AssigningAuthorityInfo CreateAssigningAuthority(AssigningAuthorityInfo assigningAuthorityInfo);
 
 		/// <summary>
@@ -157,6 +162,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="codeSystem">The code system.</param>
 		/// <returns>Returns the created code system.</returns>
 		[WebInvoke(UriTemplate = "/codeSystem", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Code System", "Creates a code system. A code system represents a system or collection of concept representations")]
 		CodeSystem CreateCodeSystem(CodeSystem codeSystem);
 
 		/// <summary>
@@ -165,6 +171,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="deviceInfo">The device to be created.</param>
 		/// <returns>Returns the newly created device.</returns>
 		[WebInvoke(UriTemplate = "/device", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Device", "Creates a device. A device represents a physical device such as a tablet or a desktop computer")]
 		SecurityDeviceInfo CreateDevice(SecurityDeviceInfo deviceInfo);
 
 		/// <summary>
@@ -173,24 +180,16 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="report">The diagnostic report to be created.</param>
 		/// <returns>Returns the created diagnostic report.</returns>
 		[WebInvoke(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Diagnostic Report", "Creates a diagnostic report. A diagnostic report contains logs and configuration information used to debug and resolve issues")]
 		DiagnosticReport CreateDiagnosticReport(DiagnosticReport report);
 
-
-        /// <summary>
-        /// Gets a server diagnostic report.
-        /// </summary>
-        /// <param name="report">The diagnostic report to be created.</param>
-        /// <returns>Returns the created diagnostic report.</returns>
-        [WebGet(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare)]
-        DiagnosticReport GetServerDiagnosticReport();
-
-
-        /// <summary>
-        /// Creates the type of the extension.
-        /// </summary>
-        /// <param name="extensionType">Type of the extension.</param>
-        /// <returns>Returns the created extension type.</returns>
-        [WebInvoke(UriTemplate = "/extensionType", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		/// <summary>
+		/// Creates the type of the extension.
+		/// </summary>
+		/// <param name="extensionType">Type of the extension.</param>
+		/// <returns>Returns the created extension type.</returns>
+		[WebInvoke(UriTemplate = "/extensionType", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Extension Type", "Creates an extension type. An extension type represents a handler which instructs the system how to handle different extensions which are attached to a(n) act(s) or an entity")]
 		ExtensionType CreateExtensionType(ExtensionType extensionType);
 
 		/// <summary>
@@ -199,6 +198,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="policy">The security policy to be created.</param>
 		/// <returns>Returns the newly created security policy.</returns>
 		[WebInvoke(UriTemplate = "/policy", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Policy", "Creates a policy. A policy represents a structured governance of data and information")]
 		SecurityPolicyInfo CreatePolicy(SecurityPolicyInfo policy);
 
 		/// <summary>
@@ -207,6 +207,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="role">The security role to be created.</param>
 		/// <returns>Returns the newly created security role.</returns>
 		[WebInvoke(UriTemplate = "/role", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create Role", "Creates a role. A role represents a group or category to which a user belongs")]
 		SecurityRoleInfo CreateRole(SecurityRoleInfo role);
 
 		/// <summary>
@@ -215,6 +216,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="user">The security user to be created.</param>
 		/// <returns>Returns the newly created security user.</returns>
 		[WebInvoke(UriTemplate = "/user", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		[SwaggerWcfPath("Create User", "Creates a user. A user represents a human user, application user or system user")]
 		SecurityUserInfo CreateUser(SecurityUserInfo user);
 
 		/// <summary>
@@ -487,6 +489,14 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		XmlSchema GetSchema(int schemaId);
 
 		/// <summary>
+		/// Gets a server diagnostic report.
+		/// </summary>
+		/// <returns>Returns the created diagnostic report.</returns>
+		[WebGet(UriTemplate = "/sherlock", BodyStyle = WebMessageBodyStyle.Bare)]
+		[SwaggerWcfPath("Get Diagnostic Report", "A diagnostic report contains logs and configuration information used to debug and resolve issues")]
+		DiagnosticReport GetServerDiagnosticReport();
+
+		/// <summary>
 		/// Gets the list of TFA mechanisms.
 		/// </summary>
 		/// <returns>Returns a list of TFA mechanisms.</returns>
@@ -640,28 +650,28 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		[WebInvoke(UriTemplate = "/user/{userId}", BodyStyle = WebMessageBodyStyle.Bare, Method = "PUT")]
 		SecurityUserInfo UpdateUser(string userId, SecurityUserInfo userInfo);
 
-        #region Logging
+		#region Logging
 
-        /// <summary>
-        /// Get log files on the server and their sizes
-        /// </summary>
-        [WebGet(UriTemplate = "/log")]
-        AmiCollection<LogFileInfo> GetLogs();
+		/// <summary>
+		/// Gets the specific log file
+		/// </summary>
+		[WebGet(UriTemplate = "/log/{logId}")]
+		LogFileInfo GetLog(String logId);
 
-        /// <summary>
-        /// Gets the specific log file
-        /// </summary>
-        [WebGet(UriTemplate = "/log/{logId}")]
-        LogFileInfo GetLog(String logId);
+		/// <summary>
+		/// Get log files on the server and their sizes
+		/// </summary>
+		[WebGet(UriTemplate = "/log")]
+		AmiCollection<LogFileInfo> GetLogs();
 
-        #endregion
+		#endregion Logging
 
-        #region Auditing
+		#region Auditing
 
-        /// <summary>
-        /// Create audit in the IMS' audit repository
-        /// </summary>
-        [WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
+		/// <summary>
+		/// Create audit in the IMS' audit repository
+		/// </summary>
+		[WebInvoke(UriTemplate = "/audit", BodyStyle = WebMessageBodyStyle.Bare, Method = "POST")]
 		void CreateAudit(AuditInfo audit);
 
 		#endregion Auditing
