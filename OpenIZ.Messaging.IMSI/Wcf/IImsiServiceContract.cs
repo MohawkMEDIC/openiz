@@ -124,7 +124,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [WebInvoke(Method = "HEAD", UriTemplate = "/{resourceType}/{id}", BodyStyle = WebMessageBodyStyle.Bare)]
         [SwaggerWcfPath("Head Resource", "Retrieves the HTTP header information for the identified resource", ExternalDocsUrl = "http://openiz.org/artifacts/1.0/imsi/", ExternalDocsDescription = "IMSI Data Contract Documentation")]
-        void GetHead(string resourceType, string id);
+        void Head(string resourceType, string id);
 
         /// <summary>
         /// Gets a complete history of all changes made to the specified resource

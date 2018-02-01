@@ -619,11 +619,14 @@ namespace OpenIZ.BusinessRules.JavaScript
         /// Indicates whether a rule has been registered for the specified action and type
         /// </summary>
         /// <param name="trigger">The trigger being checked</param>
-        /// <param name="type">The type of data being stored</param>
+        /// <param name="instanceType">The type of data being stored</param>
         /// <returns>True if there are any triggers registered for <paramref name="trigger"/></returns>
-        public bool HasRule<TBinding>(string trigger, Type type)
+        public bool HasRule<TBinding>(string trigger, Type instanceType)
         {
-            return this.GetCallList(type, trigger).Union(this.GetCallList<TBinding>(trigger)).Any();
+            var callList = this.GetCallList<TBinding>(trigger);
+            if (instanceType != null)
+                callList = callList.Union(this.GetCallList(instanceType, trigger)).ToList();
+            return callList.Any();
         }
     }
 }
