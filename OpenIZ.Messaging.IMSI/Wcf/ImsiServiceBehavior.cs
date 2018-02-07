@@ -688,7 +688,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         [SwaggerWcfResponse(404, "The provided resource could not be found")]
         [SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
         [SwaggerWcfResponse(200, "The operation was successful and the headers were returned")]
-        public void GetHead(string resourceType, string id)
+        public void Head(string resourceType, string id)
         {
             this.ThrowIfNotReady();
             this.Get(resourceType, id);

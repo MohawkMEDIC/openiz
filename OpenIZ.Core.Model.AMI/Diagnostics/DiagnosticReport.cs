@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
+
 using Newtonsoft.Json;
 using OpenIZ.Core.Model.Entities;
 using System;
@@ -33,6 +34,25 @@ namespace OpenIZ.Core.Model.AMI.Diagnostics
 	public class DiagnosticReport : BaseEntityData
 	{
 		/// <summary>
+		/// Application configuration information
+		/// </summary>
+		[XmlElement("appInfo"), JsonProperty("appInfo")]
+		public DiagnosticApplicationInfo ApplicationInfo { get; set; }
+
+		/// <summary>
+		/// Represents the most recent logs for the bug report
+		/// </summary>
+		[XmlElement("attachText", typeof(DiagnosticTextAttachment)), JsonProperty("attach")]
+		[XmlElement("attachBin", typeof(DiagnosticBinaryAttachment))]
+		public List<DiagnosticAttachmentInfo> Attachments { get; set; }
+
+		/// <summary>
+		/// Gets or sets any ticket related information
+		/// </summary>
+		[XmlElement("ticketId"), JsonProperty("ticketId")]
+		public string CorrelationId { get; set; }
+
+		/// <summary>
 		/// Gets or sets the note
 		/// </summary>
 		[XmlElement("note"), JsonProperty("note")]
@@ -45,28 +65,9 @@ namespace OpenIZ.Core.Model.AMI.Diagnostics
 		public UserEntity Submitter { get; set; }
 
 		/// <summary>
-		/// Represents the most recent logs for the bug report
+		/// Thread information
 		/// </summary>
-		[XmlElement("attachText", typeof(DiagnosticTextAttachment)), JsonProperty("attach")]
-		[XmlElement("attachBin", typeof(DiagnosticBinaryAttachment))]
-		public List<DiagnosticAttachmentInfo> Attachments { get; set; }
-
-		/// <summary>
-		/// Application configuration information
-		/// </summary>
-		[XmlElement("appInfo"), JsonProperty("appInfo")]
-		public DiagnosticApplicationInfo ApplicationInfo { get; set; }
-
-        /// <summary>
-        /// Thread information
-        /// </summary>
-        [XmlElement("thread"), JsonProperty("thread")]
-        public List<DiagnosticThreadInfo> Threads { get; set; }
-
-        /// <summary>
-        /// Gets or sets any ticket related information
-        /// </summary>
-        [XmlElement("ticketId"), JsonProperty("ticketId")]
-		public string CorrelationId { get; set; }
+		[XmlElement("thread"), JsonProperty("thread")]
+		public List<DiagnosticThreadInfo> Threads { get; set; }
 	}
 }

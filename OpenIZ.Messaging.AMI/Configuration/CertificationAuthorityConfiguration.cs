@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
+ * User: khannan
  * Date: 2017-9-1
  */
 namespace OpenIZ.Messaging.AMI.Configuration

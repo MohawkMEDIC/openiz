@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
+
 using OpenIZ.Core.Wcf.Compression;
 using System;
 using System.Collections.Generic;
@@ -48,9 +49,8 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		{
 			try
 			{
-
-                // Handle compressed requests
-                var compressionScheme = CompressionUtil.GetCompressionScheme(WebOperationContext.Current.IncomingRequest.Headers[System.Net.HttpRequestHeader.ContentEncoding]);
+				// Handle compressed requests
+				var compressionScheme = CompressionUtil.GetCompressionScheme(WebOperationContext.Current.IncomingRequest.Headers[System.Net.HttpRequestHeader.ContentEncoding]);
 				if (compressionScheme != null)
 					CompressionUtil.DeCompressMessage(ref request, compressionScheme, this.GetContentFormat(request));
 
@@ -70,7 +70,6 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		{
 			try
 			{
-
 				string encodings = WebOperationContext.Current.IncomingRequest.Headers.Get("Accept-Encoding");
 				string compressionScheme = String.Empty;
 
@@ -78,11 +77,11 @@ namespace OpenIZ.Messaging.AMI.Wcf
 				{
 					encodings = encodings.ToLowerInvariant();
 
-                    if (encodings.Contains("lzma"))
-                        compressionScheme = "lzma";
-                    else if (encodings.Contains("bzip2"))
-                        compressionScheme = "bzip2";
-                    else if (encodings.Contains("gzip"))
+					if (encodings.Contains("lzma"))
+						compressionScheme = "lzma";
+					else if (encodings.Contains("bzip2"))
+						compressionScheme = "bzip2";
+					else if (encodings.Contains("gzip"))
 						compressionScheme = "gzip";
 					else if (encodings.Contains("deflate"))
 						compressionScheme = "deflate";

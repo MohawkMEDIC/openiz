@@ -307,9 +307,10 @@ namespace OpenIZ.OrmLite
         /// </summary>
         public String GetQueryLiteral(SqlStatement query)
         {
+            query = query.Build();
             StringBuilder retVal = new StringBuilder(query.SQL);
             String sql = retVal.ToString();
-            var qList = query.Arguments.ToArray();
+            var qList = query.Arguments?.ToArray() ?? new object[0];
             int parmId = 0;
             while (sql.Contains("?"))
             {

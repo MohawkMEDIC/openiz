@@ -288,7 +288,7 @@ namespace OpenIZ.OrmLite
             if (result is IAdoLoadedData)
                 (result as IAdoLoadedData).Context = this;
             else
-                this.m_tracer.TraceWarning("Type {0} does not implement IAdoLoadedData", tModel);
+                this.m_tracer.TraceInfo("Type {0} does not implement IAdoLoadedData", tModel);
             return result;
 
         }
@@ -327,7 +327,7 @@ namespace OpenIZ.OrmLite
             finally
             {
                 sw.Stop();
-                this.m_tracer.TraceVerbose("QUERY {0} executed in {1} ms", stmt, sw.ElapsedMilliseconds);
+                this.m_tracer.TraceVerbose("QUERY {0} executed in {1} ms", this.GetQueryLiteral(stmt), sw.ElapsedMilliseconds);
             }
 #endif
         }
@@ -441,7 +441,7 @@ namespace OpenIZ.OrmLite
             finally
             {
                 sw.Stop();
-                this.m_tracer.TraceVerbose("FIRST {0} executed in {1} ms", stmt, sw.ElapsedMilliseconds);
+                this.m_tracer.TraceVerbose("FIRST {0} executed in {1} ms", this.GetQueryLiteral(stmt), sw.ElapsedMilliseconds);
             }
 #endif
         }
@@ -563,7 +563,7 @@ namespace OpenIZ.OrmLite
             finally
             {
                 sw.Stop();
-                this.m_tracer.TraceVerbose("ANY {0} executed in {1} ms", querySpec, sw.ElapsedMilliseconds);
+                this.m_tracer.TraceVerbose("ANY {0} executed in {1} ms", this.GetQueryLiteral(querySpec), sw.ElapsedMilliseconds);
             }
 #endif
         }
@@ -635,7 +635,7 @@ namespace OpenIZ.OrmLite
             finally
             {
                 sw.Stop();
-                this.m_tracer.TraceVerbose("COUNT {0} executed in {1} ms", querySpec, sw.ElapsedMilliseconds);
+                this.m_tracer.TraceVerbose("COUNT {0} executed in {1} ms", this.GetQueryLiteral(querySpec), sw.ElapsedMilliseconds);
             }
 #endif
         }
@@ -747,7 +747,7 @@ namespace OpenIZ.OrmLite
             finally
             {
                 sw.Stop();
-                this.m_tracer.TraceVerbose("QUERY {0} executed in {1} ms", query.SQL, sw.ElapsedMilliseconds);
+                this.m_tracer.TraceVerbose("QUERY {0} executed in {1} ms", this.GetQueryLiteral(query), sw.ElapsedMilliseconds);
             }
 #endif
         }

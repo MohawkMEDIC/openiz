@@ -32,6 +32,7 @@ using OpenIZ.Core.Security;
 using TS = MARC.Everest.DataTypes.TS;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.DataTypes;
+using MARC.HI.EHRS.SVC.Core.Services;
 
 namespace OpenIZ.Messaging.HL7.Notifier
 {
@@ -79,7 +80,24 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			}
 
             // TODO: Is the CT a UUID? if so we need to get the CT-ID (public id) from the place which the CT represents
-			//address.CensusTract.Value = string.Join(" ", entityAddress.LoadCollection<EntityAddressComponent>("Component").Where(c => c.ComponentTypeKey == AddressComponentKeys.CensusTract).Select(c => c.Value));
+
+			address.CensusTract.Value = string.Join(" ", entityAddress.LoadCollection<EntityAddressComponent>("Component").Where(c => c.ComponentTypeKey == AddressComponentKeys.CensusTract).Select(c => c.Value));
+
+            // HACK: Get the public identifier for the census tract
+            Guid ctId = Guid.Empty;
+            if(Guid.TryParse(address.CensusTract.Value, out ctId))
+            {
+                var place = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(ctId, Guid.Empty);
+                if(place != null)
+                {
+                    var exportDomain = ApplicationContext.Current.GetService<IConfigurationManager>().AppSettings["pix.export.village.censusTract"];
+                    if (!String.IsNullOrEmpty(exportDomain))
+                        address.CensusTract.Value = place.LoadCollection<EntityIdentifier>("Identifiers").FirstOrDefault(o => o.LoadProperty<AssigningAuthority>("Authority").DomainName == exportDomain)?.Value;
+                    else
+                        address.CensusTract.Value = String.Empty;
+                }
+            }
+
 			address.City.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.City).Select(c => c.Value));
 			address.Country.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Country).Select(c => c.Value));
 			address.StateOrProvince.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.State).Select(c => c.Value));
@@ -89,6 +107,8 @@ namespace OpenIZ.Messaging.HL7.Notifier
                 entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.AdditionalLocator).Union(
                 entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Precinct)).Select(c => c.Value));
             address.ZipOrPostalCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Select(c => c.Value));
+
+
 		}
 
 		/// <summary>
