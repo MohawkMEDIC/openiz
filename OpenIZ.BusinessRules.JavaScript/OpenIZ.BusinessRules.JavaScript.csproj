@@ -41,6 +41,7 @@
     <Compile Include="JavascriptBusinessRulesEngine.cs" />
     <Compile Include="JNI\BusinessRulesBridge.cs" />
     <Compile Include="JNI\JsConsoleProvider.cs" />
+    <Compile Include="JNI\JsObjectProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleServiceBase.cs" />
   </ItemGroup>

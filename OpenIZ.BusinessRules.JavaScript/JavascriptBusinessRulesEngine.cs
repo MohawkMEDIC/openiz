@@ -198,7 +198,8 @@ namespace OpenIZ.BusinessRules.JavaScript
 #endif
 
                 ).SetValue("OpenIZBre", this.m_bridge)
-                .SetValue("console", new JsConsoleProvider());
+                .SetValue("console", new JsConsoleProvider())
+                .SetValue("reflector", new JsObjectProvider());
 
             foreach (var itm in typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceNames().Where(o => o.EndsWith(".js")))
                 using (StreamReader sr = new StreamReader(typeof(JavascriptBusinessRulesEngine).GetTypeInfo().Assembly.GetManifestResourceStream(itm)))

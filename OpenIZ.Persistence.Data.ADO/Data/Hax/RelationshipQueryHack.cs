@@ -41,7 +41,7 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Hax
         /// <summary>
         /// Hack query builder based on clause
         /// </summary>
-        public bool HackQuery(QueryBuilder builder, SqlStatement sqlStatement, SqlStatement whereClause, PropertyInfo property, string queryPrefix, QueryPredicate predicate, object values, IEnumerable<TableMapping> scopedTables)
+        public bool HackQuery(QueryBuilder builder, SqlStatement sqlStatement, SqlStatement whereClause, Type tmodel, PropertyInfo property, string queryPrefix, QueryPredicate predicate, object values, IEnumerable<TableMapping> scopedTables)
         {
             string columnName = String.Empty;
             Type scanType = null;

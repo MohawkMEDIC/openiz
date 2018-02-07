@@ -41,7 +41,7 @@ namespace OpenIZ.OrmLite
         /// <param name="predicate">The current predicate</param>
         /// <param name="scopedTables">The tables that are scoped for the current query</param>
         /// <returns></returns>
-        bool HackQuery(QueryBuilder builder, SqlStatement sqlStatement, SqlStatement whereClause, PropertyInfo property, String queryPrefix, QueryPredicate predicate, Object values, IEnumerable<TableMapping> scopedTables);
+        bool HackQuery(QueryBuilder builder, SqlStatement sqlStatement, SqlStatement whereClause, Type tmodel, PropertyInfo property, String queryPrefix, QueryPredicate predicate, Object values, IEnumerable<TableMapping> scopedTables);
 
     }
 }

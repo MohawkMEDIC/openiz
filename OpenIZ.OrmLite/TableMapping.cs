@@ -122,10 +122,15 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Get the column mapping for the named property
         /// </summary>
-        public ColumnMapping GetColumn(string propertyName)
+        public ColumnMapping GetColumn(string propertyName, bool scanHeirarchy = false)
         {
             ColumnMapping map = null;
-            this.m_mappings.TryGetValue(propertyName, out map);
+            if(!this.m_mappings.TryGetValue(propertyName, out map) && scanHeirarchy &&
+                this.OrmType.BaseType != typeof(Object))
+            {
+                var t = TableMapping.Get(this.OrmType.BaseType);
+                return t.GetColumn(propertyName, scanHeirarchy);
+            }
             return map;
         }
 
