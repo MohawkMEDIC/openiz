@@ -64,7 +64,10 @@ namespace OpenIZ
             this.m_serviceProcessInstaller.Account = System.ServiceProcess.ServiceAccount.LocalSystem;
             this.m_serviceProcessInstaller.Password = null;
             this.m_serviceProcessInstaller.Username = null;
-            this.m_serviceInstaller.ServiceName = "OpenIZ Host Process";
+            this.m_serviceInstaller.ServiceName = "OpenIZ";
+            this.m_serviceInstaller.Description = "Provides the execution environment for OpenIZ";
+            this.m_serviceInstaller.DelayedAutoStart = true;
+            this.m_serviceInstaller.DisplayName = "OpenIZ Host Process";
             this.m_serviceInstaller.StartType = System.ServiceProcess.ServiceStartMode.Automatic;
 
             this.Installers.AddRange(
