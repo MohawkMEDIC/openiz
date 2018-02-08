@@ -84,7 +84,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// The issue despactch advice message will insert a new shipped order into the TImR system.
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("GS1 BMS XML 3.3")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -227,7 +227,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// Requests the issuance of a BMS1 inventory report request
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("GS1 BMS XML 3.3")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -489,7 +489,7 @@ namespace OpenIZ.Messaging.GS1.Wcf
         /// <summary>
         /// Issues the order response message which will mark the requested order as underway
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("GS1 BMS XML 3.3")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]

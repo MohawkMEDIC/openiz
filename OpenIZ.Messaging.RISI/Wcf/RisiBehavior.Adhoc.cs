@@ -37,7 +37,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
 		/// <summary>
 		/// Create datamart
 		/// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -61,7 +61,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Create stored query
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -85,7 +85,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Create warehouse object
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -111,7 +111,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Delete a datamart
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -134,7 +134,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Execute an ad-hoc query
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -157,7 +157,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Execute a stored query
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -183,7 +183,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Get a particular datamart
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -209,7 +209,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Get all datamarts
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -232,7 +232,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Get stored queries for the specified datamart
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -259,7 +259,7 @@ namespace OpenIZ.Messaging.RISI.Wcf
         /// <summary>
         /// Get warehouse object
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Report Integration Service Interface (RISI) - Ad-hoc Interface")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]

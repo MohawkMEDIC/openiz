@@ -82,7 +82,7 @@ namespace OpenIZ.Messaging.Discovery.Swagger
                  var security = new SecurityDefinitions
                     {
                      {
-                        "OpenIZ Auth", new SecurityAuthorization
+                        "OAUTH2", new SecurityAuthorization
                         {
                           Type = "oauth2",
                           Name = "auth",

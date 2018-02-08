@@ -321,7 +321,7 @@ namespace OpenIZ.OrmLite
 
                     // Link to this table in the other?
                     // Allow hacking of the query before we get to the auto-generated stuff
-                    if (!this.m_hacks.Any(o => o.HackQuery(this, selectStatement, whereClause, subProp, tablePrefix, propertyPredicate, parm.Value, scopedTables)))
+                    if (!this.m_hacks.Any(o => o.HackQuery(this, selectStatement, whereClause, typeof(TModel), subProp, tablePrefix, propertyPredicate, parm.Value, scopedTables)))
                     {
                         // Is this a collection?
                         if (typeof(IList).IsAssignableFrom(subProp.PropertyType)) // Other table points at this on
@@ -466,7 +466,7 @@ namespace OpenIZ.OrmLite
                         }
                     }
                 }
-                else
+                else if(!this.m_hacks.Any(o=>o.HackQuery(this, selectStatement, whereClause, typeof(TModel), typeof(TModel).GetQueryProperty(propertyPredicate.Path), tablePrefix, propertyPredicate, parm.Value, scopedTables)))
                     whereClause.And(CreateWhereCondition(typeof(TModel), propertyPredicate.Path, parm.Value, tablePrefix, scopedTables));
 
             }

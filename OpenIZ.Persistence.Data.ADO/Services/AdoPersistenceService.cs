@@ -109,7 +109,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services
             {
                 s_mapper = new ModelMapper(typeof(AdoPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream(AdoDataConstants.MapResourceName));
 
-                List<IQueryBuilderHack> hax = new List<IQueryBuilderHack>() { new RelationshipQueryHack() };
+                List<IQueryBuilderHack> hax = new List<IQueryBuilderHack>() { new RelationshipQueryHack(), new CreationTimeQueryHack(s_mapper) };
                 if (s_configuration.DataCorrectionKeys.Any(k => k == "ConceptQueryHack"))
                     hax.Add(new ConceptQueryHack(s_mapper));
 

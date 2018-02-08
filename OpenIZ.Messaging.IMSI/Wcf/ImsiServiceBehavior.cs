@@ -91,7 +91,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -150,7 +150,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -207,7 +207,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -276,7 +276,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -367,7 +367,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -423,7 +423,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// </summary>
         [PolicyPermissionAttribute(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
@@ -521,7 +521,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <summary>
         /// Get the server's current time
         /// </summary>
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(200, "The operation was successful and the response contains the current server time")]
@@ -535,7 +535,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Update the specified resource
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
@@ -595,7 +595,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Obsolete the specified data
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
@@ -653,7 +653,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Perform the search but only return the headers
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
@@ -676,7 +676,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// Get just the headers
         /// </summary>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
@@ -702,7 +702,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         /// <param name="body"></param>
         [PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.LoginAsService)]
         [SwaggerWcfTag("Immunization Management Service Interface (IMSI)")]
-        [SwaggerWcfSecurity("OpenIZ Auth")]
+        [SwaggerWcfSecurity("OAUTH2")]
         [SwaggerWcfResponse(503, "The IMSI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
         [SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
         [SwaggerWcfResponse(401, "Operation requires authentication")]
