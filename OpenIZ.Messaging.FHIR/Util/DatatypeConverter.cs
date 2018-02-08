@@ -271,12 +271,12 @@ namespace OpenIZ.Messaging.FHIR.Util
                 Url = eType.Name
             };
 
-            if (ext.Value is Decimal)
-                retVal.Value = new FhirDecimal((Decimal)ext.Value);
-            else if (ext.Value is String)
-                retVal.Value = new FhirString((String)ext.Value);
-            else if (ext.Value is Boolean)
-                retVal.Value = new FhirBoolean((bool)ext.Value);
+            if (ext.Value is Decimal || eType.ExtensionHandler == typeof(DecimalExtensionHandler))
+                retVal.Value = new FhirDecimal((Decimal)(ext.Value ?? new DecimalExtensionHandler().DeSerialize(ext.Data)));
+            else if (ext.Value is String || eType.ExtensionHandler == typeof(StringExtensionHandler))
+                retVal.Value = new FhirString((String)(ext.Value ?? new StringExtensionHandler().DeSerialize(ext.Data)));
+            else if (ext.Value is Boolean || eType.ExtensionHandler == typeof(BooleanExtensionHandler))
+                retVal.Value = new FhirBoolean((bool)(ext.Value ?? new BooleanExtensionHandler().DeSerialize(ext.Data)));
             else
                 retVal.Value = new FhirBase64Binary(ext.Data);
             return retVal;

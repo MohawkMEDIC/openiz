@@ -210,7 +210,7 @@ namespace OpenIZ.Core.Model.DataTypes
         {
             get
             {
-                return this.ExtensionValue;
+                return this.GetValue();
             }
         }
 
