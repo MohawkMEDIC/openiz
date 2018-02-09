@@ -1,38 +1,39 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
+
 using MARC.HI.EHRS.SVC.Core;
+using MARC.HI.EHRS.SVC.Core.Services;
 using NHapi.Model.V231.Datatype;
 using NHapi.Model.V231.Segment;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Messaging.HL7.Configuration;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using OpenIZ.Core.Security;
-using TS = MARC.Everest.DataTypes.TS;
-using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.DataTypes;
-using MARC.HI.EHRS.SVC.Core.Services;
+using NHapi.Base.Model;
 
 namespace OpenIZ.Messaging.HL7.Notifier
 {
@@ -50,15 +51,6 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// The internal reference to the <see cref="IAssigningAuthorityRepositoryService"/> instance.
 		/// </summary>
 		private static readonly IAssigningAuthorityRepositoryService assigningAuthorityRepositoryService = ApplicationContext.Current.GetService<IAssigningAuthorityRepositoryService>();
-
-		/// <summary>
-		/// Ensures the authentication context is set.
-		/// </summary>
-		private static void EnsureAuthenticated()
-		{
-			// ensure authenticated
-			AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
-		}
 
 		/// <summary>
 		/// Updates the address.
@@ -79,24 +71,24 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				address.AddressType.Value = MessageUtil.GetCode(addressUse.Value, CodeSystemKeys.PostalAddressUse);
 			}
 
-            // TODO: Is the CT a UUID? if so we need to get the CT-ID (public id) from the place which the CT represents
+			// TODO: Is the CT a UUID? if so we need to get the CT-ID (public id) from the place which the CT represents
 
 			address.CensusTract.Value = string.Join(" ", entityAddress.LoadCollection<EntityAddressComponent>("Component").Where(c => c.ComponentTypeKey == AddressComponentKeys.CensusTract).Select(c => c.Value));
 
-            // HACK: Get the public identifier for the census tract
-            Guid ctId = Guid.Empty;
-            if(Guid.TryParse(address.CensusTract.Value, out ctId))
-            {
-                var place = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(ctId, Guid.Empty);
-                if(place != null)
-                {
-                    var exportDomain = ApplicationContext.Current.GetService<IConfigurationManager>().AppSettings["pix.export.village.censusTract"];
-                    if (!String.IsNullOrEmpty(exportDomain))
-                        address.CensusTract.Value = place.LoadCollection<EntityIdentifier>("Identifiers").FirstOrDefault(o => o.LoadProperty<AssigningAuthority>("Authority").DomainName == exportDomain)?.Value;
-                    else
-                        address.CensusTract.Value = String.Empty;
-                }
-            }
+			// HACK: Get the public identifier for the census tract
+			Guid ctId = Guid.Empty;
+			if (Guid.TryParse(address.CensusTract.Value, out ctId))
+			{
+				var place = ApplicationContext.Current.GetService<IPlaceRepositoryService>().Get(ctId, Guid.Empty);
+				if (place != null)
+				{
+					var exportDomain = ApplicationContext.Current.GetService<IConfigurationManager>().AppSettings["pix.export.village.censusTract"];
+					if (!String.IsNullOrEmpty(exportDomain))
+						address.CensusTract.Value = place.LoadCollection<EntityIdentifier>("Identifiers").FirstOrDefault(o => o.LoadProperty<AssigningAuthority>("Authority").DomainName == exportDomain)?.Value;
+					else
+						address.CensusTract.Value = String.Empty;
+				}
+			}
 
 			address.City.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.City).Select(c => c.Value));
 			address.Country.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Country).Select(c => c.Value));
@@ -104,11 +96,9 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			address.StreetAddress.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.StreetAddressLine).Select(c => c.Value));
 			address.CountyParishCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.County).Select(c => c.Value));
 			address.OtherDesignation.Value = string.Join(" ",
-                entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.AdditionalLocator).Union(
-                entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Precinct)).Select(c => c.Value));
-            address.ZipOrPostalCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Select(c => c.Value));
-
-
+				entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.AdditionalLocator).Union(
+				entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.Precinct)).Select(c => c.Value));
+			address.ZipOrPostalCode.Value = string.Join(" ", entityAddress.Component.Where(c => c.ComponentTypeKey == AddressComponentKeys.PostalCode).Select(c => c.Value));
 		}
 
 		/// <summary>
@@ -140,7 +130,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 				case "undifferentiated":
 				case "ae94a782-1485-4241-9bca-5b09db2156bf":
-                default:
+				default:
 					pid.Sex.Value = "U";
 					break;
 			}
@@ -203,15 +193,14 @@ namespace OpenIZ.Messaging.HL7.Notifier
 
 			if (patient.MultipleBirthOrder.HasValue)
 			{
-                if(patient.MultipleBirthOrder != 0)
-				    pid.BirthOrder.Value = patient.MultipleBirthOrder.ToString();
+				if (patient.MultipleBirthOrder != 0)
+					pid.BirthOrder.Value = patient.MultipleBirthOrder.ToString();
 				pid.MultipleBirthIndicator.Value = "Y";
 			}
 
 			if (patient.DateOfBirth.HasValue)
 			{
 				pid.DateTimeOfBirth.TimeOfAnEvent.Value = patient.DateOfBirth.Value.ToString("yyyyMMdd");
-                
 			}
 
 			if (patient.DeceasedDate.HasValue)
@@ -225,34 +214,33 @@ namespace OpenIZ.Messaging.HL7.Notifier
 				NotifierBase.UpdateAD(address, pid.GetPatientAddress(pid.PatientAddressRepetitionsUsed));
 			}
 
-            var pids = patient.LoadCollection<EntityIdentifier>("Identifiers").Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null).ToArray();
+			var pids = patient.LoadCollection<EntityIdentifier>("Identifiers").Where(item => assigningAuthorityRepositoryService.Find(a => a.DomainName == item.Authority.DomainName).FirstOrDefault() != null).ToArray();
 
-            for (var i = 0; i < pids.Length; i++)
+			for (var i = 0; i < pids.Length; i++)
 			{
-                var patientIdentifier = pids[i];
+				var patientIdentifier = pids[i];
 
 				pid.GetPatientIdentifierList(i).ID.Value = patientIdentifier.Value;
 				pid.GetPatientIdentifierList(i).AssigningAuthority.NamespaceID.Value = patientIdentifier.Authority.DomainName;
 				pid.GetPatientIdentifierList(i).AssigningAuthority.UniversalID.Value = patientIdentifier.Authority.Oid;
 				pid.GetPatientIdentifierList(i).AssigningAuthority.UniversalIDType.Value = "ISO";
 				pid.GetPatientIdentifierList(i).IdentifierTypeCode.Value = "PI";
-
 			}
 
-            // Create the PI for the patient key
-            var lastPid = pid.PatientIdentifierListRepetitionsUsed;
-            pid.GetPatientIdentifierList(lastPid).ID.Value = patient.Key.ToString();
+			// Create the PI for the patient key
+			var lastPid = pid.PatientIdentifierListRepetitionsUsed;
+			pid.GetPatientIdentifierList(lastPid).ID.Value = patient.Key.ToString();
 
-            if (ApplicationContext.Current.Configuration?.Custodianship?.Id?.Id != null)
-                pid.GetPatientIdentifierList(lastPid).AssigningAuthority.NamespaceID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.Id;
-            else
-            {
-                pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.AssigningAuthority?.Oid;
-                pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalIDType.Value = "ISO";
-                pid.GetPatientIdentifierList(lastPid).IdentifierTypeCode.Value = "PI";
-            }
+			if (ApplicationContext.Current.Configuration?.Custodianship?.Id?.Id != null)
+				pid.GetPatientIdentifierList(lastPid).AssigningAuthority.NamespaceID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.Id;
+			else
+			{
+				pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalID.Value = ApplicationContext.Current.Configuration?.Custodianship?.Id?.AssigningAuthority?.Oid;
+				pid.GetPatientIdentifierList(lastPid).AssigningAuthority.UniversalIDType.Value = "ISO";
+				pid.GetPatientIdentifierList(lastPid).IdentifierTypeCode.Value = "PI";
+			}
 
-            foreach (var personLanguage in patient.LoadCollection<PersonLanguageCommunication>("LanguageCommunication").Where(l => l.IsPreferred))
+			foreach (var personLanguage in patient.LoadCollection<PersonLanguageCommunication>("LanguageCommunication").Where(l => l.IsPreferred))
 			{
 				pid.PrimaryLanguage.Identifier.Value = personLanguage.LanguageCode;
 				//pid.PrimaryLanguage.NameOfCodingSystem.Value = "ISO639-1";
@@ -302,6 +290,15 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			name.MiddleInitialOrName.Value = string.Join(" ", entityName.Component.Where(c => c.ComponentTypeKey == NameComponentKeys.Delimiter).Select(c => c.Value));
 
 			return name;
+		}
+
+		/// <summary>
+		/// Ensures the authentication context is set.
+		/// </summary>
+		private static void EnsureAuthenticated()
+		{
+			// ensure authenticated
+			AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 		}
 	}
 }

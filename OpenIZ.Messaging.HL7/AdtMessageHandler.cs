@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
+
 using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Messaging.HAPI;
@@ -24,16 +25,15 @@ using MARC.HI.EHRS.SVC.Messaging.HAPI.TransportProtocol;
 using NHapi.Base.Model;
 using NHapi.Base.Parser;
 using NHapi.Base.Util;
+using NHapi.Model.V231.Segment;
 using NHapi.Model.V25.Message;
 using OpenIZ.Core;
+using OpenIZ.Core.Security;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Principal;
-using NHapi.Model.V231.Segment;
-using OpenIZ.Core.Security;
 
 namespace OpenIZ.Messaging.HL7
 {
@@ -47,12 +47,11 @@ namespace OpenIZ.Messaging.HL7
 		/// </summary>
 		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.HL7");
 
-    
-        /// <summary>
-        /// Handle a received message on the LLP interface.
-        /// </summary>
-        /// <param name="e">The HL7 message received event arguments.</param>
-        public IMessage HandleMessage(Hl7MessageReceivedEventArgs e)
+		/// <summary>
+		/// Handle a received message on the LLP interface.
+		/// </summary>
+		/// <param name="e">The HL7 message received event arguments.</param>
+		public IMessage HandleMessage(Hl7MessageReceivedEventArgs e)
 		{
 			IMessage response = null;
 
@@ -64,14 +63,14 @@ namespace OpenIZ.Messaging.HL7
 
 					var msh = e.Message.GetStructure("MSH") as MSH;
 
-                    // get the device identity by device name, as the device will have to be registered in OpenIZ
-                    if (AuthenticationContext.Current?.Principal?.Identity?.IsAuthenticated == false ||
-                        AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
-                    {
-                        // HACK: Need better way to auth on HL7v2
-                        var deviceIdentity = identityProvider.Authenticate(msh.SendingApplication.NamespaceID.Value, msh.SendingFacility.NamespaceID.Value);
-                        AuthenticationContext.Current = new AuthenticationContext(deviceIdentity);
-                    }
+					// get the device identity by device name, as the device will have to be registered in OpenIZ
+					if (AuthenticationContext.Current?.Principal?.Identity?.IsAuthenticated == false ||
+						AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
+					{
+						// HACK: Need better way to auth on HL7v2
+						var deviceIdentity = identityProvider.Authenticate(msh.SendingApplication.NamespaceID.Value, msh.SendingFacility.NamespaceID.Value);
+						AuthenticationContext.Current = new AuthenticationContext(deviceIdentity);
+					}
 
 					// Get the MSH segment
 					var terser = new Terser(e.Message);
