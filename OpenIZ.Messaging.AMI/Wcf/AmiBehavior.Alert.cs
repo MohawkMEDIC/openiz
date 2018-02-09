@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.AMI.Alerting;
 using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
+using SwaggerWcf.Attributes;
 using System;
 using System.Data;
 using System.Linq;
@@ -41,6 +42,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="alertMessageInfo">The alert message to be created.</param>
 		/// <returns>Returns the created alert.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(409, "You are attempting to create a resource that already exists")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(201, "The object was created successfully")]
 		public AlertMessageInfo CreateAlert(AlertMessageInfo alertMessageInfo)
 		{
 			var alertRepositoryService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
@@ -60,6 +74,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="alertId">The id of the alert to retrieve.</param>
 		/// <returns>Returns the alert.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public AlertMessageInfo GetAlert(string alertId)
 		{
 			var key = Guid.Empty;
@@ -85,6 +111,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of alert for a specific query.
 		/// </summary>
 		/// <returns>Returns a list of alert which match the specific query.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public AmiCollection<AlertMessageInfo> GetAlerts()
 		{
 			var parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
@@ -119,6 +157,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="alertId">The id of the alert to be updated.</param>
 		/// <param name="alert">The alert containing the updated information.</param>
 		/// <returns>Returns the updated alert.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(409, "You are attempting to perform an update on an old version of the resource, or the conditional HTTP headers don't match the current version of the resource")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The object was updated successfully")]
 		public AlertMessageInfo UpdateAlert(string alertId, AlertMessageInfo alert)
 		{
 			var key = Guid.Empty;

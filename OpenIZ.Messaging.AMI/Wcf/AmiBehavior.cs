@@ -82,7 +82,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		public LogFileInfo GetLog(string logId)
 		{
 			var logFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), logId + ".log");
-			var retVal = new AmiCollection<LogFileInfo>();
+
 			var fi = new FileInfo(logFile);
 			return new LogFileInfo()
 			{

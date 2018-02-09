@@ -25,6 +25,7 @@ using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Security;
 using OpenIZ.Core.Security.Attribute;
 using OpenIZ.Messaging.AMI.Configuration;
+using SwaggerWcf.Attributes;
 using System;
 using System.Reflection;
 using System.Security.Cryptography.Pkcs;
@@ -63,6 +64,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="id">The id of the certificate signing request to be accepted.</param>
 		/// <returns>Returns the acceptance result.</returns>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(409, "You are attempting to create a resource that already exists")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(201, "The object was created successfully")]
 		public SubmissionResult AcceptCsr(string rawId)
 		{
 			int id = Int32.Parse(rawId);
@@ -82,6 +96,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <returns>Returns the deletion result.</returns>
 		/// <exception cref="System.InvalidOperationException">Cannot revoke an un-issued certificate</exception>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(409, "You are attempting to perform an obsolete on an old version of the resource, or the conditional HTTP headers don't match the current version of the resource")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The object was obsoleted successfully")]
 		public SubmissionResult DeleteCertificate(string rawId, String strReason)
 		{
 			// Revoke reason
@@ -109,6 +136,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="rawId">The raw identifier.</param>
 		/// <returns>Returns the certificate.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public byte[] GetCertificate(string rawId)
 		{
 			var id = int.Parse(rawId);
@@ -125,6 +164,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of certificates.
 		/// </summary>
 		/// <returns>Returns a list of certificates.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public AmiCollection<X509Certificate2Info> GetCertificates()
 		{
 			var collection = new AmiCollection<X509Certificate2Info>();
@@ -143,6 +194,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets the certificate revocation list.
 		/// </summary>
 		/// <returns>Returns the certificate revocation list.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public byte[] GetCrl()
 		{
 			WebOperationContext.Current.OutgoingResponse.ContentType = "application/x-pkcs7-crl";
@@ -155,6 +218,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="id">The id of the certificate signing request to be retrieved.</param>
 		/// <returns>Returns the certificate signing request.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public SubmissionResult GetCsr(string rawId)
 		{
 			int id = Int32.Parse(rawId);
@@ -168,6 +243,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of submitted certificate signing requests.
 		/// </summary>
 		/// <returns>Returns a list of certificate signing requests.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public AmiCollection<SubmissionInfo> GetCsrs()
 		{
 			AmiCollection<SubmissionInfo> collection = new AmiCollection<SubmissionInfo>();
@@ -195,6 +282,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="reason">The reason the certificate signing request is to be rejected.</param>
 		/// <returns>Returns the rejection result.</returns>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public SubmissionResult RejectCsr(string rawId, OpenIZ.Core.Model.AMI.Security.RevokeReason reason)
 		{
 			int id = Int32.Parse(rawId);
@@ -212,6 +311,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="s">The certificate signing request.</param>
 		/// <returns>Returns the submission result.</returns>
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.UnrestrictedAdministration)]
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(409, "You are attempting to create a resource that already exists")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(201, "The object was created successfully")]
 		public SubmissionResult SubmitCsr(SubmissionRequest s)
 		{
 			var submission = this.certTool.SubmitRequest(s.CmcRequest, s.AdminContactName, s.AdminAddress);
