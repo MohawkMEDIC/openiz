@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: fyfej
  * Date: 2017-9-1
  */
+
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Http;
@@ -324,20 +325,12 @@ namespace OpenIZ.Messaging.AMI.Client
 			return this.Client.Get<AlertMessageInfo>($"alert/{id}");
 		}
 
-        /// <summary>
-		/// Gets a diagnostic alert.
+		/// <summary>
+		/// Gets a list of alerts.
 		/// </summary>
-		public DiagnosticReport GetServerDiagnoticReport()
-        {
-            return this.Client.Get<DiagnosticReport>($"sherlock");
-        }
-
-        /// <summary>
-        /// Gets a list of alerts.
-        /// </summary>
-        /// <param name="query">The query expression to use to find the alerts.</param>
-        /// <returns>Returns a collection of alerts which match the specified criteria.</returns>
-        public AmiCollection<AlertMessageInfo> GetAlerts(Expression<Func<AlertMessage, bool>> query)
+		/// <param name="query">The query expression to use to find the alerts.</param>
+		/// <returns>Returns a collection of alerts which match the specified criteria.</returns>
+		public AmiCollection<AlertMessageInfo> GetAlerts(Expression<Func<AlertMessage, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<AlertMessageInfo>>("alert", QueryExpressionBuilder.BuildQuery(query).ToArray());
 		}
@@ -480,6 +473,22 @@ namespace OpenIZ.Messaging.AMI.Client
 		}
 
 		/// <summary>
+		/// Gets the specified log from the server
+		/// </summary>
+		public LogFileInfo GetLog(string logId)
+		{
+			return this.Client.Get<LogFileInfo>($"log/{logId}");
+		}
+
+		/// <summary>
+		/// Get all logs
+		/// </summary>
+		public AmiCollection<LogFileInfo> GetLogs()
+		{
+			return this.Client.Get<AmiCollection<LogFileInfo>>("log");
+		}
+
+		/// <summary>
 		/// Retrieves a specified policy.
 		/// </summary>
 		/// <param name="query">The query expression to use to find the policy.</param>
@@ -517,6 +526,14 @@ namespace OpenIZ.Messaging.AMI.Client
 		public AmiCollection<SecurityRoleInfo> GetRoles(Expression<Func<SecurityRole, bool>> query)
 		{
 			return this.Client.Get<AmiCollection<SecurityRoleInfo>>("role", QueryExpressionBuilder.BuildQuery(query).ToArray());
+		}
+
+		/// <summary>
+		/// Gets a diagnostic alert.
+		/// </summary>
+		public DiagnosticReport GetServerDiagnoticReport()
+		{
+			return this.Client.Get<DiagnosticReport>($"sherlock");
 		}
 
 		/// <summary>
@@ -778,22 +795,5 @@ namespace OpenIZ.Messaging.AMI.Client
 		{
 			return this.Client.Put<SecurityUserInfo, SecurityUserInfo>($"user/{id}", this.Client.Accept, user);
 		}
-
-        /// <summary>
-        /// Get all logs 
-        /// </summary>
-        public AmiCollection<LogFileInfo> GetLogs()
-        {
-            return this.Client.Get<AmiCollection<LogFileInfo>>("log");
-        }
-
-        /// <summary>
-        /// Gets the specified log from the server
-        /// </summary>
-        public LogFileInfo GetLog(string logId)
-        {
-            return this.Client.Get<LogFileInfo>($"log/{logId}");
-        }
-
 	}
 }

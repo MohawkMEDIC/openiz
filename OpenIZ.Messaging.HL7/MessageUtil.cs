@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
+
 using MARC.Everest.Connectors;
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
@@ -32,7 +33,6 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
-using OpenIZ.Core.ResultsDetails;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -900,14 +900,12 @@ namespace OpenIZ.Messaging.HL7
 					var v231Msh = (MSH)msh;
 
 					var result = ConvertAssigningAuthority(v231Msh.SendingApplication, details);
-
 				}
 				else if (msh is NHapi.Model.V25.Segment.MSH)
 				{
 					var v25Msh = (NHapi.Model.V25.Segment.MSH)msh;
 
 					var result = ConvertAssigningAuthority(v25Msh.SendingApplication, details);
-
 				}
 				else
 				{

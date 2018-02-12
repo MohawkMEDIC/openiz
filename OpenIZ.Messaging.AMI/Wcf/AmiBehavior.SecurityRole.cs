@@ -24,6 +24,7 @@ using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Services;
+using SwaggerWcf.Attributes;
 using System;
 using System.Data;
 using System.Linq;
@@ -41,6 +42,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="role">The security role to be created.</param>
 		/// <returns>Returns the newly created security role.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(409, "You are attempting to create a resource that already exists")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(201, "The object was created successfully")]
 		public SecurityRoleInfo CreateRole(SecurityRoleInfo role)
 		{
 			var roleRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -64,6 +78,19 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// </summary>
 		/// <param name="rawRoleId">The id of the role to be deleted.</param>
 		/// <returns>Returns the deleted role.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(409, "You are attempting to perform an obsolete on an old version of the resource, or the conditional HTTP headers don't match the current version of the resource")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The object was obsoleted successfully")]
 		public SecurityRoleInfo DeleteRole(string rawRoleId)
 		{
 			var key = Guid.Empty;
@@ -86,8 +113,21 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <summary>
 		/// Gets a specific security role.
 		/// </summary>
-		/// <param name="roleId">The id of the security role to be retrieved.</param>
+		/// <param name="rawRoleId">The raw role identifier.</param>
 		/// <returns>Returns the security role.</returns>
+		/// <exception cref="System.ArgumentException">rawRoleId</exception>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public SecurityRoleInfo GetRole(string rawRoleId)
 		{
 			Guid roleId = Guid.Empty;
@@ -101,6 +141,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// Gets a list of security roles.
 		/// </summary>
 		/// <returns>Returns a list of security roles.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public AmiCollection<SecurityRoleInfo> GetRoles()
 		{
 			var expression = QueryExpressionParser.BuildLinqExpression<SecurityRole>(this.CreateQuery(WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters));
@@ -114,6 +166,18 @@ namespace OpenIZ.Messaging.AMI.Wcf
 		/// <param name="roleId">The id of the role to be updated.</param>
 		/// <param name="roleInfo">The role containing the updated information.</param>
 		/// <returns>Returns the updated role.</returns>
+		[SwaggerWcfTag("Administrative Management Interface (AMI)")]
+		[SwaggerWcfSecurity("OAUTH2")]
+		[SwaggerWcfResponse(503, "The AMI service is unavailable (for example: Server is still starting up, or didn't start up correctly)")]
+		[SwaggerWcfResponse(403, "User attempted to perform an operation but they are unauthorized to do so")]
+		[SwaggerWcfResponse(401, "Operation requires authentication")]
+		[SwaggerWcfResponse(429, "The server throttling has been exceeded")]
+		[SwaggerWcfResponse(400, "The client has made a request that this server cannot fulfill")]
+		[SwaggerWcfResponse(405, "You are not allowed to perform this operation on this resource")]
+		[SwaggerWcfResponse(501, "The method / operation you are calling is not implemented")]
+		[SwaggerWcfResponse(404, "The provided resource could not be found")]
+		[SwaggerWcfResponse(422, "The operation resulted in one or more business rules being violated")]
+		[SwaggerWcfResponse(200, "The operation was successful, and the most recent version of the resource is in the response")]
 		public SecurityRoleInfo UpdateRole(string roleId, SecurityRoleInfo roleInfo)
 		{
 			Guid id = Guid.Empty;

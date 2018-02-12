@@ -1,22 +1,23 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
+
 using NHapi.Base.Model;
 using NHapi.Model.V231.Message;
 using NHapi.Model.V231.Segment;
@@ -25,7 +26,11 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Messaging.HL7.Configuration;
 using OpenIZ.Messaging.HL7.Queue;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using NHapi.Base.Parser;
 using TS = MARC.Everest.DataTypes.TS;
 
 namespace OpenIZ.Messaging.HL7.Notifier
@@ -48,12 +53,13 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		public TargetConfiguration TargetConfiguration { get; set; }
 
 		/// <summary>
-		/// Notifies a remote system.
+		/// Creates the message.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="workItem">The work item of the notification.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException"></exception>
-		public void Notify<T>(NotificationQueueWorkItem<T> workItem) where T : IdentifiedData
+		/// <typeparam name="T">The type of identified data.</typeparam>
+		/// <param name="workItem">The work item.</param>
+		/// <returns>Returns the created message</returns>
+		/// <exception cref="System.ArgumentOutOfRangeException">Invalid notification type</exception>
+		private IMessage CreateMessage<T>(NotificationQueueWorkItem<T> workItem) where T : IdentifiedData
 		{
 			IMessage notificationMessage;
 
@@ -146,6 +152,52 @@ namespace OpenIZ.Messaging.HL7.Notifier
 			// TODO: populate the merge information
 			if (mrg != null)
 			{
+			}
+
+			return notificationMessage;
+		}
+
+		/// <summary>
+		/// Notifies a remote system.
+		/// </summary>
+		/// <typeparam name="T">The type of identified data.</typeparam>
+		/// <param name="workItem">The work item of the notification.</param>
+		public void Notify<T>(NotificationQueueWorkItem<T> workItem) where T : IdentifiedData
+		{
+			var notificationMessage = this.CreateMessage(workItem);
+
+			try
+			{
+				// attempt to write the message we are sending to the file
+
+				var parser = new PipeParser();
+				var encodedNotificationMessage = parser.Encode(notificationMessage);
+				var filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "hl7");
+
+				if (!Directory.Exists(filePath))
+				{
+					Directory.CreateDirectory(filePath);
+				}
+				using (var fileStream = File.Create(filePath + "hl7_output_" + DateTime.Now.ToString("yyyyMMdd") + ".hl7"))
+				{
+					// Write message in ASCII encoding
+					byte[] buffer = Encoding.UTF8.GetBytes(encodedNotificationMessage);
+					byte[] sendBuffer = new byte[buffer.Length + 3];
+
+					sendBuffer[0] = 0x0b;
+
+					Array.Copy(buffer, 0, sendBuffer, 1, buffer.Length);
+					Array.Copy(new byte[] { 0x1c, 0x0d }, 0, sendBuffer, sendBuffer.Length - 2, 2);
+
+					fileStream.Write(sendBuffer, 0, sendBuffer.Length);
+
+					// Write end message
+					fileStream.Flush();
+				}
+			}
+			catch (Exception e)
+			{
+				tracer.TraceEvent(TraceEventType.Error, 1911, $"Unable to write message to file: {e}");
 			}
 
 			var queueItem = new MessageQueueWorkItem(notificationMessage, this.TargetConfiguration);

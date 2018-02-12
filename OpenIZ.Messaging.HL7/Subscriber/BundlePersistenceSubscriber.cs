@@ -1,34 +1,32 @@
 ﻿/*
  * Copyright 2015-2018 Mohawk College of Applied Arts and Technology
  *
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * User: fyfej
+ *
+ * User: khannan
  * Date: 2017-9-1
  */
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using MARC.HI.EHRS.SVC.Core;
 using MARC.HI.EHRS.SVC.Core.Services;
 using OpenIZ.Core.Event;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace OpenIZ.Messaging.HL7.Subscriber
 {
@@ -43,10 +41,9 @@ namespace OpenIZ.Messaging.HL7.Subscriber
 		private readonly TraceSource traceSource = new TraceSource("OpenIZ.Messaging.HL7");
 
 		/// <summary>
-		/// Gets a value indicating whether this instance is running.
+		/// Occurs when the service is started.
 		/// </summary>
-		/// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
-		public bool IsRunning => true;
+		public event EventHandler Started;
 
 		/// <summary>
 		/// Occurs when the service is starting.
@@ -54,19 +51,20 @@ namespace OpenIZ.Messaging.HL7.Subscriber
 		public event EventHandler Starting;
 
 		/// <summary>
+		/// Occurs when the service is stopped.
+		/// </summary>
+		public event EventHandler Stopped;
+
+		/// <summary>
 		/// Occurs when the service is stopping.
 		/// </summary>
 		public event EventHandler Stopping;
 
 		/// <summary>
-		/// Occurs when the service is started.
+		/// Gets a value indicating whether this instance is running.
 		/// </summary>
-		public event EventHandler Started;
-
-		/// <summary>
-		/// Occurs when the service is stopped.
-		/// </summary>
-		public event EventHandler Stopped;
+		/// <value><c>true</c> if this instance is running; otherwise, <c>false</c>.</value>
+		public bool IsRunning => true;
 
 		/// <summary>
 		/// Starts this instance.
@@ -81,7 +79,7 @@ namespace OpenIZ.Messaging.HL7.Subscriber
 				{
 					ApplicationContext.Current.GetService<IRepositoryService<Bundle>>().DataCreated += (sender, instance) =>
 					{
-						foreach (var patient in instance.Objects.OfType<Bundle>().SelectMany(p=>p.Item.OfType<Patient>()).Union(instance.Objects.OfType<Patient>()))
+						foreach (var patient in instance.Objects.OfType<Bundle>().SelectMany(p => p.Item.OfType<Patient>()).Union(instance.Objects.OfType<Patient>()))
 						{
 							ApplicationContext.Current.GetService<IClientRegistryNotificationService>()?.NotifyRegister(new NotificationEventArgs<Patient>(patient));
 						}
@@ -89,7 +87,7 @@ namespace OpenIZ.Messaging.HL7.Subscriber
 
 					ApplicationContext.Current.GetService<IRepositoryService<Bundle>>().DataUpdated += (sender, instance) =>
 					{
-						foreach (var patient in instance.Objects.OfType<Bundle>().SelectMany(p=>p.Item.OfType<Patient>()).Union(instance.Objects.OfType<Patient>()))
+						foreach (var patient in instance.Objects.OfType<Bundle>().SelectMany(p => p.Item.OfType<Patient>()).Union(instance.Objects.OfType<Patient>()))
 						{
 							ApplicationContext.Current.GetService<IClientRegistryNotificationService>()?.NotifyUpdate(new NotificationEventArgs<Patient>(patient));
 						}
@@ -97,7 +95,6 @@ namespace OpenIZ.Messaging.HL7.Subscriber
 				};
 
 				this.traceSource.TraceEvent(TraceEventType.Information, 0, "Bundle persistence Client Registry Notifications started successfully");
-
 			}
 			catch (Exception e)
 			{
@@ -117,4 +114,3 @@ namespace OpenIZ.Messaging.HL7.Subscriber
 		}
 	}
 }
-

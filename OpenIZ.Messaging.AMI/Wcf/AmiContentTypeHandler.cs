@@ -23,15 +23,18 @@ using System.ServiceModel.Channels;
 namespace OpenIZ.Messaging.AMI.Wcf
 {
 	/// <summary>
-	/// Content-type handler
+	/// Represents an AMI content type handler.
 	/// </summary>
+	/// <seealso cref="System.ServiceModel.Channels.WebContentTypeMapper" />
 	public class AmiContentTypeHandler : WebContentTypeMapper
 	{
+		/// <summary>
+		/// When overridden in a derived class, returns the message format used for a specified content type.
+		/// </summary>
+		/// <param name="contentType">The content type that indicates the MIME type of data to be interpreted.</param>
+		/// <returns>The <see cref="T:System.ServiceModel.Channels.WebContentFormat" /> that specifies the format to which the message content type is mapped.</returns>
 		public override WebContentFormat GetMessageFormatForContentType(string contentType)
 		{
-			//if (contentType.StartsWith("application/xml"))
-			//    return WebContentFormat.Xml;
-			//else
 			return WebContentFormat.Raw;
 		}
 	}
