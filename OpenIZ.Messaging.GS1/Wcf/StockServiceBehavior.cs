@@ -354,8 +354,13 @@ namespace OpenIZ.Messaging.GS1.Wcf
                         // We want to roll back to the start time and re-calc balance oh at time?
                         if (reportTo.Value.Date < DateTime.Now.Date)
                         {
+                            this.m_tracer.TraceVerbose("{0} : {1} has balance of {2}", place.Key, mmat.Key, balanceOH);
                             var consumed = this.m_stockService.GetConsumed(mmat.Key.Value, place.Key.Value, reportTo, DateTime.Now);
+                            foreach (var i in consumed)
+                                this.m_tracer.TraceVerbose("\t- {0} ({1} - {2})", i.Quantity, i.PlayerEntityKey, i.Key);
+
                             balanceOH -= (decimal)consumed.Sum(o => o.Quantity ?? 0);
+                            this.m_tracer.TraceVerbose("{0} : \t {1} {2} (TOTAL)", place.Key, balanceOH, mmat.Key);
 
                             if (balanceOH == 0 && this.m_stockService.GetConsumed(mmat.Key.Value, place.Key.Value, reportFrom, reportTo).Count() == 0)
                                 return;

@@ -397,7 +397,9 @@ namespace OpenIZ.Core.Model.Query
                                     pValue = "true";
                                 }
                                 else if (thisAccessExpression.Type == typeof(DateTime) ||
-                                    thisAccessExpression.Type == typeof(DateTime?))
+                                    thisAccessExpression.Type == typeof(DateTime?) ||
+                                    thisAccessExpression.Type == typeof(DateTimeOffset) ||
+                                    thisAccessExpression.Type == typeof(DateTimeOffset?))
                                 {
                                     pValue = value.Substring(1);
                                     DateTime dateLow = DateTime.ParseExact(pValue, "yyyy-MM-dd".Substring(0, pValue.Length), CultureInfo.InvariantCulture), dateHigh = DateTime.MaxValue;
@@ -407,15 +409,17 @@ namespace OpenIZ.Core.Model.Query
                                         dateHigh = new DateTime(dateLow.Year, dateLow.Month, DateTime.DaysInMonth(dateLow.Year, dateLow.Month), 23, 59, 59);
                                     else if (pValue.Length == 10)
                                         dateHigh = new DateTime(dateLow.Year, dateLow.Month, dateLow.Day, 23, 59, 59);
-                                    if (thisAccessExpression.Type == typeof(DateTime?))
+
+                                    if (thisAccessExpression.Type == typeof(DateTime?) || thisAccessExpression.Type == typeof(DateTimeOffset?))
                                         thisAccessExpression = Expression.MakeMemberAccess(thisAccessExpression, thisAccessExpression.Type.GetRuntimeProperty("Value"));
-                                    Expression lowerBound = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, thisAccessExpression, Expression.Constant(dateLow)),
-                                        upperBound = Expression.MakeBinary(ExpressionType.LessThanOrEqual, thisAccessExpression, Expression.Constant(dateHigh));
+
+                                    Expression lowerBound = Expression.MakeBinary(ExpressionType.GreaterThanOrEqual, thisAccessExpression, Expression.Convert(Expression.Constant(dateLow), thisAccessExpression.Type.StripNullable())),
+                                        upperBound = Expression.MakeBinary(ExpressionType.LessThanOrEqual, thisAccessExpression, Expression.Convert(Expression.Constant(dateHigh), thisAccessExpression.Type.StripNullable()));
                                     thisAccessExpression = Expression.MakeBinary(ExpressionType.AndAlso, lowerBound, upperBound);
                                     pValue = "true";
                                 }
                                 else
-                                    throw new InvalidOperationException("~ can only be applied to string properties");
+                                    throw new InvalidOperationException($"~ can only be applied to string and date properties not {thisAccessExpression.Type}");
 
                                 break;
                             case '!':
