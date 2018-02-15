@@ -37,5 +37,7 @@ namespace OpenIZ.Messaging.IMSI.Configuration
         /// Gets the wcf service name
         /// </summary>
         public string WcfServiceName { get; private set; }
+
+
     }
 }

@@ -131,6 +131,16 @@ namespace OpenIZ.Core.Model.Query
             }
             return queryString;
         }
+
+        /// <summary>
+        /// Get the key
+        /// </summary>
+        public List<String> Get(String key)
+        {
+            List<String> retVal = null;
+            this.TryGetValue(key, out retVal);
+            return retVal;
+        }
     }
 
 }

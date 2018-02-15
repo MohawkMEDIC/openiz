@@ -85,7 +85,6 @@ namespace OpenIZ.Core.Wcf.Security
                         //operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Identities"] = identities;
                         operationContext.ServiceSecurityContext.AuthorizationContext.Properties["Principal"] = Core.Security.AuthenticationContext.AnonymousPrincipal;
                         Core.Security.AuthenticationContext.Current = new Core.Security.AuthenticationContext(Core.Security.AuthenticationContext.AnonymousPrincipal);
-
                         return true; // OPTIONS is non PHI infrastructural
                     }
                     else

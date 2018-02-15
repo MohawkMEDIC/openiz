@@ -27,6 +27,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -105,7 +106,8 @@ namespace OpenIZ.Messaging.FHIR.Handlers
         protected virtual IEnumerable<TPredicate> QueryEx<TPredicate>(Expression<Func<TPredicate, bool>> query, List<IResultDetail> issues, Guid queryId, int offset, int count, out int totalResults)
             where TPredicate : IdentifiedData
         {
-            if (typeof(TPredicate).GetProperty(nameof(Entity.StatusConceptKey)) != null)
+            if (typeof(TPredicate).GetProperty(nameof(Entity.StatusConceptKey)) != null &&
+                !QueryExpressionBuilder.BuildQuery(query).Any(o=>o.Key.StartsWith("statusConcept")))
 			{
 				var obsoletionReference = Expression.MakeBinary(ExpressionType.NotEqual, Expression.Convert(Expression.MakeMemberAccess(query.Parameters[0], typeof(TPredicate).GetProperty(nameof(Entity.StatusConceptKey))), typeof(Guid)), Expression.Constant(StatusKeys.Obsolete));
 				query = Expression.Lambda<Func<TPredicate, bool>>(Expression.AndAlso(obsoletionReference, query.Body), query.Parameters);
