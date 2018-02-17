@@ -118,8 +118,8 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 // TODO: Add a configuration option to disable this
                 Dictionary<String, String> requiredHeaders = new Dictionary<string, string>() {
                     {"Access-Control-Allow-Origin", "*"},
-                    {"Access-Control-Request-Method", "GET,POST,PUT,DELETE,OPTIONS"},
-                    {"Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Accept,Content-Encoding,Accept-Encoding"}
+                    {"Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"},
+                    {"Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Accept,Content-Encoding,Accept-Encoding, Authorization"}
                 };
                 foreach (var kv in requiredHeaders)
                     if (!WebOperationContext.Current.OutgoingResponse.Headers.AllKeys.Contains(kv.Key))

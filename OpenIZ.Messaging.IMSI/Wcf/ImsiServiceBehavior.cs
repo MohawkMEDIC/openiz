@@ -863,5 +863,12 @@ namespace OpenIZ.Messaging.IMSI.Wcf
             if (!ApplicationContext.Current.IsRunning)
                 throw new DomainStateException();
         }
+
+        /// <summary>
+        /// Options resource
+        /// </summary>
+        public void OptionsResource(string resourceType)
+        {
+        }
     }
 }

@@ -265,8 +265,7 @@ namespace OpenIZ.Core.Wcf.Serialization
                     if (accepts?.StartsWith("application/json") == true ||
                         contentType?.StartsWith("application/json") == true)
                     {
-                        if (accepts?.StartsWith("application/json+oiz-viewmodel") == true ||
-                                contentType?.StartsWith("application/json+oiz-viewmodel") == true)
+                        if (accepts?.StartsWith("application/json+oiz-viewmodel") == true)
                         {
                             var nvc = NameValueCollection.ParseQueryString(httpRequest.QueryString);
                             var viewModel = httpRequest.Headers["X-OpenIZ-ViewModel"] ?? nvc.Get("_viewModel")?.FirstOrDefault();
