@@ -172,7 +172,7 @@ namespace OpenIZ.OrmLite
         // Mapper
         private ModelMapper m_mapper;
         private IDbProvider m_provider;
-       
+
         /// <summary>
         /// Represents model mapper
         /// </summary>
@@ -183,7 +183,7 @@ namespace OpenIZ.OrmLite
             this.m_provider = provider;
             this.m_hacks = hacks.ToList();
         }
-        
+
         /// <summary>
         /// Create a query 
         /// </summary>
@@ -202,10 +202,18 @@ namespace OpenIZ.OrmLite
         }
 
         /// <summary>
+        /// Create query 
+        /// </summary>
+        public SqlStatement CreateQuery<TModel>(IEnumerable<KeyValuePair<String, Object>> query, String tablePrefix, params ColumnMapping[] selector)
+        {
+            return CreateQuery<TModel>(query, null, false, selector);
+        }
+
+        /// <summary>
         /// Query query 
         /// </summary>
         /// <param name="query"></param>
-        public SqlStatement CreateQuery<TModel>(IEnumerable<KeyValuePair<String, Object>> query, String tablePrefix, params ColumnMapping[] selector)
+        public SqlStatement CreateQuery<TModel>(IEnumerable<KeyValuePair<String, Object>> query, String tablePrefix, bool skipJoins, params ColumnMapping[] selector)
         {
             var tableType = m_mapper.MapModelType(typeof(TModel));
             var tableMap = TableMapping.Get(tableType);
@@ -214,53 +222,69 @@ namespace OpenIZ.OrmLite
             bool skipParentJoin = true;
             SqlStatement selectStatement = null;
             KeyValuePair<SqlStatement, List<TableMapping>> cacheHit;
-            if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
+
+            if (skipJoins)
             {
+                // If we're skipping joins with a versioned table, then we should really go for the root tablet not the versioned table
+                if (typeof(IVersionedEntity).IsAssignableFrom(typeof(TModel)))
+                {
+                    tableMap = TableMapping.Get(tableMap.Columns.FirstOrDefault(o => o.ForeignKey != null).ForeignKey.Table);
+                    query = query.Where(o => o.Key != "obsoletionTime");
+                    scopedTables = new List<TableMapping>() { tableMap };
+                }
                 selectStatement = new SqlStatement(this.m_provider, $" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
 
-                Stack<TableMapping> fkStack = new Stack<TableMapping>();
-                fkStack.Push(tableMap);
-
-                List<JoinFilterAttribute> joinFilters = new List<JoinFilterAttribute>();
-
-                // Always join tables?
-                do
-                {
-                    var dt = fkStack.Pop();
-                    foreach (var jt in dt.Columns.Where(o => o.IsAlwaysJoin))
-                    {
-                        var fkTbl = TableMapping.Get(jt.ForeignKey.Table);
-                        var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
-                        selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name} ");
-
-                        foreach(var flt in jt.JoinFilters.Union(joinFilters).GroupBy(o=>o.PropertyName).ToArray())
-                        {
-                            var fltCol = fkTbl.GetColumn(flt.Key);
-                            if (fltCol == null)
-                                joinFilters.AddRange(flt);
-                            else
-                            {
-                                selectStatement.And($"({String.Join(" OR ", flt.Select(o => $"{tablePrefix}{fltCol.Table.TableName}.{fltCol.Name} = '{o.Value}'"))})");
-                                joinFilters.RemoveAll(o=>flt.Contains(o));
-                            }
-                        }
-
-                        selectStatement.Append(")");
-                        if (!scopedTables.Contains(fkTbl))
-                            fkStack.Push(fkTbl);
-                        scopedTables.Add(fkAtt.Table);
-                    }
-                } while (fkStack.Count > 0);
-
-                // Add the heavy work to the cache
-                lock (s_joinCache)
-                    if(!s_joinCache.ContainsKey($"{tablePrefix}.{typeof(TModel).Name}"))
-                        s_joinCache.Add($"{tablePrefix}.{typeof(TModel).Name}", new KeyValuePair<SqlStatement, List<TableMapping>>(selectStatement.Build(), scopedTables));
             }
             else
             {
-                selectStatement = cacheHit.Key.Build();
-                scopedTables = cacheHit.Value;
+                if (!s_joinCache.TryGetValue($"{tablePrefix}.{typeof(TModel).Name}", out cacheHit))
+                {
+                    selectStatement = new SqlStatement(this.m_provider, $" FROM {tableMap.TableName} AS {tablePrefix}{tableMap.TableName} ");
+
+                    Stack<TableMapping> fkStack = new Stack<TableMapping>();
+                    fkStack.Push(tableMap);
+
+                    List<JoinFilterAttribute> joinFilters = new List<JoinFilterAttribute>();
+
+                    // Always join tables?
+                    do
+                    {
+                        var dt = fkStack.Pop();
+                        foreach (var jt in dt.Columns.Where(o => o.IsAlwaysJoin))
+                        {
+                            var fkTbl = TableMapping.Get(jt.ForeignKey.Table);
+                            var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
+                            selectStatement.Append($"INNER JOIN {fkAtt.Table.TableName} AS {tablePrefix}{fkAtt.Table.TableName} ON ({tablePrefix}{jt.Table.TableName}.{jt.Name} = {tablePrefix}{fkAtt.Table.TableName}.{fkAtt.Name} ");
+
+                            foreach (var flt in jt.JoinFilters.Union(joinFilters).GroupBy(o => o.PropertyName).ToArray())
+                            {
+                                var fltCol = fkTbl.GetColumn(flt.Key);
+                                if (fltCol == null)
+                                    joinFilters.AddRange(flt);
+                                else
+                                {
+                                    selectStatement.And($"({String.Join(" OR ", flt.Select(o => $"{tablePrefix}{fltCol.Table.TableName}.{fltCol.Name} = '{o.Value}'"))})");
+                                    joinFilters.RemoveAll(o => flt.Contains(o));
+                                }
+                            }
+
+                            selectStatement.Append(")");
+                            if (!scopedTables.Contains(fkTbl))
+                                fkStack.Push(fkTbl);
+                            scopedTables.Add(fkAtt.Table);
+                        }
+                    } while (fkStack.Count > 0);
+
+                    // Add the heavy work to the cache
+                    lock (s_joinCache)
+                        if (!s_joinCache.ContainsKey($"{tablePrefix}.{typeof(TModel).Name}"))
+                            s_joinCache.Add($"{tablePrefix}.{typeof(TModel).Name}", new KeyValuePair<SqlStatement, List<TableMapping>>(selectStatement.Build(), scopedTables));
+                }
+                else
+                {
+                    selectStatement = cacheHit.Key.Build();
+                    scopedTables = cacheHit.Value;
+                }
             }
 
             // Column definitions
@@ -301,7 +325,7 @@ namespace OpenIZ.OrmLite
                 // Match the regex and process
                 var propertyPredicate = QueryPredicate.Parse(parm.Key);
                 if (propertyPredicate == null) throw new ArgumentOutOfRangeException(parm.Key);
-               
+
                 // Next, we want to construct the other parms
                 var otherParms = workingParameters.Where(o => QueryPredicate.Parse(o.Key).ToString(QueryPredicatePart.PropertyAndCast) == propertyPredicate.ToString(QueryPredicatePart.PropertyAndCast)).ToArray();
 
@@ -392,7 +416,7 @@ namespace OpenIZ.OrmLite
                                 // Generate method
                                 subQuery.RemoveAll(o => String.IsNullOrEmpty(o.Key));
                                 var prefix = IncrementSubQueryAlias(tablePrefix);
-                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(ColumnMapping[]) });
+                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { propertyType }, new Type[] { subQuery.GetType(), typeof(String), typeof(bool), typeof(ColumnMapping[]) });
 
                                 // Sub path is specified
                                 if (String.IsNullOrEmpty(propertyPredicate.SubPath) && "null".Equals(parm.Value))
@@ -402,7 +426,10 @@ namespace OpenIZ.OrmLite
 
                                 nGuards++;
                                 existsClause = $"{prefix}{subTableColumn.Table.TableName}.{subTableColumn.Name}";
-                                subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
+                                if (subQuery.Count(p => !p.Key.Contains(".")) == 0)
+                                    subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, true, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
+                                else
+                                    subQueryStatement.Append(genMethod.Invoke(this, new Object[] { subQuery, prefix, false, new ColumnMapping[] { subTableColumn } }) as SqlStatement);
 
                             }
 
@@ -446,17 +473,18 @@ namespace OpenIZ.OrmLite
                             //var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
                             //SqlStatement subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                             SqlStatement subQueryStatement = null;
+                            var subSkipJoins = subQuery.Count(o => !o.Key.Contains(".") && o.Key != "obsoletionTime") == 0;
                             if (String.IsNullOrEmpty(propertyPredicate.CastAs))
                             {
-                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
-                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(string), typeof(bool), typeof(ColumnMapping[]) });
+                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, null, subSkipJoins, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                             }
                             else // we need to cast!
                             {
                                 var castAsType = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType("OpenIZ.Core.Model", propertyPredicate.CastAs);
 
-                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { castAsType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
-                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                                var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { castAsType }, new Type[] { subQuery.GetType(), typeof(String), typeof(bool), typeof(ColumnMapping[]) });
+                                subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, null, false, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
                             }
                             cteStatements.Add(new SqlStatement(this.m_provider, $"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
                             //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
@@ -466,7 +494,7 @@ namespace OpenIZ.OrmLite
                         }
                     }
                 }
-                else if(!this.m_hacks.Any(o=>o.HackQuery(this, selectStatement, whereClause, typeof(TModel), typeof(TModel).GetQueryProperty(propertyPredicate.Path), tablePrefix, propertyPredicate, parm.Value, scopedTables)))
+                else if (!this.m_hacks.Any(o => o.HackQuery(this, selectStatement, whereClause, typeof(TModel), typeof(TModel).GetQueryProperty(propertyPredicate.Path), tablePrefix, propertyPredicate, parm.Value, scopedTables)))
                     whereClause.And(CreateWhereCondition(typeof(TModel), propertyPredicate.Path, parm.Value, tablePrefix, scopedTables));
 
             }
@@ -484,7 +512,7 @@ namespace OpenIZ.OrmLite
                 }
             }
             retVal.Append(selectStatement.Where(whereClause));
-            
+
             return retVal;
         }
 
@@ -509,7 +537,7 @@ namespace OpenIZ.OrmLite
         /// Create a where condition
         /// </summary>
         public SqlStatement CreateWhereCondition(Type tmodel, String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables)
-        { 
+        {
             SqlStatement retVal = new SqlStatement(this.m_provider);
 
             // Map the type
@@ -563,8 +591,8 @@ namespace OpenIZ.OrmLite
                                 retVal.Append(" <> ?", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;
                         case '~':
-                            if(sValue.Contains("*") || sValue.Contains("?"))
-                                retVal.Append(" ILIKE ? ", CreateParameterValue(sValue.Substring(1).Replace("*","%"), propertyInfo.PropertyType));
+                            if (sValue.Contains("*") || sValue.Contains("?"))
+                                retVal.Append(" ILIKE ? ", CreateParameterValue(sValue.Substring(1).Replace("*", "%"), propertyInfo.PropertyType));
                             else
                                 retVal.Append(" ILIKE '%' || ? || '%'", CreateParameterValue(sValue.Substring(1), propertyInfo.PropertyType));
                             break;

@@ -318,17 +318,31 @@ namespace OpenIZ.OrmLite
             return this.Append($"ORDER BY {orderMap.TableName}.{orderCol.Name} ").Append(sortOperation == SortOrderType.OrderBy ? " ASC " : " DESC ");
         }
 
+        /// <summary>
+        /// Removes the last statement from the list
+        /// </summary>
+        public bool RemoveLast(out SqlStatement last)
+        {
+            last = this.RemoveLast();
+            return last != null;
+        }
 
         /// <summary>
         /// Removes the last statement from the list
         /// </summary>
-        public void RemoveLast()
+        public SqlStatement RemoveLast()
         {
             var t = this;
             while (t.m_rhs?.m_rhs != null)
                 t = t.m_rhs;
-            if(t != null)
+            if (t != null)
+            {
+                var m = t.m_rhs;
                 t.m_rhs = null;
+                return m;
+            }
+            else
+                return null;
         }
 
         /// <summary>
