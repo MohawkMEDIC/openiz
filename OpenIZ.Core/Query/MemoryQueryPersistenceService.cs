@@ -97,6 +97,14 @@ namespace OpenIZ.Core.Query
         }
 
         /// <summary>
+        /// Clear
+        /// </summary>
+        public void Clear()
+        {
+            this.m_queryCache.Clear();
+        }
+
+        /// <summary>
         /// Add results to id set
         /// </summary>
         public bool AddResults<TIdentifier>(string queryId, Identifier<TIdentifier>[] results)

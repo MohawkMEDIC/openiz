@@ -276,7 +276,6 @@ namespace OpenIZ.Caching.Memory
         public void Clear()
         {
             this.ThrowIfDisposed();
-
             this.m_entryTable.Clear();
         }
 

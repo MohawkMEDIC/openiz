@@ -42,6 +42,8 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model;
 using System.Collections.Specialized;
 using MARC.HI.EHRS.SVC.Core.Data;
+using OpenIZ.Core.Query;
+using OpenIZ.Caching.Memory;
 
 namespace OizDevTool
 {
@@ -85,6 +87,14 @@ namespace OizDevTool
             [Description("Calculate care plan for the specified facility")]
             public String FacilityId { get; set; }
 
+            [Parameter("limit")]
+            [Description("Limit number of processing items")]
+            public String Limit { get; set; }
+
+
+            [Parameter("skip")]
+            [Description("Skip number of processing items")]
+            public String Skip { get; set; }
         }
 
         /// <summary>
@@ -326,7 +336,6 @@ namespace OizDevTool
                 warehouseService.Truncate(dataMart.Id);
 
             // Now we want to calculate
-
             var patientPersistence = ApplicationContext.Current.GetService<IStoredQueryDataPersistenceService<Patient>>();
             var lastRefresh = DateTime.Parse(parms.Since ?? "0001-01-01");
 
@@ -353,14 +362,30 @@ namespace OizDevTool
                 warehousePatients = new List<dynamic>();
             }
 
+            int limit = Int32.MaxValue;
+            if (!String.IsNullOrEmpty(parms.Limit))
+                limit = Int32.Parse(parms.Limit);
+            if (!String.IsNullOrEmpty(parms.Skip))
+            {
+                ofs += Int32.Parse(parms.Skip);
+                tr = ofs + 1;
+            }
+
             while (ofs < tr )
             {
+                // Let the pressure die down
+                if (tq - calc > 3000 || ofs % 5000 == 0)
+                {
+                    wtp.WaitOne();
+                    MemoryCache.Current.Clear();
+                    System.GC.Collect();
+                }
 
                 IEnumerable<Patient> prodPatients = null;
                 if (!String.IsNullOrEmpty(parms.FacilityId))
                 {
                     Guid facId = Guid.Parse(parms.FacilityId);
-                    prodPatients = patientPersistence.Query(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "DedicatedServiceDeliveryLocation").Any(r => r.TargetEntityKey == facId), queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr);
+                    prodPatients = patientPersistence.Query(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "DedicatedServiceDeliveryLocation").Any(r => r.TargetEntityKey == facId), queryId, ofs, 1000, AuthenticationContext.SystemPrincipal, out tr);
                 }
                 else if (parms.PatientId?.Count > 0)
                 {
@@ -371,28 +396,40 @@ namespace OizDevTool
                 else
                 {
                     // New patients directly modified
-                    prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr);
+                    prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 1000, AuthenticationContext.SystemPrincipal, out tr);
                     // Patients who have had 
                     prodPatients = prodPatients.Union(
-                        patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.Participations.Any(p=>p.ModifiedOn > lastRefresh), queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr)
+                        patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.Participations.Any(p=>p.ModifiedOn > lastRefresh), queryId, ofs, 1000, AuthenticationContext.SystemPrincipal, out tr)
                     );
                 }
 
-               
+
 
                 if (lastRefresh == DateTime.MinValue)
+                {
+                    var sk = prodPatients.Count();
                     prodPatients = prodPatients.Where(o => !warehousePatients.Any(m => m.patient_id == o.Key));
-                ofs += 100;
+                    sk = sk - prodPatients.Count();
+                    tq += sk;
+                    calc += sk;
+                }
+                ofs += 1000;
 
                 foreach (var p in prodPatients.Distinct(new IdentifiedData.EqualityComparer<Patient>()))
                 {
-                    tq++;
+                    if (tq++ > limit)
+                    {
+                        ofs = tr + 1;
+                        ApplicationContext.Current.GetService<MemoryQueryPersistenceService>()?.Clear();
+                        break;
+                    }
+
                     wtp.QueueUserWorkItem(state =>
                     {
 
                         AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 
-                        Patient pState = (Patient)state;
+                        Patient pState = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(new Identifier<Guid>((Guid)state), AuthenticationContext.SystemPrincipal, true);
 
                         List<dynamic> warehousePlan = new List<dynamic>();
 
@@ -405,7 +442,7 @@ namespace OizDevTool
                             Console.Write("    Calculating care plan {0}/{1} <<Scan: {4} ({5:0%})>> ({2:0%}) [ETA: {3} .. {7}] {6:0.##} R/S ", calc, tq, (float)calc / tq, new TimeSpan((long)ips).ToString("d'd 'h'h 'm'm 's's'"), ofs, (float)ofs / tr, ((double)calc / (double)(DateTime.Now - start).TotalSeconds), new TimeSpan((long)tps).ToString("d'd 'h'h 'm'm 's's'"));
                         }
 
-                        var data = p; //  ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
+                        var data = pState; //  ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
                         //p.par
                         // First, we want a copy of the warehouse
                         warehouseService.Delete(dataMart.Id, new
@@ -437,7 +474,7 @@ namespace OizDevTool
 
                         // Insert plans
                         warehouseService.Add(dataMart.Id, warehousePlan);
-                    }, p);
+                    }, p.Key);
                 }
             }
 

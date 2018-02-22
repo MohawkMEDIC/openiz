@@ -146,6 +146,10 @@
       <Project>{3BFD6EE6-0267-4D82-BE7D-9B48B2F6F3D4}</Project>
       <Name>OpenIZ.BusinessRules.JavaScript</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Caching.Memory\OpenIZ.Caching.Memory.csproj">
+      <Project>{8553ABC7-ABFA-4A21-B0E8-68B7DE76129D}</Project>
+      <Name>OpenIZ.Caching.Memory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
       <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
       <Name>OpenIZ.Core.Applets</Name>
