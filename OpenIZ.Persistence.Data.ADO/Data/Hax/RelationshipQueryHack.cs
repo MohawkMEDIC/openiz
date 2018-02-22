@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Constants;
 using System.Collections;
 using OpenIZ.Core.Model.DataTypes;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.Persistence.Data.ADO.Data.Hax
 {
@@ -49,20 +50,25 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Hax
             // Filter values
             if (typeof(Concept).IsAssignableFrom(property.PropertyType) && predicate.SubPath == "mnemonic")
             {
+                Regex removeRegex = null;
                 if (predicate.Path == "participationRole"  && property.DeclaringType == typeof(ActParticipation))
                 {
                     columnName = "rol_cd_id";
                     scanType = typeof(ActParticipationKey);
+                    // We want to remove the inner join for cd_tbl
+                    removeRegex = new Regex(@"INNER\sJOIN\scd_tbl\s.*\(.*?rol_cd_id.*");
                 }
                 else if (predicate.Path == "relationshipType" && property.DeclaringType == typeof(EntityRelationship))
                 {
                     columnName = "rel_typ_cd_id";
                     scanType = typeof(EntityRelationshipTypeKeys);
+                    removeRegex = new Regex(@"INNER\sJOIN\scd_tbl\s.*\(.*?rel_typ_cd_id.*");
                 }
                 else if (predicate.Path == "relationshipType" && property.DeclaringType == typeof(ActRelationship))
                 {
                     columnName = "rel_typ_cd_id";
                     scanType = typeof(ActRelationshipTypeKeys);
+                    removeRegex = new Regex(@"INNER\sJOIN\scd_tbl\s.*\(.*?rel_typ_cd_id.*");
                 }
                 else
                     return false;
@@ -85,6 +91,26 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Hax
 
                 // Now add to query
                 whereClause.And($"{columnName} IN ({String.Join(",", qValues.Select(o=>$"'{o}'").ToArray())})");
+                // Remove the inner join 
+                var remStack = new Stack<SqlStatement>();
+                SqlStatement last;
+                while(sqlStatement.RemoveLast(out last))
+                {
+                    var m = removeRegex.Match(last.SQL);
+                    if (m.Success)
+                    {
+                        // The last thing we added was the 
+                        if (m.Index == 0 && m.Length == last.SQL.Length)
+                            remStack.Pop();
+                        else
+                            sqlStatement.Append(last.SQL.Remove(m.Index, m.Length), last.Arguments.ToArray());
+                        break;
+                    }
+                    else
+                        remStack.Push(last);
+                }
+                while (remStack.Count > 0)
+                    sqlStatement.Append(remStack.Pop());
                 return true;
             }
             else
