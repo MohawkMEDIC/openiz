@@ -433,7 +433,9 @@ namespace OpenIZ.Core.Applets.ViewModel.Json
                 }
             }
             else
+            {
                 w.WriteValue(instance);
+            }
 
         }
 

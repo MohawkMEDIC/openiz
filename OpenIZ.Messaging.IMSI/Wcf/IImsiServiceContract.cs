@@ -82,6 +82,13 @@ namespace OpenIZ.Messaging.IMSI.Wcf
         IdentifiedData Options();
 
         /// <summary>
+        /// Options for resource
+        /// </summary>
+        [WebInvoke(UriTemplate = "/{resourceType}", Method = "OPTIONS", BodyStyle = WebMessageBodyStyle.Bare)]
+        [SwaggerWcfPath("Get Service Options", "Retrieves a list of resources and operations supported by this IMSI service", ExternalDocsUrl = "http://openiz.org/artifacts/1.0/imsi/", ExternalDocsDescription = "IMSI Data Contract Documentation")]
+        void OptionsResource(string resourceType);
+
+        /// <summary>
         /// Performs a minimal PING request to test service uptime
         /// </summary>
         [WebInvoke(UriTemplate = "/", Method = "PING", BodyStyle = WebMessageBodyStyle.Bare)]

@@ -73,6 +73,7 @@ namespace OpenIZ.Core.Model.Query
         public static NameValueCollection ParseQueryString(String qstring)
         {
             NameValueCollection retVal = new NameValueCollection();
+            if (String.IsNullOrEmpty(qstring)) return retVal;
             if (qstring.StartsWith("?")) qstring = qstring.Substring(1);
             foreach (var itm in qstring.Split('&'))
             {
