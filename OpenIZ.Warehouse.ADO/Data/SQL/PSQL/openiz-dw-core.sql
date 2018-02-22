@@ -595,3 +595,13 @@ CREATE MATERIALIZED VIEW pat_vw AS
      LEFT JOIN psn_vw nok ON nok.psn_id = pat_tbl.nok_id
      LEFT JOIN fac_vw asgn ON asgn.fac_id = pat_tbl.asgn_fac_id
      LEFT JOIN fac_vw parent ON asgn.parent_id = parent.fac_id;
+
+
+CREATE INDEX cd_tbl_mnemonic_idx ON cd_tbl(cd_mnemonic);
+CREATE INDEX name_cmp_use_idx ON name_cmp_tbl(use_cs);
+CREATE INDEX name_cmp_ent_idx ON name_cmp_tbl(ent_id);
+CREATE INDEX fac_parent_id_idx ON fac_tbl(parent_id);
+CREATE INDEX sbadm_fac_id_idx ON sbadm_tbl(fac_id);
+CREATE INDEX act_tag_tag_name_idx ON act_tag_tbl(tag_name);
+CREATE INDEX fac_vw_fac_id_idx ON fac_vw(fac_id);
+CREATE INDEX name_cmp_ent_idx ON name_cmp_tbl(ent_id);

@@ -75,6 +75,23 @@
     SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) / 86400 AS days_overdue, product_id, dose_seq FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
     ]]>
     </sql>
+    <sql provider="npgsql">
+      <![CDATA[
+      SELECT 
+		patient_id, 
+		location_id, 
+		act_date, 
+		-EXTRACT(day from (act_date + '7 day'::INTERVAL - CURRENT_TIMESTAMP)) as days_overdue,
+		product_id,
+		dose_seq
+	FROM 
+		oizcp
+	WHERE 
+		product_id IS NOT NULL
+		AND act_date IS NOT NULL
+		AND act_date + '7 day'::INTERVAL < CURRENT_TIMESTAMP
+      ]]>
+    </sql>
   </sqp>
   <sqp name="consistency" >
     <property name="patient_id" type="uuid"/>

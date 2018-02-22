@@ -812,7 +812,7 @@ namespace OpenIZ.Messaging.IMSI.Wcf
                 // Service options
                 var retVal = new ServiceOptions()
                 {
-                    InterfaceVersion = typeof(IdentifiedData).Assembly.GetName().Version.ToString(),
+                    InterfaceVersion = "0.9.0.0",
                     Services = new List<ServiceResourceOptions>()
                     {
                         new ServiceResourceOptions()

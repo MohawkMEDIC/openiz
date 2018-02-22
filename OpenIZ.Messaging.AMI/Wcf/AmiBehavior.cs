@@ -221,7 +221,7 @@ namespace OpenIZ.Messaging.AMI.Wcf
 
 			var serviceOptions = new ServiceOptions
 			{
-				InterfaceVersion = typeof(AmiCollection<>).Assembly.GetName().Version.ToString(),
+				InterfaceVersion = "0.9.0.0",
 				Services = new List<ServiceResourceOptions>
 				{
 					new ServiceResourceOptions

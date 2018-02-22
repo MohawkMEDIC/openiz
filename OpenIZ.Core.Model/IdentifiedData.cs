@@ -32,8 +32,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-
-
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Core.Model
 {
@@ -235,6 +234,29 @@ namespace OpenIZ.Core.Model
         public virtual String ToDisplay()
         {
             return this.Key.ToString();
+        }
+
+        /// <summary>
+        /// Quality Comparer
+        /// </summary>
+        public class EqualityComparer<T> : IEqualityComparer<T>
+            where T : IdentifiedData
+        {
+            /// <summary>
+            /// Equality
+            /// </summary>
+            public bool Equals(T x, T y)
+            {
+                return x.Key == y.Key;
+            }
+
+            /// <summary>
+            /// Get comparison hash code
+            /// </summary>
+            public int GetHashCode(T obj)
+            {
+                return obj.Key.GetHashCode();
+            }
         }
     }
 }

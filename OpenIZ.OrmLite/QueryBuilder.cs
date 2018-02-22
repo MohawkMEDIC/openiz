@@ -299,7 +299,11 @@ namespace OpenIZ.OrmLite
                 workingParameters.RemoveAt(0);
 
                 // Match the regex and process
-                var propertyPredicate = QueryPredicate.Parse(parm.Key);
+                var key = parm.Key;
+                if (String.IsNullOrEmpty(key))
+                    key = "id";
+
+                var propertyPredicate = QueryPredicate.Parse(key);
                 if (propertyPredicate == null) throw new ArgumentOutOfRangeException(parm.Key);
                
                 // Next, we want to construct the other parms

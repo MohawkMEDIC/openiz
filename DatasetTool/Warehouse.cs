@@ -332,9 +332,10 @@ namespace OizDevTool
 
             // Should we calculate?
             int tr = 1, ofs = 0, calc = 0, tq = 0;
-            var warehousePatients = warehouseService.StoredQuery(dataMart.Id, "consistency", new { }, out tr);
+            var warehousePatients = warehouseService.StoredQuery(dataMart.Id, "consistency", new { }, out tq);
+            tq = 0;
             Guid queryId = Guid.NewGuid();
-            WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount * 2);
+            WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount);
             DateTime start = DateTime.Now;
 
             // Type filters
@@ -346,15 +347,20 @@ namespace OizDevTool
                     typeFilter.Add(cpcr.GetConcept(itm).Key.Value);
             }
 
-            while (ofs < tr)
+            if (!String.IsNullOrEmpty(parms.FacilityId))
+            {
+                warehouseService.Delete(dataMart.Id, new { location_id = parms.FacilityId });
+                warehousePatients = new List<dynamic>();
+            }
+
+            while (ofs < tr )
             {
 
                 IEnumerable<Patient> prodPatients = null;
                 if (!String.IsNullOrEmpty(parms.FacilityId))
                 {
                     Guid facId = Guid.Parse(parms.FacilityId);
-                    prodPatients = patientPersistence.Query(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "DedicatedServiceDeliveryLocation").Any(r => r.TargetEntityKey == facId), AuthenticationContext.SystemPrincipal);
-                    warehouseService.Delete(dataMart.Id, new { location_id = parms.FacilityId });
+                    prodPatients = patientPersistence.Query(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "DedicatedServiceDeliveryLocation").Any(r => r.TargetEntityKey == facId), queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr);
                 }
                 else if (parms.PatientId?.Count > 0)
                 {
@@ -363,10 +369,22 @@ namespace OizDevTool
                     tr = parms.PatientId.Count;
                 }
                 else
+                {
+                    // New patients directly modified
                     prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr);
+                    // Patients who have had 
+                    prodPatients = prodPatients.Union(
+                        patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.Participations.Any(p=>p.ModifiedOn > lastRefresh), queryId, ofs, 100, AuthenticationContext.SystemPrincipal, out tr)
+                    );
+                }
+
+               
+
+                if (lastRefresh == DateTime.MinValue)
+                    prodPatients = prodPatients.Where(o => !warehousePatients.Any(m => m.patient_id == o.Key));
                 ofs += 100;
 
-                foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
+                foreach (var p in prodPatients.Distinct(new IdentifiedData.EqualityComparer<Patient>()))
                 {
                     tq++;
                     wtp.QueueUserWorkItem(state =>
@@ -382,18 +400,19 @@ namespace OizDevTool
                         lock (parms)
                         {
                             var ips = (((double)(DateTime.Now - start).Ticks / calc) * (tq - calc));
+                            var tps = (((double)(DateTime.Now - start).Ticks / calc) * (tr - calc));
                             Console.CursorLeft = 0;
-                            Console.Write("    Calculating care plan {0}/{1} <<Scan: {4} ({5:0%})>> ({2:0%}) [ETA: {3}] {6:0.##} R/S ", calc, tq, (float)calc / tq, new TimeSpan((long)ips).ToString("hh'h 'mm'm 'ss's'"), ofs, (float)ofs / tr, ((double)calc / (double)(DateTime.Now - start).TotalSeconds));
+                            Console.Write("    Calculating care plan {0}/{1} <<Scan: {4} ({5:0%})>> ({2:0%}) [ETA: {3} .. {7}] {6:0.##} R/S ", calc, tq, (float)calc / tq, new TimeSpan((long)ips).ToString("d'd 'h'h 'm'm 's's'"), ofs, (float)ofs / tr, ((double)calc / (double)(DateTime.Now - start).TotalSeconds), new TimeSpan((long)tps).ToString("d'd 'h'h 'm'm 's's'"));
                         }
 
                         var data = p; //  ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
-
+                        //p.par
                         // First, we want a copy of the warehouse
-                        var existing = warehouseService.AdhocQuery(dataMart.Id, new
+                        warehouseService.Delete(dataMart.Id, new
                         {
                             patient_id = data.Key.Value
                         });
-                        warehouseService.Delete(dataMart.Id, new { patient_id = data.Key.Value });
+                        //warehouseService.Delete(dataMart.Id, new { patient_id = data.Key.Value });
                         var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
 
                         // Now calculate the care plan... 
@@ -415,92 +434,6 @@ namespace OizDevTool
                             dose_seq = (o as SubstanceAdministration)?.SequenceId,
                             fulfilled = false
                         }));
-
-                        var fulfillCalc = data.LoadCollection<ActParticipation>("Participations");
-                        if (typeFilter.Count > 0)
-                            fulfillCalc = fulfillCalc.Where(o => typeFilter.Contains(o.LoadProperty<Act>("Act").TypeConceptKey ?? Guid.Empty));
-
-                        // Are there care plan items existing that dont exist in the calculated care plan, if so that means that the patient has completed steps and we need to indicate that
-                        if (existing.Any(o => !o.fulfilled)) // != true is needed because it can be null.
-                        {
-                            var fulfilled = existing.Where(o => !warehousePlan.Any(pl => pl.protocol_id == o.protocol_id && pl.sequence_id == o.sequence_id));
-                            warehousePlan.AddRange(fulfilled.Select(o => new
-                            {
-                                creation_date = o.creation_date,
-                                patient_id = o.patient_id,
-                                location_id = o.location_id,
-                                act_id = data.LoadCollection<ActParticipation>("Participations").FirstOrDefault(ap => ap.LoadProperty<Act>("Act").LoadCollection<ActProtocol>("Protocols").Any(pr => pr.ProtocolKey == o.protocol_id && pr.Sequence == o.sequence_id))?.Key ?? o.act_id,
-                                class_id = o.class_id,
-                                type_id = o.type_id,
-                                protocol_id = o.protocol_id,
-                                min_date = o.min_date,
-                                max_date = o.max_date,
-                                act_date = o.act_date,
-                                product_id = o.product_id,
-                                sequence_id = o.sequence_id,
-                                dose_seq = o.dose_seq,
-                                fulfilled = true
-                            }));
-                        }
-                        else if (
-                        !parms.NoFulfill &&
-                        fulfillCalc.Any()) // not calculated anything but there are steps previously done, this is a little more complex
-                        {
-                            // When something is not yet calculated what we have to do is strip away each act done as part of the protocol and re-calculate when that action was supposed to occur
-                            // For example: We calculate PCV we strip away PCV2 and re-run the plan to get the proposal of PCV3 then strip away PCV1 and re-run the plan to get the proposal of PCV2
-                            var acts = fulfillCalc.Select(o => o.LoadProperty<Act>("Act"));
-                            foreach (var itm in acts.GroupBy(o => o.LoadCollection<ActProtocol>("Protocols").FirstOrDefault()?.ProtocolKey ?? Guid.Empty))
-                            {
-                                var steps = itm.OrderByDescending(o => o.LoadCollection<ActProtocol>("Protocols").FirstOrDefault()?.Sequence);
-                                var patientClone = data.Clone() as Patient;
-                                patientClone.Participations = new List<ActParticipation>(data.Participations);
-                                foreach (var s in steps)
-                                {
-                                    patientClone.Participations.RemoveAll(o => o.ActKey == s.Key);
-                                    // Run protocol 
-                                    IEnumerable<Act> candidate;
-                                    if (itm.Key == Guid.Empty) // There is no protocol identifier
-                                    {
-                                        var tempPlan = careplanService.CreateCarePlan(patientClone, false, new Dictionary<String, Object>() { { "isBackground", true }, { "ignoreEntry", true } });
-                                        if (tempPlan.Action.Count == 0) continue;
-                                        candidate = tempPlan.Action.OfType<SubstanceAdministration>().Where(o => o.SequenceId == (s as SubstanceAdministration)?.SequenceId &&
-                                                                                                             o.Participations.FirstOrDefault(pt => pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey == s.Participations.FirstOrDefault(pt => pt.ParticipationRoleKey == ActParticipationKey.Product).PlayerEntityKey);
-                                        if (candidate.Count() != 1) continue;
-                                    }
-                                    else
-                                    {
-                                        var tempPlan = careplanService.CreateCarePlan(patientClone, false, new Dictionary<String, Object>() { { "isBackground", true }, { "ignoreEntry", true } }, itm.Key);
-                                        if (tempPlan.Action.Count == 0) continue;
-                                        candidate = tempPlan.Action.Where(o => o.Protocols.FirstOrDefault().Sequence == s.Protocols.FirstOrDefault().Sequence);
-                                        if (candidate.Count() != 1)
-                                        {
-                                            candidate = tempPlan.Action.OfType<SubstanceAdministration>().Where(o => o.SequenceId == (s as SubstanceAdministration)?.SequenceId);
-                                            if (candidate.Count() != 1) continue;
-                                        }
-                                    }
-
-                                    var planned = candidate.FirstOrDefault();
-
-                                    warehousePlan.Add(new
-                                    {
-                                        creation_date = DateTime.Now,
-                                        patient_id = data.Key.Value,
-                                        location_id = data.Relationships.FirstOrDefault(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || r.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation")?.TargetEntityKey.Value,
-                                        act_id = s.Key,
-                                        class_id = planned.ClassConceptKey.Value,
-                                        type_id = planned.TypeConceptKey.Value,
-                                        protocol_id = itm.Key,
-                                        min_date = planned.StartTime?.DateTime.Date,
-                                        max_date = planned.StopTime?.DateTime.Date,
-                                        act_date = planned.ActTime.DateTime.Date,
-                                        product_id = planned.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
-                                        sequence_id = planned.Protocols.FirstOrDefault()?.Sequence,
-                                        dose_seq = (planned as SubstanceAdministration)?.SequenceId,
-                                        fulfilled = true
-                                    });
-                                }
-                            }
-                        }
 
                         // Insert plans
                         warehouseService.Add(dataMart.Id, warehousePlan);
