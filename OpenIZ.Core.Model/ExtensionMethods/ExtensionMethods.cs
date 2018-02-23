@@ -148,7 +148,7 @@ namespace OpenIZ.Core.Model
 			else if (fromEntity == null)
 				throw new ArgumentNullException(nameof(fromEntity));
 			else if (!fromEntity.GetType().GetTypeInfo().IsAssignableFrom(toEntity.GetType().GetTypeInfo()))
-				throw new ArgumentException("Type mismatch", nameof(fromEntity));
+				throw new ArgumentException($"Type mismatch {toEntity.GetType().FullName} != {fromEntity.GetType().FullName}", nameof(fromEntity));
 
 			PropertyInfo[] properties = null;
 			if (!s_typePropertyCache.TryGetValue(toEntity.GetType(), out properties))

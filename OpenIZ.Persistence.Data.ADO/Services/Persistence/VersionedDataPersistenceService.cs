@@ -158,10 +158,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             existingObject.ObsoletionTime = DateTimeOffset.Now;
             newEntityVersion.CreationTime = DateTimeOffset.Now;
 
-	        context.Update(existingObject);
+            context.Update(existingObject);
 
-	        newEntityVersion = context.Insert<TDomain>(newEntityVersion);
-			nonVersionedObect = context.Update<TDomainKey>(nonVersionedObect);
+            newEntityVersion = context.Insert<TDomain>(newEntityVersion);
+            nonVersionedObect = context.Update<TDomainKey>(nonVersionedObect);
 
             // Pull database generated fields
             data.VersionSequence = newEntityVersion.VersionSequenceId;
@@ -202,21 +202,17 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             }
 
             SqlStatement domainQuery = null;
-            try
-            {
+            var expr = m_mapper.MapModelExpression<TModel, TDomain>(query, false);
+            if (expr != null)
                 domainQuery = context.CreateSqlStatement<TDomain>().SelectFrom()
                     .InnerJoin<TDomain, TDomainKey>(o => o.Key, o => o.Key)
-                    .Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query)).Build();
-
-            }
-            catch (Exception e)
-            {
-                m_tracer.TraceEvent(System.Diagnostics.TraceEventType.Verbose, e.HResult, "Will use slow query construction due to {0}", e.Message);
+                    .Where<TDomain>(expr).Build();
+            else
                 domainQuery = AdoPersistenceService.GetQueryBuilder().CreateQuery(query).Build();
-            }
+
 
             domainQuery = this.AppendOrderBy(domainQuery);
-                
+
 
             // Query id just get the UUIDs in the db
             if (queryId != Guid.Empty)
@@ -231,10 +227,10 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                 {
                     int ofs = 1000;
                     var rkeys = o as Guid[];
-	                if (rkeys == null)
-	                {
-		                return;
-	                }
+                    if (rkeys == null)
+                    {
+                        return;
+                    }
                     while (ofs < rkeys.Length)
                     {
                         this.m_queryPersistence?.AddResults(queryId.ToString(), rkeys.Skip(ofs).Take(1000).Select(k => new Identifier<Guid>(k)).ToArray());
@@ -409,7 +405,7 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
                         currentVersion = context.FirstOrDefault<DbEntityVersion>(versionQuery);
                     }
 
-                    if(currentVersion != null)
+                    if (currentVersion != null)
                         sourceVersionMaps.Add(itm.SourceEntityKey.Value, currentVersion.VersionSequenceId.Value);
                 }
 
@@ -433,9 +429,9 @@ namespace OpenIZ.Persistence.Data.ADO.Services.Persistence
             }
 
             // Update those that need it
-            var updateRecords = storage.Select(o => new { store = o, existing = existing.FirstOrDefault(ecn => ecn.Key == o.Key && o.Key != Guid.Empty && o != ecn) }).Where(o=>o.existing != null);
+            var updateRecords = storage.Select(o => new { store = o, existing = existing.FirstOrDefault(ecn => ecn.Key == o.Key && o.Key != Guid.Empty && o != ecn) }).Where(o => o.existing != null);
             foreach (var upd in updateRecords)
-            { 
+            {
                 // Update by key, these lines make no sense we just update the existing versioned association
                 //upd.store.EffectiveVersionSequenceId = upd.existing.EffectiveVersionSequenceId;
                 //upd.store.ObsoleteVersionSequenceId = upd.existing.EffectiveVersionSequenceId;

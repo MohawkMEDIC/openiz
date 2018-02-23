@@ -245,6 +245,7 @@ CREATE TABLE FAC_MAT_LDGR_TBL (
 	TX_UTC TIMESTAMPTZ NOT NULL, -- THE DATE OF TE TRANSACTION
 	RSN_DESC VARCHAR(64), -- THE REASON FOR THE TRANSACTION
 	USR_NAME VARCHAR(64) NOT NULL, -- THE USER NAME OF THE USER THAT CAUSED THIS
+	SEQ_ID NUMERIC(20) NOT NULL, -- THE SEQUENCE OF THE OBJECT
 	CONSTRAINT PK_FAC_MAT_LDGR_TBL PRIMARY KEY (REF_ID, FAC_ID, MMAT_ID),
 	CONSTRAINT FK_FAC_MAT_LDGR_FAC_ID FOREIGN KEY (FAC_ID) REFERENCES FAC_TBL(FAC_ID),
 	CONSTRAINT FK_FAC_MAT_LDGR_MMAT_ID FOREIGN KEY (MMAT_ID) REFERENCES MMAT_TBL(MMAT_ID),
@@ -604,3 +605,20 @@ CREATE INDEX sbadm_fac_id_idx ON sbadm_tbl(fac_id);
 CREATE INDEX act_tag_tag_name_idx ON act_tag_tbl(tag_name);
 CREATE INDEX fac_vw_fac_id_idx ON fac_vw(fac_id);
 CREATE INDEX name_cmp_ent_idx ON name_cmp_tbl(ent_id);
+CREATE INDEX sbadm_enc_id_idx ON sbadm_tbl(enc_id);
+CREATE INDEX enc_fac_id_idx ON enc_tbl(fac_id);
+create index act_tag_act_id_idx on act_tag_tbl(act_id);
+CREATE INDEX fac_mat_ldgr_fac_id ON fac_mat_ldgr_tbl(fac_id);
+-- Create a function that always returns the first non-NULL item
+CREATE OR REPLACE FUNCTION public.first_agg ( anyelement, anyelement )
+RETURNS anyelement AS $$
+        SELECT $1;
+$$ LANGUAGE SQL IMMUTABLE STRICT ;
+
+-- And then wrap an aggregate around it
+CREATE AGGREGATE public.FIRST (
+        sfunc    = public.first_agg,
+        basetype = anyelement,
+        stype    = anyelement
+);
+ 

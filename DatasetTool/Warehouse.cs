@@ -250,7 +250,8 @@ namespace OizDevTool
             var tagService = ApplicationContext.Current.GetService<ITagPersistenceService>();
 
             var oizcpDm = warehouseService.GetDatamart("oizcp");
-            if (oizcpDm == null) {
+            if (oizcpDm == null)
+            {
                 Console.WriteLine("OIZCP datamart does not exist!");
                 return -1;
             }
@@ -260,9 +261,9 @@ namespace OizDevTool
             Guid queryId = Guid.NewGuid();
             int tr = 0, ofs = 0;
             var acts = actPersistence.Query(o => !o.Tags.Any(t => t.TagKey == "originalDate"), queryId, 0, 100, AuthenticationContext.SystemPrincipal, out tr);
-            while(ofs < tr)
+            while (ofs < tr)
             {
-                foreach(var itm in acts)
+                foreach (var itm in acts)
                 {
                     wtp.QueueUserWorkItem((o) =>
                     {
@@ -273,7 +274,8 @@ namespace OizDevTool
                         AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
 
                         var actProtocol = act.LoadCollection<ActProtocol>("Protocols").FirstOrDefault();
-                        if (actProtocol != null) {
+                        if (actProtocol != null)
+                        {
                             // Get the original date
                             var warehouseObj = warehouseService.AdhocQuery(oizcpDm.Id, new { protocol_id = actProtocol.ProtocolKey, sequence_id = actProtocol.Sequence });
                             if (warehouseObj.Any())
@@ -371,12 +373,13 @@ namespace OizDevTool
                 tr = ofs + 1;
             }
 
-            while (ofs < tr )
+            while (ofs < tr)
             {
                 // Let the pressure die down
                 if (tq - calc > 3000 || ofs % 5000 == 0)
                 {
-                    wtp.WaitOne();
+                    if (tq - calc > 0)
+                        wtp.WaitOne();
                     MemoryCache.Current.Clear();
                     System.GC.Collect();
                 }
@@ -385,7 +388,7 @@ namespace OizDevTool
                 if (!String.IsNullOrEmpty(parms.FacilityId))
                 {
                     Guid facId = Guid.Parse(parms.FacilityId);
-                    prodPatients = patientPersistence.Query(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "DedicatedServiceDeliveryLocation").Any(r => r.TargetEntityKey == facId), queryId, ofs, 1000, AuthenticationContext.SystemPrincipal, out tr);
+                    prodPatients = patientPersistence.Query(o => o.Relationships.Where(g => g.RelationshipType.Mnemonic == "DedicatedServiceDeliveryLocation").Any(r => r.TargetEntityKey == facId), queryId, ofs, 250, AuthenticationContext.SystemPrincipal, out tr);
                 }
                 else if (parms.PatientId?.Count > 0)
                 {
@@ -396,14 +399,16 @@ namespace OizDevTool
                 else
                 {
                     // New patients directly modified
-                    prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 1000, AuthenticationContext.SystemPrincipal, out tr);
-                    // Patients who have had 
-                    prodPatients = prodPatients.Union(
-                        patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.Participations.Any(p=>p.ModifiedOn > lastRefresh), queryId, ofs, 1000, AuthenticationContext.SystemPrincipal, out tr)
-                    );
+                    if (lastRefresh == DateTime.MinValue)
+                        prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 250, AuthenticationContext.SystemPrincipal, out tr);
+                    else
+                        // Patients who have had 
+                        prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.Participations.Any(p => p.ModifiedOn > lastRefresh), queryId, ofs, 250, AuthenticationContext.SystemPrincipal, out tr);
+
                 }
 
 
+                ofs += prodPatients.Count();
 
                 if (lastRefresh == DateTime.MinValue)
                 {
@@ -413,7 +418,6 @@ namespace OizDevTool
                     tq += sk;
                     calc += sk;
                 }
-                ofs += 1000;
 
                 foreach (var p in prodPatients.Distinct(new IdentifiedData.EqualityComparer<Patient>()))
                 {
