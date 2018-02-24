@@ -515,10 +515,12 @@ CREATE MATERIALIZED VIEW fac_vw AS
     addr.censustract,
     addr.country,
     addr.postalcode,
-    addr.additionallocator
+    addr.additionallocator,
+    parent.value AS parent_name
    FROM fac_tbl
      LEFT JOIN ent_name_pivot_vw name ON name.ent_id = fac_tbl.fac_id
-     LEFT JOIN ent_addr_pivot_vw addr ON addr.ent_id = fac_tbl.fac_id;
+     LEFT JOIN ent_addr_pivot_vw addr ON addr.ent_id = fac_tbl.fac_id
+     LEFT JOIN name_cmp_tbl parent ON parent_id = parent.ent_id;
 
 -- PERSON VIEW
 DROP MATERIALIZED VIEW IF EXISTS psn_vw;
@@ -609,6 +611,10 @@ CREATE INDEX sbadm_enc_id_idx ON sbadm_tbl(enc_id);
 CREATE INDEX enc_fac_id_idx ON enc_tbl(fac_id);
 create index act_tag_act_id_idx on act_tag_tbl(act_id);
 CREATE INDEX fac_mat_ldgr_fac_id ON fac_mat_ldgr_tbl(fac_id);
+CREATE INDEX enc_act_utc_idx ON enc_tbl(act_utc);
+CREATE INDEX sbadm_act_utc_idx ON sbadm_tbl(act_utc);
+CREATE INDEX qty_obs_fac_id ON qty_obs_tbl(fac_id);
+CREATE INDEX pat_vw_census_tract_idx ON pat_vw (censustract);
 -- Create a function that always returns the first non-NULL item
 CREATE OR REPLACE FUNCTION public.first_agg ( anyelement, anyelement )
 RETURNS anyelement AS $$
