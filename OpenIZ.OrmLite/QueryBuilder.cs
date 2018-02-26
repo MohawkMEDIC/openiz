@@ -228,7 +228,7 @@ namespace OpenIZ.OrmLite
                 // If we're skipping joins with a versioned table, then we should really go for the root tablet not the versioned table
                 if (typeof(IVersionedEntity).IsAssignableFrom(typeof(TModel)))
                 {
-                    tableMap = TableMapping.Get(tableMap.Columns.FirstOrDefault(o => o.ForeignKey != null).ForeignKey.Table);
+                    tableMap = TableMapping.Get(tableMap.Columns.FirstOrDefault(o => o.ForeignKey != null && o.IsAlwaysJoin).ForeignKey.Table);
                     query = query.Where(o => o.Key != "obsoletionTime");
                     scopedTables = new List<TableMapping>() { tableMap };
                 }

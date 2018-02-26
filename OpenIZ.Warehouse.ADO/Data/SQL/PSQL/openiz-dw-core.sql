@@ -606,7 +606,7 @@ CREATE INDEX fac_parent_id_idx ON fac_tbl(parent_id);
 CREATE INDEX sbadm_fac_id_idx ON sbadm_tbl(fac_id);
 CREATE INDEX act_tag_tag_name_idx ON act_tag_tbl(tag_name);
 CREATE INDEX fac_vw_fac_id_idx ON fac_vw(fac_id);
-CREATE INDEX name_cmp_ent_idx ON name_cmp_tbl(ent_id);
+CREATE INDEX addr_cmp_ent_idx ON addr_cmp_tbl(ent_id);
 CREATE INDEX sbadm_enc_id_idx ON sbadm_tbl(enc_id);
 CREATE INDEX enc_fac_id_idx ON enc_tbl(fac_id);
 create index act_tag_act_id_idx on act_tag_tbl(act_id);

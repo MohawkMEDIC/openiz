@@ -184,8 +184,8 @@ namespace OpenIZ.Warehouse.ADO
             context.ExecuteNonQuery(sbQuery);
 
             // Sub-properties
-            foreach (var p in pcontainer.Properties.Where(o => o.Type == SchemaPropertyType.Object))
-                this.InsertObject(context, String.Format("{0}_{1}", path, p.Name), p, obj[p.Name], (Guid)tuple["uuid"]);
+            //foreach (var p in pcontainer.Properties.Where(o => o.Type == SchemaPropertyType.Object))
+            //    this.InsertObject(context, String.Format("{0}_{1}", path, p.Name), p, obj[p.Name], (Guid)tuple["uuid"]);
 
             return (Guid)tuple["uuid"];
         }
@@ -426,7 +426,7 @@ namespace OpenIZ.Warehouse.ADO
                     var sql = this.ParseFilterDictionary(context, mart.Schema.Name, parms, mart.Schema.Properties).Build();
                     var delSql = context.CreateSqlStatement($"DELETE FROM {mart.Schema.Name} WHERE {sql.Build().SQL} ", sql.Arguments.ToArray());
                     context.ExecuteNonQuery(delSql);
-                    this.DeleteProperties(context, mart.Schema.Name, mart.Schema);
+                    //this.DeleteProperties(context, mart.Schema.Name, mart.Schema);
 
                     context.Transaction.Commit();
                 }
@@ -1020,7 +1020,7 @@ namespace OpenIZ.Warehouse.ADO
                     // First, we delete the record
                     var delSql = context.CreateSqlStatement($"TRUNCATE {mart.Schema.Name}");
                     context.ExecuteNonQuery(delSql);
-                    this.DeleteProperties(context, mart.Schema.Name, mart.Schema);
+                    //this.DeleteProperties(context, mart.Schema.Name, mart.Schema);
 
                     context.Transaction.Commit();
                 }

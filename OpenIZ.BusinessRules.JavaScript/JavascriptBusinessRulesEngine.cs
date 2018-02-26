@@ -146,6 +146,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             // Ensure the current exists
             JavascriptBusinessRulesEngine.Current.Initialize();
 
+            
             // Host is server, then initialize a pool
             if (ApplicationServiceContext.HostType == OpenIZHostType.Server)
             {
@@ -338,7 +339,7 @@ namespace OpenIZ.BusinessRules.JavaScript
             List<Func<object, Object[]>> validatorFunc = null;
             if (!this.m_validatorDefinitions.TryGetValue(target, out validatorFunc))
             {
-                this.m_tracer.TraceInfo("Will try to create BRE service for {0}", target);
+                this.m_tracer.TraceVerbose("Will try to create BRE service for {0}", target);
                 // We need to create a rule service base and register it!!! :)
                 // Find the target type
                 var targetType = typeof(Act).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<JsonObjectAttribute>()?.Id == target);

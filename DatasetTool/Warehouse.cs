@@ -95,6 +95,10 @@ namespace OizDevTool
             [Parameter("skip")]
             [Description("Skip number of processing items")]
             public String Skip { get; set; }
+
+            [Parameter("concurrency")]
+            [Description("Sets the number of concurrent plans to generate")]
+            public String Concurrency { get; set; }
         }
 
         /// <summary>
@@ -346,7 +350,7 @@ namespace OizDevTool
             var warehousePatients = warehouseService.StoredQuery(dataMart.Id, "consistency", new { }, out tq);
             tq = 0;
             Guid queryId = Guid.NewGuid();
-            WaitThreadPool wtp = new WaitThreadPool(Environment.ProcessorCount);
+            WaitThreadPool wtp = new WaitThreadPool(String.IsNullOrEmpty(parms.Concurrency) ? Environment.ProcessorCount : Int32.Parse(parms.Concurrency));
             DateTime start = DateTime.Now;
 
             // Type filters
