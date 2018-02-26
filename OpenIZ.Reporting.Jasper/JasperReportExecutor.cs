@@ -501,8 +501,8 @@ namespace OpenIZ.Reporting.Jasper
 
 							var userEntityId = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Query(c => c.SecurityUserKey == securityUserId, 0, 1, AuthenticationContext.Current.Principal, out totalCount)?.FirstOrDefault()?.Key;
 
-							query.Value = query.Value.Replace("${Userid}", $"'{userEntityId}'::uuid");
-							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'::uuid");
+							query.Value = query.Value.Replace("${Userid}", $"'{userEntityId}'");
+							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'");
 						}
 						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
 					}
