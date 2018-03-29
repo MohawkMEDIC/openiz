@@ -52,6 +52,7 @@
     <Compile Include="Security\TokenValidationManager.cs" />
     <Compile Include="Security\X509CertificateUtils.cs" />
     <Compile Include="Shell\AdminClientEndpointDescription.cs" />
+    <Compile Include="Shell\CmdLets\AppletCmdlet.cs" />
     <Compile Include="Shell\CmdLets\LogCmdlet.cs" />
     <Compile Include="Shell\CmdLets\RoleCmdlet.cs" />
     <Compile Include="Shell\CmdLets\ServerInfoCmdlet.cs" />
@@ -73,6 +74,10 @@
     <ProjectReference Include="..\LogViewer\LogViewer.csproj">
       <Project>{20c72e5e-cdb0-4ef8-aa88-2db30662f732}</Project>
       <Name>LogViewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Core.Applets\OpenIZ.Core.Applets.csproj">
+      <Project>{39E61451-F4FE-493D-B754-5F06EB284AAC}</Project>
+      <Name>OpenIZ.Core.Applets</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Core.Model.AMI\OpenIZ.Core.Model.AMI.csproj">
       <Project>{65ef51c6-5cb8-43b8-ae65-4a68f0b44ad2}</Project>
