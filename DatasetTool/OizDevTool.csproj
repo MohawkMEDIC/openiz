@@ -57,11 +57,24 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="NHapi.Base, Version=2.3.0.0, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\NHapi.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V231, Version=2.3.0.0, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\NHapi.Model.V231.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V25, Version=2.3.0.0, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\NHapi.Model.V25.dll</HintPath>
+    </Reference>
     <Reference Include="Npgsql, Version=3.1.3.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Npgsql.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
@@ -73,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin.cs" />
+    <Compile Include="ClientRegistry.cs" />
     <Compile Include="CsdImport.Entity.cs" />
     <Compile Include="CsdImport.Metadata.cs" />
     <Compile Include="CsdImport.Place.cs" />
@@ -169,6 +183,10 @@
     <ProjectReference Include="..\OpenIZ.Messaging.AMI.Client\OpenIZ.Messaging.AMI.Client.csproj">
       <Project>{0FDBD4DB-30AE-4E1D-AAE1-5FE1370DCE3F}</Project>
       <Name>OpenIZ.Messaging.AMI.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Messaging.HL7\OpenIZ.Messaging.HL7.csproj">
+      <Project>{8F1714CE-CCCE-4EF9-8F2F-B8223D35FDB8}</Project>
+      <Name>OpenIZ.Messaging.HL7</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Protocol.Xml\OpenIZ.Protocol.Xml.csproj">
       <Project>{cad6bcb7-758b-4aa4-a5fe-a9fab8a4cf2f}</Project>

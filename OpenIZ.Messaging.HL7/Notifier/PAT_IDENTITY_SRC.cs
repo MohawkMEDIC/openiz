@@ -59,7 +59,7 @@ namespace OpenIZ.Messaging.HL7.Notifier
 		/// <param name="workItem">The work item.</param>
 		/// <returns>Returns the created message</returns>
 		/// <exception cref="System.ArgumentOutOfRangeException">Invalid notification type</exception>
-		private IMessage CreateMessage<T>(NotificationQueueWorkItem<T> workItem) where T : IdentifiedData
+		public IMessage CreateMessage<T>(NotificationQueueWorkItem<T> workItem) where T : IdentifiedData
 		{
 			IMessage notificationMessage;
 

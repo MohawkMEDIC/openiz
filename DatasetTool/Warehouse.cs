@@ -343,7 +343,7 @@ namespace OizDevTool
 
             // Now we want to calculate
             var patientPersistence = ApplicationContext.Current.GetService<IStoredQueryDataPersistenceService<Patient>>();
-            var lastRefresh = DateTime.Parse(parms.Since ?? "0001-01-01");
+            var lastRefresh = !String.IsNullOrEmpty(parms.Since) ? (DateTimeOffset?)DateTimeOffset.Parse(parms.Since) : null;
 
             // Should we calculate?
             int tr = 1, ofs = 0, calc = 0, tq = 0;
@@ -403,18 +403,18 @@ namespace OizDevTool
                 else
                 {
                     // New patients directly modified
-                    if (lastRefresh == DateTime.MinValue)
-                        prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.ModifiedOn > lastRefresh, queryId, ofs, 250, AuthenticationContext.SystemPrincipal, out tr);
+                    if (!lastRefresh.HasValue)
+                        prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE", queryId, ofs, 250, AuthenticationContext.SystemPrincipal, out tr);
                     else
                         // Patients who have had 
-                        prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.Participations.Any(p => p.ModifiedOn > lastRefresh), queryId, ofs, 250, AuthenticationContext.SystemPrincipal, out tr);
+                        prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.Participations.Any(p => p.Act.ModifiedOn > lastRefresh), queryId, ofs, 250, AuthenticationContext.SystemPrincipal, out tr);
 
                 }
 
 
                 ofs += prodPatients.Count();
 
-                if (lastRefresh == DateTime.MinValue)
+                if (!lastRefresh.HasValue)
                 {
                     var sk = prodPatients.Count();
                     prodPatients = prodPatients.Where(o => !warehousePatients.Any(m => m.patient_id == o.Key));
