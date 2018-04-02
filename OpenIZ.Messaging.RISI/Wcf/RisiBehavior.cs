@@ -19,11 +19,13 @@
  */
 using MARC.HI.EHRS.SVC.Core;
 using OpenIZ.Core.Model.RISI;
+using OpenIZ.Core.Model.RISI.Constants;
 using OpenIZ.Reporting.Core;
 using SwaggerWcf.Attributes;
 using System;
 using System.IO;
 using System.ServiceModel;
+using System.ServiceModel.Web;
 
 namespace OpenIZ.Messaging.RISI.Wcf
 {
@@ -463,6 +465,8 @@ namespace OpenIZ.Messaging.RISI.Wcf
 				throw new ArgumentException($"The parameter { format } must be a valid { nameof(Guid) }");
 			}
 
+            if (formatId == ReportFormatKeys.Html)
+                WebOperationContext.Current.OutgoingResponse.ContentType = "text/html";
 			return new MemoryStream(this.reportExecutor.RunReport(reportId, formatId, bundle.Parameters.Items));
 		}
 
