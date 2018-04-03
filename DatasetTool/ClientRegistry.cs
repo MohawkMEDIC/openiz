@@ -24,6 +24,7 @@ using System.Collections.Specialized;
 using OpenIZ.Messaging.HL7;
 using OpenIZ.Messaging.HL7.Notifier;
 using OpenIZ.Core.Services;
+using OpenIZ.Caching.Memory;
 
 namespace OizDevTool
 {
@@ -80,83 +81,103 @@ namespace OizDevTool
             int ofs = 0, tr = 1, complete = 0, skip = 0, nobar = 0, erc = 0;
             while(ofs < tr)
             {
-                var results = patientService.Query(o => o.StatusConceptKey == StatusKeys.Active, qry, ofs, 100, AuthenticationContext.Current.Principal, out tr);
+                var results = patientService.Query(o => o.StatusConceptKey == StatusKeys.Active, ofs, 100, AuthenticationContext.Current.Principal, out tr);
                 ofs += 100;
                 if(ofs % 1000 == 0)
-                {
                     ApplicationContext.Current.GetService<IDataCachingService>().Clear();
-                }
 
                 foreach(var res in results)
                     wtp.QueueUserWorkItem(o => {
-
-                        // Vars for lookup
-                        var patient = o as Patient;
-                        var searchIdentifier = patient.LoadCollection<EntityIdentifier>("Identifiers").FirstOrDefault(i=>parms.Authorities?.Contains(i.Authority.DomainName) == true || parms.Authorities == null);
-                        var messageSender = new MllpMessageSender(new Uri(parms.MpiEndpoint), null, null);
-                        Console.CursorLeft = 0;
-
-                        if (searchIdentifier == null)
+                        try
                         {
-                            Interlocked.Increment(ref nobar);
-                        }
-                        else
-                        {
-                            // Phase 1: Make sure the patient doesn't already exist on the MPI
+                            
+                            // Lookup by pkey to save even loading from db
                             var pdqRequest = CreatePDQSearch(
-                                new KeyValuePair<string, string>("@PID.3.1", searchIdentifier.Value),
-                                new KeyValuePair<string, string>("@PID.3.4.1", searchIdentifier.Authority.DomainName)
+                                new KeyValuePair<string, string>("@PID.3.1", o.ToString())
                             );
-
-                            // Process PDQ response
+                            var messageSender = new MllpMessageSender(new Uri(parms.MpiEndpoint), null, null);
                             var pdqResponse = messageSender.SendAndReceive(pdqRequest) as RSP_K21;
-                            if (pdqResponse == null || pdqResponse.MSA.AcknowledgmentCode.Value != "AA")
+                            if (pdqResponse.QUERY_RESPONSERepetitionsUsed > 0)
                             {
-                                foreach (var err in pdqResponse.ERR.GetErrorCodeAndLocation())
-                                    Console.WriteLine("MPI ERR: {0} ({1})", err.CodeIdentifyingError.Text, err.CodeIdentifyingError.AlternateText);
-                                Interlocked.Increment(ref erc);
+                                Interlocked.Increment(ref skip);
                                 return;
                             }
 
-                            // Were there any results?
-                            if (pdqResponse.QUERY_RESPONSERepetitionsUsed > 0)
-                                Interlocked.Increment(ref skip);
+                            var patient = patientService.Get(new MARC.HI.EHRS.SVC.Core.Data.Identifier<Guid>((Guid)o), AuthenticationContext.SystemPrincipal, true);
+                            var searchIdentifier = patient.LoadCollection<EntityIdentifier>("Identifiers").FirstOrDefault(i => parms.Authorities?.Contains(i.Authority.DomainName) == true || parms.Authorities == null);
+                            Console.CursorLeft = 0;
+
+                            if (searchIdentifier == null)
+                            {
+                                Interlocked.Increment(ref nobar);
+                            }
                             else
                             {
-                                // Notify of registration
-                                var patientIdentitySrc = new PAT_IDENTITY_SRC()
-                                {
-                                    TargetConfiguration = new OpenIZ.Messaging.HL7.Configuration.TargetConfiguration(
-                                        "oizdt-target",
-                                        parms.MpiEndpoint,
-                                        "PAT_IDENTITY_SRC",
-                                        parms.TargetDeviceId
-                                        )
-                                };
-                                var pixRequest = patientIdentitySrc.CreateMessage<Patient>(new NotificationQueueWorkItem<Patient>(patient, ActionType.Create));
+                                // Phase 1: Make sure the patient doesn't already exist on the MPI
+                                pdqRequest = CreatePDQSearch(
+                                    new KeyValuePair<string, string>("@PID.3.1", searchIdentifier.Value),
+                                    new KeyValuePair<string, string>("@PID.3.4.1", searchIdentifier.Authority.DomainName)
+                                );
 
-                                var pixResponse = messageSender.SendAndReceive(pixRequest) as NHapi.Model.V231.Message.ACK;
                                 // Process PDQ response
-                                if (pixResponse == null || !pixResponse.MSA.AcknowledgementCode.Value.EndsWith("A"))
+                                pdqResponse = messageSender.SendAndReceive(pdqRequest) as RSP_K21;
+                                if (pdqResponse == null || pdqResponse.MSA.AcknowledgmentCode.Value != "AA")
                                 {
                                     foreach (var err in pdqResponse.ERR.GetErrorCodeAndLocation())
                                         Console.WriteLine("MPI ERR: {0} ({1})", err.CodeIdentifyingError.Text, err.CodeIdentifyingError.AlternateText);
                                     Interlocked.Increment(ref erc);
+                                    return;
                                 }
-                                Interlocked.Increment(ref complete);
 
+                                // Were there any results?
+                                if (pdqResponse.QUERY_RESPONSERepetitionsUsed > 0)
+                                    Interlocked.Increment(ref skip);
+                                else
+                                {
+                                    // Notify of registration
+                                    var patientIdentitySrc = new PAT_IDENTITY_SRC()
+                                    {
+                                        TargetConfiguration = new OpenIZ.Messaging.HL7.Configuration.TargetConfiguration(
+                                            "oizdt-target",
+                                            parms.MpiEndpoint,
+                                            "PAT_IDENTITY_SRC",
+                                            parms.TargetDeviceId
+                                            )
+                                    };
+                                    var pixRequest = patientIdentitySrc.CreateMessage<Patient>(new NotificationQueueWorkItem<Patient>(patient, ActionType.Create));
+
+                                    var pixResponse = messageSender.SendAndReceive(pixRequest) as NHapi.Model.V231.Message.ACK;
+                                    // Process PDQ response
+                                    if (pixResponse == null || !pixResponse.MSA.AcknowledgementCode.Value.EndsWith("A"))
+                                    {
+                                        foreach (var err in pdqResponse.ERR.GetErrorCodeAndLocation())
+                                            Console.WriteLine("MPI ERR: {0} ({1})", err.CodeIdentifyingError.Text, err.CodeIdentifyingError.AlternateText);
+                                        Interlocked.Increment(ref erc);
+                                    }
+                                    Interlocked.Increment(ref complete);
+
+                                }
                             }
+
+                        }
+                        catch(Exception e)
+                        {
+                            Interlocked.Increment(ref erc);
+                            Console.WriteLine(e.Message);
                         }
 
                         lock (parms)
                         {
                             Console.CursorLeft = 0;
-                            Console.Write("    Pushing patients to MPI ([SK: {0}, UL: {1}, NI: {2}, ER: {3}]/{4}) {5:0%}    ", skip, complete, nobar, erc, tr, (float)(skip + complete + nobar + erc)/(float)tr);
-                            if (complete > 0 && complete % 1000 == 0)
-                                ApplicationContext.Current.GetService<IDataCachingService>().Clear();
+                            Console.Write("    Pushing patients to MPI ([SK: {0}, UL: {1}, NI: {2}, ER: {3}]/{4}) {5:0%}    ", skip, complete, nobar, erc, tr, (float)(skip + complete + nobar + erc) / (float)tr);
+                            if (complete > 0 && (complete % 1000) <= 1)
+                            {
+                                MemoryCache.Current.Clear();
+                                System.GC.Collect();
+                            }
                         }
 
-                    }, res);
+                    }, res.Key);
             }
 
             wtp.WaitOne();
