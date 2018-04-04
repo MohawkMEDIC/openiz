@@ -167,6 +167,17 @@ namespace OpenIZ.Messaging.RISI.Wcf
         AutoCompleteSourceDefinition GetReportParameterValues(string id, string parameterId);
 
 		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <param name="parameterValue">The parameter value.</param>
+		/// <returns>Returns an auto complete source definition of valid parameter values for a given parameter within the context of another parameter value.</returns>
+		[WebGet(UriTemplate = "/report/{id}/parm/{parameterId}/values/{parameterValue}")]
+		[SwaggerWcfPath("Get AutoComplete Values", "Retrieves a list of auto-completed parameters which are applicable for the provided parameter")]
+		AutoCompleteSourceDefinition GetReportParameterValuesCascading(string id, string parameterId, string parameterValue);
+
+		/// <summary>
 		/// Gets the report source.
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>
