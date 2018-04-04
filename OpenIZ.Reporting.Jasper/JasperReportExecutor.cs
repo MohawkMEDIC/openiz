@@ -798,10 +798,11 @@ namespace OpenIZ.Reporting.Jasper
 			}
 
 			var reportDefinition = persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
-			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId);
-			var reportParameter = reportDefinition.Parameters.FirstOrDefault(c => c.Key == parameterId);
+
+			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition?.CorrelationId);
+			var reportParameter = reportDefinition?.Parameters.FirstOrDefault(c => c.Key == parameterId);
 			var sourceDefinition = new ListAutoCompleteSourceDefinition();
-			var reportUnitInputControlReference = reportUnit.InputControlReferences.FirstOrDefault(c => c.Uri == reportParameter.CorrelationId);
+			var reportUnitInputControlReference = reportUnit?.InputControlReferences.FirstOrDefault(c => c.Uri == reportParameter?.CorrelationId);
 
 			if (reportUnitInputControlReference != null)
 			{
@@ -1075,6 +1076,11 @@ namespace OpenIZ.Reporting.Jasper
 		/// <exception cref="System.InvalidOperationException">Unable to lookup resource</exception>
 		private T LookupResource<T>(string resourceUri, IEnumerable<KeyValuePair<string, string>> parameters = null) where T : ResourceBase, new()
 		{
+			if (resourceUri == null)
+			{
+				throw new ArgumentNullException(nameof(resourceUri), "Value cannot be null");
+			}
+
 			var url = $"{this.ReportUri}{JasperResourcesPath}{resourceUri}";
 
 			if (parameters?.Count() == 1)
