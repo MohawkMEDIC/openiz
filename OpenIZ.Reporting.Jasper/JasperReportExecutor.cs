@@ -504,6 +504,8 @@ namespace OpenIZ.Reporting.Jasper
 							query.Value = query.Value.Replace("${Userid}", $"'{userEntityId}'");
 							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'");
 						}
+
+						query.Value = query.Value.Replace("$P{ParentId}", "null");
 						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
 					}
 					catch (Exception e)
@@ -838,9 +840,9 @@ namespace OpenIZ.Reporting.Jasper
 							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'");
 						}
 
-						if (Guid.TryParse(parameterValue, out var parentKey) && query.Value.Contains("${ParentId}"))
+						if (Guid.TryParse(parameterValue, out var parentKey) && query.Value.Contains("$P{ParentId}"))
 						{
-							query.Value = query.Value.Replace("${ParentId}", $"'{parentKey}'");
+							query.Value = query.Value.Replace("$P{ParentId}", $"'{parentKey}'");
 						}
 
 						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
