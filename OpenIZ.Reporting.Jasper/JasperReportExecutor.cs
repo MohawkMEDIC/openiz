@@ -505,10 +505,10 @@ namespace OpenIZ.Reporting.Jasper
 							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'");
 						}
 
-						query.Value = query.Value.Replace("$P{ParentId}", "null");
-						query.Value = query.Value.Replace("$P{Region}", "null");
-						query.Value = query.Value.Replace("$P{District}", "null");
-						query.Value = query.Value.Replace("$P{Facility}", "null");
+						query.Value = query.Value.Replace("$P{Region}", "null").Replace("$P!{Region}", "null");
+						query.Value = query.Value.Replace("$P{District}", "null").Replace("$P!{District}", "null");
+						query.Value = query.Value.Replace("$P{Facility}", "null").Replace("$P!{Facility}", "null");
+
 						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
 					}
 					catch (Exception e)
@@ -845,10 +845,9 @@ namespace OpenIZ.Reporting.Jasper
 
 						if (Guid.TryParse(parameterValue, out var parentKey))
 						{
-							query.Value = query.Value.Replace("$P{ParentId}", $"'{parentKey}'");
-							query.Value = query.Value.Replace("$P{Region}", $"'{parentKey}'");
-							query.Value = query.Value.Replace("$P{District}", $"'{parentKey}'");
-							query.Value = query.Value.Replace("$P{Facility}", $"'{parentKey}'");
+							query.Value = query.Value.Replace("$P{Region}", $"{parentKey}").Replace("$P!{Region}", $"{parentKey}");
+							query.Value = query.Value.Replace("$P{District}", $"{parentKey}").Replace("$P!{District}", $"{parentKey}");
+							query.Value = query.Value.Replace("$P{Facility}", $"{parentKey}").Replace("$P!{Facility}", $"{parentKey}");
 						}
 
 						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
