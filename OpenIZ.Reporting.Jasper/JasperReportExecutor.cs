@@ -843,7 +843,7 @@ namespace OpenIZ.Reporting.Jasper
 							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'");
 						}
 
-						if (Guid.TryParse(parameterValue, out var parentKey) && query.Value.Contains("$P{ParentId}"))
+						if (Guid.TryParse(parameterValue, out var parentKey))
 						{
 							query.Value = query.Value.Replace("$P{ParentId}", $"'{parentKey}'");
 							query.Value = query.Value.Replace("$P{Region}", $"'{parentKey}'");
