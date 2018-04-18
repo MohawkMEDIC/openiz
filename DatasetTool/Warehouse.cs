@@ -142,95 +142,102 @@ namespace OizDevTool
 
                 foreach (var plc in places)
                 {
-                    Console.WriteLine("Calculating AMC for {0}", plc.Names.FirstOrDefault().ToDisplay());
+                    try {
+                        Console.WriteLine("Calculating AMC for {0}", plc.Names.FirstOrDefault().ToDisplay());
 
-                    // First we want to get all entity relationships of type consumable related to this place
-                    var consumablePtcpts = apService.Query(o => o.ParticipationRoleKey == ActParticipationKey.Consumable && o.SourceEntity.ActTime > startDate && o.SourceEntity.Participations.Any(p => p.ParticipationRoleKey == ActParticipationKey.Location && p.PlayerEntityKey == plc.Key), AuthenticationContext.Current.Principal);
+                        // First we want to get all entity relationships of type consumable related to this place
+                        var consumablePtcpts = apService.Query(o => o.ParticipationRoleKey == ActParticipationKey.Consumable && o.SourceEntity.ActTime > startDate && o.SourceEntity.Participations.Any(p => p.ParticipationRoleKey == ActParticipationKey.Location && p.PlayerEntityKey == plc.Key), AuthenticationContext.Current.Principal);
 
-                    // Now we want to group by consumable
-                    int t = 0;
+                        // Now we want to group by consumable
+                        int t = 0;
 
-                    var groupedConsumables = consumablePtcpts.GroupBy(o => o.PlayerEntityKey).Select(o => new
-                    {
-                        ManufacturedMaterialKey = o.Key,
-                        UsedQty = o.Sum(s => s.Quantity),
-                        MaterialKey = matlService.QueryFast(m => m.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance && r.TargetEntityKey == o.Key), Guid.Empty, 0, 1, AuthenticationContext.Current.Principal, out t)?.FirstOrDefault()?.Key
-                    }).ToList();
-
-                    foreach (var i in groupedConsumables.Where(o => !o.MaterialKey.HasValue))
-                        Console.WriteLine("MMAT {0} is not linked to any MAT", i.ManufacturedMaterialKey);
-
-                    groupedConsumables.RemoveAll(o => !o.MaterialKey.HasValue);
-                    // Now, we want to build the stock policy object
-                    dynamic[] stockPolicyObject = new dynamic[0];
-                    var stockPolicyExtension = plc.LoadCollection<EntityExtension>("Extensions").FirstOrDefault(o => o.ExtensionTypeKey == Guid.Parse("DFCA3C81-A3C4-4C82-A901-8BC576DA307C"));
-                    if (stockPolicyExtension == null)
-                    {
-                        stockPolicyExtension = new EntityExtension()
+                        var groupedConsumables = consumablePtcpts.GroupBy(o => o.PlayerEntityKey).Select(o => new
                         {
-                            ExtensionType = new ExtensionType("http://openiz.org/extensions/contrib/bid/stockPolicy", typeof(DictionaryExtensionHandler))
-                            {
-                                Key = Guid.Parse("DFCA3C81-A3C4-4C82-A901-8BC576DA307C")
-                            },
-                            ExtensionValue = stockPolicyObject
-                        };
-                        plc.Extensions.Add(stockPolicyExtension);
-                    }
-                    else
-                        stockPolicyObject = (stockPolicyExtension.GetValue() as dynamic[]).GroupBy(o => o["MaterialEntityId"]).Select(o => new
+                            ManufacturedMaterialKey = o.Key,
+                            UsedQty = o.Sum(s => s.Quantity),
+                            MaterialKey = matlService.QueryFast(m => m.Relationships.Any(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance && r.TargetEntityKey == o.Key), Guid.Empty, 0, 1, AuthenticationContext.Current.Principal, out t)?.FirstOrDefault()?.Key
+                        }).ToList();
+
+                        foreach (var i in groupedConsumables.Where(o => !o.MaterialKey.HasValue))
+                            Console.WriteLine("MMAT {0} is not linked to any MAT", i.ManufacturedMaterialKey);
+
+                        groupedConsumables.RemoveAll(o => !o.MaterialKey.HasValue);
+                        // Now, we want to build the stock policy object
+                        dynamic[] stockPolicyObject = new dynamic[0];
+                        var stockPolicyExtension = plc.LoadCollection<EntityExtension>("Extensions").FirstOrDefault(o => o.ExtensionTypeKey == Guid.Parse("DFCA3C81-A3C4-4C82-A901-8BC576DA307C"));
+                        if (stockPolicyExtension == null)
                         {
-                            MaterialEntityId = Guid.Parse(o.FirstOrDefault()["MaterialEntityId"].ToString()),
-                            ReorderQuantity = (int?)(o.FirstOrDefault()["ReorderQuantity"]) ?? 0,
-                            SafetyQuantity = (int?)(o.FirstOrDefault()["SafetyQuantity"]) ?? 0,
-                            AMC = (int?)(o.FirstOrDefault()["AMC"]) ?? 0,
-                            Multiplier = (int?)(o.FirstOrDefault()["Multiplier"]) ?? 0
-                        }).ToArray();
-
-
-
-                    // Now we want to calculate each amc
-                    List<dynamic> calculatedStockPolicyObject = new List<dynamic>();
-                    bool hasChanged = false;
-                    foreach (var gkp in groupedConsumables.GroupBy(o => o.MaterialKey).Select(o => new { Key = o.Key, Value = o.Sum(p => p.UsedQty) }))
-                    {
-
-                        var amc = (int)((float)Math.Abs(gkp.Value ?? 0) / 3);
-                        // Now correct for packaging
-                        var pkging = erService.Query(o => o.SourceEntityKey == gkp.Key && o.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance, AuthenticationContext.Current.Principal).Max(o => o.Quantity);
-                        if (pkging > 1)
-                            amc = ((amc / pkging.Value) + 1) * pkging.Value;
-
-                        // Is there an existing stock policy object?
-                        var existingPolicy = stockPolicyObject.FirstOrDefault(o => o.MaterialEntityId == gkp.Key);
-                        hasChanged |= amc != existingPolicy?.AMC;
-                        if (existingPolicy != null && amc != existingPolicy?.AMC)
-                            existingPolicy = new
+                            stockPolicyExtension = new EntityExtension()
                             {
-                                MaterialEntityId = gkp.Key,
-                                ReorderQuantity = existingPolicy.ReorderQuantity,
-                                SafetyQuantity = existingPolicy.SafetyQuantity,
-                                AMC = amc,
-                                Multiplier = existingPolicy.Multiplier
+                                ExtensionType = new ExtensionType("http://openiz.org/extensions/contrib/bid/stockPolicy", typeof(DictionaryExtensionHandler))
+                                {
+                                    Key = Guid.Parse("DFCA3C81-A3C4-4C82-A901-8BC576DA307C")
+                                },
+                                ExtensionValue = stockPolicyObject
                             };
+                            plc.Extensions.Add(stockPolicyExtension);
+                        }
                         else
-                            existingPolicy = new
+                            stockPolicyObject = (stockPolicyExtension.GetValue() as dynamic[]).GroupBy(o => o["MaterialEntityId"]).Select(o => new
                             {
-                                MaterialEntityId = gkp.Key,
-                                ReorderQuantity = amc,
-                                SafetyQuantity = (int)(amc * 0.33),
-                                AMC = amc,
-                                Multiplier = 1
-                            };
+                                MaterialEntityId = Guid.Parse(o.FirstOrDefault()["MaterialEntityId"].ToString()),
+                                ReorderQuantity = (int?)(o.FirstOrDefault()["ReorderQuantity"]) ?? 0,
+                                SafetyQuantity = (int?)(o.FirstOrDefault()["SafetyQuantity"]) ?? 0,
+                                AMC = (int?)(o.FirstOrDefault()["AMC"]) ?? 0,
+                                Multiplier = (int?)(o.FirstOrDefault()["Multiplier"]) ?? 0
+                            }).ToArray();
 
-                        // add policy
-                        calculatedStockPolicyObject.Add(existingPolicy);
+
+
+                        // Now we want to calculate each amc
+                        List<dynamic> calculatedStockPolicyObject = new List<dynamic>();
+                        bool hasChanged = false;
+                        foreach (var gkp in groupedConsumables.GroupBy(o => o.MaterialKey).Select(o => new { Key = o.Key, Value = o.Sum(p => p.UsedQty) }))
+                        {
+
+                            var amc = (int)((float)Math.Abs(gkp.Value ?? 0) / 3);
+                            // Now correct for packaging
+                            var pkging = erService.Query(o => o.SourceEntityKey == gkp.Key && o.RelationshipTypeKey == EntityRelationshipTypeKeys.Instance, AuthenticationContext.Current.Principal).Max(o => o.Quantity);
+                            if (pkging > 1)
+                                amc = ((amc / pkging.Value) + 1) * pkging.Value;
+
+                            // Is there an existing stock policy object?
+                            var existingPolicy = stockPolicyObject.FirstOrDefault(o => o.MaterialEntityId == gkp.Key);
+                            hasChanged |= amc != existingPolicy?.AMC;
+                            if (existingPolicy != null && amc != existingPolicy?.AMC)
+                                existingPolicy = new
+                                {
+                                    MaterialEntityId = gkp.Key,
+                                    ReorderQuantity = existingPolicy.ReorderQuantity,
+                                    SafetyQuantity = existingPolicy.SafetyQuantity,
+                                    AMC = amc,
+                                    Multiplier = existingPolicy.Multiplier
+                                };
+                            else
+                                existingPolicy = new
+                                {
+                                    MaterialEntityId = gkp.Key,
+                                    ReorderQuantity = amc,
+                                    SafetyQuantity = (int)(amc * 0.33),
+                                    AMC = amc,
+                                    Multiplier = 1
+                                };
+
+                            // add policy
+                            calculatedStockPolicyObject.Add(existingPolicy);
+                        }
+
+                        stockPolicyExtension.ExtensionValue = calculatedStockPolicyObject.ToArray();
+
+                        if (hasChanged)
+                            placeService.Update(plc, AuthenticationContext.Current.Principal, TransactionMode.Commit);
                     }
-
-                    stockPolicyExtension.ExtensionValue = calculatedStockPolicyObject.ToArray();
-
-                    if (hasChanged)
-                        placeService.Update(plc, AuthenticationContext.Current.Principal, TransactionMode.Commit);
+                    catch(Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
                 }
+
                 ofs += 100;
             }
 

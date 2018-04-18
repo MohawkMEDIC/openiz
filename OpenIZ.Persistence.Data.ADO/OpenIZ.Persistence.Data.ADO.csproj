@@ -72,6 +72,7 @@
     <Compile Include="Data\Extensions\DataModelExtensions.cs" />
     <Compile Include="Data\Hax\ConceptQueryHack.cs" />
     <Compile Include="Data\Hax\CreationTimeQueryHack.cs" />
+    <Compile Include="Data\Hax\EntityAddressNameQueryHack.cs" />
     <Compile Include="Data\Hax\RelationshipQueryHack.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
     <Compile Include="Data\Model\Acts\DbActVersion.cs" />

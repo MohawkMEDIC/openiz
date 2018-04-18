@@ -171,6 +171,11 @@ namespace OpenIZ.OrmLite
                         using (var rdr = dbc.ExecuteReader())
                             return this.ReaderToCollection<TModel>(rdr).ToList();
                     }
+                    catch(TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
                         if (!this.IsPreparedCommand(dbc))
@@ -312,6 +317,11 @@ namespace OpenIZ.OrmLite
                             return this.ReaderToResult(returnType, rdr);
 
                     }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
 #if DBPERF
@@ -350,6 +360,11 @@ namespace OpenIZ.OrmLite
                         using (var rdr = dbc.ExecuteReader())
                             return this.ReaderToResult<TModel>(rdr);
                     }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
                         if (!this.IsPreparedCommand(dbc))
@@ -385,6 +400,11 @@ namespace OpenIZ.OrmLite
                     {
                         using (var rdr = dbc.ExecuteReader())
                             return this.ReaderToResult<TModel>(rdr);
+                    }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
                     }
                     finally
                     {
@@ -424,6 +444,11 @@ namespace OpenIZ.OrmLite
                     {
                         using (var rdr = dbc.ExecuteReader())
                             return this.ReaderToResult<TModel>(rdr);
+                    }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
                     }
                     finally
                     {
@@ -472,6 +497,11 @@ namespace OpenIZ.OrmLite
                         }
 
                     }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
 #if DBPERF
@@ -513,6 +543,11 @@ namespace OpenIZ.OrmLite
                     {
                         return (bool)dbc.ExecuteScalar();
                     }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
                         if (!this.IsPreparedCommand(dbc))
@@ -548,6 +583,11 @@ namespace OpenIZ.OrmLite
                     try
                     {
                         return (bool)dbc.ExecuteScalar();
+                    }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
                     }
                     finally
                     {
@@ -586,6 +626,11 @@ namespace OpenIZ.OrmLite
                     {
                         return (int)dbc.ExecuteScalar();
                     }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
                         if (!this.IsPreparedCommand(dbc))
@@ -621,6 +666,11 @@ namespace OpenIZ.OrmLite
                     try
                     {
                         return Convert.ToInt32(dbc.ExecuteScalar());
+                    }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
                     }
                     finally
                     {
@@ -677,6 +727,11 @@ namespace OpenIZ.OrmLite
                         using (var rdr = dbc.ExecuteReader()) 
                             return this.ReaderToCollection<TModel>(rdr).ToList();
                     }
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
 #if DBPERF
@@ -730,7 +785,11 @@ namespace OpenIZ.OrmLite
                             return this.ReaderToCollection<TModel>(rdr).ToList();
 
                     }
-
+                    catch (TimeoutException)
+                    {
+                        dbc.Cancel();
+                        throw;
+                    }
                     finally
                     {
 #if DBPERF
