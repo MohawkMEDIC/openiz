@@ -151,6 +151,15 @@ namespace OpenIZ.Reporting.Core
 		AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId);
 
 		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <param name="parameterValue">The parameter value.</param>
+		/// <returns>Returns an auto complete source definition of valid parameter values for a given parameter within the context of another parameter value.</returns>
+		AutoCompleteSourceDefinition GetReportParameterValuesCascading(Guid id, Guid parameterId, string parameterValue);
+
+		/// <summary>
 		/// Gets the report source.
 		/// </summary>
 		/// <param name="id">The id of the report for which to retrieve the source.</param>

@@ -254,9 +254,22 @@ namespace OpenIZ.Messaging.RISI.Client
 		/// <param name="id">The id of the report.</param>
 		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
 		/// <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
-		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
+		public T GetReportParameterValues<T>(Guid id, Guid parameterId) where T : AutoCompleteSourceDefinition
 		{
-			return this.Client.Get<AutoCompleteSourceDefinition>($"report/{id}/parm/{parameterId}/values");
+			return this.Client.Get<T>($"report/{id}/parm/{parameterId}/values");
+		}
+
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <typeparam name="T">The type of auto complete source definition.</typeparam>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <param name="parameterValue">The parameter value.</param>
+		/// <returns>Returns an auto complete source definition of valid parameter values for a given parameter within the context of another parameter value.</returns>
+		public T GetReportParameterValuesCascading<T>(Guid id, Guid parameterId, string parameterValue) where T : AutoCompleteSourceDefinition
+		{
+			return this.Client.Get<T>($"report/{id}/parm/{parameterId}/values/{parameterValue}");
 		}
 
 		/// <summary>

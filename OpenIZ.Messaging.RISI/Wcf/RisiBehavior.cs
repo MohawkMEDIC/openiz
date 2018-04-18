@@ -402,7 +402,34 @@ namespace OpenIZ.Messaging.RISI.Wcf
 			return this.reportExecutor.GetReportParameterValues(reportKey, parameterKey);
 		}
 
-        /// <summary>
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <param name="parameterValue">The parameter value.</param>
+		/// <returns>Returns an auto complete source definition of valid parameter values for a given parameter within the context of another parameter value.</returns>
+		/// <exception cref="ArgumentException">
+		/// </exception>
+		public AutoCompleteSourceDefinition GetReportParameterValuesCascading(string id, string parameterId, string parameterValue)
+		{
+			var reportKey = Guid.Empty;
+			var parameterKey = Guid.Empty;
+
+			if (!Guid.TryParse(id, out reportKey))
+			{
+				throw new ArgumentException($"The parameter { id } must be a valid { nameof(Guid) }");
+			}
+
+			if (!Guid.TryParse(parameterId, out parameterKey))
+			{
+				throw new ArgumentException($"The parameter { parameterId } must be a valid { nameof(Guid) }");
+			}
+
+			return this.reportExecutor.GetReportParameterValuesCascading(reportKey, parameterKey, parameterValue);
+		}
+
+		/// <summary>
         /// Gets the report source.
         /// </summary>
         /// <param name="id">The id of the report for which to retrieve the source.</param>

@@ -420,7 +420,7 @@ namespace OpenIZ.Reporting.Jasper
 
 			var userId = OpenIZ.Core.ExtensionMethods.GetUserId(AuthenticationContext.Current.Principal.Identity);
 
-			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>(UserIdKey, Guid.Parse(userId).ToString())});
+			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition.CorrelationId, new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>(UserIdKey, Guid.Parse(userId).ToString()) });
 
 			var count = 0;
 
@@ -504,6 +504,11 @@ namespace OpenIZ.Reporting.Jasper
 							query.Value = query.Value.Replace("${Userid}", $"'{userEntityId}'");
 							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'");
 						}
+
+						query.Value = query.Value.Replace("$P{Region}", "null").Replace("$P!{Region}", "null");
+						query.Value = query.Value.Replace("$P{District}", "null").Replace("$P!{District}", "null");
+						query.Value = query.Value.Replace("$P{Facility}", "null").Replace("$P!{Facility}", "null");
+
 						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
 					}
 					catch (Exception e)
@@ -772,7 +777,102 @@ namespace OpenIZ.Reporting.Jasper
 		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
 		public AutoCompleteSourceDefinition GetReportParameterValues(Guid id, Guid parameterId)
 		{
-			throw new NotImplementedException();
+			return this.GetReportParameterValuesCascading(id, parameterId, null);
+		}
+
+		/// <summary>
+		/// Gets a list of auto-complete parameters which are applicable for the specified parameter.
+		/// </summary>
+		/// <param name="id">The id of the report.</param>
+		/// <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+		/// <param name="parameterValue">The parameter value.</param>
+		/// <returns>Returns an auto complete source definition of valid parameter values for a given parameter within the context of another parameter value.</returns>
+		/// <exception cref="InvalidOperationException">
+		/// ReportDefinition
+		/// or
+		/// IAdHocDatawarehouseService
+		/// </exception>
+		[PolicyPermission(SecurityAction.Demand, PolicyId = PermissionPolicyIdentifiers.ReadMetadata)]
+		public AutoCompleteSourceDefinition GetReportParameterValuesCascading(Guid id, Guid parameterId, string parameterValue)
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ReportDefinition>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException($"Unable to locate persistence service: {nameof(IDataPersistenceService<ReportDefinition>)}");
+			}
+
+			var reportDefinition = persistenceService.Get(new Identifier<Guid>(id), AuthenticationContext.Current.Principal, false);
+
+			var reportUnit = this.LookupResource<ReportUnit>(reportDefinition?.CorrelationId);
+			var reportParameter = reportDefinition?.Parameters.FirstOrDefault(c => c.Key == parameterId);
+			var sourceDefinition = new ListAutoCompleteSourceDefinition();
+			var reportUnitInputControlReference = reportUnit?.InputControlReferences.FirstOrDefault(c => c.Uri == reportParameter?.CorrelationId);
+
+			if (reportUnitInputControlReference != null)
+			{
+				var inputControl = this.LookupResource<InputControl>(reportUnitInputControlReference.Uri);
+
+				if (inputControl.Query != null)
+				{
+					var query = this.LookupResource<Query>(inputControl.Query.Uri);
+
+					this.tracer.TraceEvent(TraceEventType.Verbose, 0, $"Jasper Query: {query.Value}");
+
+					var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+
+					if (warehouseService == null)
+					{
+						throw new InvalidOperationException($"Unable to locate service: {nameof(IAdHocDatawarehouseService)}");
+					}
+
+					IEnumerable<ExpandoObject> queryResult = null;
+
+					try
+					{
+						// set the user id
+						if (query.Value.Contains("${Userid}") || query.Value.Contains("$P{Userid}"))
+						{
+							var securityUserId = Guid.Parse(OpenIZ.Core.ExtensionMethods.GetUserId(AuthenticationContext.Current.Principal.Identity));
+
+							var totalCount = 0;
+
+							var userEntityId = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>().Query(c => c.SecurityUserKey == securityUserId, 0, 1, AuthenticationContext.Current.Principal, out totalCount)?.FirstOrDefault()?.Key;
+
+							query.Value = query.Value.Replace("${Userid}", $"'{userEntityId}'");
+							query.Value = query.Value.Replace("$P{Userid}", $"'{userEntityId}'");
+						}
+
+						if (Guid.TryParse(parameterValue, out var parentKey))
+						{
+							query.Value = query.Value.Replace("$P{Region}", $"{parentKey}").Replace("$P!{Region}", $"{parentKey}");
+							query.Value = query.Value.Replace("$P{District}", $"{parentKey}").Replace("$P!{District}", $"{parentKey}");
+							query.Value = query.Value.Replace("$P{Facility}", $"{parentKey}").Replace("$P!{Facility}", $"{parentKey}");
+						}
+
+						queryResult = warehouseService.AdhocQuery(query.Value) as IEnumerable<ExpandoObject>;
+					}
+					catch (Exception e)
+					{
+						tracer.TraceEvent(TraceEventType.Warning, 0, $"Unable to execute query: {e}");
+					}
+
+					if (queryResult != null)
+					{
+						try
+						{
+							sourceDefinition.Items.AddRange(queryResult.Where(o => o.HasProperty(inputControl.ValueColumn)).Select(p => MapIdentifiedData(p, inputControl.ValueColumn, inputControl.VisibleColumns.FirstOrDefault())));
+						}
+						catch (Exception e)
+						{
+							tracer.TraceEvent(TraceEventType.Error, 0, $"Error: {e}");
+						}
+					}
+				}
+			}
+
+
+			return sourceDefinition;
 		}
 
 		/// <summary>
@@ -983,6 +1083,11 @@ namespace OpenIZ.Reporting.Jasper
 		/// <exception cref="System.InvalidOperationException">Unable to lookup resource</exception>
 		private T LookupResource<T>(string resourceUri, IEnumerable<KeyValuePair<string, string>> parameters = null) where T : ResourceBase, new()
 		{
+			if (resourceUri == null)
+			{
+				throw new ArgumentNullException(nameof(resourceUri), "Value cannot be null");
+			}
+
 			var url = $"{this.ReportUri}{JasperResourcesPath}{resourceUri}";
 
 			if (parameters?.Count() == 1)
