@@ -297,6 +297,17 @@ namespace OpenIZ.OrmLite
                 }
             }
 
+            // JF - Performance - Rewrite the query so that parameters that are NOT are at the end
+            if(query.Any(o=>o.Value.ToString().StartsWith("!")))
+            {
+                var rwQuery = new List<KeyValuePair<String, object>>();
+                foreach (var rw in query)
+                    if (rw.Value.ToString().StartsWith("!"))
+                        rwQuery.Add(rw);
+                    else
+                        rwQuery.Insert(0, rw);
+            }
+
             // Column definitions
             var columnSelector = selector;
             if (selector == null || selector.Length == 0)
@@ -551,7 +562,7 @@ namespace OpenIZ.OrmLite
         /// <summary>
         /// Create a where condition
         /// </summary>
-        public SqlStatement CreateWhereCondition(Type tmodel, String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables)
+        public SqlStatement CreateWhereCondition(Type tmodel, String propertyPath, Object value, String tablePrefix, List<TableMapping> scopedTables, String tableAlias = null)
         {
 
             // Map the type
@@ -562,7 +573,8 @@ namespace OpenIZ.OrmLite
             PropertyInfo domainProperty = scopedTables.Select(o => { tableMapping = o; return m_mapper.MapModelProperty(tmodel, o.OrmType, propertyInfo); }).FirstOrDefault(o => o != null);
 
             // Now map the property path
-            var tableAlias = $"{tablePrefix}{tableMapping.TableName}";
+            if(String.IsNullOrEmpty(tableAlias))
+                tableAlias = $"{tablePrefix}{tableMapping.TableName}";
             if (domainProperty == null)
                 throw new ArgumentException($"Can't find SQL based property for {propertyPath} on {tableMapping.TableName}");
             var columnData = tableMapping.GetColumn(domainProperty);

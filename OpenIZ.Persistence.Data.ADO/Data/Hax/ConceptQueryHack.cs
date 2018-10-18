@@ -93,7 +93,13 @@ namespace OpenIZ.Persistence.Data.ADO.Data.Hax
                     if (typeof(IDbBaseData).IsAssignableFrom(tblMap.OrmType))
                         whereClause.And($"{tblName}.{tblMap.GetColumn(nameof(IDbBaseData.ObsoletionTime)).Name} IS NULL");
                 }
-               
+                else
+                {
+                    whereClause.And(builder.CreateWhereCondition(property.PropertyType, predicate.SubPath, values, $"{queryPrefix}{declProp.Name}_", new List<TableMapping>() { tblMap }, $"{directFkName}"));
+                    // Add obslt_utc version?
+                    if (typeof(IDbBaseData).IsAssignableFrom(tblMap.OrmType))
+                        whereClause.And($"{directFkName}.{tblMap.GetColumn(nameof(IDbBaseData.ObsoletionTime)).Name} IS NULL");
+                }
                 return true;
             }
             else

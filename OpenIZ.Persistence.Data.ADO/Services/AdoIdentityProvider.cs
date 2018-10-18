@@ -47,6 +47,7 @@ using OpenIZ.Persistence.Data.ADO.Data.Model.Security;
 using OpenIZ.Persistence.Data.ADO.Data;
 using OpenIZ.OrmLite;
 using OpenIZ.Persistence.Data.ADO.Services.Persistence;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Persistence.Data.ADO.Services
 {
@@ -210,7 +211,12 @@ namespace OpenIZ.Persistence.Data.ADO.Services
 
             // Password failed validation
             if (ApplicationContext.Current.GetService<IPasswordValidatorService>()?.Validate(newPassword) == false)
-                throw new SecurityException("Password failed validation");
+                throw new DetectedIssueException(new List<DetectedIssue>() {
+                    new DetectedIssue() {
+                        Text = "Password failed validation, it does not meet complexity requirements",
+                        Priority = DetectedIssuePriorityType.Error
+                    }
+                }, "Password does not meet validation requirements");
 
             try
             {
